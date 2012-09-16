@@ -67,8 +67,9 @@ void LogMessage::PrintHeader(LogLevel level, int line_number,
   stream_ << GetCurrentTime();
   stream_ << "][";
   stream_ << getpid();
-  // TODO(cpatrasciuc): Add thread ID
-  stream_ << "][" << file_name << "(" << line_number << ")] ";
+  // TODO(threading): Add thread ID
+  // TODO(file_util): Add a FilePath class or file_util module
+  stream_ << "][" << basename(file_name) << "(" << line_number << ")] ";
 }
 
 SystemErrorLogMessage::SystemErrorLogMessage(LogLevel level, int line_number,
