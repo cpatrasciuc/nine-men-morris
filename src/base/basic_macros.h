@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #ifndef BASE_BASIC_MACROS_H_
-#define	BASE_BASIC_MACROS_H_
+#define BASE_BASIC_MACROS_H_
 
 // Use this to get the number of elements for hard-coded arrays.
 // Example:
