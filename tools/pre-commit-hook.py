@@ -13,5 +13,5 @@ files = [os.path.join(git_dir, x[:-1]) for x in files]
 cmd = "python '%s' --filter=-readability/streams %s"
 ret = os.system(cmd % (cpplint_path, " ".join(files)))
 if ret != 0:
-	print "Exit code: %s" % ret
-	sys.exit(1)
+  print "Exit code: %s" % ret
+  sys.exit(1)
