@@ -79,7 +79,7 @@ SystemErrorLogMessage::~SystemErrorLogMessage() {
   stream() << ": ";
   const int kMaxBufferSize = 256;
   char buffer[256];
-#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
+#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && !_GNU_SOURCE
   int result = strerror_r(errno, buffer, kMaxBufferSize);
   if (result == -1) {
     stream() << "Could not obtain the system error message (errno:"
@@ -94,5 +94,4 @@ SystemErrorLogMessage::~SystemErrorLogMessage() {
 #endif
 }
 
-
-}
+}  // namespace base
