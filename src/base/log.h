@@ -50,13 +50,18 @@ class Log {
   static std::ostream* default_output_stream;
 };
 
-// Represents
+// Handles one logging statement. It prints a header including the log level,
+// current time, process ID, thread ID, source file name and line. Any data
+// can then be appended using the stream's operator<<.
+// The whole content is flushed to the output stream as soon as the LogMessage
+// instance gets out of scope.
+// TODO(threading): Make this thread-safe.
 class LogMessage {
  public:
   LogMessage(LogLevel log_level,
-          int line_number,
-          const char* file_name,
-          std::ostream& stream = *Log::default_output_stream);
+             int line_number,
+             const char* file_name,
+             std::ostream& stream = *Log::default_output_stream);
   ~LogMessage();
 
   std::ostream& stream() const {
@@ -80,6 +85,6 @@ class LogMessage {
 
 #define LOG(level) LOG_IF(level, true)
 
-}  // namespace
+}  // namespace base
 
 #endif  // BASE_LOG_H_
