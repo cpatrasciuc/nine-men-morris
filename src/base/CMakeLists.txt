@@ -1,4 +1,5 @@
 set(BASE_SOURCE_FILES
+	basic_macros.h
 	log.cc
 	log.h
 )

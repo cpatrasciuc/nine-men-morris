@@ -10,6 +10,7 @@
 #include <string>
 
 #include "base/log.h"
+#include "base/basic_macros.h"
 #include "gtest/gtest.h"
 
 namespace base {
@@ -40,19 +41,18 @@ class LogUnittest : public ::testing::Test {
 
 TEST_F(LogUnittest, MAYBE(LogLevelFilteringTest)) {
   LogLevel levels[] = {ERROR, WARNING, INFO, DEBUG};
-  // TODO: add arraysize macro
-  for (int test_level = 0; test_level <= DEBUG; ++test_level) {
+  for (unsigned int level = 0; level < arraysize(levels); ++level) {
     std::ostringstream test_stream;
     Log::default_output_stream = &test_stream;
-    Log::max_log_level = levels[test_level];
+    Log::max_log_level = levels[level];
     LOG(ERROR)   << "Error message";
     LOG(WARNING) << "Warning message";
     LOG(INFO)    << "Info message";
     LOG(DEBUG)   << "Debug message";
     std::string output = test_stream.str();
-    const int lines_count =
+    const unsigned int lines_count =
         std::count(output.begin(), output.end(), '\n');
-    EXPECT_EQ(test_level + 1, lines_count);
+    EXPECT_EQ(level + 1, lines_count);
   }
 }
 
