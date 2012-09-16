@@ -74,13 +74,13 @@ class LogMessage {
 };
 
 #ifdef ENABLE_LOGGING
-#define LOG_IF(level, cond) \
-  if ((level > base::Log::max_log_level) || !(cond)) \
+#define LOG_IF(level, condition) \
+  if ((level > base::Log::max_log_level) || !(condition)) \
     ; \
   else \
     base::LogMessage(level, __LINE__, __FILE__).stream()
 #else
-#define LOG_IF(level, cond) if (false) std::cerr
+#define LOG_IF(level, condition) if (false) std::cerr
 #endif
 
 #define LOG(level) LOG_IF(level, true)
