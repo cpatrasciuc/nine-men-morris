@@ -1034,7 +1034,11 @@ def GetHeaderGuardCPPVariable(filename):
   filename = re.sub(r'_flymake\.h$', '.h', filename)
 
   fileinfo = FileInfo(filename)
-  return re.sub(r'[-./\s]', '_', fileinfo.RepositoryName()).upper() + '_'
+  repository_name = fileinfo.RepositoryName()
+  source_folder_name = "src/"
+  if repository_name.startswith(source_folder_name):
+	  repository_name = repository_name[len(source_folder_name):]
+  return re.sub(r'[-./\s]', '_', repository_name).upper() + '_'
 
 
 def CheckForHeaderGuard(filename, lines, error):
