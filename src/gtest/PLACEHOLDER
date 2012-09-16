@@ -1,0 +1,7 @@
+This directory is a placeholder for googletest source code.
+You should checkout a read-only copy by running the following command
+in the 'src' folder:
+
+svn checkout http://googletest.googlecode.com/svn/trunk/ gtest
+
+For more info see http://code.google.com/p/googletest/.
