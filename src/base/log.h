@@ -47,7 +47,7 @@ class Log {
 
   // The default output stream to which LogMessage's are sent,
   // if no specific stream is specified at instantiation.
-  static std::ostream& default_output_stream;
+  static std::ostream* default_output_stream;
 };
 
 // Represents
@@ -56,7 +56,7 @@ class LogMessage {
   LogMessage(LogLevel log_level,
           int line_number,
           const char* file_name,
-          std::ostream& stream = Log::default_output_stream);
+          std::ostream& stream = *Log::default_output_stream);
   ~LogMessage();
 
   std::ostream& stream() const {

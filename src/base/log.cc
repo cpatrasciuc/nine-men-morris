@@ -4,7 +4,10 @@
 
 #include "base/log.h"
 
+#include <sys/types.h>
 #include <time.h>
+#include <unistd.h>
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -13,7 +16,7 @@ namespace base {
 
 LogLevel Log::max_log_level = DEBUG;
 
-std::ostream& Log::default_output_stream = std::cerr;
+std::ostream* Log::default_output_stream = &std::cerr;
 
 inline std::string LogLevelToString(LogLevel log_level) {
   switch (log_level) {
