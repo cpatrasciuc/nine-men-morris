@@ -28,14 +28,16 @@
 // If ENABLE_LOGGING is not defined, all log statements are optimized out at
 // compile time.
 
-namespace base {
-
+// This is defined outside the namespace to avoid a using directive in all files
+// that use logging functionality.
 enum LogLevel {
   ERROR,
   WARNING,
   INFO,
   DEBUG
 };
+
+namespace base {
 
 // Contains global logging settings
 class Log {
@@ -67,8 +69,8 @@ class LogMessage {
 };
 
 #ifdef ENABLE_LOGGING
-#define LOG_IF(level, cond) if ((level > Log::max_log_level) || !(cond)) ; \
-  else LogMessage(level, __LINE__, __FILE__).stream()
+#define LOG_IF(level, cond) if ((level > base::Log::max_log_level) || !(cond)) ; \
+  else base::LogMessage(level, __LINE__, __FILE__).stream()
 #else
 #define LOG_IF(level, cond) if (false) std::cerr
 #endif
