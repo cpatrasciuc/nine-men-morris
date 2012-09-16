@@ -13,5 +13,7 @@
 //   }
 #define arraysize(a) (sizeof(a)/sizeof((a)[0]))
 
+// TODO(macros): Add a macro from __attribute__(override)
+
 #endif  // BASE_BASIC_MACROS_H_
 
