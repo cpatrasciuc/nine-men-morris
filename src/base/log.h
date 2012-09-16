@@ -58,7 +58,7 @@ class Log {
 // TODO(threading): Make this thread-safe.
 class LogMessage {
  public:
-  LogMessage(LogLevel log_level,
+  LogMessage(LogLevel level,
              int line_number,
              const char* file_name,
              std::ostream& stream = *Log::default_output_stream);
@@ -69,21 +69,36 @@ class LogMessage {
   }
 
  private:
-  void PrintHeader(LogLevel log_level, int line_number, const char* file_name);
+  void PrintHeader(LogLevel level, int line_number, const char* file_name);
   std::ostream& stream_;
 };
 
+class SystemErrorLogMessage : public LogMessage {
+ public:
+  SystemErrorLogMessage(LogLevel level,
+                        int line_number,
+                        const char* file_name,
+                        std::ostream& stream = *Log::default_output_stream);
+  ~SystemErrorLogMessage();
+};
+
 #ifdef ENABLE_LOGGING
-#define LOG_IF(level, condition) \
+#define LOG_TEMPLATE(level, condition) \
   if ((level > base::Log::max_log_level) || !(condition)) \
     ; \
-  else \
+  else
+#define LOG_IF(level, condition) LOG_TEMPLATE(level, condition) \
     base::LogMessage(level, __LINE__, __FILE__).stream()
+#define ELOG_IF(level, condition) LOG_TEMPLATE(level, condition) \
+    base::SystemErrorLogMessage(level, __LINE__, __FILE__).stream()
 #else
-#define LOG_IF(level, condition) if (false) std::cerr
+#define EAT_LOG_STATEMENT if (false) std::cerr
+#define LOG_IF(level, condition) EAT_LOG_STATEMENT
+#define ELOG_IF(level, condition) EAT_LOG_STATEMENT
 #endif
 
 #define LOG(level) LOG_IF(level, true)
+#define ELOG(level) ELOG_IF(level, true)
 
 }  // namespace base
 

@@ -4,10 +4,12 @@
 
 #include "base/log.h"
 
+#include <string.h>
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
 
+#include <cerrno>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -18,8 +20,8 @@ LogLevel Log::max_log_level = DEBUG;
 
 std::ostream* Log::default_output_stream = &std::cerr;
 
-inline std::string LogLevelToString(LogLevel log_level) {
-  switch (log_level) {
+inline std::string LogLevelToString(LogLevel level) {
+  switch (level) {
     case ERROR:
       return "ERROR";
     case WARNING:
@@ -45,22 +47,22 @@ std::string GetCurrentTime() {
   return std::string();
 }
 
-LogMessage::LogMessage(LogLevel log_level,
+LogMessage::LogMessage(LogLevel level,
                        int line_number,
                        const char* file_name,
                        std::ostream& stream)
     : stream_(stream) {
-  PrintHeader(log_level, line_number, file_name);
+  PrintHeader(level, line_number, file_name);
 }
 
 LogMessage::~LogMessage() {
   stream_ << std::endl;
 }
 
-void LogMessage::PrintHeader(LogLevel log_level, int line_number,
+void LogMessage::PrintHeader(LogLevel level, int line_number,
                              const char* file_name) {
   stream_ << "[";
-  stream_ << LogLevelToString(log_level);
+  stream_ << LogLevelToString(level);
   stream_ << "][";
   stream_ << GetCurrentTime();
   stream_ << "][";
@@ -68,4 +70,29 @@ void LogMessage::PrintHeader(LogLevel log_level, int line_number,
   // TODO(cpatrasciuc): Add thread ID
   stream_ << "][" << file_name << "(" << line_number << ")] ";
 }
+
+SystemErrorLogMessage::SystemErrorLogMessage(LogLevel level, int line_number,
+    const char* file_name, std::ostream& stream)
+  : LogMessage(level, line_number, file_name, stream) {}
+
+SystemErrorLogMessage::~SystemErrorLogMessage() {
+  stream() << ": ";
+  const int kMaxBufferSize = 256;
+  char buffer[256];
+#if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
+  int result = strerror_r(errno, buffer, kMaxBufferSize);
+  if (result == -1) {
+    stream() << "Could not obtain the system error message (errno:"
+             << errno << ")";
+  } else {
+    stream() << buffer;
+  }
+  }
+#else
+  char *result = strerror_r(errno, buffer, kMaxBufferSize);
+  stream() << result;
+#endif
+}
+
+
 }

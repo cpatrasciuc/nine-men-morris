@@ -6,6 +6,8 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <cmath>
+#include <numeric>
 #include <sstream>
 #include <string>
 
@@ -80,6 +82,23 @@ TEST_F(LogUnittest, LogMessageFormatTest) {
   EXPECT_NE(std::string::npos, output.find("69"));
   EXPECT_NE(std::string::npos, output.find(source_file));
   EXPECT_NE(std::string::npos, output.find(text_message));
+}
+
+TEST_F(LogUnittest, MAYBE(SystemErrorLogIfTest)) {
+  std::ostringstream test_stream;
+  Log::default_output_stream = &test_stream;
+  Log::max_log_level = DEBUG;
+  float result = std::pow(10.0f, 2.0f);
+  ELOG_IF(ERROR, result == HUGE_VAL) << "Should not be logged";
+  EXPECT_EQ(std::string(), test_stream.str());
+
+  std::string message("Should be logged");
+  float max_float = std::numeric_limits<float>::max();
+  result = std::pow(max_float, max_float);
+  ELOG_IF(ERROR, result == HUGE_VAL) << message;
+  size_t pos = test_stream.str().find(message);
+  EXPECT_NE(std::string::npos, pos);
+  EXPECT_LT(pos, test_stream.str().size() - message.size());
 }
 
 }  // anonymous namespace
