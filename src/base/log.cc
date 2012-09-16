@@ -79,7 +79,7 @@ SystemErrorLogMessage::SystemErrorLogMessage(LogLevel level, int line_number,
 SystemErrorLogMessage::~SystemErrorLogMessage() {
   stream() << ": ";
   const int kMaxBufferSize = 256;
-  char buffer[256];
+  char buffer[kMaxBufferSize];
 #if (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && !_GNU_SOURCE
   int result = strerror_r(errno, buffer, kMaxBufferSize);
   if (result == -1) {
