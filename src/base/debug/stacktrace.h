@@ -5,14 +5,11 @@
 #ifndef BASE_DEBUG_STACKTRACE_H_
 #define BASE_DEBUG_STACKTRACE_H_
 
-#include <iosfwd>
-#include <iostream>
-
 namespace base {
 namespace debug {
 
 /* Prints the stacktrace on the current thread to the given output stream */
-void PrintStackTrace(std::ostream* out = &std::cerr);
+void PrintStackTrace();
 
 }  // namespace debug
 }  // namespace base

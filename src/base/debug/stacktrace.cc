@@ -9,14 +9,13 @@
 #include <unistd.h>
 #include <wait.h>
 
-
 #include "base/log.h"
 
 namespace base {
 namespace debug {
 
 // http://neugierig.org/software/blog/2012/06/backtraces.html
-void PrintStackTrace(std::ostream* out) {
+void PrintStackTrace() {
   pid_t parent_pid = getpid();
   pid_t child_pid = fork();
   if (child_pid < 0) {
