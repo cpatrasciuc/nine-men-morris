@@ -1,10 +1,13 @@
 set(BASE_SOURCE_FILES
 	basic_macros.h
+	debug/stacktrace.cc
+	debug/stacktrace.h
 	log.cc
 	log.h
 )
 
 set(BASE_UNITTESTS_SOURCE_FILES
+	debug/stacktrace_unittest.cc
 	log_unittest.cc
 )
 
