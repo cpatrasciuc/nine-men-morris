@@ -14,11 +14,11 @@ namespace debug {
 
 // Prints the stack trace on the current thread to the given output stream.
 // Only the |max_depth| most recent function calls are printed.
-void BASE_EXPORT PrintStackTrace(int max_depth = 64,
+BASE_EXPORT void PrintStackTrace(const int max_depth = 64,
                                  std::ostream* out = &std::cerr);
 
 // Dump the stack trace for each thread to STDERR
-void BASE_EXPORT DumpStackTraceForAllThreads();
+BASE_EXPORT void DumpStackTraceForAllThreads();
 
 }  // namespace debug
 }  // namespace base
