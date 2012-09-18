@@ -13,6 +13,10 @@ TEST(StackTraceTest, PrintStackTrace) {
   PrintStackTrace();
 }
 
+TEST(StackTraceTest, DumpStackTraceForAllThreads) {
+  DumpStackTraceForAllThreads();
+}
+
 }  // anonymous namespace
 }  // namespace debug
 }  // namespace base
