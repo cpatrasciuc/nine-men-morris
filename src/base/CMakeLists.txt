@@ -20,6 +20,10 @@ link_directories(
 	../gtest/
 )
 
+if(BUILD_SHARED_LIBS)
+  add_definitions("-DBASE_IMPLEMENTATION")
+endif()
+
 add_library(base ${BASE_SOURCE_FILES})
 
 add_executable(base_unittests ${BASE_UNITTESTS_SOURCE_FILES} test_runner.cc)

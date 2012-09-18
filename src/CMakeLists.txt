@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.8)
 
 project(nine-men-morris)
 
-if (RELEASE)
+if(RELEASE)
   set(cflags "-Werror -pthread -fno-exceptions -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O2 -fdata-sections -ffunction-sections")
   set(only_cxx_flags "-fno-rtti -fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
   set(only_c_flags "")
@@ -17,11 +17,18 @@ endif()
 set(CMAKE_C_FLAGS "${cflags} ${only_c_flags}")
 set(CMAKE_CXX_FLAGS "${cflags} ${only_cxx_flags}")
 
-if (RELEASE)
+if(BUILD_SHARED_LIBS)
+  add_definitions("-DGTEST_LINKED_AS_SHARED_LIBRARY=1")
+endif()
+
+if(RELEASE)
 else()
   add_definitions("-DENABLE_LOGGING")
 endif()
 
 add_subdirectory(base)
+
+# Hack to make all gtest symbols visible; by default we compile with -fvisibility=hidden
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=default")
 add_subdirectory(gtest)
 
