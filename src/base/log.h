@@ -8,6 +8,8 @@
 #include <iostream>
 #include <ostream>
 
+#include "base/base_export.h"
+
 // This file provides the logging functionality through a set of macros.
 // You can use constructs like the following throughout the source code
 // to generate logging statements.
@@ -40,7 +42,7 @@ enum LogLevel {
 namespace base {
 
 // Contains global logging settings
-class Log {
+class BASE_EXPORT Log {
  public:
   // Every logging statement with a level greater than this, is discarded
   static LogLevel max_log_level;
@@ -56,7 +58,7 @@ class Log {
 // The whole content is flushed to the output stream as soon as the LogMessage
 // instance gets out of scope.
 // TODO(threading): Make this thread-safe.
-class LogMessage {
+class BASE_EXPORT LogMessage {
  public:
   LogMessage(LogLevel level,
              int line_number,
@@ -73,7 +75,7 @@ class LogMessage {
   std::ostream& stream_;
 };
 
-class SystemErrorLogMessage : public LogMessage {
+class BASE_EXPORT SystemErrorLogMessage : public LogMessage {
  public:
   SystemErrorLogMessage(LogLevel level,
                         int line_number,
