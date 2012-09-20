@@ -20,6 +20,10 @@ BASE_EXPORT void PrintStackTrace(const int max_depth = 64,
 // Dump the stack trace for each thread to STDERR
 BASE_EXPORT void DumpStackTraceForAllThreads();
 
+// Register the DumpStackTraceForAllThreads() function as signal handler
+// for the following signals: SIGSEGV, SIGILL and SIGBUS.
+BASE_EXPORT void EnableStackTraceDumpOnCrash();
+
 }  // namespace debug
 }  // namespace base
 

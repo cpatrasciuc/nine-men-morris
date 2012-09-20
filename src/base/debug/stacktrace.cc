@@ -6,6 +6,7 @@
 
 #include <cxxabi.h>
 #include <execinfo.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,6 +16,7 @@
 #include <sstream>
 #include <string>
 
+#include "base/basic_macros.h"
 #include "base/log.h"
 
 namespace base {
@@ -99,6 +101,23 @@ void PrintStackTrace(const int max_depth, std::ostream* out) {
   (*out) << result.str();
   free(function_names);
   delete[] addresses;
+}
+
+void DumpStackTraceAndExit(int signal) {
+  DumpStackTraceForAllThreads();
+  _exit(1);
+}
+
+void EnableStackTraceDumpOnCrash() {
+  struct sigaction sa;
+  sa.sa_handler = DumpStackTraceAndExit;
+  const int signals[] = { SIGSEGV, SIGBUS, SIGILL };
+  for (unsigned int i = 0; i < arraysize(signals); ++i) {
+    int result = sigaction(signals[i], &sa, NULL);
+    if (result < 0) {
+      ELOG(ERROR) << "Could not install signal handler for " << signals[i];
+    }
+  }
 }
 
 }  // namespace debug

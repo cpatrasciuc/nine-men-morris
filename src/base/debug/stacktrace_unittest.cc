@@ -80,6 +80,14 @@ TEST(PrintStackTrace, DumpStackTraceForAllThreads) {
   DumpStackTraceForAllThreads();
 }
 
+// This test generates a Segmentation fault.
+// Don't enable it unless you specifically debug the crash handler.
+TEST(PrintStackTrace, DISABLED_StackTraceDumpOnCrash) {
+  EnableStackTraceDumpOnCrash();
+  int* p = NULL;
+  *p = 69;
+}
+
 }  // anonymous namespace
 }  // namespace debug
 }  // namespace base
