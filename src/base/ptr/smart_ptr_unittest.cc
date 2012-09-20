@@ -64,9 +64,10 @@ TEST(SmartPtrTest, NullComparison) {
   EXPECT_TRUE(!null_ptr);
   EXPECT_FALSE(null_ptr);
 
-  SmartPtr<int> non_null_ptr(new int);
+  int x;
+  SmartPtr<int> non_null_ptr(&x);
   EXPECT_FALSE(!non_null_ptr);
-  // EXPECT_TRUE(non_null_ptr);
+  EXPECT_TRUE(non_null_ptr);
 }
 
 class IntPtr {

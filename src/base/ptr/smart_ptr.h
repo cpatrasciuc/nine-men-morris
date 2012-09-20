@@ -85,6 +85,21 @@ class SmartPtr : public OwnershipPolicy<T> {
   bool operator!=(const SmartPtr<U>& other) const {
     return Get(*this) != Get(other);
   }
+
+  // This trick enables statements like: if (smart_ptr) { ... }
+ private:
+  class Dummy {
+    void operator delete(void* not_used);
+  };
+
+ public:
+  operator Dummy*() const {
+    if (!Get(*this)) {
+      return 0;
+    }
+    static Dummy test;
+    return &test;
+  }
 };
 
 }  // namespace ptr
