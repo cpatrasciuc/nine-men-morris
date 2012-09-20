@@ -16,16 +16,74 @@ template <
 >
 class SmartPtr : public OwnershipPolicy<T> {
  public:
+  typedef typename OwnershipPolicy<T>::PointerType PointerType;
+  typedef typename OwnershipPolicy<T>::StoredType StoredType;
+  typedef typename OwnershipPolicy<T>::ReferenceType ReferenceType;
+
   SmartPtr() : OwnershipPolicy<T>() {}
-  explicit SmartPtr(const typename OwnershipPolicy<T>::StoredType& t)
-      : OwnershipPolicy<T>(t) {}
+  explicit SmartPtr(const StoredType& t) : OwnershipPolicy<T>(t) {}
 
   SmartPtr(const SmartPtr<T>& other) {
     // TODO(smart_pointer): Implement the copy constructor
   }
 
   ~SmartPtr() {
-    OwnershipPolicy<T>::Destroy();
+    // OwnershipPolicy<T>::Destroy();
+  }
+
+  // This enables statements like: if (!smart_ptr) { ... }
+  bool operator!() const {
+    return Get(*this) == 0;
+  }
+
+  // Equality and inequality operators (non-template versions)
+  inline friend bool operator==(const SmartPtr& lhs, const PointerType rhs) {
+    return Get(lhs) == rhs;
+  }
+
+  inline friend bool operator==(const PointerType lhs, const SmartPtr& rhs) {
+    return lhs == Get(rhs);
+  }
+
+  inline friend bool operator!=(const SmartPtr& lhs, const PointerType rhs) {
+    return Get(lhs) != rhs;
+  }
+
+  inline friend bool operator!=(const PointerType lhs, const SmartPtr& rhs) {
+    return lhs != Get(rhs);
+  }
+
+  // Equality and inequality operators (template versions)
+  template <class U>
+  inline friend bool operator==(const SmartPtr& lhs, const U* rhs) {
+    return Get(lhs) == rhs;
+  }
+
+  template <class U>
+  inline friend bool operator==(const U* lhs, const SmartPtr& rhs) {
+    return lhs == Get(rhs);
+  }
+
+  template <class U>
+  inline friend bool operator!=(const SmartPtr& lhs, const U* rhs) {
+    return Get(lhs) != rhs;
+  }
+
+  template <class U>
+  inline friend bool operator!=(const U* lhs, const SmartPtr& rhs) {
+    return lhs != Get(rhs);
+  }
+
+  // Equality and inequality operators for SmartPtr itself;
+  // delegates to a comparison between T* and U*.
+  template <class U>
+  bool operator==(const SmartPtr<U>& other) const {
+    return Get(*this) == Get(other);
+  }
+
+  template <class U>
+  bool operator!=(const SmartPtr<U>& other) const {
+    return Get(*this) != Get(other);
   }
 };
 

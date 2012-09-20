@@ -59,6 +59,52 @@ TEST(SmartPtrTest, Const) {
   // TODO(smart_pointer): ptr2 = ptr3;
 }
 
+TEST(SmartPtrTest, NullComparison) {
+  SmartPtr<int> null_ptr;
+  EXPECT_TRUE(!null_ptr);
+  EXPECT_FALSE(null_ptr);
+
+  SmartPtr<int> non_null_ptr(new int);
+  EXPECT_FALSE(!non_null_ptr);
+  // EXPECT_TRUE(non_null_ptr);
+}
+
+class IntPtr {
+ public:
+  explicit IntPtr(int* p) : p_(p) {}
+  operator int*() const {
+    return p_;
+  }
+ private:
+  int* p_;
+};
+
+TEST(SmartPtrTest, EqualityAndInequality) {
+  int a = 10;
+  int b = 20;
+  int* ptr_a = &a;
+  int* ptr_b = &b;
+  SmartPtr<int> smart_ptr_a(&a);
+  SmartPtr<int> smart_ptr_b(&b);
+  SmartPtr<int> smart_ptr_a2(&a);
+  IntPtr helper_a(&a);
+  IntPtr helper_b(&b);
+  EXPECT_TRUE(smart_ptr_a == ptr_a);
+  EXPECT_TRUE(smart_ptr_a == smart_ptr_a2);
+  EXPECT_TRUE(smart_ptr_a == helper_a);
+  EXPECT_TRUE(ptr_a == smart_ptr_a);
+  EXPECT_TRUE(helper_a == smart_ptr_a);
+  EXPECT_TRUE(smart_ptr_a != ptr_b);
+  EXPECT_TRUE(smart_ptr_a != smart_ptr_b);
+  EXPECT_TRUE(smart_ptr_a != helper_b);
+  EXPECT_TRUE(ptr_b != smart_ptr_a);
+  EXPECT_TRUE(helper_b != smart_ptr_a);
+  EXPECT_TRUE(smart_ptr_a != NULL);
+  EXPECT_TRUE(SmartPtr<int>() == NULL);
+  EXPECT_TRUE(NULL != smart_ptr_a);
+  EXPECT_TRUE(NULL == SmartPtr<int>());
+}
+
 }  // anonymous namespace
 }  // namespace ptr
 }  // namespace base
