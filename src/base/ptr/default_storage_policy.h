@@ -22,7 +22,7 @@ class DefaultStoragePolicy {
 
  public:
   DefaultStoragePolicy() : pointee_(0) {}
-  DefaultStoragePolicy(const StoredType& p): pointee_(p) {}
+  explicit DefaultStoragePolicy(const StoredType& p): pointee_(p) {}
 
   /* Smart pointer behavior */
   PointerType operator->() const { return pointee_; }
@@ -37,8 +37,8 @@ class DefaultStoragePolicy {
     return sp.pointee_;
   }
 
-  friend inline StoredType& GetImplAsRef(DefaultStoragePolicy& sp) {
-   return sp.pointee_;
+  friend inline StoredType& GetImplAsRef(DefaultStoragePolicy& sp) {  // NOLINT
+    return sp.pointee_;
   }
 
  protected:

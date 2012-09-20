@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #ifndef BASE_PTR_SMART_PTR_H_
-#define	BASE_PTR_SMART_PTR_H_
+#define BASE_PTR_SMART_PTR_H_
 
 #include "base/ptr/default_storage_policy.h"
 
@@ -12,12 +12,12 @@ namespace ptr {
 
 template <
   typename T,
-  template <class> class OwnershipPolicy = DefaultStoragePolicy
+  template <class> class OwnershipPolicy = DefaultStoragePolicy  // NOLINT
 >
 class SmartPtr : public OwnershipPolicy<T> {
  public:
   SmartPtr() : OwnershipPolicy<T>() {}
-  SmartPtr(const typename OwnershipPolicy<T>::StoredType& t)
+  explicit SmartPtr(const typename OwnershipPolicy<T>::StoredType& t)
       : OwnershipPolicy<T>(t) {}
 
   SmartPtr(const SmartPtr<T>& other) {

@@ -5,7 +5,6 @@
 #include "base/ptr/default_storage_policy.h"
 #include "base/ptr/smart_ptr.h"
 #include "gtest/gtest.h"
-#include "array_storage_policy.h"
 
 namespace base {
 namespace ptr {
