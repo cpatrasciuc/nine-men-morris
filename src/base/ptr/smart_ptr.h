@@ -102,6 +102,71 @@ class SmartPtr : public OwnershipPolicy<T> {
   }
 };
 
+// Ordering operators:
+//
+// The first two operators are left undefined; its client responsibility
+// to define them if it wants to allow ordering between smart pointers,
+// for specific types.
+//
+// All the other ordering operator are defined based on the first two.
+// The client won't have to implement them.
+template <class T, class U> bool operator<(const SmartPtr<T>&, const U&);
+template <class T, class U> bool operator<(const T&, const SmartPtr<U>&);
+
+template <class T, class U>
+bool operator<(const SmartPtr<T>& lhs, const SmartPtr<U>& rhs) {
+  return lhs < Get(rhs);
+}
+
+// operator >
+
+template <class T, class U>
+bool operator>(const SmartPtr<T>& lhs, const U& rhs) {
+  return rhs < lhs;
+}
+template <class T, class U>
+bool operator>(const SmartPtr<T>& lhs, U& rhs) {
+  return rhs < lhs;
+}
+template <class T, class U>
+bool operator>(const U& lhs, const SmartPtr<T>& rhs) {
+  return rhs < lhs;
+}
+template <class T, class U>
+bool operator>(const SmartPtr<T>& lhs, const SmartPtr<U>& rhs) {
+  return Get(lhs) > rhs;
+}
+
+// operator >=
+
+template <class T, class U>
+bool operator>=(const SmartPtr<T>& lhs, const U& rhs) {
+  return (rhs < lhs) || (rhs == lhs);
+}
+template <class T, class U>
+bool operator>=(const U& lhs, const SmartPtr<T>& rhs) {
+  return (rhs < lhs) || (rhs == lhs);
+}
+template <class T, class U>
+bool operator>=(const SmartPtr<T>& lhs, const SmartPtr<U>& rhs) {
+  return (Get(lhs) > rhs) || (lhs == rhs);
+}
+
+// operator <=
+
+template <class T, class U>
+bool operator<=(const SmartPtr<T>& lhs, const U& rhs) {
+  return (lhs < rhs) || (lhs == rhs);
+}
+template <class T, class U>
+bool operator<=(const U& lhs, const SmartPtr<T>& rhs) {
+  return (lhs < rhs) || (lhs == rhs);
+}
+template <class T, class U>
+bool operator<=(const SmartPtr<T>& lhs, const SmartPtr<U>& rhs) {
+  return (lhs < rhs) || (lhs == rhs);
+}
+
 }  // namespace ptr
 }  // namespace base
 

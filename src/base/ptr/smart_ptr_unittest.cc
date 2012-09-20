@@ -106,6 +106,34 @@ TEST(SmartPtrTest, EqualityAndInequality) {
   EXPECT_TRUE(NULL == SmartPtr<int>());
 }
 
+inline bool operator<(const SmartPtr<int>& lhs, int* rhs) {
+  return Get(lhs) < rhs;
+}
+
+inline bool operator<(int* lhs, const SmartPtr<int>& rhs) {
+  return lhs < Get(rhs);
+}
+
+TEST(SmartPtrTest, Ordering) {
+  int v[] = {0, 1, 2, 3};
+  SmartPtr<int> first(&v[0]);
+  const SmartPtr<int> second(&v[1]);
+  int* p = v;
+  EXPECT_TRUE(first < second);
+  EXPECT_TRUE(first < (p + 1));
+  EXPECT_TRUE(p < second);
+  EXPECT_FALSE(first > second);
+  EXPECT_FALSE(first > p);
+  EXPECT_TRUE((p + 2) > first);
+  EXPECT_FALSE(first >= second);
+  EXPECT_TRUE(first >= p);
+  EXPECT_TRUE((p + 2) >= first);
+  EXPECT_TRUE(first <= second);
+  EXPECT_TRUE(first <= p);
+  EXPECT_FALSE((p + 2) <= first);
+}
+
+
 }  // anonymous namespace
 }  // namespace ptr
 }  // namespace base
