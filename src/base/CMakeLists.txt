@@ -4,11 +4,14 @@ set(BASE_SOURCE_FILES
 	debug/stacktrace.h
 	log.cc
 	log.h
+	ptr/default_storage_policy.h
+	ptr/smart_ptr.h
 )
 
 set(BASE_UNITTESTS_SOURCE_FILES
 	debug/stacktrace_unittest.cc
 	log_unittest.cc
+	ptr/smart_ptr_unittest.cc
 )
 
 include_directories(
