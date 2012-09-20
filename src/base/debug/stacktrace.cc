@@ -32,10 +32,9 @@ void DumpStackTraceForAllThreads() {
     char shell_command[kMaxBufferSize];
     const int result = snprintf(shell_command,
         kMaxBufferSize,
-        "gdb -p %d -batch -ex '%s' 2>/dev/null | sed '0,/%s/d' 1>&2",
+        "gdb -p %d -batch -ex '%s' 1>&2 2>/dev/null",
         parent_pid,
-        gdb_command,
-        __FUNCTION__);
+        gdb_command);
     if (result > kMaxBufferSize) {
       LOG(ERROR) << "Buffer too small. Consider a size of at least " << result;
     } else {
