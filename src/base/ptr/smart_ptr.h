@@ -12,16 +12,16 @@ namespace ptr {
 
 template <
   typename T,
-  template <class> class OwnershipPolicy = DefaultStoragePolicy  // NOLINT
+  template <class> class StoragePolicy = DefaultStoragePolicy  // NOLINT
 >
-class SmartPtr : public OwnershipPolicy<T> {
+class SmartPtr : public StoragePolicy<T> {
  public:
-  typedef typename OwnershipPolicy<T>::PointerType PointerType;
-  typedef typename OwnershipPolicy<T>::StoredType StoredType;
-  typedef typename OwnershipPolicy<T>::ReferenceType ReferenceType;
+  typedef typename StoragePolicy<T>::PointerType PointerType;
+  typedef typename StoragePolicy<T>::StoredType StoredType;
+  typedef typename StoragePolicy<T>::ReferenceType ReferenceType;
 
-  SmartPtr() : OwnershipPolicy<T>() {}
-  explicit SmartPtr(const StoredType& t) : OwnershipPolicy<T>(t) {}
+  SmartPtr() : StoragePolicy<T>() {}
+  explicit SmartPtr(const StoredType& t) : StoragePolicy<T>(t) {}
 
   SmartPtr(const SmartPtr<T>& other) {
     // TODO(smart_pointer): Implement the copy constructor
