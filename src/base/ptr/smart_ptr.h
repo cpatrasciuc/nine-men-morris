@@ -104,7 +104,7 @@ class SmartPtr : public StoragePolicy<T> {
 
 // Ordering operators:
 //
-// The first two operators are left undefined; its client responsibility
+// The first two operators are left undefined; it's client's responsibility
 // to define them if it wants to allow ordering between smart pointers,
 // for specific types.
 //
