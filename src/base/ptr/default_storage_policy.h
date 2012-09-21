@@ -5,12 +5,14 @@
 #ifndef BASE_PTR_DEFAULT_STORAGE_POLICY_H_
 #define BASE_PTR_DEFAULT_STORAGE_POLICY_H_
 
+#include "base/basic_macros.h"
+
 namespace base {
 namespace ptr {
 
 template <class T>
 class DefaultStoragePolicy {
- protected:
+ public:
   /* The type of the private stored variable (pointee__) */
   typedef T* StoredType;
 
@@ -57,6 +59,8 @@ class DefaultStoragePolicy {
 
  private:
   StoredType pointee_;
+
+  DISALLOW_COPY_AND_ASSIGN(DefaultStoragePolicy);
 };
 
 }  // namespace ptr

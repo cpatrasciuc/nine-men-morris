@@ -6,29 +6,35 @@
 #define BASE_PTR_SMART_PTR_H_
 
 #include "base/ptr/default_storage_policy.h"
+#include "base/ptr/default_ownership_policy.h"
 
 namespace base {
 namespace ptr {
 
 template <
   typename T,
-  template <class> class StoragePolicy = DefaultStoragePolicy  // NOLINT
+  template <class> class StoragePolicy = DefaultStoragePolicy,  // NOLINT
+  template <class> class OwnershipPolicy = DefaultOwnershipPolicy
 >
-class SmartPtr : public StoragePolicy<T> {
+class SmartPtr : public StoragePolicy<T>,
+    public OwnershipPolicy<typename StoragePolicy<T>::PointerType> {
  public:
   typedef typename StoragePolicy<T>::PointerType PointerType;
   typedef typename StoragePolicy<T>::StoredType StoredType;
   typedef typename StoragePolicy<T>::ReferenceType ReferenceType;
 
-  SmartPtr() : StoragePolicy<T>() {}
-  explicit SmartPtr(const StoredType& t) : StoragePolicy<T>(t) {}
+  SmartPtr() : StoragePolicy<T>(), OwnershipPolicy<PointerType>() {}
+  explicit SmartPtr(const StoredType& t)
+      : StoragePolicy<T>(t), OwnershipPolicy<PointerType>(t) {}
 
   SmartPtr(const SmartPtr<T>& other) {
-    // TODO(smart_pointer): Implement the copy constructor
+    GetImplAsRef(*this) = Clone(GetImplAsRef(other));
   }
 
   ~SmartPtr() {
-    // OwnershipPolicy<T>::Destroy();
+    if (OwnershipPolicy<PointerType>::Release(Get(*this))) {
+      StoragePolicy<T>::Destroy();
+    };
   }
 
   // This enables statements like: if (!smart_ptr) { ... }
