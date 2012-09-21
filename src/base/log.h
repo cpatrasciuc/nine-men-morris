@@ -93,23 +93,41 @@ class BASE_EXPORT SystemErrorLogMessage : public LogMessage {
   DISALLOW_COPY_AND_ASSIGN(SystemErrorLogMessage);
 };
 
+class BASE_EXPORT AssertionFailedLogMessage : public LogMessage {
+ public:
+  AssertionFailedLogMessage(LogLevel level,
+      int line_number,
+      const char* file_name,
+      std::ostream& stream = *Log::default_output_stream);
+  ~AssertionFailedLogMessage();
+
+ private:
+  DISALLOW_COPY_AND_ASSIGN(AssertionFailedLogMessage);
+};
+
 #ifdef ENABLE_LOGGING
 #define LOG_TEMPLATE(level, condition) \
   if ((level > base::Log::max_log_level) || !(condition)) \
     ; \
   else
 #define LOG_IF(level, condition) LOG_TEMPLATE(level, condition) \
-    base::LogMessage(level, __LINE__, __FILE__).stream()
+  base::LogMessage(level, __LINE__, __FILE__).stream()
 #define ELOG_IF(level, condition) LOG_TEMPLATE(level, condition) \
-    base::SystemErrorLogMessage(level, __LINE__, __FILE__).stream()
+  base::SystemErrorLogMessage(level, __LINE__, __FILE__).stream()
+#define DCHECK(condition) LOG_TEMPLATE(ERROR, !(condition)) \
+  base::AssertionFailedLogMessage(ERROR, __LINE__, __FILE__).stream()
 #else
 #define EAT_LOG_STATEMENT if (false) std::cerr
 #define LOG_IF(level, condition) EAT_LOG_STATEMENT
 #define ELOG_IF(level, condition) EAT_LOG_STATEMENT
+#define DCHECK(condition) EAT_LOG_STATEMENT
 #endif
 
 #define LOG(level) LOG_IF(level, true)
 #define ELOG(level) ELOG_IF(level, true)
+
+#define DCHECK_LT(a, b) DCHECK((a) < (b))
+#define DCHECK_GT(a, b) DCHECK((a) > (b))
 
 }  // namespace base
 

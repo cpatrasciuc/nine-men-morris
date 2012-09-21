@@ -10,9 +10,12 @@
 #include <unistd.h>
 
 #include <cerrno>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#include "base/debug/stacktrace.h"
 
 namespace base {
 
@@ -93,6 +96,17 @@ SystemErrorLogMessage::~SystemErrorLogMessage() {
   char *result = strerror_r(errno, buffer, kMaxBufferSize);
   stream() << result;
 #endif
+}
+
+AssertionFailedLogMessage::AssertionFailedLogMessage(LogLevel level,
+    int line_number, const char* file_name, std::ostream& stream)
+    : LogMessage(level, line_number, file_name, stream) {}
+
+AssertionFailedLogMessage::~AssertionFailedLogMessage() {
+  stream() << std::endl;
+  base::debug::PrintStackTrace(32, &stream());
+  stream() << std::endl;
+  std::exit(1);
 }
 
 }  // namespace base

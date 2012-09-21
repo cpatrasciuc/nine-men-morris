@@ -106,5 +106,20 @@ TEST_F(LogUnittest, MAYBE(SystemErrorLogIfTest)) {
   EXPECT_LT(pos, output.size() - message.size());
 }
 
+TEST_F(LogUnittest, MAYBE(DCHECKPass)) {
+  Log::max_log_level = ERROR;
+  DCHECK_LT(0, 1) << "Should not be logged";
+  EXPECT_EQ(std::string(), test_stream().str());
+}
+
+// This will intentionally crash.
+// Don't enable it unless you are testing the DCHECK macro behavior.
+TEST_F(LogUnittest, DISABLED_DCHECKFail) {
+  Log::max_log_level = ERROR;
+  Log::default_output_stream = &std::cerr;
+  DCHECK_GT(0, 1) << "DCHECK failed as expected";
+  LOG(ERROR) << "You should not reach this";
+}
+
 }  // anonymous namespace
 }  // namespace base
