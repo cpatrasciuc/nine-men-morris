@@ -9,6 +9,7 @@
 #include <ostream>
 
 #include "base/base_export.h"
+#include "base/basic_macros.h"
 
 // This file provides the logging functionality through a set of macros.
 // You can use constructs like the following throughout the source code
@@ -50,6 +51,9 @@ class BASE_EXPORT Log {
   // The default output stream to which LogMessage's are sent,
   // if no specific stream is specified at instantiation.
   static std::ostream* default_output_stream;
+
+ private:
+  DISALLOW_COPY_AND_ASSIGN(Log);
 };
 
 // Handles one logging statement. It prints a header including the log level,
@@ -73,6 +77,8 @@ class BASE_EXPORT LogMessage {
  private:
   void PrintHeader(LogLevel level, int line_number, const char* file_name);
   std::ostream& stream_;
+
+  DISALLOW_COPY_AND_ASSIGN(LogMessage);
 };
 
 class BASE_EXPORT SystemErrorLogMessage : public LogMessage {
@@ -82,6 +88,9 @@ class BASE_EXPORT SystemErrorLogMessage : public LogMessage {
                         const char* file_name,
                         std::ostream& stream = *Log::default_output_stream);
   ~SystemErrorLogMessage();
+
+ private:
+  DISALLOW_COPY_AND_ASSIGN(SystemErrorLogMessage);
 };
 
 #ifdef ENABLE_LOGGING

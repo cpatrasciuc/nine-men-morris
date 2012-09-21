@@ -26,6 +26,9 @@ namespace {
 
 class LogUnittest : public ::testing::Test {
  public:
+  LogUnittest() {}
+  ~LogUnittest() {}
+
   virtual void SetUp() {
     old_stream_ = Log::default_output_stream;
     old_log_level_ = Log::max_log_level;
@@ -46,6 +49,8 @@ class LogUnittest : public ::testing::Test {
   std::ostringstream test_stream_;
   std::ostream* old_stream_;
   LogLevel old_log_level_;
+
+  DISALLOW_COPY_AND_ASSIGN(LogUnittest);
 };
 
 TEST_F(LogUnittest, MAYBE(LogLevelFilteringTest)) {
