@@ -46,7 +46,6 @@ TEST(SmartPtrTest, Get) {
 TEST(SmartPtrTest, Const) {
   const int* x = NULL;
   SmartPtr<const int> ptr1(x);
-  // TODO(macros): Add a macro to specify that something should not compile
   SHOULD_NOT_COMPILE(*ptr1 = 10);
   Get(ptr1);
 
