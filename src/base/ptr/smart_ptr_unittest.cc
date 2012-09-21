@@ -84,7 +84,7 @@ TEST(SmartPtrTest, EqualityAndInequality) {
   int a = 10;
   int b = 20;
   int* ptr_a = &a;
-  int* ptr_b = &b;
+  const int* ptr_b = &b;
   SmartPtr<int> smart_ptr_a(&a);
   SmartPtr<int> smart_ptr_b(&b);
   SmartPtr<int> smart_ptr_a2(&a);
@@ -106,19 +106,27 @@ TEST(SmartPtrTest, EqualityAndInequality) {
   EXPECT_TRUE(NULL == SmartPtr<int>());
 }
 
-inline bool operator<(const SmartPtr<int>& lhs, int* rhs) {
+}  // anonymous namespace
+
+// These two operators have to be defined outside of the anonymous namespace,
+// otherwise they won't be visible at link-time.
+
+bool operator<(const SmartPtr<int>& lhs, const int* rhs) {
   return Get(lhs) < rhs;
 }
 
-inline bool operator<(int* lhs, const SmartPtr<int>& rhs) {
+bool operator<(const int* lhs, const SmartPtr<int>& rhs) {
   return lhs < Get(rhs);
 }
 
-TEST(SmartPtrTest, Ordering) {
+namespace {
+
+template<class SmartPtrType, class RawPointerType>
+void OrderingOperatorsTest() {
   int v[] = {0, 1, 2, 3};
-  SmartPtr<int> first(&v[0]);
-  const SmartPtr<int> second(&v[1]);
-  int* p = v;
+  SmartPtrType first(&v[0]);
+  const SmartPtrType second(&v[1]);
+  RawPointerType p(v);
   EXPECT_TRUE(first < second);
   EXPECT_TRUE(first < (p + 1));
   EXPECT_TRUE(p < second);
@@ -133,6 +141,13 @@ TEST(SmartPtrTest, Ordering) {
   EXPECT_FALSE((p + 2) <= first);
 }
 
+TEST(SmartPtrTest, Ordering) {
+  OrderingOperatorsTest<SmartPtr<int>, int*>();
+  OrderingOperatorsTest<const SmartPtr<int>, int*>();
+  OrderingOperatorsTest<SmartPtr<int>, const int*>();
+  OrderingOperatorsTest<const SmartPtr<int>, const int*>();
+  OrderingOperatorsTest<SmartPtr<int>, int*>();
+}
 
 }  // anonymous namespace
 }  // namespace ptr
