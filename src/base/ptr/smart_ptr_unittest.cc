@@ -31,7 +31,7 @@ TEST(SmartPtrTest, SmartPointerBehaviour) {
 
 TEST(SmartPtrTest, DefaultInitialization) {
   SmartPtr<Helper> ptr;
-  // TODO(smart_pointer): Make conversion to NULL possible
+  EXPECT_EQ(static_cast<Helper*>(NULL), ptr);
   Helper* h = Get(ptr);
   EXPECT_EQ(NULL, h);
 }
