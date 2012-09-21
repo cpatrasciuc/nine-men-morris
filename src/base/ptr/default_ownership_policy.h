@@ -17,7 +17,7 @@ class DefaultOwnershipPolicy {
   explicit DefaultOwnershipPolicy(const T& t) {}
   ~DefaultOwnershipPolicy() {}
 
-  T& Clone(const T& t) {
+  T Clone(const T& t) {
     return t;
   }
 

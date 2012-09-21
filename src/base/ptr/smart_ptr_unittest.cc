@@ -151,6 +151,14 @@ TEST(SmartPtrTest, Ordering) {
   OrderingOperatorsTest<SmartPtr<int>, int*>();
 }
 
+TEST(SmartPtrTest, Copy) {
+  int x = 69;
+  SmartPtr<int> smart_ptr_1(&x);
+  SmartPtr<int> smart_ptr_2(smart_ptr_1);
+  EXPECT_EQ(smart_ptr_1, smart_ptr_2);
+  EXPECT_EQ(x, *smart_ptr_2);
+}
+
 }  // anonymous namespace
 }  // namespace ptr
 }  // namespace base
