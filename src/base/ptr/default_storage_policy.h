@@ -6,6 +6,7 @@
 #define BASE_PTR_DEFAULT_STORAGE_POLICY_H_
 
 #include "base/basic_macros.h"
+#include "base/log.h"
 
 namespace base {
 namespace ptr {
@@ -28,12 +29,12 @@ class DefaultStoragePolicy {
 
   /* Smart pointer behavior */
   PointerType operator->() const {
-    // TODO(macros): add debug check for non-null pointer
+    DCHECK(pointee_);
     return pointee_;
   }
 
   ReferenceType operator*() const {
-    // TODO(macros): add debug check for non-null pointer
+    DCHECK(pointee_);
     return *pointee_;
   }
 
