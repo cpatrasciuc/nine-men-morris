@@ -25,8 +25,15 @@ class DefaultStoragePolicy {
   explicit DefaultStoragePolicy(const StoredType& p): pointee_(p) {}
 
   /* Smart pointer behavior */
-  PointerType operator->() const { return pointee_; }
-  ReferenceType operator*() const { return *pointee_; }
+  PointerType operator->() const {
+    // TODO(macros): add debug check for non-null pointer
+    return pointee_;
+  }
+
+  ReferenceType operator*() const {
+    // TODO(macros): add debug check for non-null pointer
+    return *pointee_;
+  }
 
   /* These functions provide explicit access to the encapsulated pointer */
   friend inline PointerType Get(const DefaultStoragePolicy& sp) {
