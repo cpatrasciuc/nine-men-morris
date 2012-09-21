@@ -21,7 +21,8 @@ class Helper {
 };
 
 TEST(SmartPtrTest, SmartPointerBehaviour) {
-  SmartPtr<Helper> ptr(new Helper);
+  Helper helper;
+  SmartPtr<Helper> ptr(&helper);
   ptr->SetPrivateMember(10);
   EXPECT_EQ(10, (*ptr).GetPrivateMember());
   ptr->public_member = 20;
@@ -36,9 +37,10 @@ TEST(SmartPtrTest, DefaultInitialization) {
 }
 
 TEST(SmartPtrTest, Get) {
-  int* x = new int;
-  SmartPtr<int> ptr(x);
-  EXPECT_EQ(x, Get(ptr));
+  int x;
+  int* ptr_x = &x;
+  SmartPtr<int> smart_ptr(ptr_x);
+  EXPECT_EQ(ptr_x, Get(smart_ptr));
 }
 
 TEST(SmartPtrTest, Const) {
@@ -48,11 +50,12 @@ TEST(SmartPtrTest, Const) {
   SHOULD_NOT_COMPILE(*ptr1 = 10);
   Get(ptr1);
 
-  SmartPtr<const Helper> ptr2(new Helper);
+  Helper helper;
+  SmartPtr<const Helper> ptr2(&helper);
   ptr2->GetPrivateMember();
   SHOULD_NOT_COMPILE(ptr2->SetPrivateMember(10));
 
-  const SmartPtr<const Helper> ptr3(new Helper);
+  const SmartPtr<const Helper> ptr3(&helper);
   ptr3->GetPrivateMember();
   SHOULD_NOT_COMPILE(ptr3->SetPrivateMember(10));
   SHOULD_NOT_COMPILE(ptr3 = ptr2);
