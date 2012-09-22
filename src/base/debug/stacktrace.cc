@@ -109,7 +109,7 @@ void DumpStackTraceAndExit(int signal) {
 }
 
 void EnableStackTraceDumpOnCrash() {
-  struct sigaction sa;
+  struct sigaction sa = {};
   sa.sa_handler = DumpStackTraceAndExit;
   const int signals[] = { SIGSEGV, SIGBUS, SIGILL };
   for (unsigned int i = 0; i < arraysize(signals); ++i) {
