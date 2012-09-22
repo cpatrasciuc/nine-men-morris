@@ -62,6 +62,7 @@ class DefaultStoragePolicy {
    * the encapsulated pointer. Can be overwritten by subclasses. */
   void Destroy() {
     delete pointee_;
+    pointee_ = 0;
   }
 
  private:
