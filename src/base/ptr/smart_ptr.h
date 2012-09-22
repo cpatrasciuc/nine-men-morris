@@ -13,8 +13,8 @@ namespace ptr {
 
 template <
   typename T,
-  template <class> class StoragePolicy = DefaultStoragePolicy,  // NOLINT
-  template <class> class OwnershipPolicy = DefaultOwnershipPolicy
+  template <class> class OwnershipPolicy = DefaultOwnershipPolicy,
+  template <class> class StoragePolicy = DefaultStoragePolicy
 >
 class SmartPtr : public StoragePolicy<T>,
     public OwnershipPolicy<typename StoragePolicy<T>::PointerType> {
