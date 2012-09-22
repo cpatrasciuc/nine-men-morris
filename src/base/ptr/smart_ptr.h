@@ -27,14 +27,41 @@ class SmartPtr : public StoragePolicy<T>,
   explicit SmartPtr(const StoredType& t)
       : StoragePolicy<T>(t), OwnershipPolicy<PointerType>(t) {}
 
-  SmartPtr(const SmartPtr<T>& other) {
-    GetImplAsRef(*this) = Clone(GetImplAsRef(other));
+  template <class T2, template <class> class OP2, template <class> class SP2>
+  SmartPtr(const SmartPtr<T2, OP2, SP2>& other) {
+    GetImplAsRef(*this) =
+        OwnershipPolicy<PointerType>::Clone(GetImplAsRef(other));
   }
 
   ~SmartPtr() {
     if (OwnershipPolicy<PointerType>::Release(Get(*this))) {
       StoragePolicy<T>::Destroy();
     };
+  }
+
+  SmartPtr& operator=(const SmartPtr& other) {
+    SmartPtr temp(other);
+    temp.Swap(*this);
+    return *this;
+  }
+
+  template <class T2, template <class> class OP2, template <class> class SP2>
+  SmartPtr& operator=(SmartPtr<T2, OP2, SP2>& other) {  // NOLINT
+    SmartPtr temp(other);
+    temp.Swap(*this);
+    return *this;
+  }
+
+  template <class T2, template <class> class OP2, template <class> class SP2>
+  SmartPtr& operator=(const SmartPtr<T2, OP2, SP2>& other) {
+    SmartPtr temp(other);
+    temp.Swap(*this);
+    return *this;
+  }
+
+  void Swap(SmartPtr& other) {
+    StoragePolicy<T>::Swap(other);
+    OwnershipPolicy<PointerType>::Swap(other);
   }
 
   // This enables statements like: if (!smart_ptr) { ... }

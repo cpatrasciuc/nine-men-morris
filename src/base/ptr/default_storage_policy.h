@@ -5,6 +5,8 @@
 #ifndef BASE_PTR_DEFAULT_STORAGE_POLICY_H_
 #define BASE_PTR_DEFAULT_STORAGE_POLICY_H_
 
+#include <algorithm>
+
 #include "base/basic_macros.h"
 #include "base/log.h"
 
@@ -25,7 +27,7 @@ class DefaultStoragePolicy {
 
  public:
   DefaultStoragePolicy() : pointee_(0) {}
-  explicit DefaultStoragePolicy(const StoredType& p): pointee_(p) {}
+  explicit DefaultStoragePolicy(const StoredType& p) : pointee_(p) {}
 
   /* Smart pointer behavior */
   PointerType operator->() const {
@@ -36,6 +38,10 @@ class DefaultStoragePolicy {
   ReferenceType operator*() const {
     DCHECK(pointee_);
     return *pointee_;
+  }
+
+  void Swap(DefaultStoragePolicy& other) {
+    std::swap(pointee_, other.pointee_);
   }
 
   /* These functions provide explicit access to the encapsulated pointer */
@@ -60,8 +66,6 @@ class DefaultStoragePolicy {
 
  private:
   StoredType pointee_;
-
-  DISALLOW_COPY_AND_ASSIGN(DefaultStoragePolicy);
 };
 
 }  // namespace ptr

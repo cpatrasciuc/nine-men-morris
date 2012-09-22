@@ -58,7 +58,7 @@ TEST(SmartPtrTest, Const) {
   ptr3->GetPrivateMember();
   SHOULD_NOT_COMPILE(ptr3->SetPrivateMember(10));
   SHOULD_NOT_COMPILE(ptr3 = ptr2);
-  // TODO(smart_pointer): ptr2 = ptr3;
+  ptr2 = ptr3;
 }
 
 TEST(SmartPtrTest, NullComparison) {
@@ -157,6 +157,19 @@ TEST(SmartPtrTest, Copy) {
   SmartPtr<int> smart_ptr_2(smart_ptr_1);
   EXPECT_EQ(smart_ptr_1, smart_ptr_2);
   EXPECT_EQ(x, *smart_ptr_2);
+}
+
+TEST(SmartPtrTest, Assignment) {
+  int x = 10;
+  SmartPtr<int> ptr1(&x);
+  SmartPtr<int> ptr2;
+  ptr2 = ptr1;
+  EXPECT_EQ(&x, Get(ptr2));
+  SmartPtr<const int> ptr4;
+  ptr4 = ptr2;
+  EXPECT_EQ(&x, Get(ptr4));
+  SHOULD_NOT_COMPILE(ptr2 = ptr4);
+  SHOULD_NOT_COMPILE(ptr1 = &x);
 }
 
 }  // anonymous namespace

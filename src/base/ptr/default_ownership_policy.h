@@ -25,8 +25,7 @@ class DefaultOwnershipPolicy {
     return false;
   }
 
- private:
-  DISALLOW_COPY_AND_ASSIGN(DefaultOwnershipPolicy);
+  void Swap(DefaultOwnershipPolicy& other) {}
 };
 
 }  // namespace ptr
