@@ -120,7 +120,7 @@ class BASE_EXPORT AssertionFailedLogMessage : public LogMessage {
 #define EAT_LOG_STATEMENT if (false) std::cerr
 #define LOG_IF(level, condition) EAT_LOG_STATEMENT
 #define ELOG_IF(level, condition) EAT_LOG_STATEMENT
-#define DCHECK(condition) EAT_LOG_STATEMENT
+#define DCHECK(condition) EAT_LOG_STATEMENT << ""
 #endif
 
 #define LOG(level) LOG_IF(level, true)
