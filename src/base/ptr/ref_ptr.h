@@ -26,7 +26,7 @@ class ref_ptr : public SmartPtr<T,
  public:
   ref_ptr()
       : SmartPtr<T, RefCountedOwnershipPolicy, RefCountedStoragePolicy>() {}
-  explicit ref_ptr(const StoredType& other)
+  ref_ptr(const StoredType& other)  // NOLINT(runtime/explicit)
       : SmartPtr<T, RefCountedOwnershipPolicy, RefCountedStoragePolicy>(other) {
   }
 
