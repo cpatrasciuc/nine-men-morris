@@ -22,7 +22,10 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 if(RELEASE)
+  add_definitions("-DNDEBUG")
+  add_definitions("-DRELEASE_MODE")
 else()
+  add_definitions("-DDEBUG_MODE")
   add_definitions("-DENABLE_LOGGING")
 endif()
 
