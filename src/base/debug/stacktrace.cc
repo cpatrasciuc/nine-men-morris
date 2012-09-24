@@ -18,9 +18,12 @@
 
 #include "base/basic_macros.h"
 #include "base/log.h"
+#include "base/ptr/scoped_malloc_ptr.h"
 
 namespace base {
 namespace debug {
+
+using base::ptr::scoped_malloc_ptr;
 
 // http://neugierig.org/software/blog/2012/06/backtraces.html
 void DumpStackTraceForAllThreads() {
@@ -62,7 +65,7 @@ void PrintStackTrace(const int max_depth, std::ostream* out) {
   void** addresses = new void*[max_depth];
   const int depth = backtrace(addresses, max_depth);
   // TODO(smart_pointers): Add a scoped malloc pointer
-  char** function_names = backtrace_symbols(addresses, depth);
+  scoped_malloc_ptr<char*> function_names(backtrace_symbols(addresses, depth));
   std::ostringstream result;
   if (function_names) {
     for (int i = 0; i < depth; ++i) {
@@ -99,7 +102,6 @@ void PrintStackTrace(const int max_depth, std::ostream* out) {
     }
   }
   (*out) << result.str();
-  free(function_names);
   delete[] addresses;
 }
 
