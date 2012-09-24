@@ -27,6 +27,19 @@ TEST(ScopedMallocPtrTest, DisallowCopyAndAssign) {
   SHOULD_NOT_COMPILE(scoped_malloc_ptr<int> ptr_z = ptr_x);
 }
 
+TEST(ScopedMallocPtrTest, ArrayIndexing) {
+  int value = 20;
+  int index = 10;
+  scoped_malloc_ptr<int> ptr(
+      static_cast<int*>(std::malloc(50 * sizeof(int))));  // NOLINT
+  ptr[index] = value;
+  EXPECT_EQ(value, ptr[index]);
+  EXPECT_EQ(value, *(Get(ptr) + index));
+  scoped_malloc_ptr<const int> const_ptr(
+      static_cast<const int*>(std::malloc(50 * sizeof(int))));  // NOLINT
+  SHOULD_NOT_COMPILE(const_ptr[index] = value);
+}
+
 }  // anonymous namespace
 }  // namespace ptr
 }  // namespace base
