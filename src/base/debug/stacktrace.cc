@@ -64,7 +64,6 @@ void PrintStackTrace(const int max_depth, std::ostream* out) {
   // TODO(smart_pointer): Add a scoped smart pointer
   void** addresses = new void*[max_depth];
   const int depth = backtrace(addresses, max_depth);
-  // TODO(smart_pointers): Add a scoped malloc pointer
   scoped_malloc_ptr<char*> function_names(backtrace_symbols(addresses, depth));
   std::ostringstream result;
   if (function_names) {
