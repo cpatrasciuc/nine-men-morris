@@ -82,17 +82,15 @@ void PrintStackTrace(const int max_depth, std::ostream* out) {
       if ((start != std::string::npos) &&
           (end != std::string::npos) &&
           (start < end)) {
-        const std::string mangled_name =
-            function_line.substr(start, end - start);
-        int demangle_status = 0;  // will be -2 for C functions
-        char *demangled_name = abi::__cxa_demangle(mangled_name.c_str(),
-                                                   NULL, 0, &demangle_status);
-        if (demangled_name) {
-          function_line.replace(start, mangled_name.length(), demangled_name);
-        } else if (demangle_status != -2) {
-          result << "[demangle error: " << demangle_status << "] ";
+        const std::string mangled = function_line.substr(start, end - start);
+        int status = 0;  // will be -2 for C functions
+        scoped_malloc_ptr<char> demangled(
+            abi::__cxa_demangle(mangled.c_str(), NULL, 0, &status));
+        if (demangled) {
+          function_line.replace(start, mangled.length(), Get(demangled));
+        } else if (status != -2) {
+          result << "[demangle error: " << status << "] ";
         }
-        free(demangled_name);
       } else if ((start != std::string::npos) && (end == std::string::npos)) {
         function_line.insert(start, "static?");
       }
