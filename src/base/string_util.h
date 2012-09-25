@@ -17,9 +17,9 @@ BASE_EXPORT extern const char kWhiteSpaceChars[];
 // Splits the |str| string into tokens, using the characters from |delimiters|
 // as separators. Each token is appended to the |tokens| vector.
 // The |tokens| vector is NOT cleared by this function before appending to it.
-void SplitString(const std::string& str,
-                 std::vector<std::string>* tokens,
-                 const std::string& delimiters = kWhiteSpaceChars);
+BASE_EXPORT void SplitString(const std::string& str,
+                             std::vector<std::string>* tokens,
+                             const std::string& delimiters = kWhiteSpaceChars);
 
 }  // namespace base
 
