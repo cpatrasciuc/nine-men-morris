@@ -4,6 +4,7 @@ set(BASE_SOURCE_FILES
 	debug/stacktrace.h
 	log.cc
 	log.h
+	ptr/array_storage_policy.h
 	ptr/default_ownership_policy.h
 	ptr/default_storage_policy.h
 	ptr/malloc_storage_policy.h
@@ -12,6 +13,7 @@ set(BASE_SOURCE_FILES
 	ptr/ref_counted_ownership_policy.h
 	ptr/ref_counted_storage_policy.h
 	ptr/ref_ptr.h
+	ptr/scoped_array_ptr.h
 	ptr/scoped_malloc_ptr.h
 	ptr/scoped_ownership_policy.h
 	ptr/scoped_ptr.h
@@ -22,6 +24,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	debug/stacktrace_unittest.cc
 	log_unittest.cc
 	ptr/ref_ptr_unittest.cc
+	ptr/scoped_array_ptr_unittest.cc
 	ptr/scoped_malloc_ptr_unittest.cc
 	ptr/scoped_ptr_unittest.cc
 	ptr/smart_ptr_unittest.cc
