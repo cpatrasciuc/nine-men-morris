@@ -11,6 +11,7 @@
 #include "base/debug/stacktrace.h"
 #include "base/debug/stacktrace_test_helper.h"
 #include "base/log.h"
+#include "base/string_util.h"
 #include "gtest/gtest.h"
 
 #ifdef RELEASE_MODE
@@ -22,19 +23,6 @@
 namespace base {
 namespace debug {
 namespace {
-
-// TODO(strings): Add a string split utility method
-std::vector<std::string> StringSplit(std::string s) {
-  std::vector<std::string> lines;
-  std::istringstream in(s);
-  std::string item;
-  while (std::getline(in, item)) {
-    if (item.size() > 0) {
-      lines.push_back(item);
-    }
-  }
-  return lines;
-}
 
 TEST(PrintStackTrace, NoArguments) {
   PrintStackTrace();
@@ -48,7 +36,8 @@ TEST(PrintStackTrace, ONLY_IN_DEBUG_MODE(PrintToString)) {
   expected_stack.insert(expected_stack.begin(), "PrintStackTrace");
   helper.foo(&out, expected_stack.size() * 10);
   LOG(DEBUG) << out.str();
-  std::vector<std::string> lines = StringSplit(out.str());
+  std::vector<std::string> lines;
+  SplitString(out.str(), &lines, "\r\n");
   ASSERT_GT(lines.size(), expected_stack.size());
   for (unsigned int i = 0; i < expected_stack.size(); ++i) {
     EXPECT_NE(std::string::npos, lines[i].find(expected_stack[i]));
@@ -66,7 +55,8 @@ TEST(PrintStackTrace, ONLY_IN_DEBUG_MODE(SmallDepth)) {
   const unsigned int depth = expected_stack.size() - frames_to_discard;
   helper.foo(&out, depth);
   LOG(DEBUG) << out.str();
-  std::vector<std::string> lines = StringSplit(out.str());
+  std::vector<std::string> lines;
+  SplitString(out.str(), &lines, "\r\n");
   lines.pop_back();  // The last line just says "... and more"
   ASSERT_EQ(depth, lines.size());
   for (unsigned int i = 0; i < lines.size(); ++i) {
