@@ -27,8 +27,13 @@ class SmartPtr : public StoragePolicy<T>,
   explicit SmartPtr(const StoredType& t)
       : StoragePolicy<T>(t), OwnershipPolicy<PointerType>(t) {}
 
-  template <class T2, template <class> class OP2, template <class> class SP2>
-  SmartPtr(const SmartPtr<T2, OP2, SP2>& other) {
+  template <class T2>
+  SmartPtr(const SmartPtr<T2, OwnershipPolicy, StoragePolicy>& other) {
+    GetImplAsRef(*this) =
+        OwnershipPolicy<PointerType>::Clone(GetImplAsRef(other));
+  }
+
+  SmartPtr(const SmartPtr& other) {
     GetImplAsRef(*this) =
         OwnershipPolicy<PointerType>::Clone(GetImplAsRef(other));
   }

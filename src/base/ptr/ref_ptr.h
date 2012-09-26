@@ -7,27 +7,29 @@
 
 #include "base/ptr/default_storage_policy.h"
 #include "base/ptr/ref_counted_ownership_policy.h"
-#include "base/ptr/ref_counted_storage_policy.h"
 #include "base/ptr/smart_ptr.h"
 
 namespace base {
 namespace ptr {
 
 template <class T>
-class ref_ptr : public SmartPtr<T,
-                                RefCountedOwnershipPolicy,
-                                RefCountedStoragePolicy> {
+class ref_ptr : public SmartPtr<T, RefCountedOwnershipPolicy> {
   typedef typename SmartPtr<T,
-                            RefCountedOwnershipPolicy,
-                            RefCountedStoragePolicy>::StoredType StoredType;
+                            RefCountedOwnershipPolicy>::StoredType StoredType;
   typedef typename SmartPtr<T,
-                            RefCountedOwnershipPolicy,
-                            RefCountedStoragePolicy>::PointerType PointerType;
+                            RefCountedOwnershipPolicy>::PointerType PointerType;
  public:
   ref_ptr()
-      : SmartPtr<T, RefCountedOwnershipPolicy, RefCountedStoragePolicy>() {}
+      : SmartPtr<T, RefCountedOwnershipPolicy>() {}
   ref_ptr(const StoredType& other)  // NOLINT(runtime/explicit)
-      : SmartPtr<T, RefCountedOwnershipPolicy, RefCountedStoragePolicy>(other) {
+      : SmartPtr<T, RefCountedOwnershipPolicy>(other) {
+  }
+  ref_ptr(const ref_ptr& other)
+      : SmartPtr<T, RefCountedOwnershipPolicy>(other) {}
+
+  template <class T2>
+  ref_ptr(const ref_ptr<T2>& other)
+      : SmartPtr<T, RefCountedOwnershipPolicy>(other) {
   }
 
   friend PointerType Release(ref_ptr<T>& ptr) {  // NOLINT(runtime/references)

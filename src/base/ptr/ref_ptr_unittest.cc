@@ -61,6 +61,35 @@ TEST(RefPtrTest, ReleaseManagement) {
   delete h2;
 }
 
+void pass_by_value(ref_ptr<const Helper> value_arg) {
+  const ref_ptr<const Helper> dummy(value_arg);
+}
+
+TEST(RefPtrTest, PassByValue) {
+  ref_ptr<Helper> ptr(new Helper);
+  pass_by_value(ptr);
+  EXPECT_TRUE(ptr->HasOnlyOneRef());
+}
+
+class CyclicDepsHelper : public RefCounted {
+ public:
+  void set_dependency(ref_ptr<CyclicDepsHelper> dep) {
+    dep_ = dep;
+  }
+
+ private:
+  ref_ptr<CyclicDepsHelper> dep_;
+};
+
+// This test generates a memory leak due to a cyclic dependency between
+// two ref_ptr's.
+TEST(RefPtrTest, DISABLED_CyclicDependency) {
+  ref_ptr<CyclicDepsHelper> one = new CyclicDepsHelper;
+  ref_ptr<CyclicDepsHelper> two = new CyclicDepsHelper;
+  one->set_dependency(two);
+  two->set_dependency(one);
+}
+
 }  // anonymous namespace
 }  // namespace ptr
 }  // namespace base

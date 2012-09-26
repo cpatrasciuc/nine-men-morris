@@ -11,7 +11,6 @@ set(BASE_SOURCE_FILES
 	ptr/ref_counted.cc
 	ptr/ref_counted.h
 	ptr/ref_counted_ownership_policy.h
-	ptr/ref_counted_storage_policy.h
 	ptr/ref_ptr.h
 	ptr/scoped_array_ptr.h
 	ptr/scoped_malloc_ptr.h
