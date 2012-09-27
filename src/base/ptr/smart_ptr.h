@@ -5,6 +5,8 @@
 #ifndef BASE_PTR_SMART_PTR_H_
 #define BASE_PTR_SMART_PTR_H_
 
+#include <functional>
+
 #include "base/ptr/default_storage_policy.h"
 #include "base/ptr/default_ownership_policy.h"
 
@@ -203,6 +205,21 @@ bool operator<=(const SmartPtr<T>& lhs, const SmartPtr<U>& rhs) {
 
 }  // namespace ptr
 }  // namespace base
+
+// Defining std::less for SmartPtr, so that it can be used in STL containers.
+// It is based on operator<, which must be defined by the client.
+namespace std {
+
+template <class T>
+struct less<base::ptr::SmartPtr<T> >
+    : binary_function<base::ptr::SmartPtr<T>, base::ptr::SmartPtr<T>, bool> {
+  bool operator()(const base::ptr::SmartPtr<T>& x,
+                  const base::ptr::SmartPtr<T>& y) const {
+    return x < y;
+  }
+};
+
+}  // namespace std
 
 #endif  // BASE_PTR_SMART_PTR_H_
 

@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <algorithm>
+#include <vector>
+
 #include "base/basic_macros.h"
 #include "base/ptr/default_storage_policy.h"
 #include "base/ptr/smart_ptr.h"
@@ -170,6 +173,18 @@ TEST(SmartPtrTest, Assignment) {
   EXPECT_EQ(&x, Get(ptr4));
   SHOULD_NOT_COMPILE(ptr2 = ptr4);
   SHOULD_NOT_COMPILE(ptr1 = &x);
+}
+
+TEST(SmartPtrTest, StdLess) {
+  int a[] = {120, 34, 35, 26};
+  std::vector<SmartPtr<int> > v;
+  for (int i = arraysize(a) - 1; i >= 0; --i) {
+    v.push_back(SmartPtr<int>(&a[i]));
+  }
+  std::sort(v.begin(), v.end());
+  for (unsigned int i = 0; i < v.size(); ++i) {
+    EXPECT_EQ(a[i], *(v[i]));
+  }
 }
 
 }  // anonymous namespace
