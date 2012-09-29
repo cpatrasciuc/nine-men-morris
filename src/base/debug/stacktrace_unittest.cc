@@ -76,12 +76,10 @@ TEST(PrintStackTrace, DumpStackTraceForAllThreads) {
   DumpStackTraceForAllThreads();
 }
 
-// This test generates a Segmentation fault.
-// Don't enable it unless you specifically debug the crash handler.
-TEST(PrintStackTrace, DISABLED_StackTraceDumpOnCrash) {
+TEST(PrintStackTraceDeathTest, StackTraceDumpOnCrash) {
   EnableStackTraceDumpOnCrash();
   int* p = NULL;
-  *p = 69;
+  ASSERT_DEATH(*p = 69, "StackTraceDumpOnCrash.*" __FILE__);
 }
 
 }  // anonymous namespace
