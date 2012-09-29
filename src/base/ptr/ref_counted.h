@@ -11,6 +11,8 @@ namespace base {
 namespace ptr {
 
 // TODO(smart_pointers) : Make this a class template
+// TODO(visibility): Make the public methods visible only to
+//                   RefCountedOwnershipPolicy
 class BASE_EXPORT RefCounted {
  public:
   void AddRef() const;
