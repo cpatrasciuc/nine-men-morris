@@ -112,8 +112,6 @@ TEST_F(LogUnittest, MAYBE(DCHECKPass)) {
   EXPECT_EQ(std::string(), test_stream().str());
 }
 
-// This will intentionally crash.
-// Don't enable it unless you are testing the DCHECK macro behavior.
 TEST(LogUnittestDeathTest, DCHECKFail) {
   Log::max_log_level = ERROR;
   Log::default_output_stream = &std::cerr;
