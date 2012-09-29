@@ -17,6 +17,9 @@ set(BASE_SOURCE_FILES
 	ptr/scoped_ownership_policy.h
 	ptr/scoped_ptr.h
 	ptr/smart_ptr.h
+	ptr/supports_weak_ref.h
+	ptr/weak_ownership_policy.h
+	ptr/weak_ptr.h
 	string_util.cc
 	string_util.h
 )
@@ -29,6 +32,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	ptr/scoped_malloc_ptr_unittest.cc
 	ptr/scoped_ptr_unittest.cc
 	ptr/smart_ptr_unittest.cc
+	ptr/weak_ptr_unittest.cc
 	string_util_unittest.cc
 )
 

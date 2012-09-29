@@ -21,6 +21,9 @@ template <
 class SmartPtr : public StoragePolicy<T>,
     public OwnershipPolicy<typename StoragePolicy<T>::PointerType> {
  public:
+  typedef OwnershipPolicy<T> OwnershipPolicyType;
+  typedef StoragePolicy<T> StoragePolicyType;
+
   typedef typename StoragePolicy<T>::PointerType PointerType;
   typedef typename StoragePolicy<T>::StoredType StoredType;
   typedef typename StoragePolicy<T>::ReferenceType ReferenceType;
@@ -29,8 +32,8 @@ class SmartPtr : public StoragePolicy<T>,
   explicit SmartPtr(const StoredType& t)
       : StoragePolicy<T>(t), OwnershipPolicy<PointerType>(t) {}
 
-  template <class T2>
-  SmartPtr(const SmartPtr<T2, OwnershipPolicy, StoragePolicy>& other) {
+  template <class T2, template <class> class OP2, template <class> class SP2>
+  SmartPtr(const SmartPtr<T2, OP2, SP2>& other) {
     GetImplAsRef(*this) =
         OwnershipPolicy<PointerType>::Clone(GetImplAsRef(other));
   }
