@@ -114,11 +114,11 @@ TEST_F(LogUnittest, MAYBE(DCHECKPass)) {
 
 // This will intentionally crash.
 // Don't enable it unless you are testing the DCHECK macro behavior.
-TEST_F(LogUnittest, DISABLED_DCHECKFail) {
+TEST(LogUnittestDeathTest, DCHECKFail) {
   Log::max_log_level = ERROR;
   Log::default_output_stream = &std::cerr;
-  DCHECK_GT(0, 1) << "DCHECK failed as expected";
-  LOG(ERROR) << "You should not reach this";
+  std::string crash_message("DCHECK failed as expected");
+  ASSERT_DEATH(DCHECK_GT(0, 1) << crash_message, crash_message);
 }
 
 }  // anonymous namespace
