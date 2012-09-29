@@ -79,7 +79,7 @@ TEST(PrintStackTrace, DumpStackTraceForAllThreads) {
 TEST(PrintStackTraceDeathTest, StackTraceDumpOnCrash) {
   EnableStackTraceDumpOnCrash();
   int* p = NULL;
-  ASSERT_DEATH(*p = 69, "StackTraceDumpOnCrash.*" __FILE__);
+  ASSERT_DEATH(*p = 69, "StackTraceDumpOnCrash.*");
 }
 
 }  // anonymous namespace

@@ -112,7 +112,7 @@ TEST_F(LogUnittest, MAYBE(DCHECKPass)) {
   EXPECT_EQ(std::string(), test_stream().str());
 }
 
-TEST(LogUnittestDeathTest, DCHECKFail) {
+TEST(LogUnittestDeathTest, MAYBE(DCHECKFail)) {
   Log::max_log_level = ERROR;
   Log::default_output_stream = &std::cerr;
   std::string crash_message("DCHECK failed as expected");
