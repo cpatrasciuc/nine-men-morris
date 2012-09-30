@@ -12,31 +12,36 @@
 namespace base {
 namespace ptr {
 
+class WeakRefObserver {
+ public:
+  WeakRefObserver() : is_valid_(false) {}
+  explicit WeakRefObserver(bool is_valid) : is_valid_(is_valid) {}
+  ~WeakRefObserver() {}
+
+  bool is_valid() const {
+    return is_valid_;
+  }
+
+  void set_valid(bool is_valid) const {
+    is_valid_ = is_valid;
+  }
+
+ private:
+  mutable bool is_valid_;
+
+  DISALLOW_COPY_AND_ASSIGN(WeakRefObserver);
+};
+
 template <class T>
 class WeakOwnershipPolicy {
  public:
-  class Observer {
-   public:
-    Observer() : is_valid_(false) {}
-    explicit Observer(bool is_valid) : is_valid_(is_valid) {}
-    ~Observer() {}
-
-    bool is_valid() const {
-      return is_valid_;
-    }
-
-    void set_valid(bool is_valid) const {
-      is_valid_ = is_valid;
-    }
-
-   private:
-    mutable bool is_valid_;
-
-    DISALLOW_COPY_AND_ASSIGN(Observer);
-  };
-
   explicit WeakOwnershipPolicy(const T& t = NULL)
-      : observer_(new Observer(t != NULL)) {}
+      : observer_(new WeakRefObserver(t != NULL)) {
+    if (t) {
+      t->AddWeakRef(observer_);
+    }
+  }
+
   ~WeakOwnershipPolicy() {
     // |observer_| should already be removed from the observers list
     delete observer_;
@@ -57,16 +62,17 @@ class WeakOwnershipPolicy {
     return false;
   }
 
-  inline bool IsValid() const {
-    return observer_->is_valid();
-  }
-
   void Swap(WeakOwnershipPolicy& other) {
     std::swap(observer_, other.observer_);
   }
 
+ protected:
+  inline bool IsValid() const {
+    return observer_->is_valid();
+  }
+
  private:
-  Observer* observer_;
+  WeakRefObserver* observer_;
 };
 
 }  // namespace ptr

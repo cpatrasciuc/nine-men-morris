@@ -7,6 +7,7 @@
 
 #include "base/ptr/ref_ptr.h"
 #include "base/ptr/smart_ptr.h"
+#include "base/ptr/supports_weak_ref.h"
 #include "base/ptr/weak_ownership_policy.h"
 
 namespace base {
@@ -21,6 +22,9 @@ class weak_ptr : public SmartPtr<T, WeakOwnershipPolicy> {
  public:
   weak_ptr() : SmartPtr<T, WeakOwnershipPolicy>() {}
 
+  weak_ptr(const StoredType& t)  // NOLINT(runtime/explicit)
+      : SmartPtr<T, WeakOwnershipPolicy>(t) {}
+
   weak_ptr(const weak_ptr& other)
       : SmartPtr<T, WeakOwnershipPolicy>(other) {}
 
@@ -28,19 +32,13 @@ class weak_ptr : public SmartPtr<T, WeakOwnershipPolicy> {
   weak_ptr(const weak_ptr<T2>& other)
       : SmartPtr<T, WeakOwnershipPolicy>(other) {}
 
-  // TODO(smart_pointers): Break the dependency between weak_ptr and ref_ptr
-  template <class T2>
-  weak_ptr(const ref_ptr<T2>& other)  // NOLINT(runtime/explicit)
-      : SmartPtr<T, WeakOwnershipPolicy>(other) {}
-
-  // TODO(threading): Make SupportsWeakPtr<T> lockable
-  ref_ptr<T> Lock() const {
-    return ref_ptr<T>(this->IsValid() ? Get(*this) : NULL);
-  }
-
   friend inline PointerType Get(const weak_ptr& wp) {
     return (wp.IsValid() ?
       Get(static_cast<typename weak_ptr::StoragePolicyType>(wp)) : NULL);
+  }
+
+  friend inline ref_ptr<T> Lock(const weak_ptr& wp) {
+    return ref_ptr<T>(wp.IsValid() ? Get(wp) : NULL);
   }
 };
 

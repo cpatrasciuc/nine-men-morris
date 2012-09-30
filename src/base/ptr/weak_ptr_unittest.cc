@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "base/basic_macros.h"
 #include "base/ptr/ref_counted.h"
 #include "base/ptr/ref_ptr.h"
 #include "base/ptr/supports_weak_ref.h"
@@ -12,76 +13,91 @@ namespace base {
 namespace ptr {
 namespace {
 
-class Helper : public RefCounted, public SupportsWeakRef<Helper> {};
+class Helper : public SupportsWeakRef<Helper> {};
 
 TEST(WeakPtrTest, NullWeakPtr) {
   weak_ptr<Helper> null_weak_ptr;
-  EXPECT_FALSE(null_weak_ptr.IsValid());
   EXPECT_FALSE(null_weak_ptr);
 }
 
+TEST(WeakPtrTest, Basic) {
+  weak_ptr<Helper> wp;
+  {
+    Helper h;
+    wp = &h;
+    EXPECT_TRUE(Get(wp));
+    EXPECT_EQ(&h, Get(wp));
+  }
+  EXPECT_FALSE(Get(wp));
+}
+
 TEST(WeakPtrTest, Multiple) {
-  ref_ptr<Helper> strong(new Helper);
-  weak_ptr<Helper> ptr1 = strong;
-  weak_ptr<Helper> ptr2 = strong;
-  EXPECT_EQ(Get(strong), Get(ptr1));
-  EXPECT_EQ(Get(strong), Get(ptr2));
-  strong = NULL;
+  Helper* h = new Helper;
+  weak_ptr<Helper> ptr1(h);
+  weak_ptr<Helper> ptr2(h);
+  EXPECT_EQ(h, Get(ptr1));
+  EXPECT_EQ(h, Get(ptr2));
+  delete h;
   EXPECT_FALSE(Get(ptr1));
   EXPECT_FALSE(Get(ptr2));
 }
 
 TEST(WeakPtrTest, Assignment) {
-  ref_ptr<Helper> strong(new Helper);
-  weak_ptr<Helper> ptr1(strong);
+  Helper h;
+  weak_ptr<Helper> ptr1(&h);
   weak_ptr<Helper> ptr2 = ptr1;
   EXPECT_EQ(ptr1, ptr2);
 }
 
-TEST(WeakPtrTest, Lock) {
-  ref_ptr<Helper> strong(new Helper);
-  weak_ptr<Helper> weak(strong);
-  EXPECT_TRUE(weak.IsValid());
-  EXPECT_TRUE(weak);
-  {
-    ref_ptr<Helper> locked_ptr = weak.Lock();
-    EXPECT_TRUE(locked_ptr);
-    EXPECT_TRUE(weak.IsValid());
-    strong = NULL;
-    EXPECT_TRUE(locked_ptr);
-    EXPECT_TRUE(weak.IsValid());
-  }
-  EXPECT_FALSE(weak.IsValid());
-  ref_ptr<Helper> invalid = weak.Lock();
-  EXPECT_FALSE(invalid);
-}
-
-class CyclicDepsHelper : public RefCounted,
-                         public SupportsWeakRef<CyclicDepsHelper> {
+class RefCountedHelper : public RefCounted,
+                         public SupportsWeakRef<RefCountedHelper> {
  public:
-  void set_dependency(const weak_ptr<CyclicDepsHelper>& dep) {
+  RefCountedHelper() {}
+  ~RefCountedHelper() {}
+
+  void set_dependency(const weak_ptr<RefCountedHelper>& dep) {
     dep_ = dep;
   }
 
  private:
-  weak_ptr<CyclicDepsHelper> dep_;
+  weak_ptr<RefCountedHelper> dep_;
+
+  DISALLOW_COPY_AND_ASSIGN(RefCountedHelper);
 };
+
+TEST(WeakPtrTest, Lock) {
+  ref_ptr<RefCountedHelper> strong(new RefCountedHelper);
+  weak_ptr<RefCountedHelper> weak(Get(strong));
+  EXPECT_TRUE(Get(weak));
+  EXPECT_TRUE(weak);
+  {
+    ref_ptr<RefCountedHelper> locked_ptr = Lock(weak);
+    EXPECT_TRUE(locked_ptr);
+    EXPECT_TRUE(Get(weak));
+    strong = NULL;
+    EXPECT_TRUE(locked_ptr);
+    EXPECT_TRUE(Get(weak));
+  }
+  EXPECT_FALSE(Get(weak));
+  ref_ptr<RefCountedHelper> invalid = Lock(weak);
+  EXPECT_FALSE(invalid);
+}
 
 // This should not cause any memory leaks
 TEST(WeakPtrTest, CyclicDependency) {
-  ref_ptr<CyclicDepsHelper> one(new CyclicDepsHelper);
-  ref_ptr<CyclicDepsHelper> two(new CyclicDepsHelper);
-  one->set_dependency(two);
-  two->set_dependency(one);
+  ref_ptr<RefCountedHelper> one(new RefCountedHelper);
+  ref_ptr<RefCountedHelper> two(new RefCountedHelper);
+  one->set_dependency(Get(two));
+  two->set_dependency(Get(one));
 }
 
-class Base : public SupportsWeakRef<Base>, public RefCounted {};
+class Base : public SupportsWeakRef<Base> {};
 class Derived : public Base {};
 
 TEST(WeakPtrTest, Polymorphism) {
-  ref_ptr<Derived> derived_ptr(new Derived);
-  weak_ptr<Base> base_ptr(derived_ptr);
-  EXPECT_EQ(Get(derived_ptr), Get(base_ptr.Lock()));
+  Derived d;
+  weak_ptr<Base> base_ptr(&d);
+  EXPECT_EQ(&d, Get(base_ptr));
 }
 
 }  // anonymous namespace
