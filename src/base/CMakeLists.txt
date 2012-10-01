@@ -1,5 +1,7 @@
 set(BASE_SOURCE_FILES
 	basic_macros.h
+	bind.h
+	callable.h
 	debug/stacktrace.cc
 	debug/stacktrace.h
 	log.cc
@@ -25,6 +27,7 @@ set(BASE_SOURCE_FILES
 )
 
 set(BASE_UNITTESTS_SOURCE_FILES
+	bind_unittest.cc
 	debug/stacktrace_unittest.cc
 	log_unittest.cc
 	ptr/ref_ptr_unittest.cc
