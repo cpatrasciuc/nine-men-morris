@@ -10,7 +10,7 @@ cpplint_path = os.path.join(git_dir, "tools/cpplint.py")
 files = os.popen("git diff --cached --name-only").readlines()
 files = [os.path.join(git_dir, x[:-1]) for x in files]
 
-cmd = "python '%s' --filter=-readability/streams %s"
+cmd = "python '%s' --filter=-readability/streams,-readability/function,-readability/casting %s"
 ret = os.system(cmd % (cpplint_path, " ".join(files)))
 if ret != 0:
   print "Exit code: %s" % ret
