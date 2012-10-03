@@ -45,7 +45,7 @@ class Method<R(T::*)(A1, A2)> : public Callable<R(A1, A2)> {
  public:
   Method(R (T::*f)(A1, A2), T* t) : f_(f), t_(t) {}
 
-  virtual R operator()(A1 a1, A1 a2) const {
+  virtual R operator()(A1 a1, A2 a2) const {
     return (t_->*f_)(a1, a2);
   }
 
