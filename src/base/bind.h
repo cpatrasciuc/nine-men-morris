@@ -40,6 +40,28 @@ Callable<R(void)>* Bind(Callable<R(A1, A2, A3)>* c, A1 a1, A2 a2, A3 a3) {
   return new Binder30<R, A1, A2, A3>(c, a1, a2, a3);
 }
 
+template <class R, class A1, class A2, class A3, class A4>
+Callable<R(A2, A3, A4)>* Bind(Callable<R(A1, A2, A3, A4)>* c, A1 a1) {
+  return new Binder43<R, A1, A2, A3, A4>(c, a1);
+}
+
+template <class R, class A1, class A2, class A3, class A4>
+Callable<R(A3, A4)>* Bind(Callable<R(A1, A2, A3, A4)>* c, A1 a1, A2 a2) {
+  return new Binder42<R, A1, A2, A3, A4>(c, a1, a2);
+}
+
+template <class R, class A1, class A2, class A3, class A4>
+Callable<R(A4)>* Bind(Callable<R(A1, A2, A3, A4)>* c, A1 a1, A2 a2, A3 a3) {
+  return new Binder41<R, A1, A2, A3, A4>(c, a1, a2, a3);
+}
+
+template <class R, class A1, class A2, class A3, class A4>
+Callable<R(void)>* Bind(Callable<R(A1, A2, A3, A4)>* c,
+    A1 a1, A2 a2, A3 a3, A4 a4) {
+  return new Binder40<R, A1, A2, A3, A4>(c, a1, a2, a3, a4);
+}
+
+
 }  // namespace base
 
 #endif  // BASE_BIND_H_

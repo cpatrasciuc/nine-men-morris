@@ -17,6 +17,7 @@ using std::string;
 int f1(int x) { return x; }
 int f2(int x, int y) { return x * y; }
 int f3(int* x, int* y, int z) { return (*x) * (*y) * z; }
+int f4(int x, int y, int z, int t) { return x * y * z * t; }
 
 TEST(BindTest, Arity1) {
   Function<int(int)> func(&f1);
@@ -57,6 +58,26 @@ TEST(BindTest, Arity3) {
   b = 2;
   EXPECT_EQ(a * b, (*a_times_b)());
   delete a_times_b;
+}
+
+TEST(BindTest, Arity4) {
+  Function<int(int, int, int, int)> product4(&f4);
+
+  Callable<int(int, int, int)>* product3 = Bind(&product4, 1);
+  EXPECT_EQ(12, (*product3)(2, 3, 2));
+  delete product3;
+
+  Callable<int(int, int)>* product2 = Bind(&product4, 1, 1);
+  EXPECT_EQ(12, (*product2)(6, 2));
+  delete product2;
+
+  Callable<int(int)>* multiply_by_2 = Bind(&product4, 1, 2, 1);
+  EXPECT_EQ(10, (*multiply_by_2)(5));
+  delete multiply_by_2;
+
+  Callable<int(void)>* constant_function = Bind(&product4, 1, 2, 3, 4);
+  EXPECT_EQ(24, (*constant_function)());
+  delete constant_function;
 }
 
 TEST(BindTest, Currying) {
