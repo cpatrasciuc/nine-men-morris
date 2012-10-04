@@ -108,8 +108,8 @@ TEST(BindTest, Currying) {
 
 TEST(BindTest, Methods) {
   Helper h;
-  Method<string(Helper::*)(string, int)> m(&Helper::test_method, &h);
-  Callable<string(int)>* c = Bind(&m, string("foobar"));
+  Method<string(Helper::*)(string, int)> method(&Helper::test_method, &h);
+  Callable<string(int)>* c = Bind(&method, string("foobar"));
   EXPECT_EQ("bar", (*c)(3));
   delete c;
 }
