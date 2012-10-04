@@ -136,5 +136,31 @@ TEST(CallableTest, VirtualMethods) {
   EXPECT_EQ(test, m(test.c_str()));
 }
 
+class ClosureTestHelper {
+ public:
+  ClosureTestHelper() : value_(false) {}
+
+  bool get_value() const {
+    return value_;
+  }
+
+  void set_value_to_true() {
+    value_ = true;
+  }
+
+ private:
+  bool value_;
+};
+
+TEST(CallableTest, Closure) {
+  using base::ptr::scoped_ptr;
+  ClosureTestHelper cth;
+  EXPECT_FALSE(cth.get_value());
+  scoped_ptr<Closure> c(new Method<void(ClosureTestHelper::*)(void)>(
+      &ClosureTestHelper::set_value_to_true, &cth));
+  (*c)();
+  EXPECT_TRUE(cth.get_value());
+}
+
 }  // anonymous namespace
 }  // namespace base

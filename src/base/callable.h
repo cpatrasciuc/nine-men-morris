@@ -45,6 +45,8 @@ class Callable<R(A1, A2, A3, A4)> {
   virtual R operator()(A1, A2, A3, A4) const = 0;
 };
 
+typedef Callable<void(void)> Closure;
+
 }  // namespace base
 
 #endif  // BASE_CALLABLE_H_
