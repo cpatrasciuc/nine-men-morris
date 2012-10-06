@@ -56,7 +56,7 @@ class ConstHelper {
   int x_;
 };
 
-void GenericCallableTest(Callable<int(void)>& c,
+void FunctionTest(Callable<int(void)>& c,
                          Callable<int(int)>& c1,
                          Callable<int(int, int)>& c2,
                          Callable<int(int, int, int)>& c3,
@@ -68,6 +68,20 @@ void GenericCallableTest(Callable<int(void)>& c,
   EXPECT_EQ(24, c4(1, 2, 3, 4));
 }
 
+template <class T>
+void MethodsTest(T* t,
+                 Callable<int(T*)>& c,
+                 Callable<int(T*, int)>& c1,
+                 Callable<int(T*, int, int)>& c2,
+                 Callable<int(T*, int, int, int)>& c3,
+                 Callable<int(T*, int, int, int, int)>& c4) {
+  EXPECT_EQ(20, c(t));
+  EXPECT_EQ(46, c1(t, 23));
+  EXPECT_EQ(20, c2(t, 2, 5));
+  EXPECT_EQ(24, c3(t, 2, 3, 2));
+  EXPECT_EQ(48, c4(t, 1, 2, 3, 4));
+}
+
 TEST(CallableTest, Functions) {
   Function<int(void)> func(&f);
   Function<int(int)> func1(&f1);
@@ -75,7 +89,7 @@ TEST(CallableTest, Functions) {
   Function<int(int, int, int)> func3(&f3);
   Function<int(int, int, int, int)> func4(&f4);
 
-  GenericCallableTest(func, func1, func2, func3, func4);
+  FunctionTest(func, func1, func2, func3, func4);
 }
 
 TEST(CallableTest, StaticMethods) {
@@ -85,32 +99,31 @@ TEST(CallableTest, StaticMethods) {
   Function<int(int, int, int)> func3(&StaticHelper::f3);
   Function<int(int, int, int, int)> func4(&StaticHelper::f4);
 
-  GenericCallableTest(func, func1, func2, func3, func4);
+  FunctionTest(func, func1, func2, func3, func4);
 }
 
 TEST(CallableTest, Methods) {
-  Helper h(1);
+  Helper h(2);
 
-  Method<int(Helper::*)(void)> m(&Helper::f, &h);
-  Method<int(Helper::*)(int)> m1(&Helper::f1, &h);
-  Method<int(Helper::*)(int, int)> m2(&Helper::f2, &h);
-  Method<int(Helper::*)(int, int, int)> m3(&Helper::f3, &h);
-  Method<int(Helper::*)(int, int, int, int)> m4(&Helper::f4, &h);
+  Method<int(Helper::*)(void)> m(&Helper::f);
+  Method<int(Helper::*)(int)> m1(&Helper::f1);
+  Method<int(Helper::*)(int, int)> m2(&Helper::f2);
+  Method<int(Helper::*)(int, int, int)> m3(&Helper::f3);
+  Method<int(Helper::*)(int, int, int, int)> m4(&Helper::f4);
 
-  GenericCallableTest(m, m1, m2, m3, m4);
+  MethodsTest(&h, m, m1, m2, m3, m4);
 }
 
 TEST(CallableTest, ConstMethods) {
-  ConstHelper h(1);
+  ConstHelper h(2);
 
-  Method<int(ConstHelper::*)(void) const> m(&ConstHelper::f, &h);
-  Method<int(ConstHelper::*)(int) const> m1(&ConstHelper::f1, &h);
-  Method<int(ConstHelper::*)(int, int) const> m2(&ConstHelper::f2, &h);
-  Method<int(ConstHelper::*)(int, int, int) const> m3(&ConstHelper::f3, &h);
-  Method<int(ConstHelper::*)(int, int, int, int) const> m4(
-      &ConstHelper::f4, &h);
+  Method<int(ConstHelper::*)(void) const> m(&ConstHelper::f);
+  Method<int(ConstHelper::*)(int) const> m1(&ConstHelper::f1);
+  Method<int(ConstHelper::*)(int, int) const> m2(&ConstHelper::f2);
+  Method<int(ConstHelper::*)(int, int, int) const> m3(&ConstHelper::f3);
+  Method<int(ConstHelper::*)(int, int, int, int) const> m4(&ConstHelper::f4);
 
-  GenericCallableTest(m, m1, m2, m3, m4);
+  MethodsTest<const ConstHelper>(&h, m, m1, m2, m3, m4);
 }
 
 class Base {
@@ -131,35 +144,9 @@ class Derived : public Base {
 TEST(CallableTest, VirtualMethods) {
   using base::ptr::scoped_ptr;
   scoped_ptr<Base> b(new Derived);
-  Method<std::string(Base::*)(const char*)> m(&Base::Foo, Get(b));
+  Method<std::string(Base::*)(const char*)> m(&Base::Foo);
   std::string test("test");
-  EXPECT_EQ(test, m(test.c_str()));
-}
-
-class ClosureTestHelper {
- public:
-  ClosureTestHelper() : value_(false) {}
-
-  bool get_value() const {
-    return value_;
-  }
-
-  void set_value_to_true() {
-    value_ = true;
-  }
-
- private:
-  bool value_;
-};
-
-TEST(CallableTest, Closure) {
-  using base::ptr::scoped_ptr;
-  ClosureTestHelper cth;
-  EXPECT_FALSE(cth.get_value());
-  scoped_ptr<Closure> c(new Method<void(ClosureTestHelper::*)(void)>(
-      &ClosureTestHelper::set_value_to_true, &cth));
-  (*c)();
-  EXPECT_TRUE(cth.get_value());
+  EXPECT_EQ(test, m(Get(b), test.c_str()));
 }
 
 }  // anonymous namespace

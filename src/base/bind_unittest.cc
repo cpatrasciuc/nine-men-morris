@@ -7,6 +7,7 @@
 #include "base/bind.h"
 #include "base/function.h"
 #include "base/method.h"
+#include "base/ptr/scoped_ptr.h"
 #include "gtest/gtest.h"
 
 namespace base {
@@ -108,10 +109,34 @@ TEST(BindTest, Currying) {
 
 TEST(BindTest, Methods) {
   Helper h;
-  Method<string(Helper::*)(string, int)> method(&Helper::test_method, &h);
-  Callable<string(int)>* c = Bind(&method, string("foobar"));
+  Method<string(Helper::*)(string, int)> method(&Helper::test_method);
+  Callable<string(int)>* c = Bind(&method, &h, string("foobar"));
   EXPECT_EQ("bar", (*c)(3));
   delete c;
+}
+
+class ClosureTestHelper {
+ public:
+  int get_value() const {
+    return value_;
+  }
+
+  void set_value(int value) {
+    value_ = value;
+  }
+
+ private:
+  int value_;
+};
+
+TEST(BindTest, Closure) {
+  using base::ptr::scoped_ptr;
+  int x = 23;
+  ClosureTestHelper cth;
+  Method<void(ClosureTestHelper::*)(int)> m(&ClosureTestHelper::set_value);
+  scoped_ptr<Closure> c(Bind(&m, &cth, x));
+  (*c)();
+  EXPECT_EQ(x, cth.get_value());
 }
 
 }  // anonymous namespace

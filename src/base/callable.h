@@ -45,6 +45,13 @@ class Callable<R(A1, A2, A3, A4)> {
   virtual R operator()(A1, A2, A3, A4) const = 0;
 };
 
+template <class R, class A1, class A2, class A3, class A4, class A5>
+class Callable<R(A1, A2, A3, A4, A5)> {
+ public:
+  virtual ~Callable() {}
+  virtual R operator()(A1, A2, A3, A4, A5) const = 0;
+};
+
 typedef Callable<void(void)> Closure;
 
 }  // namespace base
