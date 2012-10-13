@@ -7,9 +7,11 @@
 
 #include <string>
 
+#include "base/base_export.h"
+
 namespace base {
 
-class Location {
+class BASE_EXPORT Location {
  public:
   // TODO(threading): Add thread ID
   Location(const char* function, const char* file_name, int line_number);

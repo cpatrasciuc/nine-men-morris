@@ -5,6 +5,7 @@
 #ifndef BASE_THREADING_TASK_H_
 #define BASE_THREADING_TASK_H_
 
+#include "base/base_export.h"
 #include "base/basic_macros.h"
 #include "base/callable.h"
 #include "base/ptr/scoped_ptr.h"
@@ -16,7 +17,7 @@ namespace threading {
 // created and (if needed) a callback. The Task object owns both the closure and
 // the callback.
 // The Task class is used to model an execution step inside a thread/task queue.
-class Task {
+class BASE_EXPORT Task {
  public:
   Task(Location location, Closure* closure, Closure* callback = NULL);
 

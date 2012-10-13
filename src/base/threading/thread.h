@@ -9,6 +9,7 @@
 
 #include <string>
 
+#include "base/base_export.h"
 #include "base/basic_macros.h"
 
 namespace base {
@@ -16,7 +17,7 @@ namespace threading {
 
 typedef pthread_t ThreadID;
 
-class Thread {
+class BASE_EXPORT Thread {
  public:
   explicit Thread(std::string name);
   ~Thread();
