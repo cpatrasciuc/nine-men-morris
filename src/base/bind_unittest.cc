@@ -54,11 +54,11 @@ bool weak_function(WeakHelper* h) { return h; }
 
 class ClosureTestHelper {
  public:
-  int get_value() const {
+  int get() const {
     return value_;
   }
 
-  void set_value(int value) {
+  void set(int value) {
     value_ = value;
   }
 
@@ -67,47 +67,52 @@ class ClosureTestHelper {
 };
 
 TEST(BindTest, Arity1) {
-  Function<int(int)> func(&f1);
-  scoped_ptr<Callable<int(void)> > constant_function(Bind(&func, 2));
+  scoped_ptr<Callable<int(void)> > constant_function(
+      Bind(new Function<int(int)>(&f1), 2));
   EXPECT_EQ(2, (*constant_function)());
 }
 
 TEST(BindTest, Arity2) {
-  Function<int(int, int)> product(&f2);
-  scoped_ptr<Callable<int(int)> > multiply_by_2(Bind(&product, 2));
+  scoped_ptr<Callable<int(int)> > multiply_by_2(
+      Bind(new Function<int(int, int)>(&f2), 2));
   EXPECT_EQ(6, (*multiply_by_2)(3));
-  scoped_ptr<Callable<int(void)> > constant_function(Bind(&product, 3, 4));
+  scoped_ptr<Callable<int(void)> > constant_function(
+      Bind(new Function<int(int, int)>(&f2), 3, 4));
   EXPECT_EQ(12, (*constant_function)());
 }
 
 TEST(BindTest, Arity3) {
-  Function<int(int, int, int)> func3(&f3);
-  scoped_ptr<Callable<int(int, int)> > product(Bind(&func3, 1));
+  scoped_ptr<Callable<int(int, int)> > product(
+      Bind(new Function<int(int, int, int)>(&f3), 1));
   EXPECT_EQ(24, (*product)(6, 4));
-  scoped_ptr<Callable<int(int)> > multiply_by_2(Bind(&func3, 1, 2));
+  scoped_ptr<Callable<int(int)> > multiply_by_2(
+      Bind(new Function<int(int, int, int)>(&f3), 1, 2));
   EXPECT_EQ(10, (*multiply_by_2)(5));
-  scoped_ptr<Callable<int(void)> > constant_function(Bind(&func3, 1, 2, -1));
+  scoped_ptr<Callable<int(void)> > constant_function(
+      Bind(new Function<int(int, int, int)>(&f3), 1, 2, -1));
   EXPECT_EQ(-2, (*constant_function)());
 }
 
 TEST(BindTest, Arity4) {
-  Function<int(int, int, int, int)> product4(&f4);
-  scoped_ptr<Callable<int(int, int, int)> > product3(Bind(&product4, 1));
+  scoped_ptr<Callable<int(int, int, int)> > product3(
+      Bind(new Function<int(int, int, int, int)>(&f4), 1));
   EXPECT_EQ(12, (*product3)(2, 3, 2));
-  scoped_ptr<Callable<int(int, int)> > product2(Bind(&product4, 1, 1));
+  scoped_ptr<Callable<int(int, int)> > product2(
+      Bind(new Function<int(int, int, int, int)>(&f4), 1, 1));
   EXPECT_EQ(12, (*product2)(6, 2));
-  scoped_ptr<Callable<int(int)> > multiply_by_2(Bind(&product4, 1, 2, 1));
+  scoped_ptr<Callable<int(int)> > multiply_by_2(
+      Bind(new Function<int(int, int, int, int)>(&f4), 1, 2, 1));
   EXPECT_EQ(10, (*multiply_by_2)(5));
   scoped_ptr<Callable<int(void)> > constant_function(
-    Bind(&product4, 1, 2, 3, 4));
+      Bind(new Function<int(int, int, int, int)>(&f4), 1, 2, 3, 4));
   EXPECT_EQ(24, (*constant_function)());
 }
 
 TEST(BindTest, Pointers) {
   int a;
   int b;
-  Function<int(int*, int*)> product2(&p2);
-  scoped_ptr<Callable<int(void)> > a_times_b(Bind(&product2, &a, &b));
+  scoped_ptr<Callable<int(void)> > a_times_b(
+      Bind(new Function<int(int*, int*)>(&p2), &a, &b));
   a = 2;
   b = 3;
   EXPECT_EQ(a * b, (*a_times_b)());
@@ -117,54 +122,53 @@ TEST(BindTest, Pointers) {
 }
 
 TEST(BindTest, Currying) {
-  Function<int(int, int)> func2(&f2);
-  // TODO(bind): Implement an automatic deletion mechanism for binders
-  scoped_ptr<Callable<int(int)> > simple_bind(Bind(&func2, 2));
-  scoped_ptr<Callable<int(void)> > composed_bind(Bind(Get(simple_bind), 3));
+  scoped_ptr<Callable<int(void)> > composed_bind(
+    Bind(Bind(new Function<int(int, int)>(&f2), 2), 3));
   EXPECT_EQ(6, (*composed_bind)());
 }
 
 TEST(BindTest, Methods) {
   Helper h;
-  Method<string(Helper::*)(string, int)> method(&Helper::test_method);
-  scoped_ptr<Callable<string(int)> > c(Bind(&method, &h, string("foobar")));
+  Method<string(Helper::*)(string, int)>* method =
+      new Method<string(Helper::*)(string, int)>(&Helper::test_method);
+  scoped_ptr<Callable<string(int)> > c(Bind(method, &h, string("foobar")));
   EXPECT_EQ("bar", (*c)(3));
 }
 
 TEST(BindTest, Closure) {
-  using base::ptr::scoped_ptr;
   int x = 23;
   ClosureTestHelper cth;
-  Method<void(ClosureTestHelper::*)(int)> m(&ClosureTestHelper::set_value);
-  scoped_ptr<Closure> c(Bind(&m, &cth, x));
+  Method<void(ClosureTestHelper::*)(int)>* method =
+      new Method<void(ClosureTestHelper::*)(int)>(&ClosureTestHelper::set);
+  scoped_ptr<Closure> c(Bind(method, &cth, x));
   (*c)();
-  EXPECT_EQ(x, cth.get_value());
+  EXPECT_EQ(x, cth.get());
 }
 
 TEST(BindTest, Owned) {
   int* x = new int(4);
   int y = 2;
-  Function<int(int*, int*)> func(&p2);
-  scoped_ptr<Callable<int(int*)> > c(Bind(&func, Owned(x)));
+  Function<int(int*, int*)>* function= new Function<int(int*, int*)>(&p2);
+  scoped_ptr<Callable<int(int*)> > c(Bind(function, Owned(x)));
   EXPECT_EQ((*x) * y, (*c)(&y));
 }
 
 TEST(BindTest, RefCounted) {
-  Function<int(RefCountedHelper*)> func(&ref_counted_function);
   scoped_ptr<Callable<int(void)> > c(
-      Bind(&func, ref_ptr<RefCountedHelper>(new RefCountedHelper(10))));
+      Bind(new Function<int(RefCountedHelper*)>(&ref_counted_function),
+           ref_ptr<RefCountedHelper>(new RefCountedHelper(10))));
   EXPECT_EQ(10, (*c)());
   RefCountedHelper rch(20);
-  Reset(c, Bind(&func, &rch));
+  Reset(c,
+      Bind(new Function<int(RefCountedHelper*)>(&ref_counted_function), &rch));
   EXPECT_EQ(20, (*c)());
 }
 
 TEST(BindTest, WeakBind) {
-  Function<bool(WeakHelper*)> func(&weak_function);
   scoped_ptr<Callable<bool(void)> > c;
   {
     WeakHelper wh;
-    Reset(c, Bind(&func, Weak(&wh)));
+    Reset(c, Bind(new Function<bool(WeakHelper*)>(&weak_function), Weak(&wh)));
     EXPECT_TRUE((*c)());
   }
   EXPECT_FALSE((*c)());

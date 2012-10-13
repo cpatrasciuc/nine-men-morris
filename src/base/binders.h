@@ -7,6 +7,7 @@
 
 #include "base/bind_policy.h"
 #include "base/callable.h"
+#include "base/ptr/scoped_ptr.h"
 
 namespace base {
 
@@ -20,7 +21,7 @@ class Binder10 : public Callable<R(void)> {
   }
 
  private:
-  Callable<R(A1)>* c_;
+  base::ptr::scoped_ptr<Callable<R(A1)> > c_;
   P1 a1_;
 };
 
@@ -34,7 +35,7 @@ class Binder21 : public Callable<R(A2)> {
   }
 
  private:
-  Callable<R(A1, A2)>* c_;
+  base::ptr::scoped_ptr<Callable<R(A1, A2)> > c_;
   P1 a1_;
 };
 
@@ -48,7 +49,7 @@ class Binder20 : public Callable<R(void)> {
   }
 
  private:
-  Callable<R(A1, A2)>* c_;
+  base::ptr::scoped_ptr<Callable<R(A1, A2)> > c_;
   P1 a1_;
   P2 a2_;
 };
@@ -63,7 +64,7 @@ class Binder32 : public Callable<R(A2, A3)> {
   }
 
  private:
-  Callable<R(A1, A2, A3)>* c_;
+  base::ptr::scoped_ptr<Callable<R(A1, A2, A3)> > c_;
   P1 a1_;
 };
 
@@ -80,7 +81,7 @@ class Binder31 : public Callable<R(A3)> {
   }
 
  private:
-  Callable<R(A1, A2, A3)>* c_;
+  base::ptr::scoped_ptr<Callable<R(A1, A2, A3)> > c_;
   P1 a1_;
   P2 a2_;
 };
@@ -98,7 +99,7 @@ class Binder30 : public Callable<R(void)> {
   }
 
  private:
-  Callable<R(A1, A2, A3)>* c_;
+  base::ptr::scoped_ptr<Callable<R(A1, A2, A3)> > c_;
   P1 a1_;
   P2 a2_;
   P3 a3_;
@@ -115,7 +116,7 @@ class Binder43 : public Callable<R(A2, A3, A4)> {
   }
 
  private:
-  Callable<R(A1, A2, A3, A4)>* c_;
+  base::ptr::scoped_ptr<Callable<R(A1, A2, A3, A4)> > c_;
   P1 a1_;
 };
 
@@ -133,7 +134,7 @@ class Binder42 : public Callable<R(A3, A4)> {
   }
 
  private:
-  Callable<R(A1, A2, A3, A4)>* c_;
+  base::ptr::scoped_ptr<Callable<R(A1, A2, A3, A4)> > c_;
   P1 a1_;
   P2 a2_;
 };
@@ -153,7 +154,7 @@ class Binder41 : public Callable<R(A4)> {
   }
 
  private:
-  Callable<R(A1, A2, A3, A4)>* c_;
+  base::ptr::scoped_ptr<Callable<R(A1, A2, A3, A4)> > c_;
   P1 a1_;
   P2 a2_;
   P3 a3_;
@@ -174,7 +175,7 @@ class Binder40 : public Callable<R(void)> {
   }
 
  private:
-  Callable<R(A1, A2, A3, A4)>* c_;
+  base::ptr::scoped_ptr<Callable<R(A1, A2, A3, A4)> > c_;
   P1 a1_;
   P2 a2_;
   P3 a3_;
