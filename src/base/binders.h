@@ -53,51 +53,55 @@ class Binder20 : public Callable<R(void)> {
   P2 a2_;
 };
 
-template <class R, class A1, class A2, class A3>
+template <class R, class A1, class A2, class A3, class P1>
 class Binder32 : public Callable<R(A2, A3)> {
  public:
-  Binder32(Callable<R(A1, A2, A3)>* c, A1 a1) : c_(c), a1_(a1) {}
+  Binder32(Callable<R(A1, A2, A3)>* c, P1 a1) : c_(c), a1_(a1) {}
 
   virtual R operator()(A2 a2, A3 a3) const {
-    return (*c_)(a1_, a2, a3);
+    return (*c_)(BindPolicy<P1>::Forward(a1_), a2, a3);
   }
 
  private:
   Callable<R(A1, A2, A3)>* c_;
-  A1 a1_;
+  P1 a1_;
 };
 
-template <class R, class A1, class A2, class A3>
+template <class R, class A1, class A2, class A3, class P1, class P2>
 class Binder31 : public Callable<R(A3)> {
  public:
-  Binder31(Callable<R(A1, A2, A3)>* c, A1 a1, A2 a2)
+  Binder31(Callable<R(A1, A2, A3)>* c, P1 a1, P2 a2)
       : c_(c), a1_(a1), a2_(a2) {}
 
   virtual R operator()(A3 a3) const {
-    return (*c_)(a1_, a2_, a3);
+    return (*c_)(BindPolicy<P1>::Forward(a1_),
+                 BindPolicy<P2>::Forward(a2_),
+                 a3);
   }
 
  private:
   Callable<R(A1, A2, A3)>* c_;
-  A1 a1_;
-  A2 a2_;
+  P1 a1_;
+  P2 a2_;
 };
 
-template <class R, class A1, class A2, class A3>
+template <class R, class A1, class A2, class A3, class P1, class P2, class P3>
 class Binder30 : public Callable<R(void)> {
  public:
-  Binder30(Callable<R(A1, A2, A3)>* c, A1 a1, A2 a2, A3 a3)
+  Binder30(Callable<R(A1, A2, A3)>* c, P1 a1, P2 a2, P3 a3)
       : c_(c), a1_(a1), a2_(a2), a3_(a3) {}
 
   virtual R operator()() const {
-    return (*c_)(a1_, a2_, a3_);
+    return (*c_)(BindPolicy<P1>::Forward(a1_),
+                 BindPolicy<P2>::Forward(a2_),
+                 BindPolicy<P3>::Forward(a3_));
   }
 
  private:
   Callable<R(A1, A2, A3)>* c_;
-  A1 a1_;
-  A2 a2_;
-  A3 a3_;
+  P1 a1_;
+  P2 a2_;
+  P3 a3_;
 };
 
 template <class R, class A1, class A2, class A3, class A4>

@@ -33,19 +33,19 @@ Callable<R(void)>* Bind(Callable<R(A1, A2)>* c, P1 a1, P2 a2) {
   return new Binder20<R, A1, A2, P1, P2>(c, a1, a2);
 }
 
-template <class R, class A1, class A2, class A3>
-Callable<R(A2, A3)>* Bind(Callable<R(A1, A2, A3)>* c, A1 a1) {
-  return new Binder32<R, A1, A2, A3>(c, a1);
+template <class R, class A1, class A2, class A3, class P1>
+Callable<R(A2, A3)>* Bind(Callable<R(A1, A2, A3)>* c, P1 a1) {
+  return new Binder32<R, A1, A2, A3, P1>(c, a1);
 }
 
-template <class R, class A1, class A2, class A3>
-Callable<R(A3)>* Bind(Callable<R(A1, A2, A3)>* c, A1 a1, A2 a2) {
-  return new Binder31<R, A1, A2, A3>(c, a1, a2);
+template <class R, class A1, class A2, class A3, class P1, class P2>
+Callable<R(A3)>* Bind(Callable<R(A1, A2, A3)>* c, P1 a1, P2 a2) {
+  return new Binder31<R, A1, A2, A3, P1, P2>(c, a1, a2);
 }
 
-template <class R, class A1, class A2, class A3>
-Callable<R(void)>* Bind(Callable<R(A1, A2, A3)>* c, A1 a1, A2 a2, A3 a3) {
-  return new Binder30<R, A1, A2, A3>(c, a1, a2, a3);
+template <class R, class A1, class A2, class A3, class P1, class P2, class P3>
+Callable<R(void)>* Bind(Callable<R(A1, A2, A3)>* c, P1 a1, P2 a2, P3 a3) {
+  return new Binder30<R, A1, A2, A3, P1, P2, P3>(c, a1, a2, a3);
 }
 
 template <class R, class A1, class A2, class A3, class A4>
