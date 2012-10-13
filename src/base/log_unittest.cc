@@ -83,7 +83,7 @@ TEST_F(LogUnittest, LogMessageFormatTest) {
   std::string text_message("Foo Bar");
   {
     LogMessage log_message(
-      INFO, Location("", source_file.c_str(), 69), test_stream());
+      INFO, Location("", source_file.c_str(), 69, NULL), test_stream());
     log_message.stream() << text_message;
   }
   std::string output = test_stream().str();
