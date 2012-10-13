@@ -51,19 +51,17 @@ std::string GetCurrentTime() {
 }
 
 LogMessage::LogMessage(LogLevel level,
-                       int line_number,
-                       const char* file_name,
+                       Location location,
                        std::ostream& stream)
     : stream_(stream) {
-  PrintHeader(level, line_number, file_name);
+  PrintHeader(level, location);
 }
 
 LogMessage::~LogMessage() {
   stream_ << std::endl;
 }
 
-void LogMessage::PrintHeader(LogLevel level, int line_number,
-                             const char* file_name) {
+void LogMessage::PrintHeader(LogLevel level, Location location) {
   stream_ << "[";
   stream_ << LogLevelToString(level);
   stream_ << "][";
@@ -71,13 +69,13 @@ void LogMessage::PrintHeader(LogLevel level, int line_number,
   stream_ << "][";
   stream_ << getpid();
   // TODO(threading): Add thread ID
-  // TODO(file_util): Add a FilePath class or file_util module
-  stream_ << "][" << basename(file_name) << "(" << line_number << ")] ";
+  stream_ << "][" << location.file_name() << "("
+          << location.line_number() << ")] ";
 }
 
-SystemErrorLogMessage::SystemErrorLogMessage(LogLevel level, int line_number,
-    const char* file_name, std::ostream& stream)
-  : LogMessage(level, line_number, file_name, stream) {}
+SystemErrorLogMessage::SystemErrorLogMessage(LogLevel level, Location location,
+    std::ostream& stream)
+  : LogMessage(level, location, stream) {}
 
 SystemErrorLogMessage::~SystemErrorLogMessage() {
   stream() << ": ";
@@ -99,8 +97,8 @@ SystemErrorLogMessage::~SystemErrorLogMessage() {
 }
 
 AssertionFailedLogMessage::AssertionFailedLogMessage(LogLevel level,
-    int line_number, const char* file_name, std::ostream& stream)
-    : LogMessage(level, line_number, file_name, stream) {}
+    Location location, std::ostream& stream)
+    : LogMessage(level, location, stream) {}
 
 AssertionFailedLogMessage::~AssertionFailedLogMessage() {
   stream() << std::endl;

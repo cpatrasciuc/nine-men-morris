@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <string.h>
-
 #include <string>
 
 #include "base/location.h"
@@ -19,9 +17,8 @@ Location GetTestLocation() {
 TEST(LocationTest, FromHere) {
   Location loc = GetTestLocation();
   EXPECT_EQ("GetTestLocation", loc.function());
-  EXPECT_EQ(std::string("location_unittest.cc"),
-            basename(loc.file_name().c_str()));
-  EXPECT_EQ(16, loc.line_number());
+  EXPECT_EQ("location_unittest.cc", loc.file_name());
+  EXPECT_EQ(14, loc.line_number());
 }
 
 }  // anonymous namespace

@@ -10,6 +10,7 @@
 
 #include "base/base_export.h"
 #include "base/basic_macros.h"
+#include "base/location.h"
 
 // This file provides the logging functionality through a set of macros.
 // You can use constructs like the following throughout the source code
@@ -65,8 +66,7 @@ class BASE_EXPORT Log {
 class BASE_EXPORT LogMessage {
  public:
   LogMessage(LogLevel level,
-             int line_number,
-             const char* file_name,
+             Location location,
              std::ostream& stream = *Log::default_output_stream);
   ~LogMessage();
 
@@ -75,7 +75,7 @@ class BASE_EXPORT LogMessage {
   }
 
  private:
-  void PrintHeader(LogLevel level, int line_number, const char* file_name);
+  void PrintHeader(LogLevel level, Location location);
   std::ostream& stream_;
 
   DISALLOW_COPY_AND_ASSIGN(LogMessage);
@@ -84,8 +84,7 @@ class BASE_EXPORT LogMessage {
 class BASE_EXPORT SystemErrorLogMessage : public LogMessage {
  public:
   SystemErrorLogMessage(LogLevel level,
-                        int line_number,
-                        const char* file_name,
+                        Location location,
                         std::ostream& stream = *Log::default_output_stream);
   ~SystemErrorLogMessage();
 
@@ -96,8 +95,7 @@ class BASE_EXPORT SystemErrorLogMessage : public LogMessage {
 class BASE_EXPORT AssertionFailedLogMessage : public LogMessage {
  public:
   AssertionFailedLogMessage(LogLevel level,
-      int line_number,
-      const char* file_name,
+      Location location,
       std::ostream& stream = *Log::default_output_stream);
   ~AssertionFailedLogMessage();
 
@@ -111,11 +109,11 @@ class BASE_EXPORT AssertionFailedLogMessage : public LogMessage {
     ; \
   else
 #define LOG_IF(level, condition) LOG_TEMPLATE(level, condition) \
-  base::LogMessage(level, __LINE__, __FILE__).stream()
+  base::LogMessage(level, FROM_HERE).stream()
 #define ELOG_IF(level, condition) LOG_TEMPLATE(level, condition) \
-  base::SystemErrorLogMessage(level, __LINE__, __FILE__).stream()
+  base::SystemErrorLogMessage(level, FROM_HERE).stream()
 #define DCHECK(condition) LOG_TEMPLATE(ERROR, !(condition)) \
-  base::AssertionFailedLogMessage(ERROR, __LINE__, __FILE__).stream()
+  base::AssertionFailedLogMessage(ERROR, FROM_HERE).stream()
 #else
 #define EAT_LOG_STATEMENT if (false) std::cerr
 #define LOG_IF(level, condition) EAT_LOG_STATEMENT

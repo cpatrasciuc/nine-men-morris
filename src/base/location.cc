@@ -4,9 +4,15 @@
 
 #include "base/location.h"
 
+#include <string.h>
+
 namespace base {
 
 Location::Location(const char* function, const char* file_name, int line_number)
-    : function_(function), file_name_(file_name), line_number_(line_number) {}
+    : function_(function),
+      // TODO(file_util): Add a FilePath class or file_util module
+      file_name_(basename(file_name)),
+      line_number_(line_number) {
+}
 
 }  // namespace base

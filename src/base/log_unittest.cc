@@ -11,6 +11,7 @@
 #include <sstream>
 #include <string>
 
+#include "base/location.h"
 #include "base/log.h"
 #include "base/basic_macros.h"
 #include "gtest/gtest.h"
@@ -81,7 +82,8 @@ TEST_F(LogUnittest, LogMessageFormatTest) {
   std::string source_file("foobar.cc");
   std::string text_message("Foo Bar");
   {
-    LogMessage log_message(INFO, 69, source_file.c_str(), test_stream());
+    LogMessage log_message(
+      INFO, Location("", source_file.c_str(), 69), test_stream());
     log_message.stream() << text_message;
   }
   std::string output = test_stream().str();
