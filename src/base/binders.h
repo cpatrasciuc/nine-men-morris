@@ -104,70 +104,81 @@ class Binder30 : public Callable<R(void)> {
   P3 a3_;
 };
 
-template <class R, class A1, class A2, class A3, class A4>
+template <class R, class A1, class A2, class A3, class A4, class P1>
 class Binder43 : public Callable<R(A2, A3, A4)> {
  public:
-  Binder43(Callable<R(A1, A2, A3, A4)>* c, A1 a1)
+  Binder43(Callable<R(A1, A2, A3, A4)>* c, P1 a1)
       : c_(c), a1_(a1) {}
 
   virtual R operator()(A2 a2, A3 a3, A4 a4) const {
-    return (*c_)(a1_, a2, a3, a4);
+    return (*c_)(BindPolicy<P1>::Forward(a1_), a2, a3, a4);
   }
 
  private:
   Callable<R(A1, A2, A3, A4)>* c_;
-  A1 a1_;
+  P1 a1_;
 };
 
-template <class R, class A1, class A2, class A3, class A4>
+template <class R, class A1, class A2, class A3, class A4, class P1, class P2>
 class Binder42 : public Callable<R(A3, A4)> {
  public:
-  Binder42(Callable<R(A1, A2, A3, A4)>* c, A1 a1, A2 a2)
+  Binder42(Callable<R(A1, A2, A3, A4)>* c, P1 a1, P2 a2)
       : c_(c), a1_(a1), a2_(a2) {}
 
   virtual R operator()(A3 a3, A4 a4) const {
-    return (*c_)(a1_, a2_, a3, a4);
+    return (*c_)(BindPolicy<P1>::Forward(a1_),
+                 BindPolicy<P2>::Forward(a2_),
+                 a3,
+                 a4);
   }
 
  private:
   Callable<R(A1, A2, A3, A4)>* c_;
-  A1 a1_;
-  A2 a2_;
+  P1 a1_;
+  P2 a2_;
 };
 
-template <class R, class A1, class A2, class A3, class A4>
+template <class R, class A1, class A2, class A3, class A4,
+          class P1, class P2, class P3>  // NOLINT(build/class)
 class Binder41 : public Callable<R(A4)> {
  public:
-  Binder41(Callable<R(A1, A2, A3, A4)>* c, A1 a1, A2 a2, A3 a3)
+  Binder41(Callable<R(A1, A2, A3, A4)>* c, P1 a1, P2 a2, P3 a3)
       : c_(c), a1_(a1), a2_(a2), a3_(a3) {}
 
   virtual R operator()(A4 a4) const {
-    return (*c_)(a1_, a2_, a3_, a4);
+    return (*c_)(BindPolicy<P1>::Forward(a1_),
+                 BindPolicy<P2>::Forward(a2_),
+                 BindPolicy<P3>::Forward(a3_),
+                 a4);
   }
 
  private:
   Callable<R(A1, A2, A3, A4)>* c_;
-  A1 a1_;
-  A2 a2_;
-  A3 a3_;
+  P1 a1_;
+  P2 a2_;
+  P3 a3_;
 };
 
-template <class R, class A1, class A2, class A3, class A4>
+template <class R, class A1, class A2, class A3, class A4,
+          class P1, class P2, class P3, class P4>
 class Binder40 : public Callable<R(void)> {
  public:
-  Binder40(Callable<R(A1, A2, A3, A4)>* c, A1 a1, A2 a2, A3 a3, A4 a4)
+  Binder40(Callable<R(A1, A2, A3, A4)>* c, P1 a1, P2 a2, P3 a3, P4 a4)
       : c_(c), a1_(a1), a2_(a2), a3_(a3), a4_(a4) {}
 
   virtual R operator()() const {
-    return (*c_)(a1_, a2_, a3_, a4_);
+    return (*c_)(BindPolicy<P1>::Forward(a1_),
+                 BindPolicy<P2>::Forward(a2_),
+                 BindPolicy<P3>::Forward(a3_),
+                 BindPolicy<P4>::Forward(a4_));
   }
 
  private:
   Callable<R(A1, A2, A3, A4)>* c_;
-  A1 a1_;
-  A2 a2_;
-  A3 a3_;
-  A4 a4_;
+  P1 a1_;
+  P2 a2_;
+  P3 a3_;
+  P4 a4_;
 };
 
 }  // namespace base

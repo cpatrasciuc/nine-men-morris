@@ -48,25 +48,27 @@ Callable<R(void)>* Bind(Callable<R(A1, A2, A3)>* c, P1 a1, P2 a2, P3 a3) {
   return new Binder30<R, A1, A2, A3, P1, P2, P3>(c, a1, a2, a3);
 }
 
-template <class R, class A1, class A2, class A3, class A4>
-Callable<R(A2, A3, A4)>* Bind(Callable<R(A1, A2, A3, A4)>* c, A1 a1) {
-  return new Binder43<R, A1, A2, A3, A4>(c, a1);
+template <class R, class A1, class A2, class A3, class A4, class P1>
+Callable<R(A2, A3, A4)>* Bind(Callable<R(A1, A2, A3, A4)>* c, P1 a1) {
+  return new Binder43<R, A1, A2, A3, A4, P1>(c, a1);
 }
 
-template <class R, class A1, class A2, class A3, class A4>
-Callable<R(A3, A4)>* Bind(Callable<R(A1, A2, A3, A4)>* c, A1 a1, A2 a2) {
-  return new Binder42<R, A1, A2, A3, A4>(c, a1, a2);
+template <class R, class A1, class A2, class A3, class A4, class P1, class P2>
+Callable<R(A3, A4)>* Bind(Callable<R(A1, A2, A3, A4)>* c, P1 a1, P2 a2) {
+  return new Binder42<R, A1, A2, A3, A4, P1, P2>(c, a1, a2);
 }
 
-template <class R, class A1, class A2, class A3, class A4>
-Callable<R(A4)>* Bind(Callable<R(A1, A2, A3, A4)>* c, A1 a1, A2 a2, A3 a3) {
-  return new Binder41<R, A1, A2, A3, A4>(c, a1, a2, a3);
+template <class R, class A1, class A2, class A3, class A4,
+          class P1, class P2, class P3>
+Callable<R(A4)>* Bind(Callable<R(A1, A2, A3, A4)>* c, P1 a1, P2 a2, P3 a3) {
+  return new Binder41<R, A1, A2, A3, A4, P1, P2, P3>(c, a1, a2, a3);
 }
 
-template <class R, class A1, class A2, class A3, class A4>
+template <class R, class A1, class A2, class A3, class A4,
+          class P1, class P2, class P3, class P4>
 Callable<R(void)>* Bind(Callable<R(A1, A2, A3, A4)>* c,
-    A1 a1, A2 a2, A3 a3, A4 a4) {
-  return new Binder40<R, A1, A2, A3, A4>(c, a1, a2, a3, a4);
+    P1 a1, P2 a2, P3 a3, P4 a4) {
+  return new Binder40<R, A1, A2, A3, A4, P1, P2, P3, P4>(c, a1, a2, a3, a4);
 }
 
 template <typename T>
