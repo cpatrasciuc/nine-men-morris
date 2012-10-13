@@ -11,6 +11,7 @@
 #include "base/base_export.h"
 #include "base/basic_macros.h"
 #include "base/location.h"
+#include "base/threading/lock.h"
 
 // This file provides the logging functionality through a set of macros.
 // You can use constructs like the following throughout the source code
@@ -62,7 +63,6 @@ class BASE_EXPORT Log {
 // can then be appended using the stream's operator<<.
 // The whole content is flushed to the output stream as soon as the LogMessage
 // instance gets out of scope.
-// TODO(threading): Make this thread-safe.
 class BASE_EXPORT LogMessage {
  public:
   LogMessage(LogLevel level,
@@ -77,6 +77,14 @@ class BASE_EXPORT LogMessage {
  private:
   void PrintHeader(LogLevel level, Location location);
   std::ostream& stream_;
+
+  // Shared lock by all log messages to avoid mixing out the output from
+  // multiple threads.
+  static base::threading::Lock log_lock;
+
+  // Guard used to acquire the shared |log_lock| such that noone else writes to
+  // the output until we are done.
+  ::base::threading::ScopedGuard log_guard_;
 
   DISALLOW_COPY_AND_ASSIGN(LogMessage);
 };

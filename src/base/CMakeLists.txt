@@ -29,6 +29,8 @@ set(BASE_SOURCE_FILES
 	ptr/weak_ptr.h
 	string_util.cc
 	string_util.h
+	threading/lock.cc
+	threading/lock.h
 	threading/task.cc
 	threading/task.h
 	threading/thread.cc

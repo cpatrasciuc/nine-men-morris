@@ -50,10 +50,12 @@ std::string GetCurrentTime() {
   return std::string();
 }
 
+base::threading::Lock LogMessage::log_lock;
+
 LogMessage::LogMessage(LogLevel level,
                        Location location,
                        std::ostream& stream)
-    : stream_(stream) {
+    : stream_(stream), log_guard_(&LogMessage::log_lock) {
   PrintHeader(level, location);
 }
 
