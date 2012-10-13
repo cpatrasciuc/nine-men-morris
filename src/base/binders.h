@@ -160,7 +160,7 @@ class Binder41 : public Callable<R(A4)> {
 };
 
 template <class R, class A1, class A2, class A3, class A4,
-          class P1, class P2, class P3, class P4>
+          class P1, class P2, class P3, class P4>  // NOLINT(build/class)
 class Binder40 : public Callable<R(void)> {
  public:
   Binder40(Callable<R(A1, A2, A3, A4)>* c, P1 a1, P2 a2, P3 a3, P4 a4)
