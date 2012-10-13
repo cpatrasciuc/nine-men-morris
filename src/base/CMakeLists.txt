@@ -7,6 +7,8 @@ set(BASE_SOURCE_FILES
 	callable.h
 	debug/stacktrace.cc
 	debug/stacktrace.h
+	location.cc
+	location.h
 	log.cc
 	log.h
 	ptr/array_storage_policy.h
@@ -27,14 +29,13 @@ set(BASE_SOURCE_FILES
 	ptr/weak_ptr.h
 	string_util.cc
 	string_util.h
-	threading/location.cc
-	threading/location.h
 )
 
 set(BASE_UNITTESTS_SOURCE_FILES
 	bind_unittest.cc
 	callable_unittest.cc
 	debug/stacktrace_unittest.cc
+	location_unittest.cc
 	log_unittest.cc
 	ptr/ref_ptr_unittest.cc
 	ptr/scoped_array_ptr_unittest.cc
@@ -43,7 +44,6 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	ptr/smart_ptr_unittest.cc
 	ptr/weak_ptr_unittest.cc
 	string_util_unittest.cc
-	threading/location_unittest.cc
 )
 
 include_directories(

@@ -6,11 +6,10 @@
 
 #include <string>
 
-#include "base/threading/location.h"
+#include "base/location.h"
 #include "gtest/gtest.h"
 
 namespace base {
-namespace threading {
 namespace {
 
 Location GetTestLocation() {
@@ -22,9 +21,8 @@ TEST(LocationTest, FromHere) {
   EXPECT_EQ("GetTestLocation", loc.function());
   EXPECT_EQ(std::string("location_unittest.cc"),
             basename(loc.file_name().c_str()));
-  EXPECT_EQ(17, loc.line_number());
+  EXPECT_EQ(16, loc.line_number());
 }
 
 }  // anonymous namespace
-}  // namespace threading
 }  // namespace base

@@ -2,13 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef BASE_THREADING_LOCATION_H_
-#define BASE_THREADING_LOCATION_H_
+#ifndef BASE_LOCATION_H_
+#define BASE_LOCATION_H_
 
 #include <string>
 
 namespace base {
-namespace threading {
 
 class Location {
  public:
@@ -33,10 +32,9 @@ class Location {
   int line_number_;
 };
 
-#define FROM_HERE base::threading::Location(__FUNCTION__, __FILE__, __LINE__)
+#define FROM_HERE base::Location(__FUNCTION__, __FILE__, __LINE__)
 
-}  // namespace threading
 }  // namespace base
 
-#endif  // BASE_THREADING_LOCATION_H_
+#endif  // BASE_LOCATION_H_
 
