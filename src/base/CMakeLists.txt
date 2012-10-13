@@ -31,6 +31,8 @@ set(BASE_SOURCE_FILES
 	string_util.h
 	threading/task.cc
 	threading/task.h
+	threading/thread.cc
+	threading/thread.h
 )
 
 set(BASE_UNITTESTS_SOURCE_FILES
@@ -47,6 +49,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	ptr/weak_ptr_unittest.cc
 	string_util_unittest.cc
 	threading/task_unittest.cc
+	threading/thread_unittest.cc
 )
 
 include_directories(
