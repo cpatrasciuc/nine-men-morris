@@ -48,7 +48,15 @@ class RefCountedHelper : public base::ptr::RefCounted {
 
 int ref_counted_function(RefCountedHelper* h) { return h->test_method(); }
 
-class WeakHelper : public base::ptr::SupportsWeakRef<WeakHelper> {};
+class WeakHelper : public base::ptr::SupportsWeakRef<WeakHelper> {
+ public:
+  static int value;
+  void test_method(int x) {
+    value = x;
+  }
+};
+
+int WeakHelper::value;
 
 bool weak_function(WeakHelper* h) { return h; }
 
@@ -172,6 +180,23 @@ TEST(BindTest, WeakBind) {
     EXPECT_TRUE((*c)());
   }
   EXPECT_FALSE((*c)());
+}
+
+TEST(BindTest, WeakMethods) {
+  int x = 10;
+  Method<void(WeakHelper::*)(int)>* method =
+      new Method<void(WeakHelper::*)(int)>(&WeakHelper::test_method);
+  scoped_ptr<Callable<void(void)> > weak_method;
+  WeakHelper::value = 0;
+  {
+    WeakHelper wh;
+    Reset(weak_method, Bind(method, Weak(&wh), x));
+    (*weak_method)();  // This should set the value to |x|
+    EXPECT_EQ(x, WeakHelper::value);
+  }
+  WeakHelper::value = 0;
+  (*weak_method)();  // This should be a no-op since the object is gone
+  EXPECT_EQ(0, WeakHelper::value);
 }
 
 }  // anonymous namespace

@@ -42,7 +42,7 @@ class Binder21 : public Callable<R(A2)> {
 template <class R, class A1, class A2, class P1, class P2>
 class Binder20 : public Callable<R(void)> {
  public:
-  Binder20(Callable<R(A1, A2)>* c, A1 a1, A2 a2) : c_(c), a1_(a1), a2_(a2) {}
+  Binder20(Callable<R(A1, A2)>* c, P1 a1, P2 a2) : c_(c), a1_(a1), a2_(a2) {}
 
   virtual R operator()() const {
     return (*c_)(BindPolicy<P1>::Forward(a1_), BindPolicy<P2>::Forward(a2_));
