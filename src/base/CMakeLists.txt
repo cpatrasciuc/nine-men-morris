@@ -1,6 +1,8 @@
 set(BASE_SOURCE_FILES
+	base_export.h
 	basic_macros.h
 	bind.h
+	bind_policy.h
 	binders.h
 	callable.h
 	debug/stacktrace.cc
