@@ -5,51 +5,52 @@
 #ifndef BASE_BINDERS_H_
 #define BASE_BINDERS_H_
 
+#include "base/bind_policy.h"
 #include "base/callable.h"
 
 namespace base {
 
-template <class R, class A1>
+template <class R, class A1, class P1>
 class Binder10 : public Callable<R(void)> {
  public:
-  Binder10(Callable<R(A1)>* c, A1 a1) : c_(c), a1_(a1) {}
+  Binder10(Callable<R(A1)>* c, P1 a1) : c_(c), a1_(a1) {}
 
   virtual R operator()(void) const {
-    return (*c_)(a1_);
+    return (*c_)(BindPolicy<P1>::Forward(a1_));
   }
 
  private:
   Callable<R(A1)>* c_;
-  A1 a1_;
+  P1 a1_;
 };
 
-template <class R, class A1, class A2>
+template <class R, class A1, class A2, class P1>
 class Binder21 : public Callable<R(A2)> {
  public:
-  Binder21(Callable<R(A1, A2)>* c, A1 a1) : c_(c), a1_(a1) {}
+  Binder21(Callable<R(A1, A2)>* c, P1 a1) : c_(c), a1_(a1) {}
 
   virtual R operator()(A2 a2) const {
-    return (*c_)(a1_, a2);
+    return (*c_)(BindPolicy<P1>::Forward(a1_), a2);
   }
 
  private:
   Callable<R(A1, A2)>* c_;
-  A1 a1_;
+  P1 a1_;
 };
 
-template <class R, class A1, class A2>
+template <class R, class A1, class A2, class P1, class P2>
 class Binder20 : public Callable<R(void)> {
  public:
   Binder20(Callable<R(A1, A2)>* c, A1 a1, A2 a2) : c_(c), a1_(a1), a2_(a2) {}
 
   virtual R operator()() const {
-    return (*c_)(a1_, a2_);
+    return (*c_)(BindPolicy<P1>::Forward(a1_), BindPolicy<P2>::Forward(a2_));
   }
 
  private:
   Callable<R(A1, A2)>* c_;
-  A1 a1_;
-  A2 a2_;
+  P1 a1_;
+  P2 a2_;
 };
 
 template <class R, class A1, class A2, class A3>

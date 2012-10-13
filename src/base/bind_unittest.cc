@@ -7,12 +7,20 @@
 #include "base/bind.h"
 #include "base/function.h"
 #include "base/method.h"
+#include "base/ptr/ref_counted.h"
+#include "base/ptr/ref_ptr.h"
 #include "base/ptr/scoped_ptr.h"
+#include "base/ptr/supports_weak_ref.h"
+#include "base/ptr/weak_ptr.h"
 #include "gtest/gtest.h"
+#include "ptr/scoped_array_ptr.h"
 
 namespace base {
 namespace {
 
+using base::ptr::ref_ptr;
+using base::ptr::scoped_ptr;
+using base::ptr::weak_ptr;
 using std::string;
 
 int f1(int x) { return x; }
@@ -27,6 +35,35 @@ class Helper {
   string test_method(string s, int index) {
     return s.substr(index);
   }
+};
+
+class RefCountedHelper : public base::ptr::RefCounted {
+ public:
+  explicit RefCountedHelper(int x) : x_(x) {}
+  int test_method() { return x_; }
+
+ private:
+  int x_;
+};
+
+int ref_counted_function(RefCountedHelper* h) { return h->test_method(); }
+
+class WeakHelper : public base::ptr::SupportsWeakRef<WeakHelper> {};
+
+bool weak_function(WeakHelper* h) { return h; }
+
+class ClosureTestHelper {
+ public:
+  int get_value() const {
+    return value_;
+  }
+
+  void set_value(int value) {
+    value_ = value;
+  }
+
+ private:
+  int value_;
 };
 
 TEST(BindTest, Arity1) {
@@ -115,20 +152,6 @@ TEST(BindTest, Methods) {
   delete c;
 }
 
-class ClosureTestHelper {
- public:
-  int get_value() const {
-    return value_;
-  }
-
-  void set_value(int value) {
-    value_ = value;
-  }
-
- private:
-  int value_;
-};
-
 TEST(BindTest, Closure) {
   using base::ptr::scoped_ptr;
   int x = 23;
@@ -137,6 +160,35 @@ TEST(BindTest, Closure) {
   scoped_ptr<Closure> c(Bind(&m, &cth, x));
   (*c)();
   EXPECT_EQ(x, cth.get_value());
+}
+
+TEST(BindTest, Owned) {
+  int* x = new int(4);
+  int y = 2;
+  Function<int(int*, int*)> func(&p2);
+  scoped_ptr<Callable<int(int*)> > c(Bind(&func, Owned(x)));
+  EXPECT_EQ((*x) * y, (*c)(&y));
+}
+
+TEST(BindTest, RefCounted) {
+  Function<int(RefCountedHelper*)> func(&ref_counted_function);
+  scoped_ptr<Callable<int(void)> > c(
+      Bind(&func, ref_ptr<RefCountedHelper>(new RefCountedHelper(10))));
+  EXPECT_EQ(10, (*c)());
+  RefCountedHelper rch(20);
+  Reset(c, Bind(&func, &rch));
+  EXPECT_EQ(20, (*c)());
+}
+
+TEST(BindTest, WeakBind) {
+  Function<bool(WeakHelper*)> func(&weak_function);
+  scoped_ptr<Callable<bool(void)> > c;
+  {
+    WeakHelper wh;
+    Reset(c, Bind(&func, Weak(&wh)));
+    EXPECT_TRUE((*c)());
+  }
+  EXPECT_FALSE((*c)());
 }
 
 }  // anonymous namespace
