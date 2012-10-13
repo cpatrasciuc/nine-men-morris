@@ -70,7 +70,12 @@ void LogMessage::PrintHeader(LogLevel level, Location location) {
   stream_ << GetCurrentTime();
   stream_ << "][";
   stream_ << getpid();
-  // TODO(threading): Add thread ID
+  stream_ << "][";
+  if (location.thread()) {
+    stream_ << location.thread()->name();
+  } else {
+    stream_ << "Main";
+  }
   stream_ << "][" << location.file_name() << "("
           << location.line_number() << ")] ";
 }
