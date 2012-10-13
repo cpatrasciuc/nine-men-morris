@@ -33,14 +33,24 @@ void* Thread::StartThreadThunk(void* thread) {
 }
 
 void Thread::RunInternal() {
-  DCHECK(Thread::CurrentlyOn(this));
+  DCHECK(thread_id == pthread_self());
+  Thread::current_thread.Set(this);
   is_running_ = true;
   LOG(DEBUG) << name() << "(" << thread_id << ")";
 }
 
-bool Thread::CurrentlyOn(Thread* t) {
-  return t->thread_id == pthread_self();
+// static
+const Thread* Thread::Current() {
+  return Thread::current_thread.Get();
 }
+
+// static
+bool Thread::CurrentlyOn(Thread* t) {
+  return t == Thread::Current();
+}
+
+// static
+ThreadSpecific<Thread> Thread::current_thread;
 
 }  // namespace threading
 }  // namespace base

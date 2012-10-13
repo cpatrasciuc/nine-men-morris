@@ -35,6 +35,8 @@ set(BASE_SOURCE_FILES
 	threading/task.h
 	threading/thread.cc
 	threading/thread.h
+	threading/thread_specific.cc
+	threading/thread_specific.h
 )
 
 set(BASE_UNITTESTS_SOURCE_FILES

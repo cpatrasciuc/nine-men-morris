@@ -11,6 +11,7 @@
 
 #include "base/base_export.h"
 #include "base/basic_macros.h"
+#include "base/threading/thread_specific.h"
 
 namespace base {
 namespace threading {
@@ -37,6 +38,9 @@ class BASE_EXPORT Thread {
   // Blocks until |this| thread is over.
   void Join();
 
+  // Returns a pointer to the current Thread object
+  static const Thread* Current();
+
   // Check if the method is called on the thread represented by |t|.
   static bool CurrentlyOn(Thread* t);
 
@@ -45,6 +49,9 @@ class BASE_EXPORT Thread {
   // argument is a pointer to the current thread object. It just calls the
   // RunLoop() method on it.
   static void* StartThreadThunk(void* thread);
+
+  // Stores a pointer to the Thread object corresponding to the current thread
+  static ThreadSpecific<Thread> current_thread;
 
   void RunInternal();
 
