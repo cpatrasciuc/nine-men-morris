@@ -13,7 +13,6 @@
 #include "base/ptr/supports_weak_ref.h"
 #include "base/ptr/weak_ptr.h"
 #include "gtest/gtest.h"
-#include "ptr/scoped_array_ptr.h"
 
 namespace base {
 namespace {
