@@ -8,9 +8,12 @@
 #include <string>
 
 #include "base/base_export.h"
-#include "base/threading/thread.h"
 
 namespace base {
+
+namespace threading {
+class Thread;
+}
 
 class BASE_EXPORT Location {
  public:
@@ -44,11 +47,13 @@ class BASE_EXPORT Location {
   const base::threading::Thread* thread_;
 };
 
+BASE_EXPORT const base::threading::Thread* GetCurrentThread();
+
 #define FROM_HERE \
   base::Location(__FUNCTION__, \
                  __FILE__, \
                  __LINE__, \
-                 base::threading::Thread::Current())
+                 GetCurrentThread())
 
 }  // namespace base
 

@@ -6,6 +6,8 @@
 
 #include <string.h>
 
+#include "base/threading/thread.h"
+
 namespace base {
 
 Location::Location(const char* function,
@@ -17,6 +19,10 @@ Location::Location(const char* function,
       file_name_(basename(file_name)),
       line_number_(line_number),
       thread_(thread) {
+}
+
+const base::threading::Thread* GetCurrentThread() {
+  return base::threading::Thread::Current();
 }
 
 }  // namespace base

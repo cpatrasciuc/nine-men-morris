@@ -16,6 +16,7 @@
 #include <string>
 
 #include "base/debug/stacktrace.h"
+#include "base/threading/thread.h"
 
 namespace base {
 
