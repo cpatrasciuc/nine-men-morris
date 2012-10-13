@@ -29,6 +29,8 @@ set(BASE_SOURCE_FILES
 	ptr/weak_ptr.h
 	string_util.cc
 	string_util.h
+	threading/task.cc
+	threading/task.h
 )
 
 set(BASE_UNITTESTS_SOURCE_FILES
@@ -44,6 +46,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	ptr/smart_ptr_unittest.cc
 	ptr/weak_ptr_unittest.cc
 	string_util_unittest.cc
+	threading/task_unittest.cc
 )
 
 include_directories(
