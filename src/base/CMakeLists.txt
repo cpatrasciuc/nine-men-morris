@@ -54,6 +54,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	string_util_unittest.cc
 	threading/task_unittest.cc
 	threading/thread_unittest.cc
+	threading/thread_specific_unittest.cc
 )
 
 include_directories(

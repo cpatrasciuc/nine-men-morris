@@ -19,13 +19,16 @@ void ThreadSpecificImpl::New(Key* key) {
 }
 
 void ThreadSpecificImpl::Delete(Key* key) {
+  if (!ThreadSpecificImpl::Get(key)) {
+    return;
+  }
   int result = pthread_key_delete(*key);
   if (result) {
     ELOG(ERROR) << "Could not delete shared key: ";
   }
 }
 
-void* ThreadSpecificImpl::Get(Key* key) {
+void* ThreadSpecificImpl::Get(const Key* key) {
   return pthread_getspecific(*key);
 }
 

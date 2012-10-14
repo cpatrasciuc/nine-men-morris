@@ -18,7 +18,7 @@ class BASE_EXPORT ThreadSpecificImpl {
   typedef pthread_key_t Key;
   static void New(Key* key);
   static void Delete(Key* key);
-  static void* Get(Key* key);
+  static void* Get(const Key* key);
   static void Set(Key* key, const void* value);
 };
 
@@ -33,7 +33,7 @@ class ThreadSpecific {
     ThreadSpecificImpl::Delete(&key_);
   }
 
-  T* Get() {
+  T* Get() const {
     return static_cast<T*>(ThreadSpecificImpl::Get(&key_));
   }
 
@@ -43,9 +43,10 @@ class ThreadSpecific {
 
  private:
   typename ThreadSpecificImpl::Key key_;
-
-  DISALLOW_COPY_AND_ASSIGN(ThreadSpecific);
 };
+
+// TODO(threading): Add a scoped ThreadSpecific class that deallocates the
+// object stored at |key_|?
 
 }  // namespace threading
 }  // namespace base
