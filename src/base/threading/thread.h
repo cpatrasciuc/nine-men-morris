@@ -7,14 +7,20 @@
 
 #include <pthread.h>
 
+#include <deque>
 #include <string>
 
 #include "base/base_export.h"
 #include "base/basic_macros.h"
+#include "base/callable.h"
+#include "base/location.h"
+#include "base/threading/lock.h"
 #include "base/threading/thread_specific.h"
 
 namespace base {
 namespace threading {
+
+class Task;
 
 typedef pthread_t ThreadID;
 
@@ -38,6 +44,19 @@ class BASE_EXPORT Thread {
   // Blocks until |this| thread is over.
   void Join();
 
+  // This method can be called from any thread. It submits a new task to this
+  // thread. It's an asynchronous method. It returns without waiting for the
+  // thread to actually run the new task. This thread will notify the submitter
+  // thread by submitting a call to |callback| to it once this task is run,
+  // if |callback| is not NULL.
+  void SubmitTask(Location location,
+                  Closure* closure,
+                  Closure* callback = NULL);
+
+  // Post a task on this thread that will make it quit as soon as it reaches the
+  // idle state.
+  void QuitWhenIdle();
+
   // Returns a pointer to the current Thread object
   static const Thread* Current();
 
@@ -50,6 +69,10 @@ class BASE_EXPORT Thread {
   // RunLoop() method on it.
   static void* StartThreadThunk(void* thread);
 
+  // Helper function to be placed at the end of the task queue and set the
+  // |quit_when_idle_| member to false.
+  void QuitInternal();
+
   // Stores a pointer to the Thread object corresponding to the current thread
   static ThreadSpecific<Thread> current_thread;
 
@@ -58,6 +81,19 @@ class BASE_EXPORT Thread {
   std::string name_;
   ThreadID thread_id;
   bool is_running_;
+  bool quit_when_idle_;
+
+  // This queue is accessible from any other thread through SubmitTask* methods
+  std::deque<Task*> public_queue_;
+
+  // The lock used to synchronize access to the public task queue
+  base::threading::Lock public_queue_lock_;
+
+  // The internal task queue. From time to time all the tasks from the public
+  // queue are moved into the internal queue. This is not accessible outside
+  // of the thread object. Is used to buffer incoming work and avoid locking the
+  // public queue while executing it.
+  std::deque<Task*> internal_queue_;
 
   DISALLOW_COPY_AND_ASSIGN(Thread);
 };
