@@ -6,7 +6,6 @@
 
 #include "base/bind.h"
 #include "base/location.h"
-#include "base/log.h"
 #include "base/method.h"
 #include "base/string_util.h"
 #include "base/threading/lock.h"
@@ -23,7 +22,6 @@ class Counter {
 
   void IncrementCounter() {
     ScopedGuard _(&counter_lock_);
-    LOG(DEBUG) << counter_;
     ++counter_;
   }
 

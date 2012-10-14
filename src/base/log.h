@@ -84,6 +84,7 @@ class BASE_EXPORT LogMessage {
 
   // Guard used to acquire the shared |log_lock| such that noone else writes to
   // the output until we are done.
+  // TODO(threading): Check if this lock here is really OK for performance
   ::base::threading::ScopedGuard log_guard_;
 
   DISALLOW_COPY_AND_ASSIGN(LogMessage);
