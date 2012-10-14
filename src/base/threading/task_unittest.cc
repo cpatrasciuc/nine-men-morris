@@ -108,6 +108,18 @@ TEST_F(TaskTest, TaskWithCallback) {
   EXPECT_TRUE(callback_was_called());
 }
 
+TEST_F(TaskTest, PostTaskWithCallbackFromMainThreadDeathTest) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  ASSERT_DEATH(
+      {  // NOLINT(whitespace/braces)
+        worker_thread()->SubmitTask(FROM_HERE,
+            Bind(new Method<void(TaskTest::*)(void)>(&TaskTest::task), this),
+            Bind(new Method<void(TaskTest::*)(void)>(&TaskTest::task), this));
+        StopThread(&worker_thread());
+      },
+      "callbacks from the main thread");
+}
+
 }  // anonymous namespace
 }  // threading namespace
 }  // base namespace

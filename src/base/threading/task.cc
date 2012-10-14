@@ -19,7 +19,6 @@ void Task::Run() {
   DCHECK(closure_);
   (*closure_)();
   if (callback_) {
-    // TODO(threading): Write a death test for this
     DCHECK(location_.thread())
         << "Don't post tasks with callbacks from the main thread";
 
