@@ -9,8 +9,6 @@
 namespace base {
 namespace threading {
 
-// TODO(threading): Write unittests for ThreadSpecific
-
 void ThreadSpecificImpl::New(Key* key) {
   int result = pthread_key_create(key, NULL);  // No special destructor
   if (result) {
