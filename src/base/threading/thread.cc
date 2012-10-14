@@ -53,6 +53,7 @@ void Thread::QuitWhenIdle() {
 
 void Thread::QuitInternal() {
   DCHECK(Thread::CurrentlyOn(this));
+  // TODO(threading): Possible problem if others submit to the working queue?
   quit_when_idle_ = true;
 }
 

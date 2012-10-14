@@ -18,11 +18,15 @@ Task::Task(Location location, Closure* closure, Closure* callback)
 void Task::Run() {
   DCHECK(closure_);
   (*closure_)();
-  // TODO(threading) : Post the callback on the origin thread
   if (callback_) {
-    DCHECK(location_.thread());
-    location_.thread()->SubmitTask(FROM_HERE, Get(callback_));
-    Reset(callback_);
+    // TODO(threading): Write a death test for this
+    DCHECK(location_.thread())
+        << "Don't post tasks with callbacks from the main thread";
+
+    // TODO(smart_pointer): Add a Release() method for scoped_ptr.
+    Closure* callback = Get(callback_);
+    GetImplAsRef(callback_) = NULL;
+    location_.thread()->SubmitTask(FROM_HERE, callback);
   }
 }
 
