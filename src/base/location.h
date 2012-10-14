@@ -21,7 +21,7 @@ class BASE_EXPORT Location {
   Location(const char* function,
            const char* file_name,
            int line_number,
-           const base::threading::Thread* thread);
+           base::threading::Thread* thread);
 
   const std::string& function() const {
     return function_;
@@ -36,7 +36,7 @@ class BASE_EXPORT Location {
   }
 
   // WARNING: This might return NULL if the location refers to the main thread.
-  const base::threading::Thread* thread() const {
+  base::threading::Thread* thread() const {
     return thread_;
   }
 
@@ -44,10 +44,10 @@ class BASE_EXPORT Location {
   const std::string function_;
   const std::string file_name_;
   const int line_number_;
-  const base::threading::Thread* thread_;
+  base::threading::Thread* const thread_;
 };
 
-BASE_EXPORT const base::threading::Thread* GetCurrentThread();
+BASE_EXPORT base::threading::Thread* GetCurrentThread();
 
 #define FROM_HERE \
   base::Location(__FUNCTION__, \

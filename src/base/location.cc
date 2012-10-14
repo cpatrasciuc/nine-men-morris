@@ -13,7 +13,7 @@ namespace base {
 Location::Location(const char* function,
                    const char* file_name,
                    int line_number,
-                   const base::threading::Thread* thread)
+                   base::threading::Thread* thread)
     : function_(function),
       // TODO(file_util): Add a FilePath class or file_util module
       file_name_(basename(file_name)),
@@ -21,7 +21,7 @@ Location::Location(const char* function,
       thread_(thread) {
 }
 
-const base::threading::Thread* GetCurrentThread() {
+base::threading::Thread* GetCurrentThread() {
   return base::threading::Thread::Current();
 }
 

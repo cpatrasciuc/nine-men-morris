@@ -51,7 +51,7 @@ TEST_F(TaskTest, SimpleTask) {
   EXPECT_TRUE(task_was_called());
 }
 
-TEST_F(TaskTest, TaskWithCallback) {
+TEST_F(TaskTest, DISABLED_TaskWithCallback) {
   Task task(FROM_HERE,
       Bind(new Method<void(TaskTest::*)(void)>(&TaskTest::task), this),
       Bind(new Method<void(TaskTest::*)(void)>(&TaskTest::callback), this));

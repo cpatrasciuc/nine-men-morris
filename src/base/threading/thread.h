@@ -58,7 +58,7 @@ class BASE_EXPORT Thread {
   void QuitWhenIdle();
 
   // Returns a pointer to the current Thread object
-  static const Thread* Current();
+  static Thread* Current();
 
   // Check if the method is called on the thread represented by |t|.
   static bool CurrentlyOn(Thread* t);

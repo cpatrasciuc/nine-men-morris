@@ -5,6 +5,7 @@
 #include "base/threading/task.h"
 
 #include "base/log.h"
+#include "base/threading/thread.h"
 
 using base::ptr::scoped_ptr;
 
@@ -15,11 +16,14 @@ Task::Task(Location location, Closure* closure, Closure* callback)
     : location_(location), closure_(closure), callback_(callback) {}
 
 void Task::Run() {
-  DCHECK(Get(closure_));
+  DCHECK(closure_);
   (*closure_)();
   // TODO(threading) : Post the callback on the origin thread
   if (callback_) {
-    (*callback_)();
+    DCHECK(location_.thread());
+    location_.thread()->SubmitTask(FROM_HERE, Get(callback_));
+    // TODO(smart_pointer) : Make default argument of Reset to NULL
+    Reset(callback_, NULL);
   }
 }
 

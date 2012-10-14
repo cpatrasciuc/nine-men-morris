@@ -89,7 +89,7 @@ void Thread::RunInternal() {
 }
 
 // static
-const Thread* Thread::Current() {
+Thread* Thread::Current() {
   return Thread::current_thread.Get();
 }
 
