@@ -41,6 +41,19 @@ TEST(ScopedPtrTest, Reset) {
   EXPECT_TRUE(Helper::destructor_was_called);
 }
 
+TEST(ScopedPtrTest, Release) {
+  Helper::destructor_was_called = false;
+  Helper* raw_ptr = NULL;
+  {
+    scoped_ptr<Helper> ptr(new Helper);
+    raw_ptr = Release(&ptr);
+    EXPECT_FALSE(ptr);
+  }
+  EXPECT_FALSE(Helper::destructor_was_called);
+  delete raw_ptr;
+  EXPECT_TRUE(Helper::destructor_was_called);
+}
+
 TEST(ScopedPtrTest, DisallowCopyAndAssign) {
   scoped_ptr<int> ptr_x(new int);
   SHOULD_NOT_COMPILE(scoped_ptr<int> ptr_y(ptr_x));

@@ -16,6 +16,7 @@ template <typename T>
 class scoped_ptr : public SmartPtr<T, ScopedOwnershipPolicy> {
  private:
   typedef typename SmartPtr<T, ScopedOwnershipPolicy>::StoredType StoredType;
+  typedef typename SmartPtr<T, ScopedOwnershipPolicy>::PointerType PointerType;
  public:
   scoped_ptr() : SmartPtr<T, ScopedOwnershipPolicy>() {}
   explicit scoped_ptr(const StoredType& t) :
@@ -25,6 +26,12 @@ class scoped_ptr : public SmartPtr<T, ScopedOwnershipPolicy> {
     scoped_ptr<T> new_ptr(raw_ptr);
     new_ptr.Swap(smart_ptr);
   };
+
+  friend PointerType Release(scoped_ptr<T>* ptr) {
+    PointerType result = Get(*ptr);
+    GetImplAsRef(*ptr) = NULL;
+    return result;
+  }
 
  private:
   DISALLOW_COPY_AND_ASSIGN(scoped_ptr<T>);
