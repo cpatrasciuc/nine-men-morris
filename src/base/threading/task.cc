@@ -21,11 +21,7 @@ void Task::Run() {
   if (callback_) {
     DCHECK(location_.thread())
         << "Don't post tasks with callbacks from the main thread";
-
-    // TODO(smart_pointer): Add a Release() method for scoped_ptr.
-    Closure* callback = Get(callback_);
-    GetImplAsRef(callback_) = NULL;
-    location_.thread()->SubmitTask(FROM_HERE, callback);
+    location_.thread()->SubmitTask(FROM_HERE, Release(&callback_));
   }
 }
 
