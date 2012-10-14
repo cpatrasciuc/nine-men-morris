@@ -51,5 +51,12 @@ TEST(StringUtilTest, SplitString) {
   EXPECT_EQ("d", v[2]);
 }
 
+TEST(StringUtilTest, ToString) {
+  EXPECT_EQ("10", ToString(10));
+  EXPECT_EQ("-123.45", ToString(-123.450));
+  EXPECT_EQ("0", ToString(static_cast<void*>(NULL)));
+  EXPECT_EQ("test", ToString("test"));
+}
+
 }  // anonymous namespace
 }  // namespace base

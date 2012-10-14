@@ -5,6 +5,7 @@
 #ifndef BASE_STRING_UTIL_H_
 #define BASE_STRING_UTIL_H_
 
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,15 @@ BASE_EXPORT extern const char kWhiteSpaceChars[];
 BASE_EXPORT void SplitString(const std::string& str,
                              std::vector<std::string>* tokens,
                              const std::string& delimiters = kWhiteSpaceChars);
+
+// Utility function that converts an object of type T to a string. The type T
+// must support operator <<.
+template <typename T>
+std::string ToString(T t) {
+  std::ostringstream oss;
+  oss << t;
+  return oss.str();
+}
 
 }  // namespace base
 
