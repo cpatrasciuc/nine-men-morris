@@ -8,6 +8,7 @@
 #include "base/location.h"
 #include "base/log.h"
 #include "base/method.h"
+#include "base/string_util.h"
 #include "base/threading/lock.h"
 #include "base/threading/thread.h"
 #include "gtest/gtest.h"
@@ -40,10 +41,9 @@ TEST(Thread, Basic) {
   int n = 10;
   Counter c;
   std::vector<Thread*> threads;
+
   for (int i = 0; i < n; ++i) {
-    // TODO(string_util): Add a conversion utlit from int to string
-    // so we can append the thread number to the name.
-    threads.push_back(new Thread("TestThread"));
+    threads.push_back(new Thread("Test Thread " + ToString(i+1)));
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
