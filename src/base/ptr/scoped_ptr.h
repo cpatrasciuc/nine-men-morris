@@ -21,7 +21,7 @@ class scoped_ptr : public SmartPtr<T, ScopedOwnershipPolicy> {
   explicit scoped_ptr(const StoredType& t) :
       SmartPtr<T, ScopedOwnershipPolicy>(t) {}
 
-  friend void Reset(scoped_ptr<T>& smart_ptr, const StoredType& raw_ptr) {
+  friend void Reset(scoped_ptr<T>& smart_ptr, const StoredType& raw_ptr = 0) {
     scoped_ptr<T> new_ptr(raw_ptr);
     new_ptr.Swap(smart_ptr);
   };

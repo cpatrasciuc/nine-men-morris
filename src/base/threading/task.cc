@@ -22,8 +22,7 @@ void Task::Run() {
   if (callback_) {
     DCHECK(location_.thread());
     location_.thread()->SubmitTask(FROM_HERE, Get(callback_));
-    // TODO(smart_pointer) : Make default argument of Reset to NULL
-    Reset(callback_, NULL);
+    Reset(callback_);
   }
 }
 
