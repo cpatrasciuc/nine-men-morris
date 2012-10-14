@@ -7,10 +7,12 @@
 
 #include <pthread.h>
 
+#include "base/base_export.h"
+
 namespace base {
 namespace threading {
 
-class Lock {
+class BASE_EXPORT Lock {
  public:
   Lock();
 
@@ -30,7 +32,7 @@ class Lock {
   pthread_mutex_t lock_impl_;
 };
 
-class ScopedGuard {
+class BASE_EXPORT ScopedGuard {
  public:
   explicit ScopedGuard(Lock* lock) : lock_(lock) {
     lock_->Acquire();
