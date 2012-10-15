@@ -37,13 +37,13 @@ class IntHolder {
 
 int IntHolder::delete_counter = 0;
 
-void ThreadSpecificAssertEquals(const ThreadSpecific<IntHolder>* t, int value) {
-  EXPECT_TRUE(t->Get());
-  EXPECT_EQ(value, t->Get()->value());
+void ThreadSpecificAssertEquals(const ThreadSpecific<IntHolder>& t, int value) {
+  EXPECT_TRUE(t.Get());
+  EXPECT_EQ(value, t.Get()->value());
 }
 
-void ThreadSpecificAssertNotInitialized(const ThreadSpecific<IntHolder>* t) {
-  EXPECT_EQ(NULL, t->Get());
+void ThreadSpecificAssertNotInitialized(const ThreadSpecific<IntHolder>& t) {
+  EXPECT_EQ(NULL, t.Get());
 }
 
 void ThreadSpecificSetValue(ThreadSpecific<IntHolder>* t, int value) {
@@ -70,10 +70,9 @@ TEST(ThreadSpecific, Basic) {
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
-    // TODO(bind): Add a PtrToConstRef bind wrapper
     threads[i]->SubmitTask(FROM_HERE,
-      Bind(new Function<void(const ThreadSpecific<IntHolder>*)>(
-          &ThreadSpecificAssertNotInitialized), &tsi));
+      Bind(new Function<void(const ThreadSpecific<IntHolder>&)>(
+          &ThreadSpecificAssertNotInitialized), ConstRef(&tsi)));
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
@@ -84,8 +83,8 @@ TEST(ThreadSpecific, Basic) {
 
   for (size_t i = 0; i < threads.size(); ++i) {
     threads[i]->SubmitTask(FROM_HERE,
-      Bind(new Function<void(const ThreadSpecific<IntHolder>*, int)>(
-          &ThreadSpecificAssertEquals), &tsi, i));
+      Bind(new Function<void(const ThreadSpecific<IntHolder>&, int)>(
+          &ThreadSpecificAssertEquals), ConstRef(&tsi), i));
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
@@ -96,8 +95,8 @@ TEST(ThreadSpecific, Basic) {
 
   for (size_t i = 0; i < threads.size(); ++i) {
     threads[i]->SubmitTask(FROM_HERE,
-      Bind(new Function<void(const ThreadSpecific<IntHolder>*, int)>(
-          &ThreadSpecificAssertEquals), &tsi, 2*i));
+      Bind(new Function<void(const ThreadSpecific<IntHolder>&, int)>(
+          &ThreadSpecificAssertEquals), ConstRef(&tsi), 2*i));
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
