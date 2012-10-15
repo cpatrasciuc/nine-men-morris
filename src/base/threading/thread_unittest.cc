@@ -57,11 +57,7 @@ TEST(Thread, Basic) {
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
-    threads[i]->QuitWhenIdle();
-  }
-
-  for (size_t i = 0; i < threads.size(); ++i) {
-    threads[i]->Join();
+    threads[i]->SubmitQuitTaskAndJoin();
     delete threads[i];
   }
 

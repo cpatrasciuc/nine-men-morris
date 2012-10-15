@@ -66,8 +66,7 @@ class TaskTest : public ::testing::Test {
   }
 
   void StopThread(scoped_ptr<Thread>* thread) {
-    (*thread)->QuitWhenIdle();
-    (*thread)->Join();
+    (*thread)->SubmitQuitTaskAndJoin();
     Reset(*thread);
   }
 
