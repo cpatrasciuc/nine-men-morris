@@ -95,9 +95,8 @@ TEST_F(TaskTest, SimpleTask) {
 
 TEST_F(TaskTest, TaskWithCallback) {
   Location loc(FROM_HERE);
-  // TODO(threading): Change the arguments of Location to std::string
-  Location fake_loc(loc.function().c_str(), loc.file_name().c_str(),
-      loc.line_number(), Get(origin_thread()));
+  Location fake_loc(loc.function(), loc.file_name(), loc.line_number(),
+      Get(origin_thread()));
   worker_thread()->SubmitTask(fake_loc,
       Bind(new Method<void(TaskTest::*)(void)>(&TaskTest::task), this),
       Bind(new Method<void(TaskTest::*)(void)>(&TaskTest::callback), this));
