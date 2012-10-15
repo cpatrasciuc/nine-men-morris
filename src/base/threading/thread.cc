@@ -57,8 +57,13 @@ void Thread::QuitInternal() {
   quit_when_idle_ = true;
 }
 
+void Thread::SubmitQuitTaskAndJoin() {
+  QuitWhenIdle();
+  Join();
+}
+
 void* Thread::StartThreadThunk(void* thread) {
-  Thread* current_thread = reinterpret_cast<Thread*>(thread);
+  Thread* current_thread = static_cast<Thread*>(thread);
   current_thread->RunInternal();
   return NULL;  // Not used
 }

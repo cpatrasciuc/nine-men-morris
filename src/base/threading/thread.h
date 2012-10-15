@@ -47,7 +47,7 @@ class BASE_EXPORT Thread {
   // This method can be called from any thread. It submits a new task to this
   // thread. It's an asynchronous method. It returns without waiting for the
   // thread to actually run the new task. This thread will notify the submitter
-  // thread by submitting a call to |callback| to it once this task is run,
+  // thread by posting the |callback| to its task queue once this task is run,
   // if |callback| is not NULL.
   void SubmitTask(Location location,
                   Closure* closure,
@@ -56,6 +56,9 @@ class BASE_EXPORT Thread {
   // Post a task on this thread that will make it quit as soon as it reaches the
   // idle state.
   void QuitWhenIdle();
+
+  // Utility method that calls QuitWhenIdle() and then immediately calls Join()
+  void SubmitQuitTaskAndJoin();
 
   // Returns a pointer to the current Thread object
   static Thread* Current();
