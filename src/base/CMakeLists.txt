@@ -29,6 +29,7 @@ set(BASE_SOURCE_FILES
 	ptr/weak_ptr.h
 	string_util.cc
 	string_util.h
+	threading/atomic.h
 	threading/lock.cc
 	threading/lock.h
 	threading/task.cc
@@ -52,6 +53,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	ptr/smart_ptr_unittest.cc
 	ptr/weak_ptr_unittest.cc
 	string_util_unittest.cc
+	threading/atomic_unittest.cc
 	threading/task_unittest.cc
 	threading/thread_unittest.cc
 	threading/thread_specific_unittest.cc
