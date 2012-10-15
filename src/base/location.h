@@ -17,9 +17,8 @@ class Thread;
 
 class BASE_EXPORT Location {
  public:
-  // TODO(threading): Add thread ID
-  Location(const char* function,
-           const char* file_name,
+  Location(const std::string& function,
+           const std::string& file_name,
            int line_number,
            base::threading::Thread* thread);
 
