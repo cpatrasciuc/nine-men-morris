@@ -36,6 +36,15 @@ class BindPolicy<base::ptr::weak_ptr<T> > {
   static T* Forward(const base::ptr::weak_ptr<T>& t) { return Get(t); }
 };
 
+// Forward declaration
+template <typename T> class ConstRefHolder;
+
+template <typename T>
+class BindPolicy<ConstRefHolder<T> > {
+ public:
+  static const T& Forward(const ConstRefHolder<T>& t) { return t.Get(); }
+};
+
 }  // namespace base
 
 #endif  // BASE_BIND_POLICY_H_

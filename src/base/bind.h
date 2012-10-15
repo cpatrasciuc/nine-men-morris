@@ -81,6 +81,20 @@ inline base::ptr::weak_ptr<T> Weak(T* t) {
   return base::ptr::weak_ptr<T>(t);
 }
 
+template <typename T>
+class ConstRefHolder {
+ public:
+  explicit ConstRefHolder(const T* t) : t_(t) {}
+  const T& Get() const { return *t_; }
+ private:
+  const T* t_;
+};
+
+template <typename T>
+inline ConstRefHolder<T> ConstRef(T* t) {
+  return ConstRefHolder<T>(t);
+}
+
 }  // namespace base
 
 #endif  // BASE_BIND_H_

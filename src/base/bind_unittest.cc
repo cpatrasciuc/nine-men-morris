@@ -29,6 +29,8 @@ int f4(int x, int y, int z, int t) { return x * y * z * t; }
 
 int p2(int* x, int* y) { return (*x) * (*y); }
 
+int const_ref_product(const int& x, const int& y) { return x * y; }
+
 class Helper {
  public:
   string test_method(string s, int index) {
@@ -169,6 +171,18 @@ TEST(BindTest, RefCounted) {
   Reset(c,
       Bind(new Function<int(RefCountedHelper*)>(&ref_counted_function), &rch));
   EXPECT_EQ(20, (*c)());
+}
+
+TEST(BindTest, ConstReferences) {
+  int x = 2;
+  int y = 3;
+  scoped_ptr<Callable<int(void)> > c(
+      Bind(new Function<int(const int&, const int&)>(&const_ref_product),
+           ConstRef(&x), ConstRef(&y)));
+  EXPECT_EQ(x * y, (*c)());
+  x = 10;
+  y = 10;
+  EXPECT_EQ(x * y, (*c)());
 }
 
 TEST(BindTest, WeakBind) {
