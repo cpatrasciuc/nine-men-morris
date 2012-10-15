@@ -13,11 +13,6 @@
 
 namespace base {
 
-/*template <class R, class A1>
-Callable<R(void)>* Bind(Callable<R(A1)>* c, A1 a1) {
-  return new Binder10<R, A1>(c, a1);
-}*/
-
 template <class R, class A1, class P1>
 Callable<R(void)>* Bind(Callable<R(A1)>* c, P1 a1) {
   return new Binder10<R, A1, P1>(c, a1);
