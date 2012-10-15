@@ -14,6 +14,7 @@
 #include "base/location.h"
 #include "base/log.h"
 #include "base/basic_macros.h"
+#include "base/threading/thread.h"
 #include "gtest/gtest.h"
 
 namespace base {
@@ -81,9 +82,10 @@ TEST_F(LogUnittest, MAYBE(LogIfTest)) {
 TEST_F(LogUnittest, LogMessageFormatTest) {
   std::string source_file("foobar.cc");
   std::string text_message("Foo Bar");
+  base::threading::Thread thread("Test thread");
   {
     LogMessage log_message(INFO,
-        Location("LogMessageFormatTest", source_file, 69, NULL), test_stream());
+        Location("function_name", source_file, 69, &thread), test_stream());
     log_message.stream() << text_message;
   }
   std::string output = test_stream().str();
@@ -91,6 +93,7 @@ TEST_F(LogUnittest, LogMessageFormatTest) {
   EXPECT_NE(std::string::npos, output.find("69"));
   EXPECT_NE(std::string::npos, output.find(source_file));
   EXPECT_NE(std::string::npos, output.find(text_message));
+  EXPECT_NE(std::string::npos, output.find(thread.name()));
 }
 
 TEST_F(LogUnittest, MAYBE(SystemErrorLogIfTest)) {
