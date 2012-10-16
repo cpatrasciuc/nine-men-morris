@@ -74,7 +74,7 @@ void* Thread::StartThreadThunk(void* thread) {
 }
 
 void Thread::Run() {
-  DCHECK(thread_id == pthread_self());
+  DCHECK(pthread_equal(thread_id, pthread_self()));
   Thread::current_thread.Set(this);
 
   while (true) {
