@@ -141,6 +141,15 @@ TEST(ThreadDeathTest, MultipleJoins) {
   thread.SubmitQuitTaskAndJoin();
 }
 
+TEST(ThreadDeathTest, NotJoined) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  ASSERT_DEATH({
+      Thread thread("Test thread");
+      thread.Start();
+    },
+    "destroyed before being joined");
+}
+
 }  // anonymous namespace
 }  // namespace threading
 }  // namespace base

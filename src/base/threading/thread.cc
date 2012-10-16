@@ -17,12 +17,16 @@ Thread::Thread(std::string name)
       thread_id(-1),
       is_running_(false),
       quit_when_idle_(false),
+      was_joined_(false),
       public_queue_(),
       public_queue_lock_(),
       internal_queue_() {
 }
 
-Thread::~Thread() {}
+Thread::~Thread() {
+  DCHECK(!is_running() || was_joined_) << "Running thread '" << name() <<
+      "' is destroyed before being joined";
+}
 
 bool Thread::Start() {
   // TODO(threading): Add thread options
@@ -40,6 +44,8 @@ void Thread::Join() {
     ELOG(ERROR) << "Error while joining thread " << thread_id <<
         " from thread " << pthread_self() << ": ";
     DCHECK(!error);  // Force crash in debug mode
+  } else {
+    was_joined_ = true;
   }
 }
 

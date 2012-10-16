@@ -82,9 +82,14 @@ class BASE_EXPORT Thread {
   void Run();
 
   std::string name_;
+
   ThreadID thread_id;
+
   bool is_running_;
+
   bool quit_when_idle_;
+
+  bool was_joined_;
 
   // This queue is accessible from any other thread through SubmitTask* methods
   std::deque<Task*> public_queue_;
