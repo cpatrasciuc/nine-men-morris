@@ -64,11 +64,11 @@ void Thread::SubmitQuitTaskAndJoin() {
 
 void* Thread::StartThreadThunk(void* thread) {
   Thread* current_thread = static_cast<Thread*>(thread);
-  current_thread->RunInternal();
+  current_thread->Run();
   return NULL;  // Not used
 }
 
-void Thread::RunInternal() {
+void Thread::Run() {
   DCHECK(thread_id == pthread_self());
   Thread::current_thread.Set(this);
 

@@ -79,7 +79,7 @@ class BASE_EXPORT Thread {
   // Stores a pointer to the Thread object corresponding to the current thread
   static ThreadSpecific<Thread> current_thread;
 
-  void RunInternal();
+  void Run();
 
   std::string name_;
   ThreadID thread_id;
