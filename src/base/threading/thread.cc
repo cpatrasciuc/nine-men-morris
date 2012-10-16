@@ -35,7 +35,12 @@ bool Thread::Start() {
 }
 
 void Thread::Join() {
-  pthread_join(thread_id, NULL);
+  int error = pthread_join(thread_id, NULL);
+  if (error) {
+    ELOG(ERROR) << "Error while joining thread " << thread_id <<
+        " from thread " << pthread_self() << ": ";
+    DCHECK(!error);  // Force crash in debug mode
+  }
 }
 
 void Thread::SubmitTask(Location location,

@@ -99,6 +99,48 @@ TYPED_TEST(ThreadTest, Counting) {
   }
 }
 
+TEST(ThreadDeathTest, Join) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  Thread thread("Test thread");
+  thread.Start();
+  thread.QuitWhenIdle();
+  thread.Join();
+  ASSERT_DEATH(thread.Join(), "Error while joining thread");
+}
+
+TEST(ThreadDeathTest, SelfJoin) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  Thread thread("Test thread");
+  thread.Start();
+  Closure* self_join =
+      Bind(new Method<void(Thread::*)(void)>(&Thread::Join), &thread);
+  ASSERT_DEATH({
+        thread.SubmitTask(FROM_HERE, self_join);
+        thread.Join();
+      },
+      "Error while joining thread");
+  delete self_join;
+  thread.SubmitQuitTaskAndJoin();
+}
+
+TEST(ThreadDeathTest, MultipleJoins) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  Thread thread("Test thread");
+  Thread join_thread("Thread that calls Join()");
+  thread.Start();
+  join_thread.Start();
+  Closure* join =
+      Bind(new Method<void(Thread::*)(void)>(&Thread::Join), &thread);
+  ASSERT_DEATH({
+        join_thread.SubmitTask(FROM_HERE, join);
+        thread.Join();
+      },
+      "Error while joining thread");
+  delete join;
+  join_thread.SubmitQuitTaskAndJoin();
+  thread.SubmitQuitTaskAndJoin();
+}
+
 }  // anonymous namespace
 }  // namespace threading
 }  // namespace base
