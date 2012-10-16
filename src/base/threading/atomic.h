@@ -8,7 +8,7 @@
 namespace base {
 namespace threading {
 
-// TODO(threading): Add ifdef's to check if compiled under gcc/clang
+#if defined(__GNUC__) || defined(__clang__)
 
 // This class wraps a simple variable and offers atomic operations on it.
 // The functions used to implement this are only supported on GCC/Clang.
@@ -71,11 +71,11 @@ class Atomic {
     return __sync_xor_and_fetch(&var_, value);
   }
 
-  // TODO(clang): Enable this when clang version is updated
+  // TODO(clang): Enable this when clang will support atomic nand
   // return var_ = ~var_ & value
-  /*T BitwiseNand(const T& value) {
-    return __sync_nand_and_fetch(&var_, value);
-  }*/
+  // T BitwiseNand(const T& value) {
+  // return __sync_nand_and_fetch(&var_, value);
+  // }
 
   // if (var_ == old_value) {
   //     var_ = new_value;
@@ -89,6 +89,10 @@ class Atomic {
  private:
   T var_;
 };
+
+#else
+#error Your compiler does not support atomic operations
+#endif
 
 }  // namespace threading
 }  // namespace base
