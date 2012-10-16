@@ -99,6 +99,8 @@ TYPED_TEST(ThreadTest, Counting) {
   }
 }
 
+#if defined(DEBUG_MODE)
+
 TEST(ThreadDeathTest, Join) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Thread thread("Test thread");
@@ -143,12 +145,37 @@ TEST(ThreadDeathTest, MultipleJoins) {
 
 TEST(ThreadDeathTest, NotJoined) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  {
+    Thread not_started("Not started thread");
+    EXPECT_FALSE(not_started.is_running());
+  }
   ASSERT_DEATH({
       Thread thread("Test thread");
       thread.Start();
     },
     "destroyed before being joined");
 }
+
+TEST(ThreadDeathTest, JoinBeforeStart) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  Thread thread("Test thread");
+  ASSERT_DEATH(thread.Join(), "not started");
+}
+
+TEST(ThreadDeathTest, MultipleStarts) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  Thread thread("Test thread");
+  thread.Start();
+  ASSERT_DEATH(thread.Start(), "already running");
+  thread.SubmitQuitTaskAndJoin();
+  ASSERT_DEATH({
+      thread.Start();
+      thread.SubmitQuitTaskAndJoin();
+    },
+    "already run and joined");
+}
+
+#endif  // defined(DEBUG_MODE)
 
 }  // anonymous namespace
 }  // namespace threading

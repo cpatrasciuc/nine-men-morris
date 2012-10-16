@@ -14,7 +14,7 @@ namespace threading {
 
 Thread::Thread(std::string name)
     : name_(name),
-      thread_id(-1),
+      thread_id(0),
       is_running_(false),
       quit_when_idle_(false),
       was_joined_(false),
@@ -29,16 +29,18 @@ Thread::~Thread() {
 }
 
 bool Thread::Start() {
+  DCHECK(!is_running()) << "Thread '" << name() << "' is already running";
   // TODO(threading): Add thread options
   if (!pthread_create(&thread_id, NULL, &Thread::StartThreadThunk, this)) {
     is_running_ = true;
     return true;
   }
-  thread_id = -1;
+  thread_id = 0;
   return false;
 }
 
 void Thread::Join() {
+  DCHECK(thread_id) << "Thread '" << name() << "' was not started.";
   int error = pthread_join(thread_id, NULL);
   if (error) {
     ELOG(ERROR) << "Error while joining thread " << thread_id <<
@@ -81,6 +83,7 @@ void* Thread::StartThreadThunk(void* thread) {
 
 void Thread::Run() {
   DCHECK(pthread_equal(thread_id, pthread_self()));
+  DCHECK(!was_joined_) << "'" << name() << "' was already run and joined";
   Thread::current_thread.Set(this);
 
   while (true) {
@@ -100,6 +103,7 @@ void Thread::Run() {
     }
 
     if (!did_some_work && quit_when_idle_) {
+      is_running_ = false;
       break;
     }
   }
