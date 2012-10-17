@@ -26,22 +26,29 @@ class BASE_EXPORT MutexLockImpl : public LockImpl {
  public:
   MutexLockImpl();
 
-  virtual void Acquire() {
-    pthread_mutex_lock(&mutex_);
-  }
-
-  virtual void Release() {
-    pthread_mutex_unlock(&mutex_);
-  }
-
-  virtual bool TryAcquire() {
-    return pthread_mutex_trylock(&mutex_);
-  }
+  virtual void Acquire()    { pthread_mutex_lock(&mutex_); }
+  virtual void Release()    { pthread_mutex_unlock(&mutex_); }
+  virtual bool TryAcquire() { return pthread_mutex_trylock(&mutex_); }
 
  private:
   pthread_mutex_t mutex_;
 
   DISALLOW_COPY_AND_ASSIGN(MutexLockImpl);
+};
+
+class BASE_EXPORT SpinLockImpl : public LockImpl {
+ public:
+  SpinLockImpl();
+  virtual ~SpinLockImpl();
+
+  virtual void Acquire()    { pthread_spin_lock(&spinlock_); }
+  virtual void Release()    { pthread_spin_unlock(&spinlock_); }
+  virtual bool TryAcquire() { return pthread_spin_trylock(&spinlock_); }
+
+ private:
+  pthread_spinlock_t spinlock_;
+
+  DISALLOW_COPY_AND_ASSIGN(SpinLockImpl);
 };
 
 class BASE_EXPORT Lock {

@@ -20,9 +20,10 @@ namespace {
 
 const int kThreadCount = 10;
 
+template <class LockImpl>
 class LockCounter {
  public:
-  LockCounter() : counter_(0), counter_lock_(new MutexLockImpl) {}
+  LockCounter() : counter_(0), counter_lock_(new LockImpl) {}
 
   void IncrementCounter() {
     ScopedGuard _(&counter_lock_);
@@ -88,7 +89,9 @@ class ThreadTest : public ::testing::Test {
   T counter_;
 };
 
-typedef ::testing::Types<LockCounter, AtomicCounter> CounterTypes;
+typedef ::testing::Types<LockCounter<MutexLockImpl>,
+                         LockCounter<SpinLockImpl>,
+                         AtomicCounter> CounterTypes;
 TYPED_TEST_CASE(ThreadTest, CounterTypes);
 
 TYPED_TEST(ThreadTest, Counting) {
