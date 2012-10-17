@@ -18,7 +18,6 @@ namespace {
 
 class IntHolder {
  public:
-  // TODO(threading): Replace this with Atomic<int>
   static Atomic<int> delete_counter;
 
   ~IntHolder() {
