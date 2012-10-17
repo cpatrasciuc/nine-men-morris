@@ -7,6 +7,7 @@
 #include "base/bind.h"
 #include "base/function.h"
 #include "base/string_util.h"
+#include "base/threading/atomic.h"
 #include "base/threading/thread.h"
 #include "base/threading/thread_specific.h"
 #include "gtest/gtest.h"
@@ -18,10 +19,10 @@ namespace {
 class IntHolder {
  public:
   // TODO(threading): Replace this with Atomic<int>
-  static int delete_counter;
+  static Atomic<int> delete_counter;
 
   ~IntHolder() {
-    ++IntHolder::delete_counter;
+    IntHolder::delete_counter.Increment();
   }
 
   int value() const {
@@ -36,7 +37,7 @@ class IntHolder {
   int value_;
 };
 
-int IntHolder::delete_counter = 0;
+Atomic<int> IntHolder::delete_counter(0);
 
 void ThreadSpecificAssertEquals(const ThreadSpecific<IntHolder>& t, int value) {
   EXPECT_TRUE(t.Get());
@@ -111,7 +112,7 @@ TEST(ThreadSpecific, Basic) {
     delete threads[i];
   }
 
-  EXPECT_EQ(n, IntHolder::delete_counter);
+  EXPECT_EQ(n, IntHolder::delete_counter.Get());
 }
 
 }  // anonymous namespace
