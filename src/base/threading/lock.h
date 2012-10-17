@@ -25,6 +25,7 @@ class BASE_EXPORT LockImpl {
 class BASE_EXPORT MutexLockImpl : public LockImpl {
  public:
   MutexLockImpl();
+  virtual ~MutexLockImpl();
 
   virtual void Acquire()    { pthread_mutex_lock(&mutex_); }
   virtual void Release()    { pthread_mutex_unlock(&mutex_); }

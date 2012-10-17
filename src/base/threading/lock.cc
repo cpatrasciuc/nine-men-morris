@@ -26,6 +26,10 @@ MutexLockImpl::MutexLockImpl() {
 #endif
 }
 
+MutexLockImpl::~MutexLockImpl() {
+  pthread_mutex_destroy(&mutex_);
+}
+
 SpinLockImpl::SpinLockImpl() {
   pthread_spin_init(&spinlock_, 0);  // 0 = Not shared between processes
 }
