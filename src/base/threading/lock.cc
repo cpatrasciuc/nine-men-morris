@@ -11,20 +11,22 @@
 namespace base {
 namespace threading {
 
-Lock::Lock() {
+MutexLockImpl::MutexLockImpl() {
 #ifdef DEBUG_MODE
   pthread_mutexattr_t attrs;
   ELOG_IF(ERROR, pthread_mutexattr_init(&attrs))
       << "Could not initialized mutex attributes";
   ELOG_IF(ERROR, pthread_mutexattr_settype(&attrs, PTHREAD_MUTEX_ERRORCHECK))
       << "Could not setup mutex attributes";
-  pthread_mutex_init(&lock_impl_, &attrs);
+  pthread_mutex_init(&mutex_, &attrs);
   ELOG_IF(ERROR, pthread_mutexattr_destroy(&attrs))
       << "Could not destroy mutex attributes";
 #else
-  pthread_mutex_init(&lock_impl_, NULL);
+  pthread_mutex_init(&mutex_, NULL);
 #endif
 }
+
+Lock::Lock(LockImpl* lock_impl) : lock_impl_(lock_impl) {}
 
 }  // namespace threading
 }  // namespace base

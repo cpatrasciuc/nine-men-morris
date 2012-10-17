@@ -16,6 +16,7 @@
 #include <string>
 
 #include "base/debug/stacktrace.h"
+#include "base/threading/lock.h"
 #include "base/threading/thread.h"
 
 namespace base {
@@ -51,7 +52,7 @@ std::string GetCurrentTime() {
   return std::string();
 }
 
-base::threading::Lock LogMessage::log_lock;
+base::threading::Lock LogMessage::log_lock(new base::threading::MutexLockImpl);
 
 LogMessage::LogMessage(LogLevel level,
                        Location location,

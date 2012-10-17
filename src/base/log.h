@@ -11,7 +11,13 @@
 #include "base/base_export.h"
 #include "base/basic_macros.h"
 #include "base/location.h"
-#include "base/threading/lock.h"
+#include "base/threading/scoped_guard.h"
+
+namespace base {
+namespace threading {
+class Lock;
+}
+}
 
 // This file provides the logging functionality through a set of macros.
 // You can use constructs like the following throughout the source code

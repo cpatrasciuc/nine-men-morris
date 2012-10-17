@@ -8,42 +8,54 @@
 #include <pthread.h>
 
 #include "base/base_export.h"
+#include "base/basic_macros.h"
+#include "base/ptr/scoped_ptr.h"
 
 namespace base {
 namespace threading {
 
-class BASE_EXPORT Lock {
+class BASE_EXPORT LockImpl {
  public:
-  Lock();
-
-  void Acquire() {
-    pthread_mutex_lock(&lock_impl_);
-  };
-
-  void Release() {
-    pthread_mutex_unlock(&lock_impl_);
-  };
-
-  bool TryAcquire() {
-    return pthread_mutex_trylock(&lock_impl_) == 0;
-  };
-
- private:
-  pthread_mutex_t lock_impl_;
+  virtual ~LockImpl() {}
+  virtual void Acquire() = 0;
+  virtual void Release() = 0;
+  virtual bool TryAcquire() = 0;
 };
 
-class BASE_EXPORT ScopedGuard {
+class BASE_EXPORT MutexLockImpl : public LockImpl {
  public:
-  explicit ScopedGuard(Lock* lock) : lock_(lock) {
-    lock_->Acquire();
+  MutexLockImpl();
+
+  virtual void Acquire() {
+    pthread_mutex_lock(&mutex_);
   }
 
-  ~ScopedGuard() {
-    lock_->Release();
+  virtual void Release() {
+    pthread_mutex_unlock(&mutex_);
+  }
+
+  virtual bool TryAcquire() {
+    return pthread_mutex_trylock(&mutex_);
   }
 
  private:
-  Lock* lock_;
+  pthread_mutex_t mutex_;
+
+  DISALLOW_COPY_AND_ASSIGN(MutexLockImpl);
+};
+
+class BASE_EXPORT Lock {
+ public:
+  explicit Lock(LockImpl* lock_impl);
+
+  void Acquire()    { lock_impl_->Acquire();           }
+  void Release()    { lock_impl_->Release();           }
+  bool TryAcquire() { return lock_impl_->TryAcquire(); }
+
+ private:
+  base::ptr::scoped_ptr<LockImpl> lock_impl_;
+
+  DISALLOW_COPY_AND_ASSIGN(Lock);
 };
 
 }  // namespace threading

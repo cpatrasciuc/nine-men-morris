@@ -6,6 +6,7 @@
 #include "base/bind.h"
 #include "base/method.h"
 #include "base/ptr/scoped_ptr.h"
+#include "base/threading/lock.h"
 #include "base/threading/task.h"
 #include "base/threading/thread.h"
 
@@ -19,7 +20,7 @@ Thread::Thread(std::string name)
       quit_when_idle_(false),
       was_joined_(false),
       public_queue_(),
-      public_queue_lock_(),
+      public_queue_lock_(new MutexLockImpl),
       internal_queue_() {
 }
 

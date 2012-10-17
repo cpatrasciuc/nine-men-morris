@@ -22,7 +22,7 @@ const int kThreadCount = 10;
 
 class LockCounter {
  public:
-  LockCounter() : counter_(0) {}
+  LockCounter() : counter_(0), counter_lock_(new MutexLockImpl) {}
 
   void IncrementCounter() {
     ScopedGuard _(&counter_lock_);

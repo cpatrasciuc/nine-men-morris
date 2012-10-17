@@ -32,6 +32,8 @@ set(BASE_SOURCE_FILES
 	threading/atomic.h
 	threading/lock.cc
 	threading/lock.h
+	threading/scoped_guard.h
+	threading/scoped_guard.cc
 	threading/task.cc
 	threading/task.h
 	threading/thread.cc
