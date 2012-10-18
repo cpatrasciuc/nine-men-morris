@@ -54,7 +54,7 @@ class BASE_EXPORT SpinLockImpl : public LockImpl {
 
 class BASE_EXPORT Lock {
  public:
-  explicit Lock(LockImpl* lock_impl);
+  explicit Lock(LockImpl* lock_impl = new MutexLockImpl);
 
   void Acquire()    { lock_impl_->Acquire();           }
   void Release()    { lock_impl_->Release();           }
@@ -70,4 +70,3 @@ class BASE_EXPORT Lock {
 }  // namespace base
 
 #endif  // BASE_THREADING_LOCK_H_
-

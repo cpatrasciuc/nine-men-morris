@@ -20,7 +20,7 @@ Thread::Thread(std::string name)
       quit_when_idle_(false),
       was_joined_(false),
       public_queue_(),
-      public_queue_lock_(new MutexLockImpl),
+      public_queue_lock_(),
       internal_queue_() {
 }
 
