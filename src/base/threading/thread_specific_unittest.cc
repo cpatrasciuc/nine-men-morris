@@ -72,38 +72,38 @@ TEST(ThreadSpecific, Basic) {
 
   for (size_t i = 0; i < threads.size(); ++i) {
     threads[i]->SubmitTask(FROM_HERE,
-      Bind(new Function<void(const ThreadSpecific<IntHolder>&)>(
-          &ThreadSpecificAssertNotInitialized), ConstRef(&tsi)));
+        Bind(new Function<void(const ThreadSpecific<IntHolder>&)>(
+            &ThreadSpecificAssertNotInitialized), ConstRef(&tsi)));
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
     threads[i]->SubmitTask(FROM_HERE,
-      Bind(new Function<void(ThreadSpecific<IntHolder>*, int)>(
-          &ThreadSpecificSetValue), &tsi, i));
+        Bind(new Function<void(ThreadSpecific<IntHolder>*, int)>(
+            &ThreadSpecificSetValue), &tsi, i));
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
     threads[i]->SubmitTask(FROM_HERE,
-      Bind(new Function<void(const ThreadSpecific<IntHolder>&, int)>(
-          &ThreadSpecificAssertEquals), ConstRef(&tsi), i));
+        Bind(new Function<void(const ThreadSpecific<IntHolder>&, int)>(
+            &ThreadSpecificAssertEquals), ConstRef(&tsi), i));
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
     threads[i]->SubmitTask(FROM_HERE,
-      Bind(new Function<void(ThreadSpecific<IntHolder>*, int)>(
-          &ThreadSpecificSetValue), &tsi, 2*i));
+        Bind(new Function<void(ThreadSpecific<IntHolder>*, int)>(
+            &ThreadSpecificSetValue), &tsi, 2*i));
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
     threads[i]->SubmitTask(FROM_HERE,
-      Bind(new Function<void(const ThreadSpecific<IntHolder>&, int)>(
-          &ThreadSpecificAssertEquals), ConstRef(&tsi), 2*i));
+        Bind(new Function<void(const ThreadSpecific<IntHolder>&, int)>(
+            &ThreadSpecificAssertEquals), ConstRef(&tsi), 2*i));
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
     threads[i]->SubmitTask(FROM_HERE,
-      Bind(new Function<void(ThreadSpecific<IntHolder>*)>(
-          &ThreadSpecificDelete), &tsi));
+        Bind(new Function<void(ThreadSpecific<IntHolder>*)>(
+            &ThreadSpecificDelete), &tsi));
   }
 
   for (size_t i = 0; i < threads.size(); ++i) {
