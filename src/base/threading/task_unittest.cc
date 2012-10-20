@@ -38,15 +38,6 @@ class TaskTest : public ::testing::Test {
     }
   }
 
- protected:
-  bool task_was_called() const {
-    return task_was_called_;
-  }
-
-  bool callback_was_called() const {
-    return callback_was_called_;
-  }
-
   void task() {
     EXPECT_TRUE(Thread::CurrentlyOn(Get(worker_thread_)));
     task_was_called_ = true;
@@ -55,6 +46,15 @@ class TaskTest : public ::testing::Test {
   void callback() {
     EXPECT_TRUE(Thread::CurrentlyOn(Get(origin_thread_)));
     callback_was_called_ = true;
+  }
+
+ protected:
+  bool task_was_called() const {
+    return task_was_called_;
+  }
+
+  bool callback_was_called() const {
+    return callback_was_called_;
   }
 
   scoped_ptr<Thread>& origin_thread() {
