@@ -14,3 +14,20 @@
    fun:pthread_once
    fun:backtrace
 }
+{
+   Shared library log_lock
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_Z41__static_initialization_and_destruction_0ii
+   fun:_GLOBAL__I_log.cc
+   obj:/home/cristi/nine-men-morris/src/base/libstacktrace_test_helper.so
+   obj:/home/cristi/nine-men-morris/src/base/libstacktrace_test_helper.so
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+
