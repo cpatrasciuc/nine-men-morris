@@ -52,7 +52,6 @@ class BASE_EXPORT ConditionVariable {
   DISALLOW_COPY_AND_ASSIGN(ConditionVariable);
 };
 
-
 }  // namespace threading
 }  // namespace base
 
