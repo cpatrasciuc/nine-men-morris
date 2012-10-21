@@ -57,6 +57,8 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	string_util_unittest.cc
 	threading/atomic_unittest.cc
 	threading/task_unittest.cc
+	threading/thread_pool_for_unittests.cc
+	threading/thread_pool_for_unittests.h
 	threading/thread_unittest.cc
 	threading/thread_specific_unittest.cc
 )
