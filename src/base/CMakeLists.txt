@@ -30,6 +30,8 @@ set(BASE_SOURCE_FILES
 	string_util.cc
 	string_util.h
 	threading/atomic.h
+	threading/condition_variable.cc
+	threading/condition_variable.h
 	threading/lock.cc
 	threading/lock.h
 	threading/scoped_guard.h
@@ -56,6 +58,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	ptr/weak_ptr_unittest.cc
 	string_util_unittest.cc
 	threading/atomic_unittest.cc
+	threading/condition_variable_unittest.cc
 	threading/task_unittest.cc
 	threading/thread_pool_for_unittests.cc
 	threading/thread_pool_for_unittests.h

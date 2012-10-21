@@ -14,6 +14,8 @@
 namespace base {
 namespace threading {
 
+class ConditionVariable;
+
 class BASE_EXPORT LockImpl {
  public:
   virtual ~LockImpl() {}
@@ -37,6 +39,7 @@ class BASE_EXPORT MutexLockImpl : public LockImpl {
  private:
   pthread_mutex_t mutex_;
 
+  friend class ConditionVariable;
   DISALLOW_COPY_AND_ASSIGN(MutexLockImpl);
 };
 
@@ -66,6 +69,7 @@ class BASE_EXPORT Lock {
  private:
   base::ptr::scoped_ptr<LockImpl> lock_impl_;
 
+  friend class ConditionVariable;
   DISALLOW_COPY_AND_ASSIGN(Lock);
 };
 
