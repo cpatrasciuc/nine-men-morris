@@ -6,10 +6,9 @@
 
 #include "base/bind.h"
 #include "base/function.h"
-#include "base/string_util.h"
 #include "base/threading/atomic.h"
-#include "base/threading/thread.h"
 #include "base/threading/thread_specific.h"
+#include "base/threading/thread_pool_for_unittests.h"
 #include "gtest/gtest.h"
 
 namespace base {
@@ -61,57 +60,50 @@ void ThreadSpecificDelete(ThreadSpecific<IntHolder>* tsi) {
 
 // TODO(threading): Might share some code between this and thread_unittest.cc
 TEST(ThreadSpecific, Basic) {
-  const int n = 10;
-  std::vector<Thread*> threads;
+  ThreadPoolForUnittests thread_pool;
   ThreadSpecific<IntHolder> tsi;
 
-  for (int i = 0; i < n; ++i) {
-    threads.push_back(new Thread("Test Thread " + ToString(i)));
-    threads[i]->Start();
-  }
+  thread_pool.CreateThreads();
+  thread_pool.StartThreads();
 
-  for (size_t i = 0; i < threads.size(); ++i) {
-    threads[i]->SubmitTask(FROM_HERE,
+  for (int i = 0; i < thread_pool.thread_count(); ++i) {
+    thread_pool.SubmitTask(i, FROM_HERE,
         Bind(new Function<void(const ThreadSpecific<IntHolder>&)>(
             &ThreadSpecificAssertNotInitialized), ConstRef(&tsi)));
   }
 
-  for (size_t i = 0; i < threads.size(); ++i) {
-    threads[i]->SubmitTask(FROM_HERE,
+  for (int i = 0; i < thread_pool.thread_count(); ++i) {
+    thread_pool.SubmitTask(i, FROM_HERE,
         Bind(new Function<void(ThreadSpecific<IntHolder>*, int)>(
             &ThreadSpecificSetValue), &tsi, i));
   }
 
-  for (size_t i = 0; i < threads.size(); ++i) {
-    threads[i]->SubmitTask(FROM_HERE,
+  for (int i = 0; i < thread_pool.thread_count(); ++i) {
+    thread_pool.SubmitTask(i, FROM_HERE,
         Bind(new Function<void(const ThreadSpecific<IntHolder>&, int)>(
             &ThreadSpecificAssertEquals), ConstRef(&tsi), i));
   }
 
-  for (size_t i = 0; i < threads.size(); ++i) {
-    threads[i]->SubmitTask(FROM_HERE,
+  for (int i = 0; i < thread_pool.thread_count(); ++i) {
+    thread_pool.SubmitTask(i, FROM_HERE,
         Bind(new Function<void(ThreadSpecific<IntHolder>*, int)>(
             &ThreadSpecificSetValue), &tsi, 2*i));
   }
 
-  for (size_t i = 0; i < threads.size(); ++i) {
-    threads[i]->SubmitTask(FROM_HERE,
+  for (int i = 0; i < thread_pool.thread_count(); ++i) {
+    thread_pool.SubmitTask(i, FROM_HERE,
         Bind(new Function<void(const ThreadSpecific<IntHolder>&, int)>(
             &ThreadSpecificAssertEquals), ConstRef(&tsi), 2*i));
   }
 
-  for (size_t i = 0; i < threads.size(); ++i) {
-    threads[i]->SubmitTask(FROM_HERE,
+  for (int i = 0; i < thread_pool.thread_count(); ++i) {
+    thread_pool.SubmitTask(i, FROM_HERE,
         Bind(new Function<void(ThreadSpecific<IntHolder>*)>(
             &ThreadSpecificDelete), &tsi));
   }
 
-  for (size_t i = 0; i < threads.size(); ++i) {
-    threads[i]->SubmitQuitTaskAndJoin();
-    delete threads[i];
-  }
-
-  EXPECT_EQ(n, IntHolder::delete_counter.Get());
+  thread_pool.StopAndJoinThreads();
+  EXPECT_EQ(thread_pool.thread_count(), IntHolder::delete_counter.Get());
 }
 
 }  // anonymous namespace
