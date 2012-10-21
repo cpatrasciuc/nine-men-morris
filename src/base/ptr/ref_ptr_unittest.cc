@@ -2,8 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "base/bind.h"
+#include "base/function.h"
+#include "base/location.h"
 #include "base/ptr/ref_counted.h"
 #include "base/ptr/ref_ptr.h"
+#include "base/threading/thread_pool_for_unittests.h"
 #include "gtest/gtest.h"
 
 namespace base {
@@ -61,13 +65,13 @@ TEST(RefPtrTest, ReleaseManagement) {
   delete h2;
 }
 
-void pass_by_value(ref_ptr<const Helper> value_arg) {
+void PassByValue(ref_ptr<const Helper> value_arg) {
   const ref_ptr<const Helper> dummy(value_arg);
 }
 
 TEST(RefPtrTest, PassByValue) {
   ref_ptr<Helper> ptr(new Helper);
-  pass_by_value(ptr);
+  PassByValue(ptr);
   EXPECT_TRUE(ptr->HasOnlyOneRef());
 }
 
@@ -88,6 +92,25 @@ TEST(RefPtrTest, DISABLED_CyclicDependency) {
   ref_ptr<CyclicDepsHelper> two = new CyclicDepsHelper;
   one->set_dependency(two);
   two->set_dependency(one);
+}
+
+class ThreadSafeHelper : public RefCountedThreadSafe {};
+
+void PassByValue(ref_ptr<ThreadSafeHelper> ptr) {
+  const ref_ptr<ThreadSafeHelper> dummy(ptr);
+}
+
+TEST(RefPtrTest, ThreadSafety) {
+  ref_ptr<ThreadSafeHelper> ptr(new ThreadSafeHelper);
+  threading::ThreadPoolForUnittests thread_pool;
+  thread_pool.CreateThreads();
+  for (int i = 0; i < thread_pool.thread_count(); ++i) {
+    thread_pool.SubmitTask(i, FROM_HERE,
+        Bind(new Function<void(ref_ptr<ThreadSafeHelper>)>(&PassByValue), ptr));
+  }
+  thread_pool.StartThreads();
+  thread_pool.StopAndJoinThreads();
+  EXPECT_TRUE(ptr->HasOnlyOneRef());
 }
 
 }  // anonymous namespace
