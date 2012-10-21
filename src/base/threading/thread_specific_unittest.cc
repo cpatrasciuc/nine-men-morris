@@ -58,7 +58,6 @@ void ThreadSpecificDelete(ThreadSpecific<IntHolder>* tsi) {
   tsi->Set(NULL);
 }
 
-// TODO(threading): Might share some code between this and thread_unittest.cc
 TEST(ThreadSpecific, Basic) {
   ThreadPoolForUnittests thread_pool;
   ThreadSpecific<IntHolder> tsi;
