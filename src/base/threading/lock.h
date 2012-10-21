@@ -19,6 +19,9 @@ class BASE_EXPORT LockImpl {
   virtual ~LockImpl() {}
   virtual void Acquire() = 0;
   virtual void Release() = 0;
+
+  // Tries to acuire the lock without blocking. If it is already acquired by
+  // someone else, it returns |false|; otherwise it returns |true|.
   virtual bool TryAcquire() = 0;
 };
 
@@ -29,7 +32,7 @@ class BASE_EXPORT MutexLockImpl : public LockImpl {
 
   virtual void Acquire()    { pthread_mutex_lock(&mutex_); }
   virtual void Release()    { pthread_mutex_unlock(&mutex_); }
-  virtual bool TryAcquire() { return pthread_mutex_trylock(&mutex_); }
+  virtual bool TryAcquire() { return !pthread_mutex_trylock(&mutex_); }
 
  private:
   pthread_mutex_t mutex_;
@@ -44,7 +47,7 @@ class BASE_EXPORT SpinLockImpl : public LockImpl {
 
   virtual void Acquire()    { pthread_spin_lock(&spinlock_); }
   virtual void Release()    { pthread_spin_unlock(&spinlock_); }
-  virtual bool TryAcquire() { return pthread_spin_trylock(&spinlock_); }
+  virtual bool TryAcquire() { return !pthread_spin_trylock(&spinlock_); }
 
  private:
   pthread_spinlock_t spinlock_;
