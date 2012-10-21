@@ -6,19 +6,16 @@
 
 #include "base/bind.h"
 #include "base/location.h"
-#include "base/log.h"
 #include "base/method.h"
-#include "base/string_util.h"
 #include "base/threading/atomic.h"
 #include "base/threading/lock.h"
 #include "base/threading/thread.h"
+#include "base/threading/thread_pool_for_unittests.h"
 #include "gtest/gtest.h"
 
 namespace base {
 namespace threading {
 namespace {
-
-const int kThreadCount = 10;
 
 template <class LockImpl>
 class LockCounter {
@@ -51,33 +48,22 @@ template <typename T>
 class ThreadTest : public ::testing::Test {
  public:
   virtual void SetUp() {
-    for (int i = 0; i < kThreadCount; ++i) {
-      threads_.push_back(new Thread("Test Thread " + ToString(i+1)));
-    }
-    for (size_t i = 0; i < threads_.size(); ++i) {
-      EXPECT_FALSE(threads_[i]->is_running());
-      threads_[i]->Start();
-      EXPECT_TRUE(threads_[i]->is_running());
-      EXPECT_FALSE(Thread::CurrentlyOn(threads_[i]));
-    }
+    thread_pool_.CreateThreads();
+    thread_pool_.StartThreads();
   }
 
   virtual void TearDown() {
-    for (size_t i = 0; i < threads_.size(); ++i) {
-      threads_[i]->SubmitQuitTaskAndJoin();
-      delete threads_[i];
-    }
+    thread_pool_.StopAndJoinThreads();
     EXPECT_EQ(thread_count(), counter_.value());
   }
 
   void SubmitTask(int thread_number, Location loc, Closure* closure) {
-    DCHECK_LT(thread_number, thread_count());
-    threads_[thread_number]->SubmitTask(loc, closure);
+    thread_pool_.SubmitTask(thread_number, loc, closure);
   }
 
  protected:
   int thread_count() const {
-    return threads_.size();
+    return thread_pool_.thread_count();
   }
 
   T* counter() {
@@ -85,7 +71,7 @@ class ThreadTest : public ::testing::Test {
   }
 
  private:
-  std::vector<Thread*> threads_;
+  ThreadPoolForUnittests thread_pool_;
   T counter_;
 };
 
