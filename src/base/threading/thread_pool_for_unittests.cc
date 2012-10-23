@@ -50,7 +50,7 @@ void ThreadPoolForUnittests::SubmitTask(int thread_number,
                                 Closure* closure,
                                 Closure* callback) {
   DCHECK_LT(thread_number, thread_count());
-  DCHECK_EQ(threads_.size(), thread_count());
+  DCHECK_EQ(static_cast<int>(threads_.size()), thread_count());
   threads_[thread_number]->SubmitTask(loc, closure, callback);
 }
 
