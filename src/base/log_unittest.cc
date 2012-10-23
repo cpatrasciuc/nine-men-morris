@@ -118,6 +118,7 @@ TEST_F(LogUnittest, MAYBE(DCHECKPass)) {
 }
 
 TEST(LogUnittestDeathTest, MAYBE(DCHECKFail)) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Log::max_log_level = ERROR;
   Log::default_output_stream = &std::cerr;
   std::string crash_message("DCHECK failed as expected");

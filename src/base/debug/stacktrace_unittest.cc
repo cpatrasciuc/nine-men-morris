@@ -77,6 +77,7 @@ TEST(PrintStackTrace, DumpStackTraceForAllThreads) {
 }
 
 TEST(PrintStackTraceDeathTest, StackTraceDumpOnCrash) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   EnableStackTraceDumpOnCrash();
   int* p = NULL;
   ASSERT_DEATH(*p = 69, "StackTraceDumpOnCrash");
