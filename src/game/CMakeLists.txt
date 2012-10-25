@@ -1,8 +1,11 @@
 set(GAME_SOURCE_FILES
 	game_export.h
+  board_location.cc
+  board_location.h
 )
 
 set(GAME_UNITTESTS_SOURCE_FILES
+  board_location_unittest.cc
 )
 
 include_directories(
@@ -21,4 +24,4 @@ add_library(game ${GAME_SOURCE_FILES})
 
 # The unittests for this directory
 add_executable(game_unittests ${GAME_UNITTESTS_SOURCE_FILES} ../base/test_runner.cc)
-target_link_libraries(game_unittests gtest base)
+target_link_libraries(game_unittests gtest base game)
