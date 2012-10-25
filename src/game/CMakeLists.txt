@@ -1,10 +1,13 @@
 set(GAME_SOURCE_FILES
 	game_export.h
+  board.cc
+  board.h
   board_location.cc
   board_location.h
 )
 
 set(GAME_UNITTESTS_SOURCE_FILES
+  board_unittest.cc
   board_location_unittest.cc
 )
 
