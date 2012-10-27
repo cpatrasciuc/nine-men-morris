@@ -111,18 +111,27 @@ TEST(Board, Adjacency) {
 TEST(Board, AddGetRemove) {
   Board board(5);
   BoardLocation loc(0, 0);
+  EXPECT_EQ(0, board.piece_count());
   EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(loc));
   EXPECT_FALSE(board.RemovePiece(loc));
   EXPECT_FALSE(board.AddPiece(loc, Board::NO_COLOR));
+  EXPECT_EQ(0, board.piece_count());
   EXPECT_TRUE(board.AddPiece(loc, Board::WHITE_COLOR));
+  EXPECT_EQ(1, board.piece_count());
   EXPECT_EQ(Board::WHITE_COLOR, board.GetPieceAt(loc));
   EXPECT_FALSE(board.AddPiece(loc, Board::BLACK_COLOR));
+  EXPECT_EQ(1, board.piece_count());
   EXPECT_FALSE(board.AddPiece(loc, Board::WHITE_COLOR));
+  EXPECT_EQ(1, board.piece_count());
   EXPECT_TRUE(board.RemovePiece(loc));
+  EXPECT_EQ(0, board.piece_count());
   EXPECT_FALSE(board.RemovePiece(loc));
+  EXPECT_EQ(0, board.piece_count());
   EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(loc));
   EXPECT_TRUE(board.AddPiece(loc, Board::BLACK_COLOR));
+  EXPECT_EQ(1, board.piece_count());
   EXPECT_FALSE(board.AddPiece(BoardLocation(10, 10), Board::BLACK_COLOR));
+  EXPECT_EQ(1, board.piece_count());
 }
 
 TEST(Board, MovePiece) {
@@ -137,16 +146,18 @@ TEST(Board, MovePiece) {
   const Board::PieceColor color = Board::WHITE_COLOR;
   board.AddPiece(old_location, color);
 
+  int piece_count = board.piece_count();
   for (size_t i = 0; i < arraysize(new_locations); ++i) {
     const BoardLocation& new_location = new_locations[i];
     EXPECT_EQ(color, board.GetPieceAt(old_location));
     EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(new_location));
     board.MovePiece(old_location, new_location);
+    EXPECT_EQ(piece_count, board.piece_count());
     EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(old_location));
     EXPECT_EQ(color, board.GetPieceAt(new_location));
     board.MovePiece(new_location, old_location);
+    EXPECT_EQ(piece_count, board.piece_count());
   }
-  // TODO(board): Add piece count
 }
 
 TEST(BoardDeathTest, MovePiece) {

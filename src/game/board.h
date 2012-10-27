@@ -29,6 +29,9 @@ class GAME_EXPORT Board {
 
   int size() const { return size_; }
 
+  // Returns the number of pieces that are currently placed on the board
+  int piece_count() const { return pieces_.size(); }
+
   // This method is used to verify if a given location is valid, i.e. it can be
   // used to place a piece on it or move a piece to it.
   bool IsValidLocation(const BoardLocation& location) const;
