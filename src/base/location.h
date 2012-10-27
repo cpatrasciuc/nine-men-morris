@@ -52,7 +52,7 @@ BASE_EXPORT base::threading::Thread* GetCurrentThread();
   base::Location(__FUNCTION__, \
                  __FILE__, \
                  __LINE__, \
-                 GetCurrentThread())
+                 base::GetCurrentThread())
 
 }  // namespace base
 
