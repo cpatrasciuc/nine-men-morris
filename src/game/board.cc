@@ -4,7 +4,7 @@
 
 #include "game/board.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <map>
 
 #include "base/log.h"
