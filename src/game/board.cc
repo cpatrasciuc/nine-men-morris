@@ -104,7 +104,7 @@ bool Board::IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
   return false;
 }
 
-void Board::GetAdjacentLocations(BoardLocation loc,
+void Board::GetAdjacentLocations(const BoardLocation& loc,
     vector<BoardLocation>* adjacent_locations) const {
   DCHECK(IsValidLocation(loc));
   int horizontal_step = GetStep(loc.column());

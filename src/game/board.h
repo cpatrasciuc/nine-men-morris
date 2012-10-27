@@ -48,7 +48,7 @@ class GAME_EXPORT Board {
   // that is passed as argument. It does not clear the contents of the vector.
   // |location| must be valid. The method does not check if the adjacent
   // locations are empty or not. It returns all of them.
-  void GetAdjacentLocations(BoardLocation location,
+  void GetAdjacentLocations(const BoardLocation& location,
       std::vector<BoardLocation>* adjacent_locations) const;
 
   // This method adds a new piece on the board. If the operation can be done,
