@@ -36,6 +36,19 @@ class GAME_EXPORT Board {
   // locations must be valid.
   bool IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const;
 
+  // This method adds a new piece on the board. If the operation can be done,
+  // it returns |true|; otherwise, if the location is already occupied or if
+  // the location is not valid it returns |false|. Color cannot be NO_COLOR.
+  bool AddPiece(const BoardLocation& location, PieceColor color);
+
+  // Removes the piece at |location|. If the operation could be completed
+  // successfully, the method returns |true|.
+  bool RemovePiece(const BoardLocation& location);
+
+  // Return the color of the piece at |location| or |PieceColor::NO_COLOR| if
+  // there is no piece at that location. |location| must be valid.
+  PieceColor GetPieceAt(const BoardLocation& location) const;
+
  private:
   int size_;
 

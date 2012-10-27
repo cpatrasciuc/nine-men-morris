@@ -100,5 +100,22 @@ TEST(Board, IsAdjacent) {
   }
 }
 
+TEST(Board, AddGetRemove) {
+  Board board(5);
+  BoardLocation loc(0, 0);
+  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(loc));
+  EXPECT_FALSE(board.RemovePiece(loc));
+  EXPECT_FALSE(board.AddPiece(loc, Board::NO_COLOR));
+  EXPECT_TRUE(board.AddPiece(loc, Board::WHITE_COLOR));
+  EXPECT_EQ(Board::WHITE_COLOR, board.GetPieceAt(loc));
+  EXPECT_FALSE(board.AddPiece(loc, Board::BLACK_COLOR));
+  EXPECT_FALSE(board.AddPiece(loc, Board::WHITE_COLOR));
+  EXPECT_TRUE(board.RemovePiece(loc));
+  EXPECT_FALSE(board.RemovePiece(loc));
+  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(loc));
+  EXPECT_TRUE(board.AddPiece(loc, Board::BLACK_COLOR));
+  EXPECT_FALSE(board.AddPiece(BoardLocation(10, 10), Board::BLACK_COLOR));
+}
+
 }  // anonymous namespace
 }  // namespace game

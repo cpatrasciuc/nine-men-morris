@@ -2,16 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <stdlib.h>
-
 #include "game/board.h"
+
+#include <stdlib.h>
+#include <map>
 
 #include "base/log.h"
 #include "game/board_location.h"
 
+using std::map;
+
 namespace game {
 
-Board::Board(int size) : size_(size) {
+Board::Board(int size) : size_(size), pieces_() {
   // TODO(board): Add debug constraints for size
 }
 
@@ -72,6 +75,40 @@ bool Board::IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
     return true;
   }
   return false;
+}
+
+bool Board::AddPiece(const BoardLocation& location, PieceColor color) {
+  if (color == NO_COLOR) {
+    return false;
+  }
+  if (!IsValidLocation(location)) {
+    return false;
+  }
+  map<BoardLocation, PieceColor>::iterator it = pieces_.find(location);
+  if (it != pieces_.end()) {
+    return false;
+  }
+  pieces_.insert(it, std::make_pair(location, color));
+  return true;
+}
+
+bool Board::RemovePiece(const BoardLocation& location) {
+  map<BoardLocation, PieceColor>::iterator it = pieces_.find(location);
+  if (it == pieces_.end()) {
+    return false;
+  }
+  // TODO(board): Check if the piece is not in a mill before removing
+  pieces_.erase(it);
+  return true;
+}
+
+Board::PieceColor Board::GetPieceAt(const BoardLocation& location) const {
+  DCHECK(IsValidLocation(location));
+  map<BoardLocation, PieceColor>::const_iterator it = pieces_.find(location);
+  if (it != pieces_.end()) {
+    return (*it).second;
+  }
+  return NO_COLOR;
 }
 
 }  // namespace game
