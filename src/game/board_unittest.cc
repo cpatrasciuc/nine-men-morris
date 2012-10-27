@@ -147,7 +147,6 @@ TEST(Board, AddGetRemove) {
   EXPECT_EQ(0, board.piece_count());
   EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(loc));
   EXPECT_FALSE(board.RemovePiece(loc));
-  EXPECT_FALSE(board.AddPiece(loc, Board::NO_COLOR));
   EXPECT_EQ(0, board.piece_count());
   EXPECT_TRUE(board.AddPiece(loc, Board::WHITE_COLOR));
   EXPECT_EQ(1, board.piece_count());
@@ -242,6 +241,14 @@ TEST(BoardDeathTest, UseInvalidLocations) {
   ASSERT_DEATH(board.IsAdjacent(valid, invalid), "");
   ASSERT_DEATH(board.MovePiece(invalid, valid), "");
   ASSERT_DEATH(board.MovePiece(valid, invalid), "");
+}
+
+TEST(BoardDeathTest, UseInvalidColor) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  Board board;
+  const BoardLocation location(0, 0);
+  ASSERT_DEATH(board.GetPieceCountByColor(Board::NO_COLOR), "");
+  ASSERT_DEATH(board.AddPiece(location, Board::NO_COLOR), "");
 }
 
 }  // anonymous namespace

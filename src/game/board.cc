@@ -120,9 +120,7 @@ void Board::GetAdjacentLocations(const BoardLocation& loc,
 }
 
 bool Board::AddPiece(const BoardLocation& location, PieceColor color) {
-  if (color == NO_COLOR) {
-    return false;
-  }
+  DCHECK(color != NO_COLOR);
   if (!IsValidLocation(location)) {
     return false;
   }
