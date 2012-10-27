@@ -108,6 +108,39 @@ TEST(Board, Adjacency) {
   }
 }
 
+TEST(Board, PieceCount) {
+  Board board;
+  const BoardLocation loc(0, 0);
+  EXPECT_EQ(0, board.GetPieceCountByColor(Board::WHITE_COLOR));
+  EXPECT_EQ(0, board.GetPieceCountByColor(Board::BLACK_COLOR));
+  EXPECT_EQ(0, board.piece_count());
+  EXPECT_TRUE(board.AddPiece(loc, Board::WHITE_COLOR));
+  EXPECT_EQ(1, board.GetPieceCountByColor(Board::WHITE_COLOR));
+  EXPECT_EQ(0, board.GetPieceCountByColor(Board::BLACK_COLOR));
+  EXPECT_EQ(1, board.piece_count());
+  std::vector<BoardLocation> v;
+  board.GetAdjacentLocations(loc, &v);
+  for (size_t i = 0; i < v.size(); ++i) {
+    EXPECT_TRUE(board.AddPiece(v[i], Board::BLACK_COLOR));
+    EXPECT_EQ(1, board.GetPieceCountByColor(Board::WHITE_COLOR));
+    EXPECT_EQ(static_cast<int>(i) + 1,
+              board.GetPieceCountByColor(Board::BLACK_COLOR));
+    EXPECT_EQ(static_cast<int>(i) + 2, board.piece_count());
+  }
+  EXPECT_TRUE(board.RemovePiece(loc));
+  EXPECT_EQ(0, board.GetPieceCountByColor(Board::WHITE_COLOR));
+  EXPECT_EQ(static_cast<int>(v.size()),
+            board.GetPieceCountByColor(Board::BLACK_COLOR));
+  EXPECT_EQ(static_cast<int>(v.size()), board.piece_count());
+  for (size_t i = 0; i < v.size(); ++i) {
+    EXPECT_TRUE(board.RemovePiece(v[i]));
+    EXPECT_EQ(0, board.GetPieceCountByColor(Board::WHITE_COLOR));
+    EXPECT_EQ(static_cast<int>(v.size() - i - 1),
+              board.GetPieceCountByColor(Board::BLACK_COLOR));
+    EXPECT_EQ(static_cast<int>(v.size() - i - 1), board.piece_count());
+  }
+}
+
 TEST(Board, AddGetRemove) {
   Board board(5);
   BoardLocation loc(0, 0);

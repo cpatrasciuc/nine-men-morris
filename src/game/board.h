@@ -32,6 +32,10 @@ class GAME_EXPORT Board {
   // Returns the number of pieces that are currently placed on the board
   int piece_count() const { return pieces_.size(); }
 
+  // Returns the number of pieces placed on the board that have the given color.
+  // |color| cannot be NO_COLOR.
+  int GetPieceCountByColor(PieceColor color) const;
+
   // This method is used to verify if a given location is valid, i.e. it can be
   // used to place a piece on it or move a piece to it.
   bool IsValidLocation(const BoardLocation& location) const;

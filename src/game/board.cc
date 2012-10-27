@@ -4,8 +4,11 @@
 
 #include "game/board.h"
 
+#include <algorithm>
 #include <cstdlib>
+#include <functional>
 #include <map>
+#include <utility>
 
 #include "base/basic_macros.h"
 #include "base/log.h"
@@ -16,8 +19,33 @@ using std::vector;
 
 namespace game {
 
+namespace {
+
+class PieceColorEqualTo
+    : public std::unary_function<
+        const std::pair<BoardLocation, Board::PieceColor>&, bool> {
+ public:
+  explicit PieceColorEqualTo(const Board::PieceColor color) : color_(color) {}
+
+  bool operator()(const std::pair<BoardLocation, Board::PieceColor>& p) const {
+    return p.second == color_;
+  }
+
+ private:
+  Board::PieceColor color_;
+};
+
+}  // anonymous namespace
+
 Board::Board(int size) : size_(size), pieces_() {
   // TODO(board): Add debug constraints for size
+}
+
+int Board::GetPieceCountByColor(PieceColor color) const {
+  DCHECK(color != NO_COLOR);
+  return std::count_if(pieces_.begin(),
+                       pieces_.end(),
+                       PieceColorEqualTo(color));
 }
 
 bool Board::IsValidLocation(const BoardLocation& location) const {
