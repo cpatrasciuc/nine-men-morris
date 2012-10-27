@@ -7,10 +7,12 @@
 #include <cstdlib>
 #include <map>
 
+#include "base/basic_macros.h"
 #include "base/log.h"
 #include "game/board_location.h"
 
 using std::map;
+using std::vector;
 
 namespace game {
 
@@ -20,7 +22,8 @@ Board::Board(int size) : size_(size), pieces_() {
 
 bool Board::IsValidLocation(const BoardLocation& location) const {
   // First check that the location is inside the board
-  if (location.line() >= size_ || location.column() >= size_) {
+  if (location.line() >= size_ || location.column() >= size_ ||
+      location.line() < 0 || location.column() < 0) {
     return false;
   }
   // Special case for size_ == 3, where all locations are valid
@@ -71,6 +74,22 @@ bool Board::IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
     return true;
   }
   return false;
+}
+
+vector<BoardLocation> Board::GetAdjacentLocations(BoardLocation loc) const {
+  DCHECK(IsValidLocation(loc));
+  vector<BoardLocation> result;
+  int horizontal_step = GetStep(loc.column());
+  int vertical_step = GetStep(loc.line());
+  int dx[] = { horizontal_step, -horizontal_step, 0, 0 };
+  int dy[] = { 0, 0, vertical_step, -vertical_step };
+  for (size_t i = 0; i < arraysize(dx); ++i) {
+    BoardLocation new_loc(loc.line() + dx[i], loc.column() + dy[i]);
+    if (IsValidLocation(new_loc)) {
+      result.push_back(new_loc);
+    }
+  }
+  return result;
 }
 
 bool Board::AddPiece(const BoardLocation& location, PieceColor color) {

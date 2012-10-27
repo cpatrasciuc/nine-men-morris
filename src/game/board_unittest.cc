@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <map>
+#include <set>
 #include <vector>
 
 #include "base/basic_macros.h"
@@ -31,9 +32,11 @@ TEST(Board, IsValidLocation) {
       EXPECT_EQ(b[i][j], board.IsValidLocation(BoardLocation(i, j)));
     }
   }
+  EXPECT_FALSE(board.IsValidLocation(BoardLocation(10, 10)));
+  EXPECT_FALSE(board.IsValidLocation(BoardLocation(-10, -10)));
 }
 
-TEST(Board, IsAdjacent) {
+TEST(Board, Adjacency) {
   const int edges[] = {
     0, 0, 3, 0,
     0, 0, 0, 3,
@@ -69,30 +72,34 @@ TEST(Board, IsAdjacent) {
     6, 3, 6, 6
   };
   Board board(7);
-  std::map<BoardLocation, std::vector<BoardLocation> > adjacency_map;
+  std::map<BoardLocation, std::set<BoardLocation> > adjacency_map;
   for (size_t i = 0; i < arraysize(edges); i += 4) {
     BoardLocation b1(edges[i], edges[i + 1]);
     BoardLocation b2(edges[i + 2], edges[i + 3]);
     EXPECT_TRUE(board.IsAdjacent(b1, b2)) << i / 4;
-    adjacency_map[b1].push_back(b2);
+    adjacency_map[b1].insert(b2);
     EXPECT_TRUE(board.IsAdjacent(b2, b1)) << i / 4;
-    adjacency_map[b2].push_back(b1);
+    adjacency_map[b2].insert(b1);
   }
 
   for (int x1 = 0; x1 < board.size(); ++x1) {
-    for (int x2 = 0; x2 < board.size(); ++x2) {
-      for (int y1 = 0; y1 < board.size(); ++y1) {
-        for (int y2 = 0; y2 < board.size(); ++y2) {
-          BoardLocation b1(x1, y1);
-          BoardLocation b2(x2, y2);
-          if (board.IsValidLocation(b1) && board.IsValidLocation(b2)) {
-            if (adjacency_map.find(b1) != adjacency_map.end()) {
-              std::vector<BoardLocation>& v = adjacency_map[b1];
-              if (std::find(v.begin(), v.end(), b2) != v.end()) {
+    for (int y1 = 0; y1 < board.size(); ++y1) {
+      BoardLocation b1(x1, y1);
+      if (board.IsValidLocation(b1)) {
+        std::set<BoardLocation>& s = adjacency_map[b1];
+        std::vector<BoardLocation> v = board.GetAdjacentLocations(b1);
+        std::set<BoardLocation> adjacent_locations(v.begin(), v.end());
+        EXPECT_EQ(s, adjacent_locations);
+
+        for (int x2 = 0; x2 < board.size(); ++x2) {
+          for (int y2 = 0; y2 < board.size(); ++y2) {
+            BoardLocation b2(x2, y2);
+            if (board.IsValidLocation(b1) && board.IsValidLocation(b2)) {
+              if (adjacency_map.find(b1) != adjacency_map.end()) {
                 continue;
               }
+              EXPECT_FALSE(board.IsAdjacent(b1, b2)) << b1 << " " << b2;
             }
-            EXPECT_FALSE(board.IsAdjacent(b1, b2)) << b1 << " " << b2;
           }
         }
       }

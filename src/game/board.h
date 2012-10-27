@@ -6,6 +6,7 @@
 #define GAME_BOARD_H_
 
 #include <map>
+#include <vector>
 
 #include "base/basic_macros.h"
 #include "game/board_location.h"
@@ -35,6 +36,11 @@ class GAME_EXPORT Board {
   // This function returns |true| if the two BoardLocations are adjacent. Both
   // locations must be valid.
   bool IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const;
+
+  // Returns the list of locations that are adjacent to |location|. |location|
+  // must be valid. The method does not check if the adjacent location are empty
+  // or not. It returns all of them.
+  std::vector<BoardLocation> GetAdjacentLocations(BoardLocation location) const;
 
   // This method adds a new piece on the board. If the operation can be done,
   // it returns |true|; otherwise, if the location is already occupied or if
