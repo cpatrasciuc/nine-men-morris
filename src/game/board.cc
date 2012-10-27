@@ -76,9 +76,9 @@ bool Board::IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
   return false;
 }
 
-vector<BoardLocation> Board::GetAdjacentLocations(BoardLocation loc) const {
+void Board::GetAdjacentLocations(BoardLocation loc,
+    vector<BoardLocation>* adjacent_locations) const {
   DCHECK(IsValidLocation(loc));
-  vector<BoardLocation> result;
   int horizontal_step = GetStep(loc.column());
   int vertical_step = GetStep(loc.line());
   int dx[] = { horizontal_step, -horizontal_step, 0, 0 };
@@ -86,10 +86,9 @@ vector<BoardLocation> Board::GetAdjacentLocations(BoardLocation loc) const {
   for (size_t i = 0; i < arraysize(dx); ++i) {
     BoardLocation new_loc(loc.line() + dx[i], loc.column() + dy[i]);
     if (IsValidLocation(new_loc)) {
-      result.push_back(new_loc);
+      adjacent_locations->push_back(new_loc);
     }
   }
-  return result;
 }
 
 bool Board::AddPiece(const BoardLocation& location, PieceColor color) {

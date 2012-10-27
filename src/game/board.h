@@ -37,10 +37,12 @@ class GAME_EXPORT Board {
   // locations must be valid.
   bool IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const;
 
-  // Returns the list of locations that are adjacent to |location|. |location|
-  // must be valid. The method does not check if the adjacent location are empty
-  // or not. It returns all of them.
-  std::vector<BoardLocation> GetAdjacentLocations(BoardLocation location) const;
+  // Add the list of locations that are adjacent to |location| to the vector
+  // that is passed as argument. It does not clear the contents of the vector.
+  // |location| must be valid. The method does not check if the adjacent
+  // locations are empty or not. It returns all of them.
+  void GetAdjacentLocations(BoardLocation location,
+      std::vector<BoardLocation>* adjacent_locations) const;
 
   // This method adds a new piece on the board. If the operation can be done,
   // it returns |true|; otherwise, if the location is already occupied or if

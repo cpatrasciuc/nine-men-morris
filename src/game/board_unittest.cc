@@ -87,7 +87,8 @@ TEST(Board, Adjacency) {
       BoardLocation b1(x1, y1);
       if (board.IsValidLocation(b1)) {
         std::set<BoardLocation>& s = adjacency_map[b1];
-        std::vector<BoardLocation> v = board.GetAdjacentLocations(b1);
+        std::vector<BoardLocation> v;
+        board.GetAdjacentLocations(b1, &v);
         std::set<BoardLocation> adjacent_locations(v.begin(), v.end());
         EXPECT_EQ(s, adjacent_locations);
 
