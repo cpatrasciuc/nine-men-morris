@@ -31,7 +31,7 @@ bool Board::IsValidLocation(const BoardLocation& location) const {
   int c = location.column();
   // Only the middle of the board is not allowed for the center line
   if (l == size_ / 2) {
-      return (c != size_ / 2);
+    return (c != size_ / 2);
   }
   // Handle symmetry
   if (l > size_ / 2) {
