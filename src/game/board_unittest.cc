@@ -125,5 +125,41 @@ TEST(Board, AddGetRemove) {
   EXPECT_FALSE(board.AddPiece(BoardLocation(10, 10), Board::BLACK_COLOR));
 }
 
+TEST(Board, MovePiece) {
+  Board board;
+  const BoardLocation old_location(0, 0);
+  const BoardLocation new_locations[] = {
+    // Adjacent move
+    BoardLocation(0, 3),
+    // Jump
+    BoardLocation(board.size() - 1, board.size() - 1)
+  };
+  const Board::PieceColor color = Board::WHITE_COLOR;
+  board.AddPiece(old_location, color);
+
+  for (size_t i = 0; i < arraysize(new_locations); ++i) {
+    const BoardLocation& new_location = new_locations[i];
+    EXPECT_EQ(color, board.GetPieceAt(old_location));
+    EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(new_location));
+    board.MovePiece(old_location, new_location);
+    EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(old_location));
+    EXPECT_EQ(color, board.GetPieceAt(new_location));
+    board.MovePiece(new_location, old_location);
+  }
+  // TODO(board): Add piece count
+}
+
+TEST(BoardDeathTest, MovePiece) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  Board board;
+  const BoardLocation old_location(0, 0);
+  const BoardLocation new_location(0, 3);
+  ASSERT_DEATH(board.MovePiece(old_location, new_location), "");
+  board.AddPiece(old_location, Board::WHITE_COLOR);
+  board.AddPiece(new_location, Board::BLACK_COLOR);
+  ASSERT_DEATH(board.MovePiece(old_location, new_location), "");
+  ASSERT_DEATH(board.MovePiece(old_location, old_location), "");
+}
+
 }  // anonymous namespace
 }  // namespace game

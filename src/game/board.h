@@ -57,6 +57,12 @@ class GAME_EXPORT Board {
   // there is no piece at that location. |location| must be valid.
   PieceColor GetPieceAt(const BoardLocation& location) const;
 
+  // Move a piece from location |old_loc| to |new_loc|. When calling the method
+  // |old_loc| must contain a piece, while |new_loc| must be empty.
+  // Both arguments should be valid locations. The method does not check if the
+  // locations are adjacent. It can also be used to perform 'jumps'.
+  void MovePiece(const BoardLocation& old_loc, const BoardLocation& new_loc);
+
  private:
   // Utility method that returns the distance between valid locations on the
   // line or column specified by |index|.

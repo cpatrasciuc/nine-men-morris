@@ -125,6 +125,17 @@ Board::PieceColor Board::GetPieceAt(const BoardLocation& location) const {
   return NO_COLOR;
 }
 
+void Board::MovePiece(const BoardLocation& old_loc,
+                      const BoardLocation& new_loc) {
+  DCHECK(IsValidLocation(old_loc));
+  DCHECK(IsValidLocation(new_loc));
+  PieceColor color = GetPieceAt(old_loc);
+  DCHECK(color != NO_COLOR);
+  DCHECK_EQ(NO_COLOR, GetPieceAt(new_loc));
+  RemovePiece(old_loc);
+  AddPiece(new_loc, color);
+}
+
 int Board::GetStep(int index) const {
   if (index == size_ / 2) {
     return 1;
