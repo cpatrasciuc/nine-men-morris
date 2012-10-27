@@ -67,11 +67,7 @@ bool Board::IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
   if (common_coordinate > size_ / 2) {
     common_coordinate = size_ - common_coordinate - 1;
   }
-  int step = (size_ - 1 - 2 * common_coordinate) / 2;
-  if (common_coordinate == size_ / 2) {
-    step = 1;
-  }
-  if (abs(x - y) == step) {
+  if (abs(x - y) == GetStep(common_coordinate)) {
     return true;
   }
   return false;
@@ -110,5 +106,12 @@ Board::PieceColor Board::GetPieceAt(const BoardLocation& location) const {
   }
   return NO_COLOR;
 }
+
+int Board::GetStep(int index) const {
+  if (index == size_ / 2) {
+    return 1;
+  }
+  return (size_ - 1 - 2 * index) / 2;
+};
 
 }  // namespace game

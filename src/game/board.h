@@ -50,6 +50,10 @@ class GAME_EXPORT Board {
   PieceColor GetPieceAt(const BoardLocation& location) const;
 
  private:
+  // Utility method that returns the distance between valid locations on the
+  // line or column specified by |index|.
+  int GetStep(int index) const;
+
   int size_;
 
   std::map<BoardLocation, PieceColor> pieces_;
