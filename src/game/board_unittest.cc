@@ -193,6 +193,32 @@ TEST(Board, MovePiece) {
   }
 }
 
+TEST(Board, IsPartOfMill) {
+  Board board;
+  BoardLocation mills[][3] = {
+    // Horizontal mill
+    { BoardLocation(0, 0), BoardLocation(0, 3), BoardLocation(0, 6) },
+    // Vertical mill
+    { BoardLocation(4, 4), BoardLocation(2, 4), BoardLocation(3, 4) }
+  };
+  for (size_t k = 0; k < arraysize(mills); ++k) {
+    EXPECT_FALSE(board.IsPartOfMill(mills[k][0]));
+    for (size_t i = 0; i < arraysize(mills[k]); ++i) {
+      EXPECT_TRUE(board.AddPiece(mills[k][i], Board::BLACK_COLOR));
+      for (size_t j = 0; j < arraysize(mills[k]); ++j) {
+        EXPECT_EQ(i + 1 == arraysize(mills[k]),
+                  board.IsPartOfMill(mills[k][i]));
+      }
+    }
+    for (size_t i = 0; i < arraysize(mills[k]); ++i) {
+      EXPECT_TRUE(board.RemovePiece(mills[k][i]));
+      for (size_t j = 0; j < arraysize(mills[k]); ++j) {
+        EXPECT_FALSE(board.IsPartOfMill(mills[k][i]));
+      }
+    }
+  }
+}
+
 TEST(BoardDeathTest, MovePiece) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;

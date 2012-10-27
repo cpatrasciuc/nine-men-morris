@@ -70,6 +70,10 @@ class GAME_EXPORT Board {
   // locations are adjacent. It can also be used to perform 'jumps'.
   void MovePiece(const BoardLocation& old_loc, const BoardLocation& new_loc);
 
+  // Check if the piece at |location| is part of a mill. If there is no piece at
+  // |location| the method returns |false|.
+  bool IsPartOfMill(const BoardLocation& location) const;
+
  private:
   // Utility method that returns the distance between valid locations on the
   // line or column specified by |index|.
