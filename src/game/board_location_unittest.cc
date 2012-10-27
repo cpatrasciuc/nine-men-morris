@@ -4,11 +4,27 @@
 
 #include <map>
 
+#include "base/string_util.h"
 #include "game/board_location.h"
 #include "gtest/gtest.h"
 
 namespace game {
 namespace {
+
+TEST(BoardLocation, Equality) {
+  BoardLocation b1(10, 20);
+  BoardLocation b2(20, 10);
+  BoardLocation b3(20, 20);
+  BoardLocation b4(10, 20);
+  EXPECT_EQ(b1, b4);
+  EXPECT_NE(b1, b3);
+  EXPECT_NE(b1, b2);
+}
+
+TEST(BoardLocation, ToString) {
+  BoardLocation b(2, 2);
+  EXPECT_EQ("[C3]", base::ToString(b));
+}
 
 TEST(BoardLocation, Ordering) {
   BoardLocation loc(10, 10);
