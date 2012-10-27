@@ -161,5 +161,18 @@ TEST(BoardDeathTest, MovePiece) {
   ASSERT_DEATH(board.MovePiece(old_location, old_location), "");
 }
 
+TEST(BoardDeathTest, UseInvalidLocations) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  Board board;
+  const BoardLocation invalid(-1, -1);
+  const BoardLocation valid(0, 0);
+  ASSERT_DEATH(board.GetAdjacentLocations(invalid, NULL), "");
+  ASSERT_DEATH(board.GetPieceAt(invalid), "");
+  ASSERT_DEATH(board.IsAdjacent(invalid, valid), "");
+  ASSERT_DEATH(board.IsAdjacent(valid, invalid), "");
+  ASSERT_DEATH(board.MovePiece(invalid, valid), "");
+  ASSERT_DEATH(board.MovePiece(valid, invalid), "");
+}
+
 }  // anonymous namespace
 }  // namespace game
