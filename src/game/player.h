@@ -28,7 +28,10 @@ class GAME_EXPORT Player {
 
   void set_game(Game* game) { game_ = game; }
 
-  virtual PlayerAction* GetNextAction(PlayerAction::ActionType type) = 0;
+  // TODO(player): Remove the temporary implementation
+  virtual PlayerAction* GetNextAction(PlayerAction::ActionType type) {
+    return NULL;
+  };
 
  private:
   std::string name_;

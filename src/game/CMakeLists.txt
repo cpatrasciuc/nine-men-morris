@@ -8,6 +8,8 @@ set(GAME_SOURCE_FILES
   game_export.h
   game_options.cc
   game_options.h
+  game_serializer.cc
+  game_serializer.h
   player.cc
   player.h
   player_action.cc
@@ -17,6 +19,7 @@ set(GAME_SOURCE_FILES
 set(GAME_UNITTESTS_SOURCE_FILES
   board_unittest.cc
   board_location_unittest.cc
+  game_serializer_unittest.cc
   player_action_unittest.cc
 )
 
