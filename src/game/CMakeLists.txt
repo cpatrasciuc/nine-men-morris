@@ -1,14 +1,23 @@
 set(GAME_SOURCE_FILES
-	game_export.h
   board.cc
   board.h
   board_location.cc
   board_location.h
+  game.cc
+  game.h
+  game_export.h
+  game_options.cc
+  game_options.h
+  player.cc
+  player.h
+  player_action.cc
+  player_action.h
 )
 
 set(GAME_UNITTESTS_SOURCE_FILES
   board_unittest.cc
   board_location_unittest.cc
+  player_action_unittest.cc
 )
 
 include_directories(
