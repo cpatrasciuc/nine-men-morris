@@ -143,6 +143,8 @@ class BASE_EXPORT AssertionFailedLogMessage : public LogMessage {
 #define DCHECK_GT(a, b) DCHECK((a) > (b))
 #define DCHECK_EQ(a, b) DCHECK((a) == (b))
 
+#define NOTREACHED() DCHECK(false)
+
 }  // namespace base
 
 #endif  // BASE_LOG_H_

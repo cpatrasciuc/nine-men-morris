@@ -125,5 +125,10 @@ TEST(LogUnittestDeathTest, MAYBE(DCHECKFail)) {
   ASSERT_DEATH(DCHECK_GT(0, 1) << crash_message, crash_message);
 }
 
+TEST(LogUnittestDeathTest, MAYBE(NotReached)) {
+  std::string error_message("NotReached");
+  ASSERT_DEATH(NOTREACHED() << error_message, error_message);
+}
+
 }  // anonymous namespace
 }  // namespace base
