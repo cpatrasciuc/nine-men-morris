@@ -49,7 +49,7 @@ class GAME_EXPORT Game {
   void DumpActionList(std::vector<PlayerAction>* actions) const;
 
   // Utility method that returns the number of pieces that a player starts with
-  // based on the gmae type.
+  // based on the game type.
   static int GetInitialPieceCountByGameType(GameOptions::GameType type);
 
  private:
