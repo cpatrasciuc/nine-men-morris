@@ -71,5 +71,43 @@ TEST(PlayerAction, MovePiece) {
   }
 }
 
+TEST(PlayerAction, Undo) {
+  // We place a piece, move it and remove it from the board, then we undo each
+  // action (in reverse order).
+  Board board;
+  Board::PieceColor color = Board::WHITE_COLOR;
+  PlayerAction place_piece(color, PlayerAction::PLACE_PIECE);
+  place_piece.set_destination(BoardLocation(0, 0));
+  place_piece.Execute(&board);
+  EXPECT_EQ(color, board.GetPieceAt(place_piece.destination()));
+  EXPECT_EQ(1, board.piece_count());
+  PlayerAction move_action(color, PlayerAction::MOVE_PIECE);
+  move_action.set_source(place_piece.destination());
+  std::vector<BoardLocation> adjacent_locations;
+  board.GetAdjacentLocations(move_action.source(), &adjacent_locations);
+  move_action.set_destination(adjacent_locations[0]);
+  move_action.Execute(&board);
+  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(move_action.source()));
+  EXPECT_EQ(color, board.GetPieceAt(move_action.destination()));
+  EXPECT_EQ(1, board.piece_count());
+  PlayerAction remove_piece(
+      color == Board::WHITE_COLOR ? Board::BLACK_COLOR : Board::WHITE_COLOR,
+      PlayerAction::REMOVE_PIECE);
+  remove_piece.set_source(move_action.destination());
+  remove_piece.Execute(&board);
+  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(remove_piece.source()));
+  EXPECT_EQ(0, board.piece_count());
+
+  remove_piece.Undo(&board);
+  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(move_action.source()));
+  EXPECT_EQ(color, board.GetPieceAt(move_action.destination()));
+  EXPECT_EQ(1, board.piece_count());
+  move_action.Undo(&board);
+  EXPECT_EQ(color, board.GetPieceAt(place_piece.destination()));
+  EXPECT_EQ(1, board.piece_count());
+  place_piece.Undo(&board);
+  EXPECT_EQ(0, board.piece_count());
+}
+
 }  // anonymous namespace
 }  // namespace game

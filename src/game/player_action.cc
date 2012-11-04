@@ -35,6 +35,30 @@ void PlayerAction::Execute(Board* board) const {
       DCHECK_EQ((player_color_ == Board::WHITE_COLOR ?
           Board::BLACK_COLOR : Board::WHITE_COLOR), board->GetPieceAt(source_));
       board->RemovePiece(source_);
+      break;
+  }
+}
+
+void PlayerAction::Undo(Board* board) const {
+  switch (action_type_) {
+    case MOVE_PIECE:
+      DCHECK(board->IsValidLocation(source_));
+      DCHECK(board->IsValidLocation(destination_));
+      DCHECK_EQ(player_color_, board->GetPieceAt(destination_));
+      DCHECK_EQ(Board::NO_COLOR, board->GetPieceAt(source_));
+      board->MovePiece(destination_, source_);
+      break;
+    case PLACE_PIECE:
+      DCHECK(board->IsValidLocation(destination_));
+      DCHECK_EQ(player_color_, board->GetPieceAt(destination_));
+      board->RemovePiece(destination_);
+      break;
+    case REMOVE_PIECE:
+      DCHECK(board->IsValidLocation(source_));
+      DCHECK_EQ(Board::NO_COLOR, board->GetPieceAt(source_));
+      board->AddPiece(source_, player_color_ == Board::WHITE_COLOR ?
+        Board::BLACK_COLOR : Board::WHITE_COLOR);
+      break;
   }
 }
 

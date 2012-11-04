@@ -41,7 +41,11 @@ class GAME_EXPORT PlayerAction {
     destination_ = destination;
   }
 
+  // Execute the action on the given board instance.
   void Execute(Board* board) const;
+
+  // Undo the action that was previously executed on the given board instance.
+  void Undo(Board* board) const;
 
  private:
   Board::PieceColor player_color_;
