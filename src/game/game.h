@@ -6,7 +6,7 @@
 #define GAME_GAME_H_
 
 #include <map>
-#include <stack>
+#include <vector>
 
 #include "base/basic_macros.h"
 #include "base/ptr/scoped_ptr.h"
@@ -43,6 +43,11 @@ class GAME_EXPORT Game {
   // Undo the last executed action and update the game state accordingly.
   void UndoLastAction();
 
+  // Adds the current list of player actions that were executed in this game,
+  // to the |actions| vector. The actions are inserted in the order in which
+  // they were executed. |actions| is not cleared before appending to it.
+  void DumpActionList(std::vector<PlayerAction>* actions) const;
+
   // Utility method that returns the number of pieces that a player starts with
   // based on the gmae type.
   static int GetInitialPieceCountByGameType(GameOptions::GameType type);
@@ -69,7 +74,7 @@ class GAME_EXPORT Game {
   // The list of player actions that were executed from the beginning of the
   // game. It allows the user to undo the recent actions and also to save the
   // the game to a file so it can be resumed later.
-  std::stack<PlayerAction> moves_;
+  std::vector<PlayerAction> moves_;
 
   // A map that stores the number of pieces that still have to be placed on the
   // board by each player.

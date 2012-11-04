@@ -85,7 +85,7 @@ bool Game::IsGameOver() const {
 
 void Game::ExecutePlayerAction(const PlayerAction& action) {
   DCHECK_EQ(next_action_type_, action.type());
-  moves_.push(action);
+  moves_.push_back(action);
   action.Execute(&board_);
   if (action.type() == PlayerAction::PLACE_PIECE) {
     DCHECK_GT(pieces_in_hand_[current_player_], 0);
@@ -98,8 +98,8 @@ void Game::UndoLastAction() {
   if (moves_.empty()) {
     return;
   }
-  PlayerAction last_action = moves_.top();
-  moves_.pop();
+  PlayerAction last_action = moves_.back();
+  moves_.pop_back();
   last_action.Undo(&board_);
   if (last_action.type() == PlayerAction::PLACE_PIECE) {
     ++pieces_in_hand_[last_action.player_color()];
@@ -122,7 +122,7 @@ void Game::UpdateCurrentPlayerAndActionType() {
       current_player_ = Board::BLACK_COLOR;
     }
   } else {
-    const PlayerAction action = moves_.top();
+    const PlayerAction action = moves_.back();
     if ((action.type() == PlayerAction::PLACE_PIECE ||
        action.type() == PlayerAction::MOVE_PIECE) &&
        board_.IsPartOfMill(action.destination())) {
@@ -136,6 +136,10 @@ void Game::UpdateCurrentPlayerAndActionType() {
                           PlayerAction::MOVE_PIECE;
     }
   }
+}
+
+void Game::DumpActionList(std::vector<PlayerAction>* actions) const {
+  actions->insert(actions->end(), moves_.begin(), moves_.end());
 }
 
 // static
