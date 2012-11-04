@@ -27,7 +27,7 @@ int GetBoardSizeFromGameType(GameOptions::GameType type) {
     case GameOptions::NINE_MEN_MORRIS:
       return 7;
   }
-  // TODO(macros): Add a macro for non-reachable sections
+  NOTREACHED();
   return -1;
 }
 
@@ -148,6 +148,7 @@ int Game::GetInitialPieceCountByGameType(GameOptions::GameType type) {
     case GameOptions::THREE_MEN_MORRIS:
       return 3;
   }
+  NOTREACHED();
   return -1;
 }
 
