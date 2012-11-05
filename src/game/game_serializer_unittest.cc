@@ -48,7 +48,7 @@ class GameSerializerTest : public ::testing::Test {
     black_locations_.pop_back();
   }
 
-  Game* const game() const { return Get(game_); }
+  Game* game() const { return Get(game_); }
 
  private:
   base::ptr::scoped_ptr<Game> game_;
