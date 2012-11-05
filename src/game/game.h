@@ -9,7 +9,6 @@
 #include <vector>
 
 #include "base/basic_macros.h"
-#include "base/ptr/scoped_ptr.h"
 #include "game/board.h"
 #include "game/game_export.h"
 #include "game/game_options.h"
@@ -17,13 +16,9 @@
 
 namespace game {
 
-class Player;
-
 class GAME_EXPORT Game {
  public:
-  explicit Game(const GameOptions& game_options,
-                Player* white_player,
-                Player* black_player);
+  explicit Game(const GameOptions& game_options);
 
   const GameOptions& options() const { return game_options_; }
 
@@ -53,20 +48,12 @@ class GAME_EXPORT Game {
   static int GetInitialPieceCountByGameType(GameOptions::GameType type);
 
  private:
-  // Utility method that returns a pointer to the current player based on the
-  // |current_player_| color.
-  Player* GetCurrentPlayer() const;
-
   // Update the next player to move and the expected action type, based on the
   // last executed action.
   void UpdateCurrentPlayerAndActionType();
 
   // The options for this game instance.
   GameOptions game_options_;
-
-  // Owned pointers to the two players.
-  base::ptr::scoped_ptr<Player> white_player_;
-  base::ptr::scoped_ptr<Player> black_player_;
 
   // The board used by this game instance.
   Board board_;

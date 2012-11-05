@@ -13,7 +13,6 @@
 #include "game/game.h"
 #include "game/game_options.h"
 #include "game/game_serializer.h"
-#include "game/player.h"
 #include "gtest/gtest.h"
 
 namespace game {
@@ -23,7 +22,7 @@ class GameSerializerTest : public ::testing::Test {
  public:
   virtual void SetUp() {
     // TODO(player): Remove the temporary implementation
-    Reset(game_, new Game(GameOptions(), new Player("1"), new Player("2")));
+    Reset(game_, new Game(GameOptions()));
     game()->Initialize();
     white_locations_.push_back(BoardLocation(0, 0));
     white_locations_.push_back(BoardLocation(0, 3));
@@ -98,7 +97,8 @@ TEST_F(GameSerializerTest, TextSerialization) {
 }
 
 TEST_F(GameSerializerTest, EmptyGame) {
-  Game game(GameOptions(), new Player("1"), new Player("2"));
+  GameOptions game_options;
+  Game game(game_options);
 
   std::ostringstream text_stream;
   GameSerializer::SerializeTo(game, text_stream, false);

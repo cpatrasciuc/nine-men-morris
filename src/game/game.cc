@@ -8,11 +8,7 @@
 #include <vector>
 
 #include "base/log.h"
-#include "base/ptr/scoped_ptr.h"
 #include "game/game_options.h"
-#include "game/player.h"
-
-using base::ptr::scoped_ptr;
 
 namespace game {
 
@@ -33,16 +29,10 @@ int GetBoardSizeFromGameType(GameOptions::GameType type) {
 
 }  // anonymous namespace
 
-Game::Game(const GameOptions& game_options,
-           Player* white_player,
-           Player* black_player)
+Game::Game(const GameOptions& game_options)
     : game_options_(game_options),
-      white_player_(white_player),
-      black_player_(black_player),
       board_(GetBoardSizeFromGameType(game_options.game_type())),
       next_action_type_(PlayerAction::PLACE_PIECE) {
-  white_player->set_game(this);
-  black_player->set_game(this);
   pieces_in_hand_.insert(std::make_pair(Board::WHITE_COLOR, 0));
   pieces_in_hand_.insert(std::make_pair(Board::BLACK_COLOR, 0));
 }
@@ -105,12 +95,6 @@ void Game::UndoLastAction() {
     ++pieces_in_hand_[last_action.player_color()];
   }
   UpdateCurrentPlayerAndActionType();
-}
-
-Player* Game::GetCurrentPlayer() const {
-  return Get((current_player_ == Board::WHITE_COLOR) ?
-              white_player_ :
-              black_player_);
 }
 
 void Game::UpdateCurrentPlayerAndActionType() {
