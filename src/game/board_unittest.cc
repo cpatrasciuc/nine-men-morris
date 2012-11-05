@@ -10,6 +10,7 @@
 #include "base/basic_macros.h"
 #include "game/board.h"
 #include "game/board_location.h"
+#include "game/game_options.h"
 #include "gtest/gtest.h"
 
 namespace game {
@@ -26,7 +27,7 @@ TEST(Board, IsValidLocation) {
     { 0, 1, 0, 1, 0, 1, 0 },
     { 1, 0, 0, 1, 0, 0, 1 }
   };
-  Board board(n);
+  Board board;
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
       EXPECT_EQ(b[i][j], board.IsValidLocation(BoardLocation(i, j)));
@@ -71,7 +72,7 @@ TEST(Board, Adjacency) {
     6, 0, 6, 3,
     6, 3, 6, 6
   };
-  Board board(7);
+  Board board;
   std::map<BoardLocation, std::set<BoardLocation> > adjacency_map;
   for (size_t i = 0; i < arraysize(edges); i += 4) {
     BoardLocation b1(edges[i], edges[i + 1]);
@@ -142,7 +143,7 @@ TEST(Board, PieceCount) {
 }
 
 TEST(Board, AddGetRemove) {
-  Board board(5);
+  Board board(GameOptions::SIX_MEN_MORRIS);
   BoardLocation loc(0, 0);
   EXPECT_EQ(0, board.piece_count());
   EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(loc));

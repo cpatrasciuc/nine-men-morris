@@ -12,26 +12,9 @@
 
 namespace game {
 
-namespace {
-
-int GetBoardSizeFromGameType(GameOptions::GameType type) {
-  switch (type) {
-    case GameOptions::THREE_MEN_MORRIS:
-      return 3;
-    case GameOptions::SIX_MEN_MORRIS:
-      return 5;
-    case GameOptions::NINE_MEN_MORRIS:
-      return 7;
-  }
-  NOTREACHED();
-  return -1;
-}
-
-}  // anonymous namespace
-
 Game::Game(const GameOptions& game_options)
     : game_options_(game_options),
-      board_(GetBoardSizeFromGameType(game_options.game_type())),
+      board_(game_options.game_type()),
       next_action_type_(PlayerAction::PLACE_PIECE) {
   pieces_in_hand_.insert(std::make_pair(Board::WHITE_COLOR, 0));
   pieces_in_hand_.insert(std::make_pair(Board::BLACK_COLOR, 0));

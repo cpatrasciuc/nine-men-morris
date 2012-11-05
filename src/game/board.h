@@ -11,6 +11,7 @@
 #include "base/basic_macros.h"
 #include "game/board_location.h"
 #include "game/game_export.h"
+#include "game/game_options.h"
 
 namespace game {
 
@@ -25,7 +26,7 @@ class GAME_EXPORT Board {
     BLACK_COLOR
   };
 
-  explicit Board(int size = 7);
+  explicit Board(GameOptions::GameType type = GameOptions::NINE_MEN_MORRIS);
 
   int size() const { return size_; }
 
