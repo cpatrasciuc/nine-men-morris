@@ -8,6 +8,7 @@
 
 #include <limits>
 #include <ostream>
+#include <string>
 #include <vector>
 
 #include "base/log.h"
@@ -18,6 +19,40 @@
 namespace game {
 
 namespace {
+
+const char kMovePieceString[] = "MOVE";
+const char kPlacePieceString[] = "PLACE";
+const char kRemovePieceString[] = "REMOVE";
+
+const char kWhiteColorString[] = "WHITE";
+const char kBlackColorString[] = "BLACK";
+
+std::string ActionTypeToString(const PlayerAction::ActionType type) {
+  switch (type) {
+    case PlayerAction::MOVE_PIECE:
+      return kMovePieceString;
+    case PlayerAction::PLACE_PIECE:
+      return kPlacePieceString;
+    case PlayerAction::REMOVE_PIECE:
+      return kRemovePieceString;
+  }
+  NOTREACHED();
+  return std::string();
+}
+
+std::string PlayerColorToString(const Board::PieceColor color) {
+  switch (color) {
+    case Board::WHITE_COLOR:
+      return kWhiteColorString;
+    case Board::BLACK_COLOR:
+      return kBlackColorString;
+    case Board::NO_COLOR:
+      NOTREACHED();
+      break;
+  }
+  NOTREACHED();
+  return std::string();
+}
 
 void SerializeActionsToBinaryStream(const std::vector<PlayerAction>& actions,
                                     std::ostream& out) {
@@ -48,6 +83,32 @@ void SerializeActionsToBinaryStream(const std::vector<PlayerAction>& actions,
   }
 }
 
+void SerializeActionsToTextStream(const std::vector<PlayerAction>& actions,
+                                    std::ostream& out) {
+  out << actions.size() << std::endl;
+  for (size_t i = 0; i < actions.size(); ++i) {
+    out << ActionTypeToString(actions[i].type()) << " ";
+    out << PlayerColorToString(actions[i].player_color()) << " ";
+    switch (actions[i].type()) {
+      case PlayerAction::MOVE_PIECE:
+        out << actions[i].source().line() << " "
+            << actions[i].source().column() << " "
+            << actions[i].destination().line() << " "
+            << actions[i].destination().column();
+        break;
+      case PlayerAction::PLACE_PIECE:
+        out << actions[i].destination().line() << " "
+            << actions[i].destination().column();
+        break;
+      case PlayerAction::REMOVE_PIECE:
+        out << actions[i].source().line() << " "
+            << actions[i].source().column();
+        break;
+    }
+    out << std::endl;
+  }
+}
+
 }  // anonymous namespace
 
 // static
@@ -61,6 +122,8 @@ void GameSerializer::SerializeTo(const Game& game,
     DCHECK_EQ(sizeof(char), 1);  // NOLINT(runtime/sizeof)
     DCHECK_LT(game.board().size(), std::numeric_limits<char>().max());
     SerializeActionsToBinaryStream(actions, out);
+  } else {
+    SerializeActionsToTextStream(actions, out);
   }
 }
 

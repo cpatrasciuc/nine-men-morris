@@ -83,5 +83,19 @@ TEST_F(GameSerializerTest, BinarySerialization) {
   }
 }
 
+TEST_F(GameSerializerTest, TextSerialization) {
+  std::ostringstream out;
+  GameSerializer::SerializeTo(*game(), out, false);
+  const std::string expected =
+      "6\n"
+      "PLACE WHITE 0 0\n"
+      "PLACE BLACK 6 0\n"
+      "PLACE WHITE 0 3\n"
+      "PLACE BLACK 6 3\n"
+      "PLACE WHITE 0 6\n"
+      "REMOVE WHITE 6 3\n";
+  EXPECT_EQ(expected, out.str());
+}
+
 }  // anonymous namespace
 }  // namespace game
