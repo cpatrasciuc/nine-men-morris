@@ -107,7 +107,11 @@ TEST_F(GameSerializerTest, EmptyGame) {
   std::ostringstream binary_stream(std::ios::out | std::ios::binary);
   GameSerializer::SerializeTo(game, binary_stream, true);
   const char expected[8] = { 0 };
-  EXPECT_STREQ(expected, binary_stream.str().c_str());
+  const std::string binary_string = binary_stream.str();
+  ASSERT_EQ(arraysize(expected), binary_string.size());
+  for (size_t i = 0; i < arraysize(expected); ++i) {
+    EXPECT_EQ(expected[i], binary_string[i]);
+  }
 }
 
 }  // anonymous namespace
