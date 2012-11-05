@@ -28,10 +28,8 @@ void Game::Initialize() {
 }
 
 bool Game::IsGameOver() const {
-  if (pieces_in_hand_[current_player_] > 0) {
-    return false;
-  }
-  int remaining_pieces = board_.GetPieceCountByColor(current_player_);
+  int remaining_pieces = board_.GetPieceCountByColor(current_player_) +
+                         pieces_in_hand_[current_player_];
   if (remaining_pieces < 2) {
     return true;
   }
