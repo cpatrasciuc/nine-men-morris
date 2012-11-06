@@ -9,6 +9,12 @@
 #include "game/player_action.h"
 #include "gtest/gtest.h"
 
+#if defined(DEBUG_MODE)
+#define MAYBE(testcase) testcase
+#else
+#define MAYBE(testcase) DISABLED_##testcase
+#endif
+
 namespace game {
 namespace {
 
@@ -151,6 +157,14 @@ TEST(PlayerAction, CanExecuteOn) {
   // Good
   remove_action.set_source(BoardLocation(0, 3));
   EXPECT_TRUE(remove_action.CanExecuteOn(board));
+}
+
+TEST(PlayerActionDeathTest, MAYBE(ExecuteInvalidAction)) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  Board board;
+  PlayerAction remove_action(Board::WHITE_COLOR, PlayerAction::REMOVE_PIECE);
+  EXPECT_FALSE(remove_action.CanExecuteOn(board));
+  ASSERT_DEATH(remove_action.Execute(&board), "");
 }
 
 }  // anonymous namespace

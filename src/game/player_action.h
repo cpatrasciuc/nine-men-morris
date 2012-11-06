@@ -41,7 +41,9 @@ class GAME_EXPORT PlayerAction {
     destination_ = destination;
   }
 
-  // Execute the action on the given board instance.
+  // Execute the action on the given board instance. The action must be a valid
+  // one given the current state of the board. To check this you can run
+  // |CanExecuteOn()|.
   void Execute(Board* board) const;
 
   // Undo the action that was previously executed on the given board instance.

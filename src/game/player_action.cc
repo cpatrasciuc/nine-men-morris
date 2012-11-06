@@ -17,23 +17,15 @@ PlayerAction::PlayerAction(Board::PieceColor player_color, ActionType type)
 }
 
 void PlayerAction::Execute(Board* board) const {
+  DCHECK(CanExecuteOn(*board));
   switch (action_type_) {
     case MOVE_PIECE:
-      DCHECK(board->IsValidLocation(source_));
-      DCHECK(board->IsValidLocation(destination_));
-      DCHECK_EQ(player_color_, board->GetPieceAt(source_));
-      DCHECK_EQ(Board::NO_COLOR, board->GetPieceAt(destination_));
       board->MovePiece(source_, destination_);
       break;
     case PLACE_PIECE:
-      DCHECK(board->IsValidLocation(destination_));
-      DCHECK_EQ(Board::NO_COLOR, board->GetPieceAt(destination_));
       board->AddPiece(destination_, player_color_);
       break;
     case REMOVE_PIECE:
-      DCHECK(board->IsValidLocation(source_));
-      DCHECK_EQ((player_color_ == Board::WHITE_COLOR ?
-          Board::BLACK_COLOR : Board::WHITE_COLOR), board->GetPieceAt(source_));
       board->RemovePiece(source_);
       break;
   }
