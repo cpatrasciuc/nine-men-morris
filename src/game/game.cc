@@ -27,7 +27,7 @@ void Game::Initialize() {
   UpdateGameState();
 }
 
-bool Game::IsGameOver() const {
+bool Game::CheckIfGameIsOver() const {
   int remaining_pieces = board_.GetPieceCountByColor(current_player_) +
                          (*pieces_in_hand_.find(current_player_)).second;
   if (remaining_pieces < 2) {

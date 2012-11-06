@@ -29,9 +29,6 @@ class GAME_EXPORT Game {
   // pieces available to each player at the beginning of the game, etc.
   void Initialize();
 
-  // Checks if the game reached its end. It must be called after each action.
-  bool IsGameOver() const;
-
   // Execute the given |action| and update the game state based on its result.
   void ExecutePlayerAction(const PlayerAction& action);
 
@@ -52,6 +49,9 @@ class GAME_EXPORT Game {
   // last executed action. It also checks if the game is over and, if it's the
   // case, it updates the corresponding variables.
   void UpdateGameState();
+
+  // Checks if the game reached its end. It is called after each action.
+  bool CheckIfGameIsOver() const;
 
   // The options for this game instance.
   GameOptions game_options_;
