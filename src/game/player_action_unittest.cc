@@ -109,5 +109,49 @@ TEST(PlayerAction, Undo) {
   EXPECT_EQ(0, board.piece_count());
 }
 
+TEST(PlayerAction, CanExecuteOn) {
+  Board board;
+  board.AddPiece(BoardLocation(0, 0), Board::BLACK_COLOR);
+
+  PlayerAction place_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
+  // Already occupied location
+  place_action.set_destination(BoardLocation(0, 0));
+  EXPECT_FALSE(place_action.CanExecuteOn(board));
+  // Invalid location
+  place_action.set_destination(BoardLocation(0, 1));
+  EXPECT_FALSE(place_action.CanExecuteOn(board));
+  // Good
+  place_action.set_destination(BoardLocation(0, 3));
+  EXPECT_TRUE(place_action.CanExecuteOn(board));
+  place_action.Execute(&board);
+
+  PlayerAction move_action(Board::BLACK_COLOR, PlayerAction::MOVE_PIECE);
+  // Invalid source
+  EXPECT_FALSE(move_action.CanExecuteOn(board));
+  // Invalid destination
+  move_action.set_source(BoardLocation(0, 0));
+  EXPECT_FALSE(move_action.CanExecuteOn(board));
+  // Invalid source color
+  move_action.set_destination(BoardLocation(3, 0));
+  move_action.set_source(place_action.destination());
+  EXPECT_FALSE(move_action.CanExecuteOn(board));
+  // Good
+  move_action.set_source(BoardLocation(0, 0));
+  EXPECT_TRUE(move_action.CanExecuteOn(board));
+  // Destination is not empty
+  move_action.set_destination(BoardLocation(0, 3));
+  EXPECT_FALSE(move_action.CanExecuteOn(board));
+
+  PlayerAction remove_action(Board::BLACK_COLOR, PlayerAction::REMOVE_PIECE);
+  // Invalid source
+  EXPECT_FALSE(remove_action.CanExecuteOn(board));
+  // Invalid source color
+  remove_action.set_source(BoardLocation(0, 0));
+  EXPECT_FALSE(remove_action.CanExecuteOn(board));
+  // Good
+  remove_action.set_source(BoardLocation(0, 3));
+  EXPECT_TRUE(remove_action.CanExecuteOn(board));
+}
+
 }  // anonymous namespace
 }  // namespace game

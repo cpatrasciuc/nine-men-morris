@@ -47,6 +47,14 @@ class GAME_EXPORT PlayerAction {
   // Undo the action that was previously executed on the given board instance.
   void Undo(Board* board) const;
 
+  // Verifies if |this| action satisfies all the constraints required before
+  // executing it on the given |board|. If all pre-conditions are verified the
+  // method returns |true|.
+  //
+  // Note: For MOVE_PIECE actions it does not verify if the locations are
+  //       adjacent. This allows jumps at the end of the game.
+  bool CanExecuteOn(const Board& board) const;
+
  private:
   Board::PieceColor player_color_;
   ActionType action_type_;
