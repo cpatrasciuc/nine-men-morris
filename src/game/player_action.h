@@ -57,6 +57,12 @@ class GAME_EXPORT PlayerAction {
   //       adjacent. This allows jumps at the end of the game.
   bool CanExecuteOn(const Board& board) const;
 
+  // Verifies if |this| action satisfies all the constraints required before
+  // undoing it from the given |board|. If all the pre-conditions are verified
+  // the method returns |true|.
+  // See also the note from |CanExecuteOn()| regarding MOVE_PIECE actions.
+  bool CanUndoFrom(const Board& board) const;
+
  private:
   Board::PieceColor player_color_;
   ActionType action_type_;

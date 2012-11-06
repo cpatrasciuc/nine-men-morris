@@ -74,4 +74,22 @@ bool PlayerAction::CanExecuteOn(const Board& board) const {
   return false;
 }
 
+bool PlayerAction::CanUndoFrom(const Board& board) const {
+  switch (action_type_) {
+    case MOVE_PIECE:
+      return board.IsValidLocation(source_) &&
+             board.IsValidLocation(destination_) &&
+             (board.GetPieceAt(destination_) == player_color_) &&
+             (board.GetPieceAt(source_) == Board::NO_COLOR);
+    case PLACE_PIECE:
+      return board.IsValidLocation(destination_) &&
+             (board.GetPieceAt(destination_) == player_color_);
+    case REMOVE_PIECE:
+      return board.IsValidLocation(source_) &&
+             (board.GetPieceAt(source_) == Board::NO_COLOR);
+  }
+  NOTREACHED();
+  return false;
+}
+
 }  // namespace game

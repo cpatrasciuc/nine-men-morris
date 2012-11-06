@@ -159,6 +159,47 @@ TEST(PlayerAction, CanExecuteOn) {
   EXPECT_TRUE(remove_action.CanExecuteOn(board));
 }
 
+TEST(PlayerAction, CanUndoFrom) {
+  Board board;
+
+  PlayerAction place_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
+  // Invalid destination
+  EXPECT_FALSE(place_action.CanUndoFrom(board));
+  // Empty destination
+  place_action.set_destination(BoardLocation(0, 0));
+  EXPECT_FALSE(place_action.CanUndoFrom(board));
+  // Good
+  board.AddPiece(place_action.destination(), place_action.player_color());
+  EXPECT_TRUE(place_action.CanUndoFrom(board));
+
+  PlayerAction move_action(Board::BLACK_COLOR, PlayerAction::MOVE_PIECE);
+  // Invalid source
+  EXPECT_FALSE(move_action.CanUndoFrom(board));
+  // Invalid destination
+  move_action.set_source(BoardLocation(0, 0));
+  EXPECT_FALSE(move_action.CanUndoFrom(board));
+  // Empty destination
+  move_action.set_destination(BoardLocation(3, 0));
+  move_action.set_source(BoardLocation(6, 0));
+  EXPECT_FALSE(move_action.CanUndoFrom(board));
+  // Good
+  board.AddPiece(move_action.destination(), move_action.player_color());
+  EXPECT_TRUE(move_action.CanUndoFrom(board));
+  // Source is not empty
+  move_action.set_source(place_action.destination());
+  EXPECT_FALSE(move_action.CanUndoFrom(board));
+
+  PlayerAction remove_action(Board::BLACK_COLOR, PlayerAction::REMOVE_PIECE);
+  // Invalid source
+  EXPECT_FALSE(remove_action.CanUndoFrom(board));
+  // Good
+  remove_action.set_source(BoardLocation(6, 6));
+  EXPECT_TRUE(remove_action.CanUndoFrom(board));
+  // Non-empty source
+  board.AddPiece(remove_action.source(), remove_action.player_color());
+  EXPECT_FALSE(remove_action.CanUndoFrom(board));
+}
+
 TEST(PlayerActionDeathTest, MAYBE(ExecuteInvalidAction)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;
