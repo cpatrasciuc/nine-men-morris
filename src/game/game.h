@@ -33,6 +33,7 @@ class GAME_EXPORT Game {
   // This method is responsible for doing the initial setup of the game object
   // before starting the play. It determines the first player, the number of
   // pieces available to each player at the beginning of the game, etc.
+  // It must be called only once for each game instance.
   void Initialize();
 
   // Execute the given |action| and update the game state based on its result.
