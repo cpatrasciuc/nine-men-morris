@@ -200,11 +200,13 @@ TEST(PlayerAction, CanUndoFrom) {
   EXPECT_FALSE(remove_action.CanUndoFrom(board));
 }
 
-TEST(PlayerActionDeathTest, MAYBE(ExecuteInvalidAction)) {
+TEST(PlayerActionDeathTest, MAYBE(ExecuteOrUndoInvalidAction)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;
   PlayerAction remove_action(Board::WHITE_COLOR, PlayerAction::REMOVE_PIECE);
   EXPECT_FALSE(remove_action.CanExecuteOn(board));
+  ASSERT_DEATH(remove_action.Execute(&board), "");
+  EXPECT_FALSE(remove_action.CanUndoFrom(board));
   ASSERT_DEATH(remove_action.Execute(&board), "");
 }
 
