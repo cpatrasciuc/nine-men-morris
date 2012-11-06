@@ -36,6 +36,8 @@ inline std::string LogLevelToString(LogLevel level) {
     case DEBUG:
       return "DEBUG";
   }
+  NOTREACHED();
+  return std::string();
 }
 
 std::string GetCurrentTime() {
