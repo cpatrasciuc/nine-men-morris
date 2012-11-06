@@ -49,8 +49,9 @@ class GAME_EXPORT Game {
 
  private:
   // Update the next player to move and the expected action type, based on the
-  // last executed action.
-  void UpdateCurrentPlayerAndActionType();
+  // last executed action. It also checks if the game is over and, if it's the
+  // case, it updates the corresponding variables.
+  void UpdateGameState();
 
   // The options for this game instance.
   GameOptions game_options_;

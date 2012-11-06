@@ -24,7 +24,7 @@ void Game::Initialize() {
   int piece_count = GetInitialPieceCountByGameType(game_options_.game_type());
   pieces_in_hand_[Board::WHITE_COLOR] = piece_count;
   pieces_in_hand_[Board::BLACK_COLOR] = piece_count;
-  UpdateCurrentPlayerAndActionType();
+  UpdateGameState();
 }
 
 bool Game::IsGameOver() const {
@@ -65,7 +65,7 @@ void Game::ExecutePlayerAction(const PlayerAction& action) {
     DCHECK_GT(pieces_in_hand_[current_player_], 0);
     --pieces_in_hand_[current_player_];
   }
-  UpdateCurrentPlayerAndActionType();
+  UpdateGameState();
 }
 
 void Game::UndoLastAction() {
@@ -78,10 +78,10 @@ void Game::UndoLastAction() {
   if (last_action.type() == PlayerAction::PLACE_PIECE) {
     ++pieces_in_hand_[last_action.player_color()];
   }
-  UpdateCurrentPlayerAndActionType();
+  UpdateGameState();
 }
 
-void Game::UpdateCurrentPlayerAndActionType() {
+void Game::UpdateGameState() {
   if (moves_.empty()) {
     next_action_type_ = PlayerAction::PLACE_PIECE;
     if (game_options_.white_starts()) {
