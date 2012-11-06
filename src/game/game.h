@@ -24,6 +24,12 @@ class GAME_EXPORT Game {
 
   const Board& board() const { return board_; }
 
+  bool is_game_over() const { return is_game_over_; }
+
+  // Returns the color of the winning player. It should only be called after the
+  // game is over.
+  Board::PieceColor winner() const;
+
   // This method is responsible for doing the initial setup of the game object
   // before starting the play. It determines the first player, the number of
   // pieces available to each player at the beginning of the game, etc.
@@ -73,6 +79,15 @@ class GAME_EXPORT Game {
 
   // The expected type of the next player action.
   PlayerAction::ActionType next_action_type_;
+
+  // Store the game state internally. Initially it is set to |false|. Once the
+  // game reaches its end state, the variable is switched to |true| and no other
+  // player action can be executed.
+  // TODO(game): Decide if actions can be undone once the game is over.
+  bool is_game_over_;
+
+  // Once the game is over, stores the winning color.
+  Board::PieceColor winner_;
 
   DISALLOW_COPY_AND_ASSIGN(Game);
 };
