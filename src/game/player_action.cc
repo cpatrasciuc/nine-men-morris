@@ -16,37 +16,6 @@ PlayerAction::PlayerAction(Board::PieceColor player_color, ActionType type)
   DCHECK(player_color != Board::NO_COLOR);
 }
 
-void PlayerAction::Execute(Board* board) const {
-  DCHECK(CanExecuteOn(*board));
-  switch (action_type_) {
-    case MOVE_PIECE:
-      board->MovePiece(source_, destination_);
-      break;
-    case PLACE_PIECE:
-      board->AddPiece(destination_, player_color_);
-      break;
-    case REMOVE_PIECE:
-      board->RemovePiece(source_);
-      break;
-  }
-}
-
-void PlayerAction::Undo(Board* board) const {
-  DCHECK(CanUndoFrom(*board));
-  switch (action_type_) {
-    case MOVE_PIECE:
-      board->MovePiece(destination_, source_);
-      break;
-    case PLACE_PIECE:
-      board->RemovePiece(destination_);
-      break;
-    case REMOVE_PIECE:
-      board->AddPiece(source_, player_color_ == Board::WHITE_COLOR ?
-        Board::BLACK_COLOR : Board::WHITE_COLOR);
-      break;
-  }
-}
-
 bool PlayerAction::CanExecuteOn(const Board& board) const {
   switch (action_type_) {
     case MOVE_PIECE:
@@ -67,6 +36,21 @@ bool PlayerAction::CanExecuteOn(const Board& board) const {
   return false;
 }
 
+void PlayerAction::Execute(Board* board) const {
+  DCHECK(CanExecuteOn(*board));
+  switch (action_type_) {
+    case MOVE_PIECE:
+      board->MovePiece(source_, destination_);
+      break;
+    case PLACE_PIECE:
+      board->AddPiece(destination_, player_color_);
+      break;
+    case REMOVE_PIECE:
+      board->RemovePiece(source_);
+      break;
+  }
+}
+
 bool PlayerAction::CanUndoFrom(const Board& board) const {
   switch (action_type_) {
     case MOVE_PIECE:
@@ -83,6 +67,22 @@ bool PlayerAction::CanUndoFrom(const Board& board) const {
   }
   NOTREACHED();
   return false;
+}
+
+void PlayerAction::Undo(Board* board) const {
+  DCHECK(CanUndoFrom(*board));
+  switch (action_type_) {
+    case MOVE_PIECE:
+      board->MovePiece(destination_, source_);
+      break;
+    case PLACE_PIECE:
+      board->RemovePiece(destination_);
+      break;
+    case REMOVE_PIECE:
+      board->AddPiece(source_, player_color_ == Board::WHITE_COLOR ?
+        Board::BLACK_COLOR : Board::WHITE_COLOR);
+      break;
+  }
 }
 
 }  // namespace game

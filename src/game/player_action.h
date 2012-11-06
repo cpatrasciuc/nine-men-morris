@@ -41,14 +41,6 @@ class GAME_EXPORT PlayerAction {
     destination_ = destination;
   }
 
-  // Execute the action on the given board instance. The action must be a valid
-  // one given the current state of the board. To check this you can run
-  // |CanExecuteOn()|.
-  void Execute(Board* board) const;
-
-  // Undo the action that was previously executed on the given board instance.
-  void Undo(Board* board) const;
-
   // Verifies if |this| action satisfies all the constraints required before
   // executing it on the given |board|. If all pre-conditions are verified the
   // method returns |true|.
@@ -57,11 +49,19 @@ class GAME_EXPORT PlayerAction {
   //       adjacent. This allows jumps at the end of the game.
   bool CanExecuteOn(const Board& board) const;
 
+  // Execute the action on the given board instance. The action must be a valid
+  // one given the current state of the board. To check this you can run
+  // |CanExecuteOn()|.
+  void Execute(Board* board) const;
+
   // Verifies if |this| action satisfies all the constraints required before
   // undoing it from the given |board|. If all the pre-conditions are verified
   // the method returns |true|.
   // See also the note from |CanExecuteOn()| regarding MOVE_PIECE actions.
   bool CanUndoFrom(const Board& board) const;
+
+  // Undo the action that was previously executed on the given board instance.
+  void Undo(Board* board) const;
 
  private:
   Board::PieceColor player_color_;
