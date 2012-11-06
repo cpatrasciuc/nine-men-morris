@@ -36,12 +36,12 @@ bool Game::CheckIfGameIsOver() const {
   if (is_game_over_) {
     return true;
   }
-  Board::PieceColor opponent = (current_player_ == Board::WHITE_COLOR) ?
-                               Board::BLACK_COLOR :
-                               Board::WHITE_COLOR;
-  int remaining_pieces_on_board = board_.GetPieceCountByColor(opponent);
-  int remaining_pieces_in_hand = (*pieces_in_hand_.find(opponent)).second;
-  int total_remaining_pieces =
+  const Board::PieceColor opponent = (current_player_ == Board::WHITE_COLOR) ?
+                                     Board::BLACK_COLOR :
+                                     Board::WHITE_COLOR;
+  const int remaining_pieces_on_board = board_.GetPieceCountByColor(opponent);
+  const int remaining_pieces_in_hand = (*pieces_in_hand_.find(opponent)).second;
+  const int total_remaining_pieces =
       remaining_pieces_on_board + remaining_pieces_in_hand;
   if (total_remaining_pieces <= 2) {
     return true;
@@ -92,7 +92,7 @@ void Game::UndoLastAction() {
   if (moves_.empty()) {
     return;
   }
-  PlayerAction last_action = moves_.back();
+  const PlayerAction last_action = moves_.back();
   moves_.pop_back();
   last_action.Undo(&board_);
   if (last_action.type() == PlayerAction::PLACE_PIECE) {
