@@ -18,8 +18,6 @@ Game::Game(const GameOptions& game_options)
       next_action_type_(PlayerAction::PLACE_PIECE),
       is_game_over_(false),
       winner_(Board::NO_COLOR) {
-  pieces_in_hand_.insert(std::make_pair(Board::WHITE_COLOR, 0));
-  pieces_in_hand_.insert(std::make_pair(Board::BLACK_COLOR, 0));
 }
 
 Board::PieceColor Game::winner() const {
@@ -29,8 +27,8 @@ Board::PieceColor Game::winner() const {
 
 void Game::Initialize() {
   int piece_count = GetInitialPieceCountByGameType(game_options_.game_type());
-  pieces_in_hand_[Board::WHITE_COLOR] = piece_count;
-  pieces_in_hand_[Board::BLACK_COLOR] = piece_count;
+  pieces_in_hand_.insert(std::make_pair(Board::WHITE_COLOR, piece_count));
+  pieces_in_hand_.insert(std::make_pair(Board::BLACK_COLOR, piece_count));
   UpdateGameState();
 }
 
