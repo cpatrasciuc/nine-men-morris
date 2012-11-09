@@ -18,12 +18,12 @@ bool BoardLocation::operator==(const BoardLocation& other) const {
   return (line_ == other.line_) && (column_ == other.column_);
 }
 
-}  // namespace game
-
 std::ostream& operator<<(std::ostream& out, const game::BoardLocation& loc) {
   out.put('[');
   out.put('A' + loc.column());
   return out << loc.line() + 1 << "]";
 };
+
+}  // namespace game
 
 

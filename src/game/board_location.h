@@ -37,10 +37,10 @@ class GAME_EXPORT BoardLocation {
   int column_;
 };
 
-}  // namespace game
-
 GAME_EXPORT
 std::ostream& operator<<(std::ostream& out, const game::BoardLocation& loc);
+
+}  // namespace game
 
 #endif  // GAME_BOARD_LOCATION_H_
 
