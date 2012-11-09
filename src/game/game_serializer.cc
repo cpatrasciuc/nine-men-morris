@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 #include <limits>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -122,6 +123,14 @@ int8_t EncodeGameOptions(const GameOptions& options) {
   return result;
 }
 
+GameOptions DecodeGameOptions(int8_t encoding) {
+  GameOptions options;
+  options.set_game_type(static_cast<GameOptions::GameType>(encoding & 0x03));
+  options.set_white_starts(encoding & 0b0001000);
+  options.set_jumps_allowed(encoding & 0b0010000);
+  return options;
+}
+
 }  // anonymous namespace
 
 // static
@@ -142,6 +151,22 @@ void GameSerializer::SerializeTo(const Game& game,
     out << options_encoding << std::endl;
     SerializeActionsToTextStream(actions, out);
   }
+}
+
+// static
+std::auto_ptr<Game> DeserializeFrom(std::istream* in, bool use_binary) {
+  int8_t options_encoding;
+  if (use_binary) {
+    in->read(reinterpret_cast<char*>(&options_encoding),
+             sizeof(options_encoding));
+  } else {
+    (*in) >> options_encoding;
+  }
+  GameOptions options = DecodeGameOptions(options_encoding);
+  Game* game = new Game(options);
+  game->Initialize();
+  // TODO(serialization): Deserialize player actions
+  return std::auto_ptr<Game>(game);
 }
 
 }  // namespace game
