@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <stdint.h>
+
 #include <sstream>
 #include <string>
 #include <vector>
@@ -59,6 +61,8 @@ TEST_F(GameSerializerTest, BinarySerialization) {
   std::ostringstream out(std::ios::out | std::ios::binary);
   GameSerializer::SerializeTo(*game(), out, true);
   const char expected_data[] = {
+      // The encoding of game options
+      0x32,
       // The number of moves on 64 bits
       0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       // White places at (0, 0)
@@ -86,6 +90,7 @@ TEST_F(GameSerializerTest, TextSerialization) {
   std::ostringstream out;
   GameSerializer::SerializeTo(*game(), out, false);
   const std::string expected =
+      "2\n"
       "6\n"
       "PLACE WHITE 0 0\n"
       "PLACE BLACK 6 0\n"
@@ -102,11 +107,11 @@ TEST_F(GameSerializerTest, EmptyGame) {
 
   std::ostringstream text_stream;
   GameSerializer::SerializeTo(game, text_stream, false);
-  EXPECT_EQ("0\n", text_stream.str());
+  EXPECT_EQ("2\n0\n", text_stream.str());
 
   std::ostringstream binary_stream(std::ios::out | std::ios::binary);
   GameSerializer::SerializeTo(game, binary_stream, true);
-  const char expected[8] = { 0 };
+  const char expected[9] = { 0x32, 0 };
   const std::string binary_string = binary_stream.str();
   ASSERT_EQ(arraysize(expected), binary_string.size());
   for (size_t i = 0; i < arraysize(expected); ++i) {

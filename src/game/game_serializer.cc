@@ -14,6 +14,7 @@
 #include "base/log.h"
 #include "game/board.h"
 #include "game/game.h"
+#include "game/game_options.h"
 #include "game/player_action.h"
 
 namespace game {
@@ -109,6 +110,18 @@ void SerializeActionsToTextStream(const std::vector<PlayerAction>& actions,
   }
 }
 
+// The encoding is done as follows:
+//   - the game type on the first 3 bits
+//   - the value of white_starts() on the 4th bit
+//   - the value of jumps_allowed() on the 5th bit
+int8_t EncodeGameOptions(const GameOptions& options) {
+  DCHECK_LT(options.game_type(), 1 << 4);
+  int8_t result = static_cast<int8_t>(options.game_type());
+  result |= (options.white_starts() ? 1 : 0) << 4;
+  result |= (options.jumps_allowed() ? 1 : 0) << 5;
+  return result;
+}
+
 }  // anonymous namespace
 
 // static
@@ -118,11 +131,15 @@ void GameSerializer::SerializeTo(const Game& game,
   // TODO(serialization): Add version number
   std::vector<PlayerAction> actions;
   game.DumpActionList(&actions);
+  int8_t options_encoding = EncodeGameOptions(game.options());
   if (use_binary) {
     DCHECK_EQ(sizeof(char), 1);  // NOLINT(runtime/sizeof)
     DCHECK_LT(game.board().size(), std::numeric_limits<char>().max());
+    out.write(reinterpret_cast<const char*>(&options_encoding),
+              sizeof(options_encoding));
     SerializeActionsToBinaryStream(actions, out);
   } else {
+    out << options_encoding << std::endl;
     SerializeActionsToTextStream(actions, out);
   }
 }
