@@ -64,6 +64,10 @@ class GAME_EXPORT Game {
   // Checks if the game reached its end. It is called after each action.
   bool CheckIfGameIsOver() const;
 
+  // Utility method that returns the number of pieces that still have to be
+  // placed on the board by the given player.
+  int GetPiecesInHand(const Board::PieceColor player_color) const;
+
   // The options for this game instance.
   GameOptions game_options_;
 

@@ -40,7 +40,7 @@ bool Game::CheckIfGameIsOver() const {
                                      Board::BLACK_COLOR :
                                      Board::WHITE_COLOR;
   const int remaining_pieces_on_board = board_.GetPieceCountByColor(opponent);
-  const int remaining_pieces_in_hand = (*pieces_in_hand_.find(opponent)).second;
+  const int remaining_pieces_in_hand = GetPiecesInHand(opponent);
   const int total_remaining_pieces =
       remaining_pieces_on_board + remaining_pieces_in_hand;
   if (total_remaining_pieces <= 2) {
@@ -81,8 +81,8 @@ bool Game::CanExecutePlayerAction(const PlayerAction& action) const {
          (action.type() == next_action_type_) &&
          (action.player_color() == current_player_) &&
          action.CanExecuteOn(board_) &&
-         (((*pieces_in_hand_.find(current_player_)).second > 0) ||
-          (action.type() != PlayerAction::PLACE_PIECE));
+         ((action.type() != PlayerAction::PLACE_PIECE) ||
+          (GetPiecesInHand(current_player_) > 0));
 }
 
 void Game::ExecutePlayerAction(const PlayerAction& action) {
@@ -138,6 +138,11 @@ void Game::UpdateGameState() {
 
 void Game::DumpActionList(std::vector<PlayerAction>* actions) const {
   actions->insert(actions->end(), moves_.begin(), moves_.end());
+}
+
+int Game::GetPiecesInHand(const Board::PieceColor player_color) const {
+  DCHECK(player_color != Board::NO_COLOR);
+  return (*pieces_in_hand_.find(player_color)).second;
 }
 
 // static
