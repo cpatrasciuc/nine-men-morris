@@ -36,6 +36,10 @@ class GAME_EXPORT Game {
   // It must be called only once for each game instance.
   void Initialize();
 
+  // Verifies that the |action| is valid and can be executed given the current
+  // state of the game.
+  bool CanExecutePlayerAction(const PlayerAction& action) const;
+
   // Execute the given |action| and update the game state based on its result.
   void ExecutePlayerAction(const PlayerAction& action);
 

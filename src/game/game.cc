@@ -76,13 +76,20 @@ bool Game::CheckIfGameIsOver() const {
   return true;
 }
 
+bool Game::CanExecutePlayerAction(const PlayerAction& action) const {
+  return (!is_game_over_) &&
+         (action.type() == next_action_type_) &&
+         (action.player_color() == current_player_) &&
+         action.CanExecuteOn(board_) &&
+         (((*pieces_in_hand_.find(current_player_)).second > 0) ||
+          (action.type() != PlayerAction::PLACE_PIECE));
+}
+
 void Game::ExecutePlayerAction(const PlayerAction& action) {
-  DCHECK_EQ(next_action_type_, action.type());
-  DCHECK(!is_game_over_);
+  DCHECK(CanExecutePlayerAction(action));
   moves_.push_back(action);
   action.Execute(&board_);
   if (action.type() == PlayerAction::PLACE_PIECE) {
-    DCHECK_GT(pieces_in_hand_[current_player_], 0);
     --pieces_in_hand_[current_player_];
   }
   UpdateGameState();
