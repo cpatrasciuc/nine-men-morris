@@ -166,6 +166,7 @@ TEST_F(GameSerializerTest, EmptyGame) {
 
 TEST_F(GameSerializerTest, InvalidTextStream) {
   const std::string invalid_streams[] = {
+    "",
     "real invalid stream",
     "50",
     "50 invalid action number",
