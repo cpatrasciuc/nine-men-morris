@@ -345,12 +345,10 @@ std::auto_ptr<Game> GameSerializer::DeserializeFrom(std::istream* in,
   std::vector<PlayerAction> actions;
   if (use_binary) {
     if (!DeserializeActionsFromBinaryStream(in, &actions)) {
-      LOG(ERROR) << "Could not deserialize game actions";
       return std::auto_ptr<Game>();
     };
   } else {
     if (!DeserializeActionsFromTextStream(in, &actions)) {
-      LOG(ERROR) << "Could not deserialize game actions";
       return std::auto_ptr<Game>();
     }
   }
