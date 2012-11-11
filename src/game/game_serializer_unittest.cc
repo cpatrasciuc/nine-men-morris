@@ -232,7 +232,6 @@ TEST_F(GameSerializerTest, InvalidBinaryStream) {
 }
 
 // TODO(serialization): Add tests for serializing MOVE actions
-// TODO(serialization): Eat whitespace in text streams before testing for EOF
 
 }  // anonymous namespace
 }  // namespace game
