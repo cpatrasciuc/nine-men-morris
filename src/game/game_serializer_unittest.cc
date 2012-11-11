@@ -184,7 +184,53 @@ TEST_F(GameSerializerTest, InvalidTextStream) {
   }
 }
 
-// TODO(serialization): Add tests for invalid binary streams
+TEST_F(GameSerializerTest, InvalidBinaryStream) {
+  // On the first position of each array, we store its length. The stream's
+  // actual data starts only from index 1.
+  const char invalid_streams[][50] = {
+    // Empty stream
+    { 0, 0 },
+    // No action count
+    { 1, 0x32 },
+    // Not enough bits for action count
+    { 2, 0x32, 0x10 },
+    // Not enough actions
+    { 9, 0x32, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+    // Incomplete action
+    { 10, 0x32, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+    { 11, 0x32, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
+    { 12,
+      0x32,
+      0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x01, 0x00 },
+    // Invalid player color
+    { 13,
+      0x32,
+      0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0xFF, 0x00, 0x00 },
+    // Invalid action type
+    { 13,
+      0x32,
+      0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0xFF, 0x01, 0x00, 0x00 },
+    // Invalid series of actions (white should move first)
+    { 13,
+      0x32,
+      0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x02, 0x00, 0x00 },
+  };
+
+  for (size_t i = 0; i < arraysize(invalid_streams); ++i) {
+    std::istringstream in(
+            std::string(&invalid_streams[i][1], invalid_streams[i][0]),
+            std::ios::in | std::ios::binary);
+    std::auto_ptr<Game> game = GameSerializer::DeserializeFrom(&in, true);
+    ASSERT_FALSE(game.get());
+  }
+}
+
+// TODO(serialization): Add tests for serializing MOVE actions
+// TODO(serialization): Eat whitespace in text streams before testing for EOF
 
 }  // anonymous namespace
 }  // namespace game
