@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -22,6 +23,8 @@ namespace {
 
 class GameSerializerTest : public ::testing::Test {
  public:
+  static const char kExpectedBinaryStream[];
+
   virtual void SetUp() {
     // TODO(player): Remove the temporary implementation
     Reset(game_, new Game(GameOptions()));
@@ -57,32 +60,62 @@ class GameSerializerTest : public ::testing::Test {
   std::vector<BoardLocation> black_locations_;
 };
 
+const char GameSerializerTest::kExpectedBinaryStream[] = {
+    // The encoding of game options
+    0x32,
+    // The number of moves on 64 bits
+    0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    // White places at (0, 0)
+    0x00, 0x01, 0x00, 0x00,
+    // Black places at (6, 0)
+    0x00, 0x02, 0x06, 0x00,
+    // White places at (0, 3)
+    0x00, 0x01, 0x00, 0x03,
+    // Black places at (6, 3)
+    0x00, 0x02, 0x06, 0x03,
+    // White places at (0, 6)
+    0x00, 0x01, 0x00, 0x06,
+    // White removes from (6, 3)
+    0x02, 0x01, 0x06, 0x03
+};
+
+
 TEST_F(GameSerializerTest, BinarySerialization) {
   std::ostringstream out(std::ios::out | std::ios::binary);
   GameSerializer::SerializeTo(*game(), out, true);
-  const char expected_data[] = {
-      // The encoding of game options
-      0x32,
-      // The number of moves on 64 bits
-      0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-      // White places at (0, 0)
-      0x00, 0x01, 0x00, 0x00,
-      // Black places at (6, 0)
-      0x00, 0x02, 0x06, 0x00,
-      // White places at (0, 3)
-      0x00, 0x01, 0x00, 0x03,
-      // Black places at (6, 3)
-      0x00, 0x02, 0x06, 0x03,
-      // White places at (0, 6)
-      0x00, 0x01, 0x00, 0x06,
-      // White removes from (6, 3)
-      0x02, 0x01, 0x06, 0x03
-  };
   const std::string binary_string = out.str();
-  ASSERT_EQ(arraysize(expected_data), binary_string.size());
+  ASSERT_EQ(arraysize(kExpectedBinaryStream), binary_string.size());
   const char* actual_data = binary_string.c_str();
-  for (size_t i = 0; i < arraysize(expected_data); ++i) {
-    EXPECT_EQ(expected_data[i], actual_data[i]);
+  for (size_t i = 0; i < arraysize(kExpectedBinaryStream); ++i) {
+    EXPECT_EQ(kExpectedBinaryStream[i], actual_data[i]);
+  }
+}
+
+TEST_F(GameSerializerTest, BinaryDeserialization) {
+  std::istringstream in(
+      std::string(kExpectedBinaryStream, arraysize(kExpectedBinaryStream)),
+      std::ios::in | std::ios::binary);
+  std::auto_ptr<Game> game = GameSerializer::DeserializeFrom(&in, true);
+  ASSERT_TRUE(game.get());
+  EXPECT_EQ(this->game()->is_game_over(), game->is_game_over());
+  EXPECT_EQ(this->game()->options().game_type(),
+            game->options().game_type());
+  EXPECT_EQ(this->game()->options().jumps_allowed(),
+            game->options().jumps_allowed());
+  EXPECT_EQ(this->game()->options().white_starts(),
+            game->options().white_starts());
+  std::vector<PlayerAction> expected_actions;
+  this->game()->DumpActionList(&expected_actions);
+  std::vector<PlayerAction> actual_actions;
+  game->DumpActionList(&actual_actions);
+  ASSERT_EQ(expected_actions.size(), actual_actions.size());
+  for (size_t i = 0; i < expected_actions.size(); ++i) {
+    EXPECT_EQ(expected_actions[i].type(), actual_actions[i].type());
+    EXPECT_EQ(expected_actions[i].player_color(),
+              actual_actions[i].player_color());
+    EXPECT_EQ(expected_actions[i].source(), actual_actions[i].source());
+    EXPECT_EQ(expected_actions[i].destination(),
+              actual_actions[i].destination());
   }
 }
 
