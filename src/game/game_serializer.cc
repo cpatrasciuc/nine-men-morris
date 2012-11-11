@@ -106,6 +106,16 @@ bool GetIntegerFromTextStream(std::istream* in, IntType* x) {
   return true;
 }
 
+// Utility function that checks if there is something else, except whitespace,
+// until the end of the input stream. The function eats all the available
+// whitespace at the beginning of the stream. If after that, it reaches the end
+// of the stream, it returns true; otherwise it returns false.
+// NOTE: It only works on text streams.
+inline bool HasOnlyWhiteSpace(std::istream* in) {
+  (*in) >> std::ws;
+  return !in->good();
+}
+
 void SerializeActionsToBinaryStream(const std::vector<PlayerAction>& actions,
                                     std::ostream* out) {
   const int64_t count = actions.size();
@@ -213,7 +223,7 @@ void SerializeActionsToTextStream(const std::vector<PlayerAction>& actions,
 
 bool DeserializeActionsFromTextStream(std::istream* in,
                                       std::vector<PlayerAction>* actions) {
-  if (!in->good()) {
+  if (HasOnlyWhiteSpace(in)) {
     LOG(ERROR) << "Could not read the number of actions";
     return false;
   }
@@ -223,14 +233,14 @@ bool DeserializeActionsFromTextStream(std::istream* in,
     return false;
   }
   for (int64_t i = 0; i < actions_count; ++i) {
-    if (!in->good()) {
+    if (HasOnlyWhiteSpace(in)) {
       LOG(ERROR) << "Could not read the type for action number " << (i + 1);
       return false;
     }
     std::string type_string;
     (*in) >> type_string;
 
-    if (!in->good()) {
+    if (HasOnlyWhiteSpace(in)) {
       LOG(ERROR) << "Could not read player color for action number " << (i + 1);
       return false;
     }
@@ -248,7 +258,7 @@ bool DeserializeActionsFromTextStream(std::istream* in,
       return false;
     }
 
-    if (!in->good()) {
+    if (HasOnlyWhiteSpace(in)) {
       LOG(ERROR) << "Could not read the details for action number " << (i + 1);
       return false;
     }
