@@ -24,6 +24,7 @@ namespace {
 class GameSerializerTest : public ::testing::Test {
  public:
   static const char kExpectedBinaryStream[];
+  static const std::string kExpectedTextStream;
 
   virtual void SetUp() {
     // TODO(player): Remove the temporary implementation
@@ -50,6 +51,28 @@ class GameSerializerTest : public ::testing::Test {
     remove_action.set_source(black_locations_.back());
     game()->ExecutePlayerAction(remove_action);
     black_locations_.pop_back();
+  }
+
+  void AssertEqualGame(const Game& actual_game) const {
+    EXPECT_EQ(game_->is_game_over(), actual_game.is_game_over());
+    EXPECT_EQ(game_->options().game_type(), actual_game.options().game_type());
+    EXPECT_EQ(game_->options().jumps_allowed(),
+              actual_game.options().jumps_allowed());
+    EXPECT_EQ(game_->options().white_starts(),
+              actual_game.options().white_starts());
+    std::vector<PlayerAction> expected_actions;
+    game_->DumpActionList(&expected_actions);
+    std::vector<PlayerAction> actual_actions;
+    actual_game.DumpActionList(&actual_actions);
+    ASSERT_EQ(expected_actions.size(), actual_actions.size());
+    for (size_t i = 0; i < expected_actions.size(); ++i) {
+      EXPECT_EQ(expected_actions[i].type(), actual_actions[i].type());
+      EXPECT_EQ(expected_actions[i].player_color(),
+                actual_actions[i].player_color());
+      EXPECT_EQ(expected_actions[i].source(), actual_actions[i].source());
+      EXPECT_EQ(expected_actions[i].destination(),
+                actual_actions[i].destination());
+    }
   }
 
   Game* game() const { return Get(game_); }
@@ -79,6 +102,17 @@ const char GameSerializerTest::kExpectedBinaryStream[] = {
     0x02, 0x01, 0x06, 0x03
 };
 
+const std::string GameSerializerTest::kExpectedTextStream =
+    "2\n"
+    "6\n"
+    "PLACE WHITE 0 0\n"
+    "PLACE BLACK 6 0\n"
+    "PLACE WHITE 0 3\n"
+    "PLACE BLACK 6 3\n"
+    "PLACE WHITE 0 6\n"
+    "REMOVE WHITE 6 3\n";
+
+
 
 TEST_F(GameSerializerTest, BinarySerialization) {
   std::ostringstream out(std::ios::out | std::ios::binary);
@@ -97,41 +131,20 @@ TEST_F(GameSerializerTest, BinaryDeserialization) {
       std::ios::in | std::ios::binary);
   std::auto_ptr<Game> game = GameSerializer::DeserializeFrom(&in, true);
   ASSERT_TRUE(game.get());
-  EXPECT_EQ(this->game()->is_game_over(), game->is_game_over());
-  EXPECT_EQ(this->game()->options().game_type(),
-            game->options().game_type());
-  EXPECT_EQ(this->game()->options().jumps_allowed(),
-            game->options().jumps_allowed());
-  EXPECT_EQ(this->game()->options().white_starts(),
-            game->options().white_starts());
-  std::vector<PlayerAction> expected_actions;
-  this->game()->DumpActionList(&expected_actions);
-  std::vector<PlayerAction> actual_actions;
-  game->DumpActionList(&actual_actions);
-  ASSERT_EQ(expected_actions.size(), actual_actions.size());
-  for (size_t i = 0; i < expected_actions.size(); ++i) {
-    EXPECT_EQ(expected_actions[i].type(), actual_actions[i].type());
-    EXPECT_EQ(expected_actions[i].player_color(),
-              actual_actions[i].player_color());
-    EXPECT_EQ(expected_actions[i].source(), actual_actions[i].source());
-    EXPECT_EQ(expected_actions[i].destination(),
-              actual_actions[i].destination());
-  }
+  AssertEqualGame(*game.get());
 }
 
 TEST_F(GameSerializerTest, TextSerialization) {
   std::ostringstream out;
   GameSerializer::SerializeTo(*game(), out, false);
-  const std::string expected =
-      "2\n"
-      "6\n"
-      "PLACE WHITE 0 0\n"
-      "PLACE BLACK 6 0\n"
-      "PLACE WHITE 0 3\n"
-      "PLACE BLACK 6 3\n"
-      "PLACE WHITE 0 6\n"
-      "REMOVE WHITE 6 3\n";
-  EXPECT_EQ(expected, out.str());
+  EXPECT_EQ(kExpectedTextStream, out.str());
+}
+
+TEST_F(GameSerializerTest, TextDeserialization) {
+  std::istringstream in(kExpectedTextStream);
+  std::auto_ptr<Game> game = GameSerializer::DeserializeFrom(&in, false);
+  ASSERT_TRUE(game.get());
+  AssertEqualGame(*game.get());
 }
 
 TEST_F(GameSerializerTest, EmptyGame) {
