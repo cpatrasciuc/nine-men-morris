@@ -10,8 +10,6 @@ set(GAME_SOURCE_FILES
   game_options.h
   game_serializer.cc
   game_serializer.h
-  player.cc
-  player.h
   player_action.cc
   player_action.h
 )
