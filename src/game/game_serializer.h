@@ -20,7 +20,6 @@ class GAME_EXPORT GameSerializer {
   // the serializer will use a binary format; otherwise it will use a
   // text based output format. If |use_binary| is true, |out| must be a binary
   // stream; otherwise it must be a text based stream.
-  // TODO(serialization): Change |out| from ref to pointer.
   static void SerializeTo(const Game& game, std::ostream* out, bool use_binary);
 
   // Deserialize a Game instance from the given input stream. If |use_binary| is
