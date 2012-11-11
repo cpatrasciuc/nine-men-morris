@@ -102,7 +102,7 @@ const char GameSerializerTest::kExpectedBinaryStream[] = {
 };
 
 const std::string GameSerializerTest::kExpectedTextStream =
-    "2\n"
+    "50\n"
     "6\n"
     "PLACE WHITE 0 0\n"
     "PLACE BLACK 6 0\n"
@@ -152,7 +152,7 @@ TEST_F(GameSerializerTest, EmptyGame) {
 
   std::ostringstream text_stream;
   GameSerializer::SerializeTo(game, &text_stream, false);
-  EXPECT_EQ("2\n0\n", text_stream.str());
+  EXPECT_EQ("50\n0\n", text_stream.str());
 
   std::ostringstream binary_stream(std::ios::out | std::ios::binary);
   GameSerializer::SerializeTo(game, &binary_stream, true);
@@ -167,14 +167,14 @@ TEST_F(GameSerializerTest, EmptyGame) {
 TEST_F(GameSerializerTest, InvalidTextStream) {
   const std::string invalid_streams[] = {
     "real invalid stream",
-    "2",
-    "2 invalid action number",
-    "2 1 PLACE",
-    "2 1 PLACE WHITE",
-    "2 1 INVALID_TYPE WHITE",
-    "2 1 PLACE INVALID_COLOR",
+    "50",
+    "50 invalid action number",
+    "50 1 PLACE",
+    "50 1 PLACE WHITE",
+    "50 1 INVALID_TYPE WHITE",
+    "50 1 PLACE INVALID_COLOR",
     // Invalid series of actions (the white player should move first)
-    "2 1 PLACE BLACK 0 0",
+    "50 1 PLACE BLACK 0 0",
   };
 
   for (size_t i = 0; i < arraysize(invalid_streams); ++i) {

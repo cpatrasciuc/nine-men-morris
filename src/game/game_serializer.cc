@@ -97,8 +97,11 @@ bool GetIntegerFromTextStream(std::istream* in, IntType* x) {
       return false;
     }
   }
+  // TODO(string_util): Check if the ToString() method works on char variables.
+  int64_t temp;
   std::istringstream iss(number_string);
-  iss >> *x;
+  iss >> temp;
+  *x = temp;
   return true;
 }
 
@@ -307,7 +310,7 @@ void GameSerializer::SerializeTo(const Game& game,
               sizeof(options_encoding));
     SerializeActionsToBinaryStream(actions, out);
   } else {
-    (*out) << options_encoding << std::endl;
+    (*out) << static_cast<int>(options_encoding) << std::endl;
     SerializeActionsToTextStream(actions, out);
   }
 }
