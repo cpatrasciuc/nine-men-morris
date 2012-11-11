@@ -87,9 +87,22 @@ bool PlayerColorFromString(const std::string& color_string,
   return false;
 }
 
+// Utility function that checks if there is something else, except whitespace,
+// until the end of the input stream. The function eats all the available
+// whitespace at the beginning of the stream. If after that, it reaches the end
+// of the stream, it returns true; otherwise it returns false.
+// NOTE: It only works on text streams.
+inline bool HasOnlyWhiteSpace(std::istream* in) {
+  (*in) >> std::ws;
+  return !in->good();
+}
+
 template <typename IntType>
 bool GetIntegerFromTextStream(std::istream* in, IntType* x) {
   DCHECK(x);
+  if (HasOnlyWhiteSpace(in)) {
+    return false;
+  }
   std::string number_string;
   (*in) >> number_string;
   for (size_t i = 0; i < number_string.size(); ++i) {
@@ -104,16 +117,6 @@ bool GetIntegerFromTextStream(std::istream* in, IntType* x) {
   iss >> temp;
   *x = temp;
   return true;
-}
-
-// Utility function that checks if there is something else, except whitespace,
-// until the end of the input stream. The function eats all the available
-// whitespace at the beginning of the stream. If after that, it reaches the end
-// of the stream, it returns true; otherwise it returns false.
-// NOTE: It only works on text streams.
-inline bool HasOnlyWhiteSpace(std::istream* in) {
-  (*in) >> std::ws;
-  return !in->good();
 }
 
 void SerializeActionsToBinaryStream(const std::vector<PlayerAction>& actions,
