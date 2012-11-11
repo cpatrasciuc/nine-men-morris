@@ -219,6 +219,22 @@ TEST(Board, IsPartOfMill) {
   }
 }
 
+TEST(Board, MillOnTheMiddleLine) {
+  Board board;
+  board.AddPiece(BoardLocation(3, 1), Board::BLACK_COLOR);
+  board.AddPiece(BoardLocation(3, 2), Board::BLACK_COLOR);
+  board.AddPiece(BoardLocation(3, 4), Board::BLACK_COLOR);
+  EXPECT_FALSE(board.IsPartOfMill(BoardLocation(3, 4)));
+  board.AddPiece(BoardLocation(3, 0), Board::BLACK_COLOR);
+  EXPECT_TRUE(board.IsPartOfMill(BoardLocation(3, 0)));
+  board.AddPiece(BoardLocation(1, 3), Board::BLACK_COLOR);
+  board.AddPiece(BoardLocation(2, 3), Board::BLACK_COLOR);
+  board.AddPiece(BoardLocation(4, 3), Board::BLACK_COLOR);
+  EXPECT_FALSE(board.IsPartOfMill(BoardLocation(4, 3)));
+  board.AddPiece(BoardLocation(0, 3), Board::BLACK_COLOR);
+  EXPECT_TRUE(board.IsPartOfMill(BoardLocation(0, 3)));
+}
+
 TEST(BoardDeathTest, MovePiece) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;

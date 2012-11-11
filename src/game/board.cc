@@ -183,40 +183,36 @@ bool Board::IsPartOfMill(const BoardLocation& location) const {
 
   int step = GetStep(location.column());
   int dx[] = { -2 * step, -step, 0, step, 2 * step };
-  int count = 0;
+  bool horizontal_pieces[arraysize(dx)] = { false };
   for (size_t i = 0; i < arraysize(dx); ++i) {
     BoardLocation loc(location.line() + dx[i], location.column());
     if (IsValidLocation(loc)) {
       if (GetPieceAt(loc) == color) {
-        ++count;
-      } else {
-        // We are sure that there is no mill on the line since all slots must
-        // be occupied and must have the same color.
-        break;
+        horizontal_pieces[i] = true;
+        if (i >= 2) {
+          if (horizontal_pieces[i - 1] && horizontal_pieces[i - 2]) {
+            return true;
+          }
+        }
       }
     }
-  }
-  if (count == 3) {
-    return true;
   }
 
   step = GetStep(location.line());
   int dy[] = { -2 * step, -step, 0, step, 2 * step };
-  count = 0;
+  bool vertical_pieces[arraysize(dy)] = { false };
   for (size_t i = 0; i < arraysize(dy); ++i) {
     BoardLocation loc(location.line(), location.column() + dy[i]);
     if (IsValidLocation(loc)) {
       if (GetPieceAt(loc) == color) {
-        ++count;
-      } else {
-        // We are sure that there is no mill on the column since all slots must
-        // be occupied and must have the same color.
-        break;
+        vertical_pieces[i] = true;
+        if (i >= 2) {
+          if (vertical_pieces[i - 1] && vertical_pieces[i - 2]) {
+            return true;
+          }
+        }
       }
     }
-  }
-  if (count == 3) {
-    return true;
   }
 
   return false;
