@@ -56,6 +56,9 @@ TEST(StringUtilTest, ToString) {
   EXPECT_EQ("-123.45", ToString(-123.450));
   EXPECT_EQ("0", ToString(static_cast<void*>(NULL)));
   EXPECT_EQ("test", ToString("test"));
+  char c = 10;
+  EXPECT_EQ("\n", ToString(c));
+  EXPECT_EQ("10", ToString<int>(c));
 }
 
 }  // anonymous namespace

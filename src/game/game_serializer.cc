@@ -97,7 +97,8 @@ bool GetIntegerFromTextStream(std::istream* in, IntType* x) {
       return false;
     }
   }
-  // TODO(string_util): Check if the ToString() method works on char variables.
+  // Use a 64bit int to avoid the case when IntType is on 1 byte and the stream
+  // will only read the next char instead of the next number.
   int64_t temp;
   std::istringstream iss(number_string);
   iss >> temp;

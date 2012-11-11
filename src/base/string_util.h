@@ -24,6 +24,14 @@ BASE_EXPORT void SplitString(const std::string& str,
 
 // Utility function that converts an object of type T to a string. The type T
 // must support operator <<.
+//
+// WARNING: Be careful when using it for 'char' or 'int8_t' since it will treat
+// the argument as a character not as a number.
+//
+//   int8_t x = 10;
+//   EXPECT_EQ("\n", ToString(x));       /* Treats it as a char */
+//   EXPECT_EQ("10", ToString<int>(x));  /* Force it to treat it a number */
+//
 template <typename T>
 std::string ToString(T t) {
   std::ostringstream oss;
