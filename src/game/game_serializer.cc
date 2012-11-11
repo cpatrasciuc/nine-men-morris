@@ -9,6 +9,7 @@
 #include <limits>
 #include <memory>
 #include <ostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -84,6 +85,21 @@ bool PlayerColorFromString(const std::string& color_string,
     return true;
   }
   return false;
+}
+
+template <typename IntType>
+bool GetIntegerFromTextStream(std::istream* in, IntType* x) {
+  DCHECK(x);
+  std::string number_string;
+  (*in) >> number_string;
+  for (size_t i = 0; i < number_string.size(); ++i) {
+    if (number_string[i] < '0' || number_string[i] > '9') {
+      return false;
+    }
+  }
+  std::istringstream iss(number_string);
+  iss >> *x;
+  return true;
 }
 
 void SerializeActionsToBinaryStream(const std::vector<PlayerAction>& actions,
@@ -166,7 +182,7 @@ bool DeserializeActionsFromBinaryStream(std::istream* in,
 }
 
 void SerializeActionsToTextStream(const std::vector<PlayerAction>& actions,
-                                    std::ostream& out) {
+                                  std::ostream& out) {
   out << actions.size() << std::endl;
   for (size_t i = 0; i < actions.size(); ++i) {
     out << ActionTypeToString(actions[i].type()) << " ";
@@ -198,7 +214,10 @@ bool DeserializeActionsFromTextStream(std::istream* in,
     return false;
   }
   int64_t actions_count;
-  (*in) >> actions_count;
+  if (!GetIntegerFromTextStream(in, &actions_count)) {
+    LOG(ERROR) << "Could not deserialize the action number";
+    return false;
+  }
   for (int64_t i = 0; i < actions_count; ++i) {
     if (!in->good()) {
       LOG(ERROR) << "Could not read the type for action number " << (i + 1);
@@ -301,7 +320,10 @@ std::auto_ptr<Game> GameSerializer::DeserializeFrom(std::istream* in,
     in->read(reinterpret_cast<char*>(&options_encoding),
              sizeof(options_encoding));
   } else {
-    (*in) >> options_encoding;
+    if (!GetIntegerFromTextStream(in, &options_encoding)) {
+      LOG(ERROR) << "Could not deserialize game options";
+      return std::auto_ptr<Game>();
+    }
   }
   GameOptions options = DecodeGameOptions(options_encoding);
   Game* game = new Game(options);

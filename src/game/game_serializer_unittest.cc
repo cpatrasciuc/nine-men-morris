@@ -165,5 +165,27 @@ TEST_F(GameSerializerTest, EmptyGame) {
   }
 }
 
+TEST_F(GameSerializerTest, InvalidTextStream) {
+  const std::string invalid_streams[] = {
+    "real invalid stream",
+    "2",
+    "2 invalid action number",
+    "2 1 PLACE",
+    "2 1 PLACE WHITE",
+    "2 1 INVALID_TYPE WHITE",
+    "2 1 PLACE INVALID_COLOR",
+    // Invalid series of actions (the white player should move first)
+    "2 1 PLACE BLACK 0 0",
+  };
+
+  for (size_t i = 0; i < arraysize(invalid_streams); ++i) {
+    std::istringstream in(invalid_streams[i]);
+    std::auto_ptr<Game> game = GameSerializer::DeserializeFrom(&in, false);
+    EXPECT_FALSE(game.get());
+  }
+}
+
+// TODO(serialization): Add tests for invalid binary streams
+
 }  // anonymous namespace
 }  // namespace game
