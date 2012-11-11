@@ -329,7 +329,7 @@ std::auto_ptr<Game> GameSerializer::DeserializeFrom(std::istream* in,
     }
   }
   GameOptions options = DecodeGameOptions(options_encoding);
-  Game* game = new Game(options);
+  std::auto_ptr<Game> game(new Game(options));
   game->Initialize();
   std::vector<PlayerAction> actions;
   if (use_binary) {
@@ -350,7 +350,7 @@ std::auto_ptr<Game> GameSerializer::DeserializeFrom(std::istream* in,
     }
     game->ExecutePlayerAction(actions[i]);
   }
-  return std::auto_ptr<Game>(game);
+  return game;
 }
 
 }  // namespace game
