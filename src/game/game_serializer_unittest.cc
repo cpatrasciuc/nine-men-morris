@@ -116,7 +116,7 @@ const std::string GameSerializerTest::kExpectedTextStream =
 
 TEST_F(GameSerializerTest, BinarySerialization) {
   std::ostringstream out(std::ios::out | std::ios::binary);
-  GameSerializer::SerializeTo(*game(), out, true);
+  GameSerializer::SerializeTo(*game(), &out, true);
   const std::string binary_string = out.str();
   ASSERT_EQ(arraysize(kExpectedBinaryStream), binary_string.size());
   const char* actual_data = binary_string.c_str();
@@ -136,7 +136,7 @@ TEST_F(GameSerializerTest, BinaryDeserialization) {
 
 TEST_F(GameSerializerTest, TextSerialization) {
   std::ostringstream out;
-  GameSerializer::SerializeTo(*game(), out, false);
+  GameSerializer::SerializeTo(*game(), &out, false);
   EXPECT_EQ(kExpectedTextStream, out.str());
 }
 
@@ -152,11 +152,11 @@ TEST_F(GameSerializerTest, EmptyGame) {
   Game game(game_options);
 
   std::ostringstream text_stream;
-  GameSerializer::SerializeTo(game, text_stream, false);
+  GameSerializer::SerializeTo(game, &text_stream, false);
   EXPECT_EQ("2\n0\n", text_stream.str());
 
   std::ostringstream binary_stream(std::ios::out | std::ios::binary);
-  GameSerializer::SerializeTo(game, binary_stream, true);
+  GameSerializer::SerializeTo(game, &binary_stream, true);
   const char expected[9] = { 0x32, 0 };
   const std::string binary_string = binary_stream.str();
   ASSERT_EQ(arraysize(expected), binary_string.size());
