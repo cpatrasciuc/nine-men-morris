@@ -77,12 +77,33 @@ bool Game::CheckIfGameIsOver() const {
 }
 
 bool Game::CanExecutePlayerAction(const PlayerAction& action) const {
-  return (!is_game_over_) &&
-         (action.type() == next_action_type_) &&
-         (action.player_color() == current_player_) &&
-         action.CanExecuteOn(board_) &&
-         ((action.type() != PlayerAction::PLACE_PIECE) ||
-          (GetPiecesInHand(current_player_) > 0));
+  if (is_game_over_) {
+    LOG(ERROR) << "Game is over";
+    return false;
+  }
+  if (action.type() != next_action_type_) {
+    LOG(ERROR) << "Invalid action type";
+    return false;
+  }
+  if (action.player_color() != current_player_) {
+    LOG(ERROR) << "Invalid player color";
+    return false;
+  }
+  if (!action.CanExecuteOn(board_)) {
+    LOG(ERROR) << "Cannot execute action on board";
+    return false;
+  }
+  if ((action.type() == PlayerAction::PLACE_PIECE) &&
+      (GetPiecesInHand(current_player_) <= 0)) {
+    LOG(ERROR) << "No more pieces to be placed";
+    return false;
+  }
+  if ((action.type() == PlayerAction::MOVE_PIECE) &&
+      (GetPiecesInHand(current_player_) > 0)) {
+    LOG(ERROR) << "There are still pieces to be placed on the board";
+    return false;
+  }
+  return true;
 }
 
 void Game::ExecutePlayerAction(const PlayerAction& action) {
