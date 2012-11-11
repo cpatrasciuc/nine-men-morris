@@ -170,6 +170,7 @@ TEST_F(GameSerializerTest, InvalidTextStream) {
     "real invalid stream",
     "50",
     "50 invalid action number",
+    "50 1",
     "50 1 PLACE",
     "50 1 PLACE WHITE",
     "50 1 INVALID_TYPE WHITE",
