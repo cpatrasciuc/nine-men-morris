@@ -27,7 +27,6 @@ class GameSerializerTest : public ::testing::Test {
   static const std::string kExpectedTextStream;
 
   virtual void SetUp() {
-    // TODO(player): Remove the temporary implementation
     Reset(game_, new Game(GameOptions()));
     game()->Initialize();
     white_locations_.push_back(BoardLocation(0, 0));
