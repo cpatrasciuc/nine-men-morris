@@ -27,29 +27,34 @@ class GameSerializerTest : public ::testing::Test {
   static const std::string kExpectedTextStream;
 
   virtual void SetUp() {
-    Reset(game_, new Game(GameOptions()));
+    GameOptions options;
+    options.set_game_type(GameOptions::THREE_MEN_MORRIS);
+    Reset(game_, new Game(options));
     game()->Initialize();
-    white_locations_.push_back(BoardLocation(0, 0));
-    white_locations_.push_back(BoardLocation(0, 3));
-    white_locations_.push_back(BoardLocation(0, 6));
-    black_locations_.push_back(BoardLocation(6, 0));
-    black_locations_.push_back(BoardLocation(6, 3));
-    for (size_t i = 0; i < black_locations_.size(); ++i) {
+    std::vector<BoardLocation> white_locations;
+    std::vector<BoardLocation> black_locations;
+    white_locations.push_back(BoardLocation(0, 0));
+    white_locations.push_back(BoardLocation(0, 1));
+    white_locations.push_back(BoardLocation(1, 2));
+    black_locations.push_back(BoardLocation(2, 0));
+    black_locations.push_back(BoardLocation(2, 1));
+    black_locations.push_back(BoardLocation(1, 0));
+    for (size_t i = 0; i < black_locations.size(); ++i) {
       PlayerAction white_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
-      white_action.set_destination(white_locations_[i]);
+      white_action.set_destination(white_locations[i]);
       game()->ExecutePlayerAction(white_action);
       PlayerAction black_action(Board::BLACK_COLOR, PlayerAction::PLACE_PIECE);
-      black_action.set_destination(black_locations_[i]);
+      black_action.set_destination(black_locations[i]);
       game()->ExecutePlayerAction(black_action);
     }
-    PlayerAction white_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
-    white_action.set_destination(white_locations_[2]);
+    PlayerAction white_action(Board::WHITE_COLOR, PlayerAction::MOVE_PIECE);
+    white_action.set_source(BoardLocation(1, 2));
+    white_action.set_destination(BoardLocation(0, 2));
     game()->ExecutePlayerAction(white_action);
     // We have formed a mill now, so we have to remove a black piece
     PlayerAction remove_action(Board::WHITE_COLOR, PlayerAction::REMOVE_PIECE);
-    remove_action.set_source(black_locations_.back());
+    remove_action.set_source(black_locations.back());
     game()->ExecutePlayerAction(remove_action);
-    black_locations_.pop_back();
   }
 
   void AssertEqualGame(const Game& actual_game) const {
@@ -78,40 +83,42 @@ class GameSerializerTest : public ::testing::Test {
 
  private:
   base::ptr::scoped_ptr<Game> game_;
-  std::vector<BoardLocation> white_locations_;
-  std::vector<BoardLocation> black_locations_;
 };
 
 const char GameSerializerTest::kExpectedBinaryStream[] = {
     // The encoding of game options
-    0x32,
+    0b00110000,
     // The number of moves on 64 bits
-    0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     // White places at (0, 0)
     0x00, 0x01, 0x00, 0x00,
-    // Black places at (6, 0)
-    0x00, 0x02, 0x06, 0x00,
-    // White places at (0, 3)
-    0x00, 0x01, 0x00, 0x03,
-    // Black places at (6, 3)
-    0x00, 0x02, 0x06, 0x03,
-    // White places at (0, 6)
-    0x00, 0x01, 0x00, 0x06,
-    // White removes from (6, 3)
-    0x02, 0x01, 0x06, 0x03
+    // Black places at (2, 0)
+    0x00, 0x02, 0x02, 0x00,
+    // White places at (0, 1)
+    0x00, 0x01, 0x00, 0x01,
+    // Black places at (2, 1)
+    0x00, 0x02, 0x02, 0x01,
+    // White places at (1, 2)
+    0x00, 0x01, 0x01, 0x02,
+    // Black places at (1, 0)
+    0x00, 0x02, 0x01, 0x00,
+    // White moves from (1, 2) to (0, 2)
+    0x01, 0x01, 0x01, 0x02, 0x00, 0x02,
+    // White removes from (1, 0)
+    0x02, 0x01, 0x01, 0x00
 };
 
 const std::string GameSerializerTest::kExpectedTextStream =
-    "50\n"
-    "6\n"
+    "48\n"
+    "8\n"
     "PLACE WHITE 0 0\n"
-    "PLACE BLACK 6 0\n"
-    "PLACE WHITE 0 3\n"
-    "PLACE BLACK 6 3\n"
-    "PLACE WHITE 0 6\n"
-    "REMOVE WHITE 6 3\n";
-
-
+    "PLACE BLACK 2 0\n"
+    "PLACE WHITE 0 1\n"
+    "PLACE BLACK 2 1\n"
+    "PLACE WHITE 1 2\n"
+    "PLACE BLACK 1 0\n"
+    "MOVE WHITE 1 2 0 2\n"
+    "REMOVE WHITE 1 0\n";
 
 TEST_F(GameSerializerTest, BinarySerialization) {
   std::ostringstream out(std::ios::out | std::ios::binary);
@@ -230,8 +237,6 @@ TEST_F(GameSerializerTest, InvalidBinaryStream) {
     ASSERT_FALSE(game.get());
   }
 }
-
-// TODO(serialization): Add tests for serializing MOVE actions
 
 }  // anonymous namespace
 }  // namespace game
