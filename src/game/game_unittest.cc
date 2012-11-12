@@ -18,6 +18,7 @@ namespace {
 
 TEST(GameTest, ThreeMenMorris) {
   const std::string game_string =
+      "256 "
       "48 "
       "21 "
       "PLACE WHITE 2 2 "
@@ -51,6 +52,7 @@ TEST(GameTest, ThreeMenMorris) {
 TEST(GameTest, SixMenMorris) {
   // http://www.youtube.com/watch?v=GErHm21qbsk
   const std::string game_string =
+      "256 "
       "49 "
       "66 "
       "PLACE WHITE 3 1 "

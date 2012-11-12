@@ -310,20 +310,30 @@ GameOptions DecodeGameOptions(int8_t encoding) {
 }  // anonymous namespace
 
 // static
+int32_t GameSerializer::Version() {
+  int8_t major = 1;
+  int8_t minor = 0;
+  int8_t patch = 0;
+  return (major << 8) | (minor << 4) | patch;
+}
+
+// static
 void GameSerializer::SerializeTo(const Game& game,
                                  std::ostream* out,
                                  bool use_binary) {
-  // TODO(serialization): Add version number
+  const int32_t version = GameSerializer::Version();
   std::vector<PlayerAction> actions;
   game.DumpActionList(&actions);
-  int8_t options_encoding = EncodeGameOptions(game.options());
+  const int8_t options_encoding = EncodeGameOptions(game.options());
   if (use_binary) {
     DCHECK_EQ(sizeof(char), 1);  // NOLINT(runtime/sizeof)
     DCHECK_LT(game.board().size(), std::numeric_limits<char>().max());
+    out->write(reinterpret_cast<const char*>(&version), sizeof(version));
     out->write(reinterpret_cast<const char*>(&options_encoding),
               sizeof(options_encoding));
     SerializeActionsToBinaryStream(actions, out);
   } else {
+    (*out) << version << std::endl;
     (*out) << static_cast<int>(options_encoding) << std::endl;
     SerializeActionsToTextStream(actions, out);
   }
@@ -332,6 +342,24 @@ void GameSerializer::SerializeTo(const Game& game,
 // static
 std::auto_ptr<Game> GameSerializer::DeserializeFrom(std::istream* in,
                                                     bool use_binary) {
+  int32_t version;
+  if (use_binary) {
+    if (!in->good()) {
+      LOG(ERROR) << "Could not read the serialization format version";
+      return std::auto_ptr<Game>();
+    }
+    in->read(reinterpret_cast<char*>(&version), sizeof(version));
+  } else {
+    if (HasOnlyWhiteSpace(in) || (!GetIntegerFromTextStream(in, &version))) {
+      LOG(ERROR) << "Could not read the serialization format version";
+      return std::auto_ptr<Game>();
+    }
+  }
+  if (version != GameSerializer::Version()) {
+    LOG(ERROR) << "No backward compatibility with version: "
+               << std::hex << version;
+    return std::auto_ptr<Game>();
+  }
   int8_t options_encoding;
   if (use_binary) {
     in->read(reinterpret_cast<char*>(&options_encoding),

@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "base/basic_macros.h"
+#include "base/string_util.h"
 #include "base/ptr/scoped_ptr.h"
 #include "game/board.h"
 #include "game/board_location.h"
@@ -86,6 +87,8 @@ class GameSerializerTest : public ::testing::Test {
 };
 
 const char GameSerializerTest::kExpectedBinaryStream[] = {
+    // The serialization format version
+    0x00, 0x01, 0x00, 0x00,
     // The encoding of game options
     0b00110000,
     // The number of moves on 64 bits
@@ -109,6 +112,7 @@ const char GameSerializerTest::kExpectedBinaryStream[] = {
 };
 
 const std::string GameSerializerTest::kExpectedTextStream =
+    "256\n"
     "48\n"
     "8\n"
     "PLACE WHITE 0 0\n"
@@ -159,11 +163,11 @@ TEST_F(GameSerializerTest, EmptyGame) {
 
   std::ostringstream text_stream;
   GameSerializer::SerializeTo(game, &text_stream, false);
-  EXPECT_EQ("50\n0\n", text_stream.str());
+  EXPECT_EQ("256\n50\n0\n", text_stream.str());
 
   std::ostringstream binary_stream(std::ios::out | std::ios::binary);
   GameSerializer::SerializeTo(game, &binary_stream, true);
-  const char expected[9] = { 0x32, 0 };
+  const char expected[13] = { 0x00, 0x01, 0x00, 0x00, 0x32, 0 };
   const std::string binary_string = binary_stream.str();
   ASSERT_EQ(arraysize(expected), binary_string.size());
   for (size_t i = 0; i < arraysize(expected); ++i) {
@@ -175,15 +179,17 @@ TEST_F(GameSerializerTest, InvalidTextStream) {
   const std::string invalid_streams[] = {
     "",
     "real invalid stream",
-    "50",
-    "50 invalid action number",
-    "50 1",
-    "50 1 PLACE",
-    "50 1 PLACE WHITE",
-    "50 1 INVALID_TYPE WHITE",
-    "50 1 PLACE INVALID_COLOR",
+    "2",
+    base::ToString(GameSerializer::Version()),
+    "256 50",
+    "256 50 invalid action number",
+    "256 50 1",
+    "256 50 1 PLACE",
+    "256 50 1 PLACE WHITE",
+    "256 50 1 INVALID_TYPE WHITE",
+    "256 50 1 PLACE INVALID_COLOR",
     // Invalid series of actions (the white player should move first)
-    "50 1 PLACE BLACK 0 0",
+    "256 50 1 PLACE BLACK 0 0",
   };
 
   for (size_t i = 0; i < arraysize(invalid_streams); ++i) {
@@ -199,31 +205,48 @@ TEST_F(GameSerializerTest, InvalidBinaryStream) {
   const char invalid_streams[][50] = {
     // Empty stream
     { 0, 0 },
+    // Invalid version
+    { 1, 0 },
     // No action count
-    { 1, 0x32 },
+    { 5, 0x00, 0x01, 0x00, 0x00, 0x32 },
     // Not enough bits for action count
-    { 2, 0x32, 0x10 },
+    { 6, 0x00, 0x01, 0x00, 0x00, 0x32, 0x10 },
     // Not enough actions
-    { 9, 0x32, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+    { 13,
+      0x00, 0x01, 0x00, 0x00,
+      0x32,
+      0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
     // Incomplete action
-    { 10, 0x32, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
-    { 11, 0x32, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 },
-    { 12,
+    { 14,
+      0x00, 0x01, 0x00, 0x00,
+      0x32,
+      0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00 },
+    { 15,
+      0x00, 0x01, 0x00, 0x00,
+      0x32,
+      0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+      0x00, 0x01 },
+    { 16,
+      0x00, 0x01, 0x00, 0x00,
       0x32,
       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x01, 0x00 },
     // Invalid player color
-    { 13,
+    { 17,
+      0x00, 0x01, 0x00, 0x00,
       0x32,
       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0xFF, 0x00, 0x00 },
     // Invalid action type
-    { 13,
+    { 17,
+      0x00, 0x01, 0x00, 0x00,
       0x32,
       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0xFF, 0x01, 0x00, 0x00 },
     // Invalid series of actions (white should move first)
-    { 13,
+    { 17,
+      0x00, 0x01, 0x00, 0x00,
       0x32,
       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x02, 0x00, 0x00 },

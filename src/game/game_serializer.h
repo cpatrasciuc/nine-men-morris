@@ -5,6 +5,8 @@
 #ifndef GAME_GAME_SERIALIZER_H_
 #define GAME_GAME_SERIALIZER_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <ostream>
 
@@ -16,6 +18,15 @@ class Game;
 
 class GAME_EXPORT GameSerializer {
  public:
+  // Returns the current version of the serialization format. It can be used to
+  // solve backward compatibilities in the future. It should be increased every
+  // time a significant change is done to the serialization format that might
+  // cause the old files to not be usable anymore.
+  //
+  // The version is 4-byte integer storing the major, minor and patch version on
+  // each of the last three bytes. The first byte is reserved for future usage.
+  static int32_t Version();
+
   // Serialize the |game| to the given output stream. If |use_binary| is true,
   // the serializer will use a binary format; otherwise it will use a
   // text based output format. If |use_binary| is true, |out| must be a binary
