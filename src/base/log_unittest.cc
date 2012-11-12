@@ -126,6 +126,7 @@ TEST(LogUnittestDeathTest, MAYBE(DCHECKFail)) {
 }
 
 TEST(LogUnittestDeathTest, MAYBE(NotReached)) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   std::string error_message("NotReached");
   ASSERT_DEATH(NOTREACHED() << error_message, error_message);
 }
