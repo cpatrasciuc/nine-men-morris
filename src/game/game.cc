@@ -12,6 +12,15 @@
 
 namespace game {
 
+namespace {
+
+Board::PieceColor GetOpponentColor(const Board::PieceColor color) {
+  DCHECK(color != Board::NO_COLOR);
+  return color == Board::WHITE_COLOR ? Board::BLACK_COLOR : Board::WHITE_COLOR;
+}
+
+}  // anonymous namespace
+
 Game::Game(const GameOptions& game_options)
     : game_options_(game_options),
       board_(game_options.game_type()),
@@ -36,9 +45,7 @@ bool Game::CheckIfGameIsOver() const {
   if (is_game_over_) {
     return true;
   }
-  const Board::PieceColor opponent = (current_player_ == Board::WHITE_COLOR) ?
-                                     Board::BLACK_COLOR :
-                                     Board::WHITE_COLOR;
+  const Board::PieceColor opponent = GetOpponentColor(current_player_);
   const int remaining_pieces_on_board = board_.GetPieceCountByColor(opponent);
   const int remaining_pieces_in_hand = GetPiecesInHand(opponent);
   const int total_remaining_pieces =
@@ -102,6 +109,25 @@ bool Game::CanExecutePlayerAction(const PlayerAction& action) const {
       (GetPiecesInHand(current_player_) > 0)) {
     LOG(ERROR) << "There are still pieces to be placed on the board";
     return false;
+  }
+  // You can only remove a piece that is part of a mill, if there is no piece
+  // that is not part of a mill.
+  if (action.type() == PlayerAction::REMOVE_PIECE &&
+      board_.IsPartOfMill(action.source())) {
+    const Board::PieceColor opponent = GetOpponentColor(current_player_);
+    for (int i = 0; i < board_.size(); ++i) {
+      for (int j = 0; j < board_.size(); ++j) {
+        const BoardLocation location(i, j);
+        if (board_.IsValidLocation(location)) {
+          if (board_.GetPieceAt(location) == opponent) {
+            if (!board_.IsPartOfMill(location)) {
+              LOG(ERROR) << "The piece is part of a mill";
+              return false;
+            }
+          }
+        }
+      }
+    }
   }
   return true;
 }

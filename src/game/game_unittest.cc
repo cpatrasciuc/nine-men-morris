@@ -88,6 +88,20 @@ TEST(GameTest, UndoLastAction) {
   game->UndoLastAction();
 }
 
+TEST(GameTest, RemovePieceFromOpponentMill) {
+  std::auto_ptr<Game> game = LoadSavedGameForTests("remove_from_mill_6");
+  ASSERT_TRUE(game.get());
+  PlayerAction remove_from_mill(Board::BLACK_COLOR, PlayerAction::REMOVE_PIECE);
+  remove_from_mill.set_source(BoardLocation(4, 4));
+  EXPECT_TRUE(game->board().IsPartOfMill(remove_from_mill.source()));
+  EXPECT_FALSE(game->CanExecutePlayerAction(remove_from_mill));
+  remove_from_mill.set_source(BoardLocation(1, 2));
+  EXPECT_FALSE(game->board().IsPartOfMill(remove_from_mill.source()));
+  EXPECT_TRUE(game->CanExecutePlayerAction(remove_from_mill));
+  // TODO(game_tests): Simulate a scenario when a player has to remove a piece
+  // and all opponent's pieces are part of a mill.
+}
+
 }  // anonymous namespace
 }  // namespace game
 
