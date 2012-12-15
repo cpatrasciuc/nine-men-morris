@@ -14,7 +14,7 @@ namespace game {
 
 namespace {
 
-Board::PieceColor GetOpponentColor(const Board::PieceColor color) {
+Board::PieceColor GetOpponent(const Board::PieceColor color) {
   DCHECK(color != Board::NO_COLOR);
   return color == Board::WHITE_COLOR ? Board::BLACK_COLOR : Board::WHITE_COLOR;
 }
@@ -45,7 +45,7 @@ bool Game::CheckIfGameIsOver() const {
   if (is_game_over_) {
     return true;
   }
-  const Board::PieceColor opponent = GetOpponentColor(current_player_);
+  const Board::PieceColor opponent = GetOpponent(current_player_);
   const int remaining_pieces_on_board = board_.GetPieceCountByColor(opponent);
   const int remaining_pieces_in_hand = GetPiecesInHand(opponent);
   const int total_remaining_pieces =
@@ -114,7 +114,7 @@ bool Game::CanExecutePlayerAction(const PlayerAction& action) const {
   // that is not part of a mill.
   if (action.type() == PlayerAction::REMOVE_PIECE &&
       board_.IsPartOfMill(action.source())) {
-    const Board::PieceColor opponent = GetOpponentColor(current_player_);
+    const Board::PieceColor opponent = GetOpponent(current_player_);
     for (int i = 0; i < board_.size(); ++i) {
       for (int j = 0; j < board_.size(); ++j) {
         const BoardLocation location(i, j);
@@ -174,9 +174,7 @@ void Game::UpdateGameState() {
         is_game_over_ = true;
         winner_ = current_player_;
     } else {
-      current_player_ = action.player_color() == Board::WHITE_COLOR ?
-                        Board::BLACK_COLOR :
-                        Board::WHITE_COLOR;
+      current_player_ = GetOpponent(action.player_color());
       next_action_type_ = pieces_in_hand_[current_player_] > 0 ?
                           PlayerAction::PLACE_PIECE :
                           PlayerAction::MOVE_PIECE;
