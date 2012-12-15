@@ -51,6 +51,22 @@ TEST(GameTest, ExceuteActionAfterGameIsOver) {
   EXPECT_FALSE(game->CanExecutePlayerAction(action));
 }
 
+TEST(GameTest, MoveBeforePlacingAllPieces) {
+  std::auto_ptr<Game> game = LoadSavedGameForTests("place_phase_3");
+  ASSERT_TRUE(game.get());
+  game->UndoLastAction();
+  PlayerAction move_action(Board::BLACK_COLOR, PlayerAction::MOVE_PIECE);
+  EXPECT_FALSE(game->CanExecutePlayerAction(move_action));
+}
+
+TEST(GameTest, PlaceTooManyTimes) {
+  std::auto_ptr<Game> game = LoadSavedGameForTests("place_phase_3");
+  ASSERT_TRUE(game.get());
+  PlayerAction place_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
+  place_action.set_destination(BoardLocation(1, 2));
+  EXPECT_FALSE(game->CanExecutePlayerAction(place_action));
+}
+
 }  // anonymous namespace
 }  // namespace game
 

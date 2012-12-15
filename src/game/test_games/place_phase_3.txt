@@ -1,0 +1,11 @@
+# Three Men Morris game
+# The game is simulated only until all pieces are placed on the board.
+256
+48
+6
+PLACE WHITE 2 2
+PLACE BLACK 0 1
+PLACE WHITE 1 1
+PLACE BLACK 0 2
+PLACE WHITE 0 0
+PLACE BLACK 2 0
