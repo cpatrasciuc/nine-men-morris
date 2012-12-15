@@ -43,6 +43,14 @@ TEST(GameTest, BlackStarts) {
   EXPECT_TRUE(game.CanExecutePlayerAction(valid_action));
 }
 
+TEST(GameTest, ExceuteActionAfterGameIsOver) {
+  std::auto_ptr<Game> game = LoadSavedGameForTests("full_3");
+  ASSERT_TRUE(game.get());
+  EXPECT_TRUE(game->is_game_over());
+  PlayerAction action(Board::WHITE_COLOR, PlayerAction::REMOVE_PIECE);
+  EXPECT_FALSE(game->CanExecutePlayerAction(action));
+}
+
 }  // anonymous namespace
 }  // namespace game
 
