@@ -211,6 +211,7 @@ TEST(PlayerActionDeathTest, MAYBE(ExecuteOrUndoInvalidAction)) {
 }
 
 TEST(PlayerActionDeathTest, MAYBE(InvalidPlayerColor)) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   ASSERT_DEATH(PlayerAction(Board::NO_COLOR, PlayerAction::MOVE_PIECE), "");
 }
 
