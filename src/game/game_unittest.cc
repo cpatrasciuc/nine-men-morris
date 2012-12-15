@@ -5,6 +5,7 @@
 #include <memory>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "game/board.h"
 #include "game/board_location.h"
@@ -65,6 +66,21 @@ TEST(GameTest, PlaceTooManyTimes) {
   PlayerAction place_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
   place_action.set_destination(BoardLocation(1, 2));
   EXPECT_FALSE(game->CanExecutePlayerAction(place_action));
+}
+
+TEST(GameTest, UndoLastAction) {
+  std::auto_ptr<Game> game = LoadSavedGameForTests("place_phase_3");
+  ASSERT_TRUE(game.get());
+  std::vector<PlayerAction> actions;
+  game->DumpActionList(&actions);
+  for (size_t i = 0; i < actions.size(); i++) {
+    game->UndoLastAction();
+  }
+  actions.clear();
+  game->DumpActionList(&actions);
+  EXPECT_TRUE(actions.empty());
+  // Undoing an action for an empty game should be a no-op, not a crash
+  game->UndoLastAction();
 }
 
 }  // anonymous namespace
