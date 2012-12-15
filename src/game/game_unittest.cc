@@ -69,16 +69,21 @@ TEST(GameTest, PlaceTooManyTimes) {
 }
 
 TEST(GameTest, UndoLastAction) {
-  std::auto_ptr<Game> game = LoadSavedGameForTests("place_phase_3");
+  std::auto_ptr<Game> game = LoadSavedGameForTests("full_3");
   ASSERT_TRUE(game.get());
+  EXPECT_TRUE(game->is_game_over());
+  game->UndoLastAction();
+  EXPECT_FALSE(game->is_game_over());
   std::vector<PlayerAction> actions;
   game->DumpActionList(&actions);
+  const PlayerAction first_action(actions[0]);
   for (size_t i = 0; i < actions.size(); i++) {
     game->UndoLastAction();
   }
   actions.clear();
   game->DumpActionList(&actions);
   EXPECT_TRUE(actions.empty());
+  EXPECT_TRUE(game->CanExecutePlayerAction(first_action));
   // Undoing an action for an empty game should be a no-op, not a crash
   game->UndoLastAction();
 }

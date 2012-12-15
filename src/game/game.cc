@@ -130,6 +130,7 @@ void Game::UndoLastAction() {
 }
 
 void Game::UpdateGameState() {
+  is_game_over_ = false;
   if (moves_.empty()) {
     next_action_type_ = PlayerAction::PLACE_PIECE;
     if (game_options_.white_starts()) {
