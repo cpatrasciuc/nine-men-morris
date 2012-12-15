@@ -200,6 +200,23 @@ TEST(PlayerAction, CanUndoFrom) {
   EXPECT_FALSE(remove_action.CanUndoFrom(board));
 }
 
+TEST(PlayerAction, RemovePieceFromMill) {
+  Board board;
+  // Form a mill
+  board.AddPiece(BoardLocation(0, 0), Board::WHITE_COLOR);
+  board.AddPiece(BoardLocation(3, 0), Board::WHITE_COLOR);
+  board.AddPiece(BoardLocation(6, 0), Board::WHITE_COLOR);
+  // Add a 'free' piece
+  BoardLocation free_piece(6, 6);
+  board.AddPiece(free_piece, Board::WHITE_COLOR);
+
+  PlayerAction remove_from_mill(Board::BLACK_COLOR, PlayerAction::REMOVE_PIECE);
+  remove_from_mill.set_source(BoardLocation(0, 0));
+  EXPECT_FALSE(remove_from_mill.CanExecuteOn(board));
+  board.RemovePiece(free_piece);
+  EXPECT_TRUE(remove_from_mill.CanExecuteOn(board));
+}
+
 TEST(PlayerActionDeathTest, MAYBE(ExecuteOrUndoInvalidAction)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;

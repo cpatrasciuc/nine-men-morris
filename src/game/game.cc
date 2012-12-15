@@ -110,25 +110,6 @@ bool Game::CanExecutePlayerAction(const PlayerAction& action) const {
     LOG(ERROR) << "There are still pieces to be placed on the board";
     return false;
   }
-  // You can only remove a piece that is part of a mill, if there is no piece
-  // that is not part of a mill.
-  if (action.type() == PlayerAction::REMOVE_PIECE &&
-      board_.IsPartOfMill(action.source())) {
-    const Board::PieceColor opponent = GetOpponent(current_player_);
-    for (int i = 0; i < board_.size(); ++i) {
-      for (int j = 0; j < board_.size(); ++j) {
-        const BoardLocation location(i, j);
-        if (board_.IsValidLocation(location)) {
-          if (board_.GetPieceAt(location) == opponent) {
-            if (!board_.IsPartOfMill(location)) {
-              LOG(ERROR) << "The piece is part of a mill";
-              return false;
-            }
-          }
-        }
-      }
-    }
-  }
   return true;
 }
 

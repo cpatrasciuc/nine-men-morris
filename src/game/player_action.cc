@@ -27,10 +27,31 @@ bool PlayerAction::CanExecuteOn(const Board& board) const {
       return board.IsValidLocation(destination_) &&
              (board.GetPieceAt(destination_) == Board::NO_COLOR);
     case REMOVE_PIECE:
-      return board.IsValidLocation(source_) &&
-             (board.GetPieceAt(source_) ==
-                  (player_color_ == Board::WHITE_COLOR ?
-                   Board::BLACK_COLOR : Board::WHITE_COLOR));
+      if (!board.IsValidLocation(source_)) {
+        return false;
+      }
+      const Board::PieceColor opponent = (player_color_ == Board::WHITE_COLOR) ?
+          Board::BLACK_COLOR : Board::WHITE_COLOR;
+      if (board.GetPieceAt(source_) != opponent) {
+        return false;
+      }
+      // You can only remove a piece that is part of a mill, if there is no
+      // piece available that is not part of a mill.
+      if (board.IsPartOfMill(source_)) {
+        for (int i = 0; i < board.size(); ++i) {
+          for (int j = 0; j < board.size(); ++j) {
+            const BoardLocation location(i, j);
+            if (board.IsValidLocation(location)) {
+              if (board.GetPieceAt(location) == opponent) {
+                if (!board.IsPartOfMill(location)) {
+                  return false;
+                }
+              }
+            }
+          }
+        }
+      }
+      return true;
   }
   NOTREACHED();
   return false;

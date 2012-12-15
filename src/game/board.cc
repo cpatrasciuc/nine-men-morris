@@ -150,7 +150,6 @@ bool Board::RemovePiece(const BoardLocation& location) {
   if (it == pieces_.end()) {
     return false;
   }
-  // TODO(board): Check if the piece is not in a mill before removing
   pieces_.erase(it);
   return true;
 }

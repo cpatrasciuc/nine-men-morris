@@ -89,6 +89,8 @@ TEST(GameTest, UndoLastAction) {
 }
 
 TEST(GameTest, RemovePieceFromOpponentMill) {
+  // TODO(game_tests): This scenario might be removed since it's already tested
+  // in player_action_unittest.cc
   std::auto_ptr<Game> game = LoadSavedGameForTests("remove_from_mill_6");
   ASSERT_TRUE(game.get());
   PlayerAction remove_from_mill(Board::BLACK_COLOR, PlayerAction::REMOVE_PIECE);
@@ -98,8 +100,6 @@ TEST(GameTest, RemovePieceFromOpponentMill) {
   remove_from_mill.set_source(BoardLocation(1, 2));
   EXPECT_FALSE(game->board().IsPartOfMill(remove_from_mill.source()));
   EXPECT_TRUE(game->CanExecutePlayerAction(remove_from_mill));
-  // TODO(game_tests): Simulate a scenario when a player has to remove a piece
-  // and all opponent's pieces are part of a mill.
 }
 
 }  // anonymous namespace

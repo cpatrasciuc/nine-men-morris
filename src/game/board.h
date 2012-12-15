@@ -59,6 +59,8 @@ class GAME_EXPORT Board {
 
   // Removes the piece at |location|. If the operation could be completed
   // successfully, the method returns |true|.
+  // NOTE: The method is not supposed to verify if the piece that is to be
+  // removed is part of a mill or not. This has to be checked in an upper layer.
   bool RemovePiece(const BoardLocation& location);
 
   // Return the color of the piece at |location| or |PieceColor::NO_COLOR| if
