@@ -210,5 +210,9 @@ TEST(PlayerActionDeathTest, MAYBE(ExecuteOrUndoInvalidAction)) {
   ASSERT_DEATH(remove_action.Execute(&board), "");
 }
 
+TEST(PlayerActionDeathTest, MAYBE(InvalidPlayerColor)) {
+  ASSERT_DEATH(PlayerAction(Board::NO_COLOR, PlayerAction::MOVE_PIECE), "");
+}
+
 }  // anonymous namespace
 }  // namespace game
