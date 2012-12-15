@@ -1,0 +1,4 @@
+# Empty game used to test the deserializer and comment removal
+256
+48
+0

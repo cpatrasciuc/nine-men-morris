@@ -10,6 +10,8 @@ set(GAME_SOURCE_FILES
   game_options.h
   game_serializer.cc
   game_serializer.h
+  game_test_helper.cc
+  game_test_helper.h
   player_action.cc
   player_action.h
 )
@@ -19,6 +21,7 @@ set(GAME_UNITTESTS_SOURCE_FILES
   board_location_unittest.cc
   game_unittest.cc
   game_serializer_unittest.cc
+  game_test_helper_unittest.cc
   player_action_unittest.cc
 )
 
