@@ -154,7 +154,7 @@ bool DeserializeActionsFromBinaryStream(std::istream* in,
     LOG(ERROR) << "Could not read the number of actions";
     return false;
   }
-  int64_t actions_count;
+  int64_t actions_count = 0x3f3f3f3f;
   in->read(reinterpret_cast<char*>(&actions_count), sizeof(actions_count));
   for (int64_t i = 0; i < actions_count; ++i) {
     if (!in->good()) {
@@ -342,7 +342,7 @@ void GameSerializer::SerializeTo(const Game& game,
 // static
 std::auto_ptr<Game> GameSerializer::DeserializeFrom(std::istream* in,
                                                     bool use_binary) {
-  int32_t version;
+  int32_t version = 0x3f3f3f3f;
   if (use_binary) {
     if (!in->good()) {
       LOG(ERROR) << "Could not read the serialization format version";

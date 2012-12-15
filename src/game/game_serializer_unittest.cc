@@ -257,7 +257,7 @@ TEST_F(GameSerializerTest, InvalidBinaryStream) {
             std::string(&invalid_streams[i][1], invalid_streams[i][0]),
             std::ios::in | std::ios::binary);
     std::auto_ptr<Game> game = GameSerializer::DeserializeFrom(&in, true);
-    ASSERT_FALSE(game.get());
+    ASSERT_FALSE(game.get()) << i;
   }
 }
 

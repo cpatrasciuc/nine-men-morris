@@ -30,4 +30,19 @@
    obj:*
    obj:*
 }
-
+{
+   Board::IsValidLocation() uses uninitialized values
+   Memcheck:Cond
+   fun:_ZNK4game5Board15IsValidLocationERKNS_13BoardLocationE
+   fun:_ZNK4game12PlayerAction12CanExecuteOnERKNS_5BoardE
+   fun:_ZNK4game4Game22CanExecutePlayerActionERKNS_12PlayerActionE
+   fun:_ZN4game14GameSerializer15DeserializeFromEPSib
+   fun:_ZN4game12_GLOBAL__N_143GameSerializerTest_InvalidBinaryStream_Test8TestBodyEv
+   fun:_ZN7testing8internal38HandleSehExceptionsInMethodIfSupportedINS_4TestEvEET0_PT_MS4_FS3_vEPKc
+   fun:_ZN7testing8internal35HandleExceptionsInMethodIfSupportedINS_4TestEvEET0_PT_MS4_FS3_vEPKc
+   fun:_ZN7testing4Test3RunEv
+   fun:_ZN7testing8TestInfo3RunEv
+   fun:_ZN7testing8TestCase3RunEv
+   fun:_ZN7testing8internal12UnitTestImpl11RunAllTestsEv
+   fun:_ZN7testing8internal38HandleSehExceptionsInMethodIfSupportedINS0_12UnitTestImplEbEET0_PT_MS4_FS3_vEPKc
+}
