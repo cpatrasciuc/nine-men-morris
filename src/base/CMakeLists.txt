@@ -7,6 +7,8 @@ set(BASE_SOURCE_FILES
 	callable.h
 	debug/stacktrace.cc
 	debug/stacktrace.h
+	file_path.cc
+	file_path.h
 	location.cc
 	location.h
 	log.cc
@@ -48,6 +50,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	bind_unittest.cc
 	callable_unittest.cc
 	debug/stacktrace_unittest.cc
+	file_path_unittest.cc
 	location_unittest.cc
 	log_unittest.cc
 	ptr/ref_ptr_unittest.cc

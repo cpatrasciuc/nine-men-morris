@@ -46,3 +46,19 @@
    fun:_ZN7testing8internal12UnitTestImpl11RunAllTestsEv
    fun:_ZN7testing8internal38HandleSehExceptionsInMethodIfSupportedINS0_12UnitTestImplEbEET0_PT_MS4_FS3_vEPKc
 }
+{
+   Valgrind < 3.8.1 and optimized memrchr() (see: http://stackoverflow.com/questions/12708501/valgrind-breaks-with-dirname) 
+   Memcheck:Addr8
+   fun:memrchr
+   fun:dirname
+   fun:_ZNK4base8FilePath7DirNameEv
+   fun:_ZN4base12_GLOBAL__N_121FilePath_DirName_Test8TestBodyEv
+   fun:_ZN7testing8internal38HandleSehExceptionsInMethodIfSupportedINS_4TestEvEET0_PT_MS4_FS3_vEPKc
+   fun:_ZN7testing8internal35HandleExceptionsInMethodIfSupportedINS_4TestEvEET0_PT_MS4_FS3_vEPKc
+   fun:_ZN7testing4Test3RunEv
+   fun:_ZN7testing8TestInfo3RunEv
+   fun:_ZN7testing8TestCase3RunEv
+   fun:_ZN7testing8internal12UnitTestImpl11RunAllTestsEv
+   fun:_ZN7testing8internal38HandleSehExceptionsInMethodIfSupportedINS0_12UnitTestImplEbEET0_PT_MS4_FS3_vEPKc
+   fun:_ZN7testing8internal35HandleExceptionsInMethodIfSupportedINS0_12UnitTestImplEbEET0_PT_MS4_FS3_vEPKc
+}i
