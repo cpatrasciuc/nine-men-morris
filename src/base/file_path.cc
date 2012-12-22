@@ -78,7 +78,7 @@ FilePath FilePath::StripTrailingSeparators() const {
   return FilePath(path_.substr(0, pos + 1));
 }
 
-FilePath FilePath::Append(FilePath file_path) const {
+FilePath FilePath::Append(const FilePath& file_path) const {
   if (file_path.IsAbsolute()) {
     return file_path;
   }
@@ -92,7 +92,7 @@ FilePath FilePath::Append(FilePath file_path) const {
   return FilePath(result);
 }
 
-FilePath FilePath::Append(StringType file_path_str) const {
+FilePath FilePath::Append(const StringType& file_path_str) const {
   return Append(FilePath(file_path_str));
 }
 

@@ -59,8 +59,8 @@ class BASE_EXPORT FilePath {
   // If |file_path| is absolute, the result will be equal to it. If |file_path|
   // is relative, it is appended to the path referred by |this|. Separators will
   // be inserted where needed.
-  FilePath Append(FilePath file_path) const;
-  FilePath Append(StringType file_path_str) const;
+  FilePath Append(const FilePath& file_path) const;
+  FilePath Append(const StringType& file_path_str) const;
 
   // Returns true if the file or folder referred by |this| exists on the file
   // system. If an error occurs while trying to verify this, the method assumes
