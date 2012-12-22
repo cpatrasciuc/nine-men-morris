@@ -11,12 +11,11 @@
 namespace base {
 
 Location::Location(const std::string& function,
-                   const std::string& file_name,
+                   const FilePath& file_name,
                    int line_number,
                    base::threading::Thread* thread)
     : function_(function),
-      // TODO(file_util): Add a FilePath class or file_util module
-      file_name_(basename(file_name.c_str())),
+      file_name_(file_name),
       line_number_(line_number),
       thread_(thread) {
 }

@@ -80,7 +80,7 @@ void LogMessage::PrintHeader(LogLevel level, Location location) {
   } else {
     stream_ << "Main";
   }
-  stream_ << "][" << location.file_name() << "("
+  stream_ << "][" << location.file_name().value() << "("
           << location.line_number() << ")] ";
 }
 

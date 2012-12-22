@@ -84,8 +84,8 @@ TEST_F(LogUnittest, LogMessageFormatTest) {
   std::string text_message("Foo Bar");
   base::threading::Thread thread("Test thread");
   {
-    LogMessage log_message(INFO,
-        Location("function_name", source_file, 69, &thread), test_stream());
+    Location location("function_name", FilePath(source_file), 69, &thread);
+    LogMessage log_message(INFO, location, test_stream());
     log_message.stream() << text_message;
   }
   std::string output = test_stream().str();

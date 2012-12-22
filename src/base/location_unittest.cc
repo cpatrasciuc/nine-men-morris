@@ -22,7 +22,7 @@ Location GetTestLocation() { return FROM_HERE; }
 TEST(LocationTest, FromHere) {
   Location loc = GetTestLocation();
   EXPECT_EQ("GetTestLocation", loc.function());
-  EXPECT_EQ("location_unittest.cc", loc.file_name());
+  EXPECT_EQ("location_unittest.cc", loc.file_name().value());
   EXPECT_EQ(TEST_LINE_NUMBER, loc.line_number());
 }
 

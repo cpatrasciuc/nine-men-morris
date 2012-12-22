@@ -8,6 +8,7 @@
 #include <string>
 
 #include "base/base_export.h"
+#include "base/file_path.h"
 
 namespace base {
 
@@ -18,7 +19,7 @@ class Thread;
 class BASE_EXPORT Location {
  public:
   Location(const std::string& function,
-           const std::string& file_name,
+           const FilePath& file_name,
            int line_number,
            base::threading::Thread* thread);
 
@@ -26,7 +27,7 @@ class BASE_EXPORT Location {
     return function_;
   }
 
-  const std::string& file_name() const {
+  const FilePath& file_name() const {
     return file_name_;
   }
 
@@ -41,7 +42,7 @@ class BASE_EXPORT Location {
 
  private:
   const std::string function_;
-  const std::string file_name_;
+  const FilePath file_name_;
   const int line_number_;
   base::threading::Thread* const thread_;
 };
@@ -50,7 +51,7 @@ BASE_EXPORT base::threading::Thread* GetCurrentThread();
 
 #define FROM_HERE \
   base::Location(__FUNCTION__, \
-                 __FILE__, \
+                 base::FilePath(__FILE__).BaseName(), \
                  __LINE__, \
                  base::GetCurrentThread())
 
