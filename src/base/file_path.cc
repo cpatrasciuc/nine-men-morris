@@ -39,17 +39,22 @@ FilePath FilePath::Extension() const {
   if (empty() || (path_[path_.size() - 1] == FilePath::separator)) {
     return FilePath();
   }
-  const FilePath base_name = BaseName();
-  const size_t dot_position = base_name.value().find_last_of('.');
-  if (dot_position == StringType::npos) {
+  const StringType base_name_str = BaseName().value();
+  StringType::size_type extension_start = -1;
+  StringType::size_type pos = extension_start;
+  while ((pos = base_name_str.find(kExtensionSeparator, extension_start + 1)) !=
+         StringType::npos) {
+    extension_start = pos;
+  };
+  if (extension_start == StringType::size_type(-1)) {
     return FilePath();
   }
-  return FilePath(base_name.value().substr(dot_position));
+  return FilePath(base_name_str.substr(extension_start));
 }
 
 FilePath FilePath::AddExtension(const FilePath& extension) const {
   if (empty() ||
-      path_[path_.size() - 1] == '/' ||
+      path_[path_.size() - 1] == FilePath::separator ||
       path_ == kCurrentDirString ||
       path_ == kParentDirString) {
     return FilePath();
@@ -79,7 +84,7 @@ FilePath FilePath::Append(FilePath file_path) const {
   }
   StringType result = StripTrailingSeparators().value();
   if (!file_path.empty()) {
-    if (!result.empty() && result[result.size() - 1] != '/') {
+    if (!result.empty() && result[result.size() - 1] != FilePath::separator) {
       result.push_back(FilePath::separator);
     }
     result.append(file_path.value());

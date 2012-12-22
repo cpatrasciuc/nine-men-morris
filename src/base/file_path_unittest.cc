@@ -101,6 +101,7 @@ TEST(FilePath, Extension) {
   EXPECT_EQ("", FilePath("foo.txt/").Extension().value());
   EXPECT_EQ(".txt", FilePath("foo.txt").Extension().value());
   EXPECT_EQ(".txt", FilePath("/foo/bar/baz.txt").Extension().value());
+  EXPECT_EQ(".txt", FilePath("/foo/bar.baz/qux.txt").Extension().value());
 }
 
 TEST(FilePath, AddExtension) {

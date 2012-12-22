@@ -48,7 +48,7 @@ class BASE_EXPORT FilePath {
   // returns an empty path.
   FilePath Extension() const;
 
-  // Adds the given extension to the file path refered by |this|. If |this| is
+  // Adds the given extension to the file path referred by |this|. If |this| is
   // empty or points to a folder, the method returns an empty file path. If the
   // extension is empty, the method returns a file path equal to |this|.
   FilePath AddExtension(const FilePath& extension) const;
