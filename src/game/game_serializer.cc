@@ -177,7 +177,7 @@ bool DeserializeActionsFromBinaryStream(std::istream* in,
     }
     PlayerAction action(static_cast<Board::PieceColor>(player_color),
                         static_cast<PlayerAction::ActionType>(type));
-    char buffer[4];
+    char buffer[4] = { -1, -1, -1, -1 };
     switch (type) {
       case PlayerAction::MOVE_PIECE:
         in->read(buffer, 4 * sizeof(buffer[0]));
