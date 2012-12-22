@@ -103,6 +103,37 @@ TEST(FilePath, Extension) {
   EXPECT_EQ(".txt", FilePath("/foo/bar/baz.txt").Extension().value());
 }
 
+TEST(FilePath, AddExtension) {
+  const char* const tests[] = {
+    "", "", "",
+    "", "txt", "",
+    ".", "txt", "",
+    "..", "txt", "",
+    ".", "", "",
+    "foo.dll", "txt", "foo.dll.txt",
+    "./foo.dll", "txt", "./foo.dll.txt",
+    "foo..dll", "txt", "foo..dll.txt",
+    "foo.dll", ".txt", "foo.dll.txt",
+    "foo", "txt", "foo.txt",
+    "foo.", "txt", "foo..txt",
+    "foo..", "txt", "foo...txt",
+    "foo", ".txt", "foo.txt",
+    "foo.baz.dll", "txt", "foo.baz.dll.txt",
+    "foo.baz.dll", ".txt", "foo.baz.dll.txt",
+    "foo.dll", "", "foo.dll",
+    "foo.dll", ".", "foo.dll",
+    "foo", "", "foo",
+    "foo", ".", "foo",
+    "foo.baz.dll", "", "foo.baz.dll",
+    "foo.baz.dll", ".", "foo.baz.dll",
+  };
+  for (size_t i = 0; i < arraysize(tests); i += 3) {
+    const FilePath file_path(tests[i]);
+    const FilePath extension(tests[i + 1]);
+    EXPECT_EQ(tests[i + 2], file_path.AddExtension(extension).value()) << i/3;
+  }
+}
+
 TEST(FilePath, StripTrailingSeparators) {
   const char* const tests[] = {
     "", "",

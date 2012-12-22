@@ -13,8 +13,9 @@
 
 namespace base {
 
-const FilePath::CharType kCurrentDirString[] = ".";
-const FilePath::CharType kParentDirString[] = "..";
+const FilePath::CharType kCurrentDirString[] = FILE_PATH_LITERAL(".");
+const FilePath::CharType kParentDirString[] = FILE_PATH_LITERAL("..");
+const FilePath::CharType kExtensionSeparator[] = FILE_PATH_LITERAL(".");
 
 FilePath::FilePath() : path_() {}
 
@@ -44,6 +45,24 @@ FilePath FilePath::Extension() const {
     return FilePath();
   }
   return FilePath(base_name.value().substr(dot_position));
+}
+
+FilePath FilePath::AddExtension(const FilePath& extension) const {
+  if (empty() ||
+      path_[path_.size() - 1] == '/' ||
+      path_ == kCurrentDirString ||
+      path_ == kParentDirString) {
+    return FilePath();
+  }
+  if (extension.empty() || extension.value() == kExtensionSeparator) {
+    return *this;
+  }
+  StringType new_path(path_);
+  if (extension.value().find(kExtensionSeparator) != 0) {
+    new_path.append(kExtensionSeparator);
+  }
+  new_path.append(extension.value());
+  return FilePath(new_path);
 }
 
 FilePath FilePath::StripTrailingSeparators() const {
