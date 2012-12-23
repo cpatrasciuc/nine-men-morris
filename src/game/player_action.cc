@@ -5,6 +5,7 @@
 #include "game/player_action.h"
 
 #include "base/log.h"
+#include "game/board.h"
 
 namespace game {
 

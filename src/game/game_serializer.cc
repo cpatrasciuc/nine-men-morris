@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "base/log.h"
-#include "game/board.h"
 #include "game/game.h"
 #include "game/game_options.h"
 #include "game/piece_color.h"

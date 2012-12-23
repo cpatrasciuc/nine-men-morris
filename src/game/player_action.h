@@ -5,12 +5,13 @@
 #ifndef GAME_PLAYER_ACTION_H_
 #define GAME_PLAYER_ACTION_H_
 
-#include "game/board.h"
 #include "game/board_location.h"
 #include "game/game_export.h"
 #include "game/piece_color.h"
 
 namespace game {
+
+class Board;
 
 // Abstract class that represents an action that one player can take when it's
 // his turn at the board. The can be on of the following:
