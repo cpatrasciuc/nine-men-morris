@@ -33,7 +33,7 @@ add_subdirectory(base)
 
 add_subdirectory(game)
 
-add_subdirectory(controller)
+add_subdirectory(engine)
 
 # Hack to make all gtest symbols visible; by default we compile with -fvisibility=hidden
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=default")

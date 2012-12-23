@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 #include "base/threading/thread.h"
-#include "controller/game_thread.h"
+#include "engine/game_thread.h"
 #include "gtest/gtest.h"
 
-namespace controller {
+namespace engine {
 namespace {
 
 TEST(GameThread, Basic) {
@@ -18,4 +18,4 @@ TEST(GameThread, Basic) {
 }
 
 }  // anonymous namespace
-}  // namespace controller
+}  // namespace engine

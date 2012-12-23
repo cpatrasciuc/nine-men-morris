@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CONTROLLER_GAME_THREAD_H_
-#define CONTROLLER_GAME_THREAD_H_
+#ifndef ENGINE_GAME_THREAD_H_
+#define ENGINE_GAME_THREAD_H_
 
 #include <vector>
 
@@ -13,7 +13,7 @@ class Thread;
 }
 }
 
-namespace controller {
+namespace engine {
 
 class GameThread {
  public:
@@ -36,7 +36,7 @@ class GameThread {
   static std::vector<base::threading::Thread*> game_threads;
 };
 
-}  // namespace controller
+}  // namespace engine
 
-#endif  // CONTROLLER_GAME_THREAD_H_
+#endif  // ENGINE_GAME_THREAD_H_
 

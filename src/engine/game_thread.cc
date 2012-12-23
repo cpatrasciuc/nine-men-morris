@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "controller/game_thread.h"
+#include "engine/game_thread.h"
 
 #include <string>
 
 #include "base/log.h"
 #include "base/threading/thread.h"
 
-namespace controller {
+namespace engine {
 
 using base::threading::Thread;
 
@@ -66,4 +66,4 @@ bool GameThread::CurrentlyOn(ID identifier) {
 // static
 std::vector<Thread*> GameThread::game_threads;
 
-}  // namespace controller
+}  // namespace engine
