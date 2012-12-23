@@ -97,9 +97,7 @@ TEST(PlayerAction, Undo) {
   EXPECT_EQ(NO_COLOR, board.GetPieceAt(move_action.source()));
   EXPECT_EQ(color, board.GetPieceAt(move_action.destination()));
   EXPECT_EQ(1, board.piece_count());
-  PlayerAction remove_piece(
-      color == WHITE_COLOR ? BLACK_COLOR : WHITE_COLOR,
-      PlayerAction::REMOVE_PIECE);
+  PlayerAction remove_piece(GetOpponent(color), PlayerAction::REMOVE_PIECE);
   remove_piece.set_source(move_action.destination());
   remove_piece.Execute(&board);
   EXPECT_EQ(NO_COLOR, board.GetPieceAt(remove_piece.source()));

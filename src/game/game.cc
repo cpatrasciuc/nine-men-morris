@@ -12,15 +12,6 @@
 
 namespace game {
 
-namespace {
-
-PieceColor GetOpponent(const PieceColor color) {
-  DCHECK(color != NO_COLOR);
-  return color == WHITE_COLOR ? BLACK_COLOR : WHITE_COLOR;
-}
-
-}  // anonymous namespace
-
 Game::Game(const GameOptions& game_options)
     : game_options_(game_options),
       board_(game_options.game_type()),

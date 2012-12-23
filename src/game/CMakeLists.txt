@@ -12,6 +12,8 @@ set(GAME_SOURCE_FILES
   game_serializer.h
   game_test_helper.cc
   game_test_helper.h
+  piece_color.cc
+  piece_color.h
   player_action.cc
   player_action.h
 )
@@ -22,6 +24,7 @@ set(GAME_UNITTESTS_SOURCE_FILES
   game_unittest.cc
   game_serializer_unittest.cc
   game_test_helper_unittest.cc
+  piece_color_unittest.cc
   player_action_unittest.cc
 )
 

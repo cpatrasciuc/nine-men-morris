@@ -30,8 +30,7 @@ bool PlayerAction::CanExecuteOn(const Board& board) const {
       if (!board.IsValidLocation(source_)) {
         return false;
       }
-      const PieceColor opponent = (player_color_ == WHITE_COLOR) ?
-          BLACK_COLOR : WHITE_COLOR;
+      const PieceColor opponent = GetOpponent(player_color_);
       if (board.GetPieceAt(source_) != opponent) {
         return false;
       }
@@ -100,8 +99,7 @@ void PlayerAction::Undo(Board* board) const {
       board->RemovePiece(destination_);
       break;
     case REMOVE_PIECE:
-      board->AddPiece(source_, player_color_ == WHITE_COLOR ?
-        BLACK_COLOR : WHITE_COLOR);
+      board->AddPiece(source_, GetOpponent(player_color_));
       break;
   }
 }

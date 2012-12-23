@@ -5,6 +5,8 @@
 #ifndef GAME_PIECE_COLOR_H_
 #define GAME_PIECE_COLOR_H_
 
+#include "game/game_export.h"
+
 namespace game {
 
 // This enum is used to describe the state of each location on the board. It
@@ -15,6 +17,11 @@ enum PieceColor {
   WHITE_COLOR,
   BLACK_COLOR
 };
+
+// Utility method that can be used to get the opponent of a given color (i.e.
+// move back and forth between WHITE and BLACK). The argument must not be equal
+// to NO_COLOR.
+GAME_EXPORT PieceColor GetOpponent(const PieceColor& color);
 
 }  // namespace game
 
