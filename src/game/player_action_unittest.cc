@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "game/board.h"
+#include "game/piece_color.h"
 #include "game/player_action.h"
 #include "gtest/gtest.h"
 
@@ -21,10 +22,10 @@ namespace {
 TEST(PlayerAction, AddRemovePiece) {
   Board board;
   BoardLocation loc(0, 0);
-  PlayerAction action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
+  PlayerAction action(WHITE_COLOR, PlayerAction::PLACE_PIECE);
   action.set_destination(loc);
   EXPECT_EQ(0, board.piece_count());
-  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(loc));
+  EXPECT_EQ(NO_COLOR, board.GetPieceAt(loc));
   EXPECT_EQ(0, board.GetPieceCountByColor(action.player_color()));
   action.Execute(&board);
   EXPECT_EQ(1, board.piece_count());
@@ -34,7 +35,7 @@ TEST(PlayerAction, AddRemovePiece) {
   std::vector<BoardLocation> v;
   board.GetAdjacentLocations(loc, &v);
   for (int i = 0; i < static_cast<int>(v.size()); ++i) {
-    PlayerAction opponent_action(Board::BLACK_COLOR, PlayerAction::PLACE_PIECE);
+    PlayerAction opponent_action(BLACK_COLOR, PlayerAction::PLACE_PIECE);
     opponent_action.set_destination(v[i]);
     EXPECT_EQ(i, board.GetPieceCountByColor(opponent_action.player_color()));
     opponent_action.Execute(&board);
@@ -42,11 +43,11 @@ TEST(PlayerAction, AddRemovePiece) {
   }
 
   for (int i = static_cast<int>(v.size()) - 1; i >= 0; --i) {
-    PlayerAction remove_action(Board::WHITE_COLOR, PlayerAction::REMOVE_PIECE);
+    PlayerAction remove_action(WHITE_COLOR, PlayerAction::REMOVE_PIECE);
     remove_action.set_source(v[i]);
-    EXPECT_EQ(i + 1, board.GetPieceCountByColor(Board::BLACK_COLOR));
+    EXPECT_EQ(i + 1, board.GetPieceCountByColor(BLACK_COLOR));
     remove_action.Execute(&board);
-    EXPECT_EQ(i, board.GetPieceCountByColor(Board::BLACK_COLOR));
+    EXPECT_EQ(i, board.GetPieceCountByColor(BLACK_COLOR));
   }
 }
 
@@ -54,7 +55,7 @@ TEST(PlayerAction, MovePiece) {
   std::set<BoardLocation> visited;
   Board board;
   BoardLocation loc(0, 0);
-  Board::PieceColor color = Board::BLACK_COLOR;
+  PieceColor color = BLACK_COLOR;
   board.AddPiece(loc, color);
   BoardLocation current = loc;
   bool has_nonvisited_adjacent_locations = true;
@@ -81,7 +82,7 @@ TEST(PlayerAction, Undo) {
   // We place a piece, move it and remove it from the board, then we undo each
   // action (in reverse order).
   Board board;
-  Board::PieceColor color = Board::WHITE_COLOR;
+  PieceColor color = WHITE_COLOR;
   PlayerAction place_piece(color, PlayerAction::PLACE_PIECE);
   place_piece.set_destination(BoardLocation(0, 0));
   place_piece.Execute(&board);
@@ -93,19 +94,19 @@ TEST(PlayerAction, Undo) {
   board.GetAdjacentLocations(move_action.source(), &adjacent_locations);
   move_action.set_destination(adjacent_locations[0]);
   move_action.Execute(&board);
-  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(move_action.source()));
+  EXPECT_EQ(NO_COLOR, board.GetPieceAt(move_action.source()));
   EXPECT_EQ(color, board.GetPieceAt(move_action.destination()));
   EXPECT_EQ(1, board.piece_count());
   PlayerAction remove_piece(
-      color == Board::WHITE_COLOR ? Board::BLACK_COLOR : Board::WHITE_COLOR,
+      color == WHITE_COLOR ? BLACK_COLOR : WHITE_COLOR,
       PlayerAction::REMOVE_PIECE);
   remove_piece.set_source(move_action.destination());
   remove_piece.Execute(&board);
-  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(remove_piece.source()));
+  EXPECT_EQ(NO_COLOR, board.GetPieceAt(remove_piece.source()));
   EXPECT_EQ(0, board.piece_count());
 
   remove_piece.Undo(&board);
-  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(move_action.source()));
+  EXPECT_EQ(NO_COLOR, board.GetPieceAt(move_action.source()));
   EXPECT_EQ(color, board.GetPieceAt(move_action.destination()));
   EXPECT_EQ(1, board.piece_count());
   move_action.Undo(&board);
@@ -117,9 +118,9 @@ TEST(PlayerAction, Undo) {
 
 TEST(PlayerAction, CanExecuteOn) {
   Board board;
-  board.AddPiece(BoardLocation(0, 0), Board::BLACK_COLOR);
+  board.AddPiece(BoardLocation(0, 0), BLACK_COLOR);
 
-  PlayerAction place_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
+  PlayerAction place_action(WHITE_COLOR, PlayerAction::PLACE_PIECE);
   // Already occupied location
   place_action.set_destination(BoardLocation(0, 0));
   EXPECT_FALSE(place_action.CanExecuteOn(board));
@@ -131,7 +132,7 @@ TEST(PlayerAction, CanExecuteOn) {
   EXPECT_TRUE(place_action.CanExecuteOn(board));
   place_action.Execute(&board);
 
-  PlayerAction move_action(Board::BLACK_COLOR, PlayerAction::MOVE_PIECE);
+  PlayerAction move_action(BLACK_COLOR, PlayerAction::MOVE_PIECE);
   // Invalid source
   EXPECT_FALSE(move_action.CanExecuteOn(board));
   // Invalid destination
@@ -148,7 +149,7 @@ TEST(PlayerAction, CanExecuteOn) {
   move_action.set_destination(BoardLocation(0, 3));
   EXPECT_FALSE(move_action.CanExecuteOn(board));
 
-  PlayerAction remove_action(Board::BLACK_COLOR, PlayerAction::REMOVE_PIECE);
+  PlayerAction remove_action(BLACK_COLOR, PlayerAction::REMOVE_PIECE);
   // Invalid source
   EXPECT_FALSE(remove_action.CanExecuteOn(board));
   // Invalid source color
@@ -162,7 +163,7 @@ TEST(PlayerAction, CanExecuteOn) {
 TEST(PlayerAction, CanUndoFrom) {
   Board board;
 
-  PlayerAction place_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
+  PlayerAction place_action(WHITE_COLOR, PlayerAction::PLACE_PIECE);
   // Invalid destination
   EXPECT_FALSE(place_action.CanUndoFrom(board));
   // Empty destination
@@ -172,7 +173,7 @@ TEST(PlayerAction, CanUndoFrom) {
   board.AddPiece(place_action.destination(), place_action.player_color());
   EXPECT_TRUE(place_action.CanUndoFrom(board));
 
-  PlayerAction move_action(Board::BLACK_COLOR, PlayerAction::MOVE_PIECE);
+  PlayerAction move_action(BLACK_COLOR, PlayerAction::MOVE_PIECE);
   // Invalid source
   EXPECT_FALSE(move_action.CanUndoFrom(board));
   // Invalid destination
@@ -189,7 +190,7 @@ TEST(PlayerAction, CanUndoFrom) {
   move_action.set_source(place_action.destination());
   EXPECT_FALSE(move_action.CanUndoFrom(board));
 
-  PlayerAction remove_action(Board::BLACK_COLOR, PlayerAction::REMOVE_PIECE);
+  PlayerAction remove_action(BLACK_COLOR, PlayerAction::REMOVE_PIECE);
   // Invalid source
   EXPECT_FALSE(remove_action.CanUndoFrom(board));
   // Good
@@ -203,14 +204,14 @@ TEST(PlayerAction, CanUndoFrom) {
 TEST(PlayerAction, RemovePieceFromMill) {
   Board board;
   // Form a mill
-  board.AddPiece(BoardLocation(0, 0), Board::WHITE_COLOR);
-  board.AddPiece(BoardLocation(3, 0), Board::WHITE_COLOR);
-  board.AddPiece(BoardLocation(6, 0), Board::WHITE_COLOR);
+  board.AddPiece(BoardLocation(0, 0), WHITE_COLOR);
+  board.AddPiece(BoardLocation(3, 0), WHITE_COLOR);
+  board.AddPiece(BoardLocation(6, 0), WHITE_COLOR);
   // Add a 'free' piece
   BoardLocation free_piece(6, 6);
-  board.AddPiece(free_piece, Board::WHITE_COLOR);
+  board.AddPiece(free_piece, WHITE_COLOR);
 
-  PlayerAction remove_from_mill(Board::BLACK_COLOR, PlayerAction::REMOVE_PIECE);
+  PlayerAction remove_from_mill(BLACK_COLOR, PlayerAction::REMOVE_PIECE);
   remove_from_mill.set_source(BoardLocation(0, 0));
   EXPECT_FALSE(remove_from_mill.CanExecuteOn(board));
   board.RemovePiece(free_piece);
@@ -220,7 +221,7 @@ TEST(PlayerAction, RemovePieceFromMill) {
 TEST(PlayerActionDeathTest, MAYBE(ExecuteOrUndoInvalidAction)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;
-  PlayerAction remove_action(Board::WHITE_COLOR, PlayerAction::REMOVE_PIECE);
+  PlayerAction remove_action(WHITE_COLOR, PlayerAction::REMOVE_PIECE);
   EXPECT_FALSE(remove_action.CanExecuteOn(board));
   ASSERT_DEATH(remove_action.Execute(&board), "");
   EXPECT_FALSE(remove_action.CanUndoFrom(board));
@@ -229,7 +230,7 @@ TEST(PlayerActionDeathTest, MAYBE(ExecuteOrUndoInvalidAction)) {
 
 TEST(PlayerActionDeathTest, MAYBE(InvalidPlayerColor)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
-  ASSERT_DEATH(PlayerAction(Board::NO_COLOR, PlayerAction::MOVE_PIECE), "");
+  ASSERT_DEATH(PlayerAction(NO_COLOR, PlayerAction::MOVE_PIECE), "");
 }
 
 }  // anonymous namespace

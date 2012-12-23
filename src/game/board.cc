@@ -37,16 +37,16 @@ int GetBoardSizeFromGameType(GameOptions::GameType type) {
 
 class PieceColorEqualTo
     : public std::unary_function<
-        const std::pair<BoardLocation, Board::PieceColor>&, bool> {
+        const std::pair<BoardLocation, PieceColor>&, bool> {
  public:
-  explicit PieceColorEqualTo(const Board::PieceColor color) : color_(color) {}
+  explicit PieceColorEqualTo(const PieceColor color) : color_(color) {}
 
-  bool operator()(const std::pair<BoardLocation, Board::PieceColor>& p) const {
+  bool operator()(const std::pair<BoardLocation, PieceColor>& p) const {
     return p.second == color_;
   }
 
  private:
-  Board::PieceColor color_;
+  PieceColor color_;
 };
 
 }  // anonymous namespace
@@ -154,7 +154,7 @@ bool Board::RemovePiece(const BoardLocation& location) {
   return true;
 }
 
-Board::PieceColor Board::GetPieceAt(const BoardLocation& location) const {
+PieceColor Board::GetPieceAt(const BoardLocation& location) const {
   DCHECK(IsValidLocation(location));
   map<BoardLocation, PieceColor>::const_iterator it = pieces_.find(location);
   if (it != pieces_.end()) {

@@ -17,6 +17,7 @@
 #include "game/board.h"
 #include "game/game.h"
 #include "game/game_options.h"
+#include "game/piece_color.h"
 #include "game/player_action.h"
 
 namespace game {
@@ -60,13 +61,13 @@ bool ActionTypeFromString(const std::string& type_string,
   return false;
 }
 
-std::string PlayerColorToString(const Board::PieceColor color) {
+std::string PlayerColorToString(const PieceColor color) {
   switch (color) {
-    case Board::WHITE_COLOR:
+    case WHITE_COLOR:
       return kWhiteColorString;
-    case Board::BLACK_COLOR:
+    case BLACK_COLOR:
       return kBlackColorString;
-    case Board::NO_COLOR:
+    case NO_COLOR:
       NOTREACHED();
       break;
   }
@@ -74,14 +75,13 @@ std::string PlayerColorToString(const Board::PieceColor color) {
   return std::string();
 }
 
-bool PlayerColorFromString(const std::string& color_string,
-                           Board::PieceColor* color) {
+bool PlayerColorFromString(const std::string& color_string, PieceColor* color) {
   if (color_string == kWhiteColorString) {
-    *color = Board::WHITE_COLOR;
+    *color = WHITE_COLOR;
     return true;
   }
   if (color_string == kBlackColorString) {
-    *color = Board::BLACK_COLOR;
+    *color = BLACK_COLOR;
     return true;
   }
   return false;
@@ -175,7 +175,7 @@ bool DeserializeActionsFromBinaryStream(std::istream* in,
       LOG(ERROR) << "Could not read the details for action number " << (i + 1);
       return false;
     }
-    PlayerAction action(static_cast<Board::PieceColor>(player_color),
+    PlayerAction action(static_cast<PieceColor>(player_color),
                         static_cast<PlayerAction::ActionType>(type));
     char buffer[4] = { -1, -1, -1, -1 };
     switch (type) {
@@ -251,7 +251,7 @@ bool DeserializeActionsFromTextStream(std::istream* in,
     (*in) >> player_color_string;
 
     PlayerAction::ActionType type;
-    Board::PieceColor player_color;
+    PieceColor player_color;
     if (!ActionTypeFromString(type_string, &type)) {
       LOG(ERROR) << "Invalid actions type: " << type_string;
       return false;

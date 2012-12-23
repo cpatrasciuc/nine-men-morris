@@ -8,12 +8,12 @@
 
 namespace game {
 
-PlayerAction::PlayerAction(Board::PieceColor player_color, ActionType type)
+PlayerAction::PlayerAction(PieceColor player_color, ActionType type)
     : player_color_(player_color),
       action_type_(type),
       source_(-1, -1),
       destination_(-1, -1) {
-  DCHECK(player_color != Board::NO_COLOR);
+  DCHECK(player_color != NO_COLOR);
 }
 
 bool PlayerAction::CanExecuteOn(const Board& board) const {
@@ -22,16 +22,16 @@ bool PlayerAction::CanExecuteOn(const Board& board) const {
       return board.IsValidLocation(source_) &&
              board.IsValidLocation(destination_) &&
              (board.GetPieceAt(source_) == player_color_) &&
-             (board.GetPieceAt(destination_) == Board::NO_COLOR);
+             (board.GetPieceAt(destination_) == NO_COLOR);
     case PLACE_PIECE:
       return board.IsValidLocation(destination_) &&
-             (board.GetPieceAt(destination_) == Board::NO_COLOR);
+             (board.GetPieceAt(destination_) == NO_COLOR);
     case REMOVE_PIECE:
       if (!board.IsValidLocation(source_)) {
         return false;
       }
-      const Board::PieceColor opponent = (player_color_ == Board::WHITE_COLOR) ?
-          Board::BLACK_COLOR : Board::WHITE_COLOR;
+      const PieceColor opponent = (player_color_ == WHITE_COLOR) ?
+          BLACK_COLOR : WHITE_COLOR;
       if (board.GetPieceAt(source_) != opponent) {
         return false;
       }
@@ -78,13 +78,13 @@ bool PlayerAction::CanUndoFrom(const Board& board) const {
       return board.IsValidLocation(source_) &&
              board.IsValidLocation(destination_) &&
              (board.GetPieceAt(destination_) == player_color_) &&
-             (board.GetPieceAt(source_) == Board::NO_COLOR);
+             (board.GetPieceAt(source_) == NO_COLOR);
     case PLACE_PIECE:
       return board.IsValidLocation(destination_) &&
              (board.GetPieceAt(destination_) == player_color_);
     case REMOVE_PIECE:
       return board.IsValidLocation(source_) &&
-             (board.GetPieceAt(source_) == Board::NO_COLOR);
+             (board.GetPieceAt(source_) == NO_COLOR);
   }
   NOTREACHED();
   return false;
@@ -100,8 +100,8 @@ void PlayerAction::Undo(Board* board) const {
       board->RemovePiece(destination_);
       break;
     case REMOVE_PIECE:
-      board->AddPiece(source_, player_color_ == Board::WHITE_COLOR ?
-        Board::BLACK_COLOR : Board::WHITE_COLOR);
+      board->AddPiece(source_, player_color_ == WHITE_COLOR ?
+        BLACK_COLOR : WHITE_COLOR);
       break;
   }
 }

@@ -8,6 +8,7 @@
 #include "game/board.h"
 #include "game/board_location.h"
 #include "game/game_export.h"
+#include "game/piece_color.h"
 
 namespace game {
 
@@ -27,9 +28,9 @@ class GAME_EXPORT PlayerAction {
     REMOVE_PIECE
   };
 
-  explicit PlayerAction(Board::PieceColor player_color, ActionType type);
+  explicit PlayerAction(PieceColor player_color, ActionType type);
 
-  Board::PieceColor player_color() const { return player_color_; }
+  PieceColor player_color() const { return player_color_; }
 
   ActionType type() const { return action_type_; }
 
@@ -64,7 +65,7 @@ class GAME_EXPORT PlayerAction {
   void Undo(Board* board) const;
 
  private:
-  Board::PieceColor player_color_;
+  PieceColor player_color_;
   ActionType action_type_;
   BoardLocation source_;
   BoardLocation destination_;

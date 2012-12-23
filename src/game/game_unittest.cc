@@ -11,6 +11,7 @@
 #include "game/board_location.h"
 #include "game/game.h"
 #include "game/game_test_helper.h"
+#include "game/piece_color.h"
 #include "game/player_action.h"
 #include "gtest/gtest.h"
 
@@ -21,14 +22,14 @@ TEST(GameTest, ThreeMenMorris) {
   std::auto_ptr<Game> game = LoadSavedGameForTests("full_3");
   ASSERT_TRUE(game.get());
   EXPECT_TRUE(game->is_game_over());
-  EXPECT_EQ(Board::BLACK_COLOR, game->winner());
+  EXPECT_EQ(BLACK_COLOR, game->winner());
 }
 
 TEST(GameTest, SixMenMorris) {
   std::auto_ptr<Game> game = LoadSavedGameForTests("full_6");
   ASSERT_TRUE(game.get());
   EXPECT_TRUE(game->is_game_over());
-  EXPECT_EQ(Board::WHITE_COLOR, game->winner());
+  EXPECT_EQ(WHITE_COLOR, game->winner());
 }
 
 TEST(GameTest, BlackStarts) {
@@ -36,10 +37,10 @@ TEST(GameTest, BlackStarts) {
   options.set_white_starts(false);
   Game game(options);
   game.Initialize();
-  PlayerAction invalid_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
+  PlayerAction invalid_action(WHITE_COLOR, PlayerAction::PLACE_PIECE);
   invalid_action.set_destination(BoardLocation(0, 0));
   EXPECT_FALSE(game.CanExecutePlayerAction(invalid_action));
-  PlayerAction valid_action(Board::BLACK_COLOR, PlayerAction::PLACE_PIECE);
+  PlayerAction valid_action(BLACK_COLOR, PlayerAction::PLACE_PIECE);
   valid_action.set_destination(BoardLocation(0, 0));
   EXPECT_TRUE(game.CanExecutePlayerAction(valid_action));
 }
@@ -48,7 +49,7 @@ TEST(GameTest, ExceuteActionAfterGameIsOver) {
   std::auto_ptr<Game> game = LoadSavedGameForTests("full_3");
   ASSERT_TRUE(game.get());
   EXPECT_TRUE(game->is_game_over());
-  PlayerAction action(Board::WHITE_COLOR, PlayerAction::REMOVE_PIECE);
+  PlayerAction action(WHITE_COLOR, PlayerAction::REMOVE_PIECE);
   EXPECT_FALSE(game->CanExecutePlayerAction(action));
 }
 
@@ -56,14 +57,14 @@ TEST(GameTest, MoveBeforePlacingAllPieces) {
   std::auto_ptr<Game> game = LoadSavedGameForTests("place_phase_3");
   ASSERT_TRUE(game.get());
   game->UndoLastAction();
-  PlayerAction move_action(Board::BLACK_COLOR, PlayerAction::MOVE_PIECE);
+  PlayerAction move_action(BLACK_COLOR, PlayerAction::MOVE_PIECE);
   EXPECT_FALSE(game->CanExecutePlayerAction(move_action));
 }
 
 TEST(GameTest, PlaceTooManyTimes) {
   std::auto_ptr<Game> game = LoadSavedGameForTests("place_phase_3");
   ASSERT_TRUE(game.get());
-  PlayerAction place_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
+  PlayerAction place_action(WHITE_COLOR, PlayerAction::PLACE_PIECE);
   place_action.set_destination(BoardLocation(1, 2));
   EXPECT_FALSE(game->CanExecutePlayerAction(place_action));
 }
@@ -93,7 +94,7 @@ TEST(GameTest, RemovePieceFromOpponentMill) {
   // in player_action_unittest.cc
   std::auto_ptr<Game> game = LoadSavedGameForTests("remove_from_mill_6");
   ASSERT_TRUE(game.get());
-  PlayerAction remove_from_mill(Board::BLACK_COLOR, PlayerAction::REMOVE_PIECE);
+  PlayerAction remove_from_mill(BLACK_COLOR, PlayerAction::REMOVE_PIECE);
   remove_from_mill.set_source(BoardLocation(4, 4));
   EXPECT_TRUE(game->board().IsPartOfMill(remove_from_mill.source()));
   EXPECT_FALSE(game->CanExecutePlayerAction(remove_from_mill));

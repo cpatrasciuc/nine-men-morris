@@ -12,6 +12,7 @@
 #include "game/board.h"
 #include "game/game_export.h"
 #include "game/game_options.h"
+#include "game/piece_color.h"
 #include "game/player_action.h"
 
 namespace game {
@@ -26,9 +27,11 @@ class GAME_EXPORT Game {
 
   bool is_game_over() const { return is_game_over_; }
 
+  PieceColor current_player() const { return current_player_; }
+
   // Returns the color of the winning player. It should only be called after the
   // game is over.
-  Board::PieceColor winner() const;
+  PieceColor winner() const;
 
   // This method is responsible for doing the initial setup of the game object
   // before starting the play. It determines the first player, the number of
@@ -66,7 +69,7 @@ class GAME_EXPORT Game {
 
   // Utility method that returns the number of pieces that still have to be
   // placed on the board by the given player.
-  int GetPiecesInHand(const Board::PieceColor player_color) const;
+  int GetPiecesInHand(const PieceColor player_color) const;
 
   // The options for this game instance.
   GameOptions game_options_;
@@ -81,10 +84,10 @@ class GAME_EXPORT Game {
 
   // A map that stores the number of pieces that still have to be placed on the
   // board by each player.
-  std::map<Board::PieceColor, int> pieces_in_hand_;
+  std::map<PieceColor, int> pieces_in_hand_;
 
   // The color of the next player to move.
-  Board::PieceColor current_player_;
+  PieceColor current_player_;
 
   // The expected type of the next player action.
   PlayerAction::ActionType next_action_type_;
@@ -96,7 +99,7 @@ class GAME_EXPORT Game {
   bool is_game_over_;
 
   // Once the game is over, stores the winning color.
-  Board::PieceColor winner_;
+  PieceColor winner_;
 
   DISALLOW_COPY_AND_ASSIGN(Game);
 };

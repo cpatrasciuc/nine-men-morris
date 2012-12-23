@@ -12,20 +12,12 @@
 #include "game/board_location.h"
 #include "game/game_export.h"
 #include "game/game_options.h"
+#include "game/piece_color.h"
 
 namespace game {
 
 class GAME_EXPORT Board {
  public:
-  // This enum is used to describe the state of each location on the board. It
-  // contains one value for each player (white and black) and an additional
-  // value to designate empty spots.
-  enum PieceColor {
-    NO_COLOR,
-    WHITE_COLOR,
-    BLACK_COLOR
-  };
-
   explicit Board(GameOptions::GameType type = GameOptions::NINE_MEN_MORRIS);
 
   int size() const { return size_; }

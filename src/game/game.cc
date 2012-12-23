@@ -14,9 +14,9 @@ namespace game {
 
 namespace {
 
-Board::PieceColor GetOpponent(const Board::PieceColor color) {
-  DCHECK(color != Board::NO_COLOR);
-  return color == Board::WHITE_COLOR ? Board::BLACK_COLOR : Board::WHITE_COLOR;
+PieceColor GetOpponent(const PieceColor color) {
+  DCHECK(color != NO_COLOR);
+  return color == WHITE_COLOR ? BLACK_COLOR : WHITE_COLOR;
 }
 
 }  // anonymous namespace
@@ -26,18 +26,18 @@ Game::Game(const GameOptions& game_options)
       board_(game_options.game_type()),
       next_action_type_(PlayerAction::PLACE_PIECE),
       is_game_over_(false),
-      winner_(Board::NO_COLOR) {
+      winner_(NO_COLOR) {
 }
 
-Board::PieceColor Game::winner() const {
+PieceColor Game::winner() const {
   DCHECK(is_game_over_);
   return winner_;
 }
 
 void Game::Initialize() {
   int piece_count = GetInitialPieceCountByGameType(game_options_.game_type());
-  pieces_in_hand_.insert(std::make_pair(Board::WHITE_COLOR, piece_count));
-  pieces_in_hand_.insert(std::make_pair(Board::BLACK_COLOR, piece_count));
+  pieces_in_hand_.insert(std::make_pair(WHITE_COLOR, piece_count));
+  pieces_in_hand_.insert(std::make_pair(BLACK_COLOR, piece_count));
   UpdateGameState();
 }
 
@@ -45,7 +45,7 @@ bool Game::CheckIfGameIsOver() const {
   if (is_game_over_) {
     return true;
   }
-  const Board::PieceColor opponent = GetOpponent(current_player_);
+  const PieceColor opponent = GetOpponent(current_player_);
   const int remaining_pieces_on_board = board_.GetPieceCountByColor(opponent);
   const int remaining_pieces_in_hand = GetPiecesInHand(opponent);
   const int total_remaining_pieces =
@@ -74,7 +74,7 @@ bool Game::CheckIfGameIsOver() const {
       std::vector<BoardLocation> adjacent_locations;
       board_.GetAdjacentLocations(location, &adjacent_locations);
       for (size_t k = 0; k < adjacent_locations.size(); ++k) {
-        if (board_.GetPieceAt(adjacent_locations[k]) == Board::NO_COLOR) {
+        if (board_.GetPieceAt(adjacent_locations[k]) == NO_COLOR) {
           return false;
         }
       }
@@ -141,9 +141,9 @@ void Game::UpdateGameState() {
   if (moves_.empty()) {
     next_action_type_ = PlayerAction::PLACE_PIECE;
     if (game_options_.white_starts()) {
-      current_player_ = Board::WHITE_COLOR;
+      current_player_ = WHITE_COLOR;
     } else {
-      current_player_ = Board::BLACK_COLOR;
+      current_player_ = BLACK_COLOR;
     }
   } else {
     const PlayerAction action = moves_.back();
@@ -167,8 +167,8 @@ void Game::DumpActionList(std::vector<PlayerAction>* actions) const {
   actions->insert(actions->end(), moves_.begin(), moves_.end());
 }
 
-int Game::GetPiecesInHand(const Board::PieceColor player_color) const {
-  DCHECK(player_color != Board::NO_COLOR);
+int Game::GetPiecesInHand(const PieceColor player_color) const {
+  DCHECK(player_color != NO_COLOR);
   return (*pieces_in_hand_.find(player_color)).second;
 }
 

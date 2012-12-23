@@ -41,19 +41,19 @@ class GameSerializerTest : public ::testing::Test {
     black_locations.push_back(BoardLocation(2, 1));
     black_locations.push_back(BoardLocation(1, 0));
     for (size_t i = 0; i < black_locations.size(); ++i) {
-      PlayerAction white_action(Board::WHITE_COLOR, PlayerAction::PLACE_PIECE);
+      PlayerAction white_action(WHITE_COLOR, PlayerAction::PLACE_PIECE);
       white_action.set_destination(white_locations[i]);
       game()->ExecutePlayerAction(white_action);
-      PlayerAction black_action(Board::BLACK_COLOR, PlayerAction::PLACE_PIECE);
+      PlayerAction black_action(BLACK_COLOR, PlayerAction::PLACE_PIECE);
       black_action.set_destination(black_locations[i]);
       game()->ExecutePlayerAction(black_action);
     }
-    PlayerAction white_action(Board::WHITE_COLOR, PlayerAction::MOVE_PIECE);
+    PlayerAction white_action(WHITE_COLOR, PlayerAction::MOVE_PIECE);
     white_action.set_source(BoardLocation(1, 2));
     white_action.set_destination(BoardLocation(0, 2));
     game()->ExecutePlayerAction(white_action);
     // We have formed a mill now, so we have to remove a black piece
-    PlayerAction remove_action(Board::WHITE_COLOR, PlayerAction::REMOVE_PIECE);
+    PlayerAction remove_action(WHITE_COLOR, PlayerAction::REMOVE_PIECE);
     remove_action.set_source(black_locations.back());
     game()->ExecutePlayerAction(remove_action);
   }

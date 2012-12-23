@@ -11,6 +11,7 @@
 #include "game/board.h"
 #include "game/board_location.h"
 #include "game/game_options.h"
+#include "game/piece_color.h"
 #include "gtest/gtest.h"
 
 namespace game {
@@ -112,32 +113,32 @@ TEST(Board, Adjacency) {
 TEST(Board, PieceCount) {
   Board board;
   const BoardLocation loc(0, 0);
-  EXPECT_EQ(0, board.GetPieceCountByColor(Board::WHITE_COLOR));
-  EXPECT_EQ(0, board.GetPieceCountByColor(Board::BLACK_COLOR));
+  EXPECT_EQ(0, board.GetPieceCountByColor(WHITE_COLOR));
+  EXPECT_EQ(0, board.GetPieceCountByColor(BLACK_COLOR));
   EXPECT_EQ(0, board.piece_count());
-  EXPECT_TRUE(board.AddPiece(loc, Board::WHITE_COLOR));
-  EXPECT_EQ(1, board.GetPieceCountByColor(Board::WHITE_COLOR));
-  EXPECT_EQ(0, board.GetPieceCountByColor(Board::BLACK_COLOR));
+  EXPECT_TRUE(board.AddPiece(loc, WHITE_COLOR));
+  EXPECT_EQ(1, board.GetPieceCountByColor(WHITE_COLOR));
+  EXPECT_EQ(0, board.GetPieceCountByColor(BLACK_COLOR));
   EXPECT_EQ(1, board.piece_count());
   std::vector<BoardLocation> v;
   board.GetAdjacentLocations(loc, &v);
   for (size_t i = 0; i < v.size(); ++i) {
-    EXPECT_TRUE(board.AddPiece(v[i], Board::BLACK_COLOR));
-    EXPECT_EQ(1, board.GetPieceCountByColor(Board::WHITE_COLOR));
+    EXPECT_TRUE(board.AddPiece(v[i], BLACK_COLOR));
+    EXPECT_EQ(1, board.GetPieceCountByColor(WHITE_COLOR));
     EXPECT_EQ(static_cast<int>(i) + 1,
-              board.GetPieceCountByColor(Board::BLACK_COLOR));
+              board.GetPieceCountByColor(BLACK_COLOR));
     EXPECT_EQ(static_cast<int>(i) + 2, board.piece_count());
   }
   EXPECT_TRUE(board.RemovePiece(loc));
-  EXPECT_EQ(0, board.GetPieceCountByColor(Board::WHITE_COLOR));
+  EXPECT_EQ(0, board.GetPieceCountByColor(WHITE_COLOR));
   EXPECT_EQ(static_cast<int>(v.size()),
-            board.GetPieceCountByColor(Board::BLACK_COLOR));
+            board.GetPieceCountByColor(BLACK_COLOR));
   EXPECT_EQ(static_cast<int>(v.size()), board.piece_count());
   for (size_t i = 0; i < v.size(); ++i) {
     EXPECT_TRUE(board.RemovePiece(v[i]));
-    EXPECT_EQ(0, board.GetPieceCountByColor(Board::WHITE_COLOR));
+    EXPECT_EQ(0, board.GetPieceCountByColor(WHITE_COLOR));
     EXPECT_EQ(static_cast<int>(v.size() - i - 1),
-              board.GetPieceCountByColor(Board::BLACK_COLOR));
+              board.GetPieceCountByColor(BLACK_COLOR));
     EXPECT_EQ(static_cast<int>(v.size() - i - 1), board.piece_count());
   }
 }
@@ -146,24 +147,24 @@ TEST(Board, AddGetRemove) {
   Board board(GameOptions::SIX_MEN_MORRIS);
   BoardLocation loc(0, 0);
   EXPECT_EQ(0, board.piece_count());
-  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(loc));
+  EXPECT_EQ(NO_COLOR, board.GetPieceAt(loc));
   EXPECT_FALSE(board.RemovePiece(loc));
   EXPECT_EQ(0, board.piece_count());
-  EXPECT_TRUE(board.AddPiece(loc, Board::WHITE_COLOR));
+  EXPECT_TRUE(board.AddPiece(loc, WHITE_COLOR));
   EXPECT_EQ(1, board.piece_count());
-  EXPECT_EQ(Board::WHITE_COLOR, board.GetPieceAt(loc));
-  EXPECT_FALSE(board.AddPiece(loc, Board::BLACK_COLOR));
+  EXPECT_EQ(WHITE_COLOR, board.GetPieceAt(loc));
+  EXPECT_FALSE(board.AddPiece(loc, BLACK_COLOR));
   EXPECT_EQ(1, board.piece_count());
-  EXPECT_FALSE(board.AddPiece(loc, Board::WHITE_COLOR));
+  EXPECT_FALSE(board.AddPiece(loc, WHITE_COLOR));
   EXPECT_EQ(1, board.piece_count());
   EXPECT_TRUE(board.RemovePiece(loc));
   EXPECT_EQ(0, board.piece_count());
   EXPECT_FALSE(board.RemovePiece(loc));
   EXPECT_EQ(0, board.piece_count());
-  EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(loc));
-  EXPECT_TRUE(board.AddPiece(loc, Board::BLACK_COLOR));
+  EXPECT_EQ(NO_COLOR, board.GetPieceAt(loc));
+  EXPECT_TRUE(board.AddPiece(loc, BLACK_COLOR));
   EXPECT_EQ(1, board.piece_count());
-  EXPECT_FALSE(board.AddPiece(BoardLocation(10, 10), Board::BLACK_COLOR));
+  EXPECT_FALSE(board.AddPiece(BoardLocation(10, 10), BLACK_COLOR));
   EXPECT_EQ(1, board.piece_count());
 }
 
@@ -176,17 +177,17 @@ TEST(Board, MovePiece) {
     // Jump
     BoardLocation(board.size() - 1, board.size() - 1)
   };
-  const Board::PieceColor color = Board::WHITE_COLOR;
+  const PieceColor color = WHITE_COLOR;
   board.AddPiece(old_location, color);
 
   int piece_count = board.piece_count();
   for (size_t i = 0; i < arraysize(new_locations); ++i) {
     const BoardLocation& new_location = new_locations[i];
     EXPECT_EQ(color, board.GetPieceAt(old_location));
-    EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(new_location));
+    EXPECT_EQ(NO_COLOR, board.GetPieceAt(new_location));
     board.MovePiece(old_location, new_location);
     EXPECT_EQ(piece_count, board.piece_count());
-    EXPECT_EQ(Board::NO_COLOR, board.GetPieceAt(old_location));
+    EXPECT_EQ(NO_COLOR, board.GetPieceAt(old_location));
     EXPECT_EQ(color, board.GetPieceAt(new_location));
     board.MovePiece(new_location, old_location);
     EXPECT_EQ(piece_count, board.piece_count());
@@ -204,7 +205,7 @@ TEST(Board, IsPartOfMill) {
   for (size_t k = 0; k < arraysize(mills); ++k) {
     EXPECT_FALSE(board.IsPartOfMill(mills[k][0]));
     for (size_t i = 0; i < arraysize(mills[k]); ++i) {
-      EXPECT_TRUE(board.AddPiece(mills[k][i], Board::BLACK_COLOR));
+      EXPECT_TRUE(board.AddPiece(mills[k][i], BLACK_COLOR));
       for (size_t j = 0; j < arraysize(mills[k]); ++j) {
         EXPECT_EQ(i + 1 == arraysize(mills[k]),
                   board.IsPartOfMill(mills[k][i]));
@@ -221,17 +222,17 @@ TEST(Board, IsPartOfMill) {
 
 TEST(Board, MillOnTheMiddleLine) {
   Board board;
-  board.AddPiece(BoardLocation(3, 1), Board::BLACK_COLOR);
-  board.AddPiece(BoardLocation(3, 2), Board::BLACK_COLOR);
-  board.AddPiece(BoardLocation(3, 4), Board::BLACK_COLOR);
+  board.AddPiece(BoardLocation(3, 1), BLACK_COLOR);
+  board.AddPiece(BoardLocation(3, 2), BLACK_COLOR);
+  board.AddPiece(BoardLocation(3, 4), BLACK_COLOR);
   EXPECT_FALSE(board.IsPartOfMill(BoardLocation(3, 4)));
-  board.AddPiece(BoardLocation(3, 0), Board::BLACK_COLOR);
+  board.AddPiece(BoardLocation(3, 0), BLACK_COLOR);
   EXPECT_TRUE(board.IsPartOfMill(BoardLocation(3, 0)));
-  board.AddPiece(BoardLocation(1, 3), Board::BLACK_COLOR);
-  board.AddPiece(BoardLocation(2, 3), Board::BLACK_COLOR);
-  board.AddPiece(BoardLocation(4, 3), Board::BLACK_COLOR);
+  board.AddPiece(BoardLocation(1, 3), BLACK_COLOR);
+  board.AddPiece(BoardLocation(2, 3), BLACK_COLOR);
+  board.AddPiece(BoardLocation(4, 3), BLACK_COLOR);
   EXPECT_FALSE(board.IsPartOfMill(BoardLocation(4, 3)));
-  board.AddPiece(BoardLocation(0, 3), Board::BLACK_COLOR);
+  board.AddPiece(BoardLocation(0, 3), BLACK_COLOR);
   EXPECT_TRUE(board.IsPartOfMill(BoardLocation(0, 3)));
 }
 
@@ -241,8 +242,8 @@ TEST(BoardDeathTest, MovePiece) {
   const BoardLocation old_location(0, 0);
   const BoardLocation new_location(0, 3);
   ASSERT_DEATH(board.MovePiece(old_location, new_location), "");
-  board.AddPiece(old_location, Board::WHITE_COLOR);
-  board.AddPiece(new_location, Board::BLACK_COLOR);
+  board.AddPiece(old_location, WHITE_COLOR);
+  board.AddPiece(new_location, BLACK_COLOR);
   ASSERT_DEATH(board.MovePiece(old_location, new_location), "");
   ASSERT_DEATH(board.MovePiece(old_location, old_location), "");
 }
@@ -264,8 +265,8 @@ TEST(BoardDeathTest, UseInvalidColor) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;
   const BoardLocation location(0, 0);
-  ASSERT_DEATH(board.GetPieceCountByColor(Board::NO_COLOR), "");
-  ASSERT_DEATH(board.AddPiece(location, Board::NO_COLOR), "");
+  ASSERT_DEATH(board.GetPieceCountByColor(NO_COLOR), "");
+  ASSERT_DEATH(board.AddPiece(location, NO_COLOR), "");
 }
 
 }  // anonymous namespace
