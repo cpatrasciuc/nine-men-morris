@@ -14,12 +14,6 @@
 #include "base/string_util.h"
 #include "gtest/gtest.h"
 
-#ifdef RELEASE_MODE
-#define ONLY_IN_DEBUG_MODE(testcase) DISABLED_##testcase
-#else
-#define ONLY_IN_DEBUG_MODE(testcase) testcase
-#endif
-
 namespace base {
 namespace debug {
 namespace {
@@ -28,7 +22,7 @@ TEST(PrintStackTrace, NoArguments) {
   PrintStackTrace();
 }
 
-TEST(PrintStackTrace, ONLY_IN_DEBUG_MODE(PrintToString)) {
+TEST(PrintStackTrace, DEBUG_ONLY_TEST(PrintToString)) {
   std::ostringstream out;
   StackTraceTestHelper helper;
   std::vector<std::string> expected_stack =
@@ -44,7 +38,7 @@ TEST(PrintStackTrace, ONLY_IN_DEBUG_MODE(PrintToString)) {
   }
 }
 
-TEST(PrintStackTrace, ONLY_IN_DEBUG_MODE(SmallDepth)) {
+TEST(PrintStackTrace, DEBUG_ONLY_TEST(SmallDepth)) {
   std::ostringstream out;
   StackTraceTestHelper helper;
   std::vector<std::string> expected_stack =
@@ -64,7 +58,7 @@ TEST(PrintStackTrace, ONLY_IN_DEBUG_MODE(SmallDepth)) {
   }
 }
 
-TEST(PrintStackTrace, ONLY_IN_DEBUG_MODE(CStyleFunction)) {
+TEST(PrintStackTrace, DEBUG_ONLY_TEST(CStyleFunction)) {
   std::ostringstream out;
   CStyleFunction(&out);
   std::string stacktrace(out.str());

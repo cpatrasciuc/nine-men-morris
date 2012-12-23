@@ -11,20 +11,14 @@
 #include <sstream>
 #include <string>
 
+#include "base/basic_macros.h"
 #include "base/location.h"
 #include "base/log.h"
-#include "base/basic_macros.h"
 #include "base/threading/thread.h"
 #include "gtest/gtest.h"
 
 namespace base {
 namespace {
-
-#ifdef ENABLE_LOGGING
-#define MAYBE(testcase) testcase
-#else
-#define MAYBE(testcase) DISABLED_##testcase
-#endif
 
 class LogUnittest : public ::testing::Test {
  public:
@@ -55,7 +49,7 @@ class LogUnittest : public ::testing::Test {
   DISALLOW_COPY_AND_ASSIGN(LogUnittest);
 };
 
-TEST_F(LogUnittest, MAYBE(LogLevelFilteringTest)) {
+TEST_F(LogUnittest, DEBUG_ONLY_TEST(LogLevelFilteringTest)) {
   LogLevel levels[] = {ERROR, WARNING, INFO, DEBUG};
   for (unsigned int level = 0; level < arraysize(levels); ++level) {
     test_stream().str("");  // Clear the buffer
@@ -71,7 +65,7 @@ TEST_F(LogUnittest, MAYBE(LogLevelFilteringTest)) {
   }
 }
 
-TEST_F(LogUnittest, MAYBE(LogIfTest)) {
+TEST_F(LogUnittest, DEBUG_ONLY_TEST(LogIfTest)) {
   LOG_IF(INFO, 0 == 1) << "Should not be logged";
   EXPECT_EQ(std::string(), test_stream().str());
   std::string message("Should be logged");
@@ -96,7 +90,7 @@ TEST_F(LogUnittest, LogMessageFormatTest) {
   EXPECT_NE(std::string::npos, output.find(thread.name()));
 }
 
-TEST_F(LogUnittest, MAYBE(SystemErrorLogIfTest)) {
+TEST_F(LogUnittest, DEBUG_ONLY_TEST(SystemErrorLogIfTest)) {
   float result = std::pow(10.0f, 2.0f);
   ELOG_IF(ERROR, result == HUGE_VAL) << "Should not be logged";
   EXPECT_EQ(std::string(), test_stream().str());
@@ -111,13 +105,13 @@ TEST_F(LogUnittest, MAYBE(SystemErrorLogIfTest)) {
   EXPECT_LT(pos, output.size() - message.size());
 }
 
-TEST_F(LogUnittest, MAYBE(DCHECKPass)) {
+TEST_F(LogUnittest, DEBUG_ONLY_TEST(DCHECKPass)) {
   Log::max_log_level = ERROR;
   DCHECK_LT(0, 1) << "Should not be logged";
   EXPECT_EQ(std::string(), test_stream().str());
 }
 
-TEST(LogUnittestDeathTest, MAYBE(DCHECKFail)) {
+TEST(LogUnittestDeathTest, DEBUG_ONLY_TEST(DCHECKFail)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Log::max_log_level = ERROR;
   Log::default_output_stream = &std::cerr;
@@ -125,7 +119,7 @@ TEST(LogUnittestDeathTest, MAYBE(DCHECKFail)) {
   ASSERT_DEATH(DCHECK_GT(0, 1) << crash_message, crash_message);
 }
 
-TEST(LogUnittestDeathTest, MAYBE(NotReached)) {
+TEST(LogUnittestDeathTest, DEBUG_ONLY_TEST(NotReached)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   std::string error_message("NotReached");
   ASSERT_DEATH(NOTREACHED() << error_message, error_message);

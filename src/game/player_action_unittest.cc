@@ -5,16 +5,11 @@
 #include <set>
 #include <vector>
 
+#include "base/basic_macros.h"
 #include "game/board.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
 #include "gtest/gtest.h"
-
-#if defined(DEBUG_MODE)
-#define MAYBE(testcase) testcase
-#else
-#define MAYBE(testcase) DISABLED_##testcase
-#endif
 
 namespace game {
 namespace {
@@ -216,7 +211,7 @@ TEST(PlayerAction, RemovePieceFromMill) {
   EXPECT_TRUE(remove_from_mill.CanExecuteOn(board));
 }
 
-TEST(PlayerActionDeathTest, MAYBE(ExecuteOrUndoInvalidAction)) {
+TEST(PlayerActionDeathTest, DEBUG_ONLY_TEST(ExecuteOrUndoInvalidAction)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;
   PlayerAction remove_action(WHITE_COLOR, PlayerAction::REMOVE_PIECE);
@@ -226,7 +221,7 @@ TEST(PlayerActionDeathTest, MAYBE(ExecuteOrUndoInvalidAction)) {
   ASSERT_DEATH(remove_action.Execute(&board), "");
 }
 
-TEST(PlayerActionDeathTest, MAYBE(InvalidPlayerColor)) {
+TEST(PlayerActionDeathTest, DEBUG_ONLY_TEST(InvalidPlayerColor)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   ASSERT_DEATH(PlayerAction(NO_COLOR, PlayerAction::MOVE_PIECE), "");
 }

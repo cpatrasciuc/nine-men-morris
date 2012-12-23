@@ -2,14 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "base/basic_macros.h"
 #include "game/piece_color.h"
 #include "gtest/gtest.h"
-
-#if defined(DEBUG_MODE)
-#define MAYBE(testcase) testcase
-#else
-#define MAYBE(testcase) DISABLED_##testcase
-#endif
 
 namespace game {
 namespace {
@@ -19,7 +14,7 @@ TEST(PieceColor, GetOpponent) {
   EXPECT_EQ(BLACK_COLOR, GetOpponent(WHITE_COLOR));
 }
 
-TEST(PieceColorDeathTest, MAYBE(GetOpponentInvalidColor)) {
+TEST(PieceColorDeathTest, DEBUG_ONLY_TEST(GetOpponentInvalidColor)) {
   ASSERT_DEATH(GetOpponent(NO_COLOR), "");
 }
 

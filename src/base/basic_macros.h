@@ -28,5 +28,15 @@
   TypeName(const TypeName&);               \
   void operator=(const TypeName&);
 
+// This macro should be used for test cases that must only be run on debug mode
+// builds. Usually these represent death tests that break different DCHECK's.
+// Usage:
+//   TEST(SomeClassDeathTest, DEBUG_ONLY_TEST(InvalidArgumentsTest)).
+#if defined(DEBUG_MODE)
+#define DEBUG_ONLY_TEST(testcase) testcase
+#else
+#define DEBUG_ONLY_TEST(testcase) DISABLED_##testcase
+#endif
+
 #endif  // BASE_BASIC_MACROS_H_
 

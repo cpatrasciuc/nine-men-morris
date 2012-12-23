@@ -4,6 +4,7 @@
 
 #include <vector>
 
+#include "base/basic_macros.h"
 #include "base/bind.h"
 #include "base/location.h"
 #include "base/method.h"
@@ -88,9 +89,7 @@ TYPED_TEST(ThreadTest, Counting) {
   }
 }
 
-#if defined(DEBUG_MODE)
-
-TEST(ThreadDeathTest, Join) {
+TEST(ThreadDeathTest, DEBUG_ONLY_TEST(Join)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Thread thread("Test thread");
   thread.Start();
@@ -99,7 +98,7 @@ TEST(ThreadDeathTest, Join) {
   ASSERT_DEATH(thread.Join(), "Error while joining thread");
 }
 
-TEST(ThreadDeathTest, SelfJoin) {
+TEST(ThreadDeathTest, DEBUG_ONLY_TEST(SelfJoin)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Thread thread("Test thread");
   thread.Start();
@@ -114,7 +113,7 @@ TEST(ThreadDeathTest, SelfJoin) {
   thread.SubmitQuitTaskAndJoin();
 }
 
-TEST(ThreadDeathTest, MultipleJoins) {
+TEST(ThreadDeathTest, DEBUG_ONLY_TEST(MultipleJoins)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Thread thread("Test thread");
   Thread join_thread("Thread that calls Join()");
@@ -132,7 +131,7 @@ TEST(ThreadDeathTest, MultipleJoins) {
   thread.SubmitQuitTaskAndJoin();
 }
 
-TEST(ThreadDeathTest, NotJoined) {
+TEST(ThreadDeathTest, DEBUG_ONLY_TEST(NotJoined)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   {
     Thread not_started("Not started thread");
@@ -145,13 +144,13 @@ TEST(ThreadDeathTest, NotJoined) {
     "destroyed before being joined");
 }
 
-TEST(ThreadDeathTest, JoinBeforeStart) {
+TEST(ThreadDeathTest, DEBUG_ONLY_TEST(JoinBeforeStart)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Thread thread("Test thread");
   ASSERT_DEATH(thread.Join(), "not started");
 }
 
-TEST(ThreadDeathTest, MultipleStarts) {
+TEST(ThreadDeathTest, DEBUG_ONLY_TEST(MultipleStarts)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Thread thread("Test thread");
   thread.Start();
@@ -163,8 +162,6 @@ TEST(ThreadDeathTest, MultipleStarts) {
     },
     "already run and joined");
 }
-
-#endif  // defined(DEBUG_MODE)
 
 }  // anonymous namespace
 }  // namespace threading
