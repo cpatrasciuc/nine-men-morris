@@ -6,16 +6,26 @@
 #define CONSOLE_GAME_CONSOLE_GAME_H_
 
 #include "base/basic_macros.h"
+#include "base/ptr/scoped_ptr.h"
+#include "game/game.h"
+
+namespace game {
+class GameOptions;
+}
 
 namespace console_game {
 
 class ConsoleGame {
  public:
-  ConsoleGame();
+  explicit ConsoleGame(const game::GameOptions& options);
+
+  void Draw();
 
   void Run();
 
  private:
+  game::Game game_;
+
   DISALLOW_COPY_AND_ASSIGN(ConsoleGame);
 };
 
