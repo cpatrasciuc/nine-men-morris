@@ -57,13 +57,13 @@ std::istream& operator>>(std::istream& in, game::BoardLocation& location) {
   for (int i = 0; i < 2; i++) {
     in.get(c);
     if ('1' <= c && c <= '9') {
-      column = c - '1';
+      line = c - '1';
     }
     if ('a' <= c && c <= 'z') {
-      line = c - 'a';
+      column = c - 'a';
     }
     if ('A' <= c && c <= 'Z') {
-      line = c - 'A';
+      column = c - 'A';
     }
   }
   location = game::BoardLocation(line, column);
