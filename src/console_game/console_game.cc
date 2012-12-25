@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iomanip>
 
 #include "base/console.h"
 #include "game/board_location.h"
@@ -55,8 +56,8 @@ std::istream& operator>>(std::istream& in, game::BoardLocation& location) {
   int column = -1;
   for (int i = 0; i < 2; i++) {
     in.get(c);
-    if ('0' <= c && c <= '9') {
-      column = c - '0';
+    if ('1' <= c && c <= '9') {
+      column = c - '1';
     }
     if ('a' <= c && c <= 'z') {
       line = c - 'a';
@@ -88,26 +89,42 @@ void ConsoleGame::Draw() {
   std::vector<bool> found_by_line(game_.board().size(), false);
   std::vector<bool> found_by_col(game_.board().size(), false);
 
+  const int indent = 5;
+  std::cout << std::string(indent, ' ');
+  for (int col = 0; col < cols; ++col) {
+    if (col % cmul == 1) {
+      std::cout.put('A' + (col / cmul));
+    } else {
+      std::cout.put(' ');
+    }
+  }
+  std::cout << "\n\n";
+
   for (int line = 0; line < lines; ++line) {
+    if (line % lmul == 1) {
+      std::cout << std::setw(indent - 1) << line / lmul + 1 << " ";
+    } else {
+      std::cout << std::string(indent, ' ');
+    }
     for (int col = 0; col < cols; ++col) {
       // Check if the current coordinates correspond to a valid board location
       if (line % lmul != lmul - 1 && col % cmul < cmul - 2) {
         game::BoardLocation loc(line / lmul, col / cmul);
         if (game_.board().IsValidLocation(loc)) {
-          base::Console::Color color = base::Console::COLOR_BLACK;
+          base::Console::Color text_color = base::Console::COLOR_BLACK;
           game::PieceColor board_color = game_.board().GetPieceAt(loc);
           switch (board_color) {
             case game::WHITE_COLOR:
-              color = base::Console::COLOR_RED;
+              text_color = base::Console::COLOR_RED;
               break;
             case game::BLACK_COLOR:
-              color = base::Console::COLOR_GREEN;
+              text_color = base::Console::COLOR_GREEN;
               break;
             case game::NO_COLOR:
-              color = base::Console::COLOR_BLACK;
+              text_color = base::Console::COLOR_BLACK;
               break;
           }
-          PrintColoredFillChar(color,
+          PrintColoredFillChar(text_color,
               board_color == game::NO_COLOR ? PARTIAL_FILL : FULL_FILL);
           found_by_line[line / lmul] = true;
           found_by_col[col / cmul] = true;
