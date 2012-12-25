@@ -6,6 +6,7 @@
 #define BASE_CONSOLE_H_
 
 #include "base/base_export.h"
+#include "base/basic_macros.h"
 
 namespace base {
 
@@ -34,6 +35,9 @@ class BASE_EXPORT Console {
 
   // Equivalent of running the system "clear" command.
   static void ClearScreen();
+
+ private:
+  DISALLOW_COPY_AND_ASSIGN(Console);
 };
 
 }  // namespace base
