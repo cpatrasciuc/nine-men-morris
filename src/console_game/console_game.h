@@ -21,13 +21,21 @@ class ConsoleGame {
  public:
   explicit ConsoleGame(const game::GameOptions& options);
 
+  // Draws the current state of the game board.
   void Draw();
 
+  // Runs the game loop that continously calls Draw() and then waits for a user
+  // command. The method exits when the user enters the 'q' (quit) command or
+  // the game is over.
   void Run();
 
  private:
+  // Handle the latest user command and perform the neccesary changes on the
+  // |game_| object. The method returns a string that represents the status of
+  // the command being run. The result is used to provide feedback to the user.
   std::string ProcessCommand(const std::string& command);
 
+  // The game model
   game::Game game_;
 
   DISALLOW_COPY_AND_ASSIGN(ConsoleGame);
