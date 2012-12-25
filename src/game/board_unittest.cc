@@ -236,7 +236,7 @@ TEST(Board, MillOnTheMiddleLine) {
   EXPECT_TRUE(board.IsPartOfMill(BoardLocation(0, 3)));
 }
 
-TEST(BoardDeathTest, MovePiece) {
+TEST(BoardDeathTest, DEBUG_ONLY_TEST(MovePiece)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;
   const BoardLocation old_location(0, 0);
@@ -248,7 +248,7 @@ TEST(BoardDeathTest, MovePiece) {
   ASSERT_DEATH(board.MovePiece(old_location, old_location), "");
 }
 
-TEST(BoardDeathTest, UseInvalidLocations) {
+TEST(BoardDeathTest, DEBUG_ONLY_TEST(UseInvalidLocations)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;
   const BoardLocation invalid(-1, -1);
@@ -261,7 +261,7 @@ TEST(BoardDeathTest, UseInvalidLocations) {
   ASSERT_DEATH(board.MovePiece(valid, invalid), "");
 }
 
-TEST(BoardDeathTest, UseInvalidColor) {
+TEST(BoardDeathTest, DEBUG_ONLY_TEST(UseInvalidColor)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Board board;
   const BoardLocation location(0, 0);
