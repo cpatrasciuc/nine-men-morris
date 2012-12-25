@@ -10,8 +10,6 @@ set(GAME_SOURCE_FILES
   game_options.h
   game_serializer.cc
   game_serializer.h
-  game_test_helper.cc
-  game_test_helper.h
   piece_color.cc
   piece_color.h
   player_action.cc
@@ -23,6 +21,8 @@ set(GAME_UNITTESTS_SOURCE_FILES
   board_location_unittest.cc
   game_unittest.cc
   game_serializer_unittest.cc
+  game_test_helper.cc
+  game_test_helper.h
   game_test_helper_unittest.cc
   piece_color_unittest.cc
   player_action_unittest.cc
@@ -41,6 +41,7 @@ add_definitions("-DGAME_IMPLEMENTATION")
 
 # The main target of this directory
 add_library(game ${GAME_SOURCE_FILES})
+target_link_libraries(game base)
 
 # The unittests for this directory
 add_executable(game_unittests ${GAME_UNITTESTS_SOURCE_FILES} ../base/test_runner.cc)

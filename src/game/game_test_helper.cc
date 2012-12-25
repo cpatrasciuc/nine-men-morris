@@ -18,24 +18,22 @@
 
 namespace game {
 
-using base::FilePath;
-
-const FilePath::CharType kSavedGamesFolderName[] =
+const base::FilePath::CharType kSavedGamesFolderName[] =
     FILE_PATH_LITERAL("test_games");
-const FilePath::CharType kSavedGamesFileExtension[] =
+const base::FilePath::CharType kSavedGamesFileExtension[] =
     FILE_PATH_LITERAL(".txt");
 
 const char kStartCommentChar = '#';
 
-FilePath GetSavedGamesFolder() {
+base::FilePath GetSavedGamesFolder() {
   base::FilePath current_file_name(FILE_PATH_LITERAL(__FILE__));
   return current_file_name.DirName().Append(kSavedGamesFolderName);
 }
 
 std::auto_ptr<Game> LoadSavedGameForTests(const std::string& game_name) {
-  FilePath file_name(GetSavedGamesFolder()
+  base::FilePath file_name(GetSavedGamesFolder()
       .Append(game_name)
-      .AddExtension(FilePath(kSavedGamesFileExtension)));
+      .AddExtension(base::FilePath(kSavedGamesFileExtension)));
   DCHECK(file_name.Exists()) << "File does not exist: " << file_name.value();
   std::ifstream in(file_name.value().c_str());
   std::stringstream contents;
