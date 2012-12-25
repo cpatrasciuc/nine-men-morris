@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "base/basic_macros.h"
 #include "base/bind.h"
 #include "base/method.h"
 #include "base/ptr/scoped_ptr.h"
@@ -106,7 +107,7 @@ TEST_F(TaskTest, TaskWithCallback) {
   EXPECT_TRUE(callback_was_called());
 }
 
-TEST_F(TaskTest, PostTaskWithCallbackFromMainThreadDeathTest) {
+TEST_F(TaskTest, DEBUG_ONLY_TEST(PostTaskWithCallbackFromMainThreadDeathTest)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   ASSERT_DEATH(
       {  // NOLINT(whitespace/braces)

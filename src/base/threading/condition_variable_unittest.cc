@@ -4,6 +4,7 @@
 
 #include <ctime>
 
+#include "base/basic_macros.h"
 #include "base/bind.h"
 #include "base/location.h"
 #include "base/log.h"
@@ -115,7 +116,7 @@ TEST_F(ConditionVariableTest, TimedWait) {
   lock.Release();
 }
 
-TEST(ConditionVariableDeathTest, NoLockedAcquired) {
+TEST(ConditionVariableDeathTest, DEBUG_ONLY_TEST(NoLockedAcquired)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Lock lock;
   ConditionVariable cv(&lock);
@@ -128,7 +129,7 @@ TEST(ConditionVariableDeathTest, NoLockedAcquired) {
   ASSERT_DEATH(cv.Broadcast(), "");
 }
 
-TEST(ConditionVariableDeathTest, NoMutexLock) {
+TEST(ConditionVariableDeathTest, DEBUG_ONLY_TEST(NoMutexLock)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Lock lock(new SpinLockImpl);
   ConditionVariable cv(&lock);
