@@ -4,12 +4,16 @@
 
 #include "console_game/console_game.h"
 
+#include <istream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include "base/console.h"
 #include "game/board_location.h"
 #include "game/game_options.h"
+#include "game/piece_color.h"
+#include "game/player_action.h"
 
 namespace console_game {
 
@@ -19,7 +23,8 @@ enum CharType {
   EMPTY,
   VERTICAL_LINE,
   HORIZONTAL_LINE,
-  FILL
+  PARTIAL_FILL,
+  FULL_FILL
 };
 
 void PrintColoredFillChar(base::Console::Color color, CharType type) {
@@ -34,11 +39,34 @@ void PrintColoredFillChar(base::Console::Color color, CharType type) {
     case HORIZONTAL_LINE:
       c = '_';
       break;
-    case FILL:
+    case PARTIAL_FILL:
       c = 176;
+      break;
+    case FULL_FILL:
+      c = 178;
       break;
   }
   base::Console::ColoredPrintf(color, "%c", c);
+}
+
+std::istream& operator>>(std::istream& in, game::BoardLocation& location) {
+  char c = '?';
+  int line = -1;
+  int column = -1;
+  for (int i = 0; i < 2; i++) {
+    in.get(c);
+    if ('0' <= c && c <= '9') {
+      column = c - '0';
+    }
+    if ('a' <= c && c <= 'z') {
+      line = c - 'a';
+    }
+    if ('A' <= c && c <= 'Z') {
+      line = c - 'A';
+    }
+  }
+  location = game::BoardLocation(line, column);
+  return in;
 }
 
 }  // anonymous namespace
@@ -66,7 +94,21 @@ void ConsoleGame::Draw() {
       if (line % lmul != lmul - 1 && col % cmul < cmul - 2) {
         game::BoardLocation loc(line / lmul, col / cmul);
         if (game_.board().IsValidLocation(loc)) {
-          PrintColoredFillChar(base::Console::COLOR_BLACK, FILL);
+          base::Console::Color color = base::Console::COLOR_BLACK;
+          game::PieceColor board_color = game_.board().GetPieceAt(loc);
+          switch (board_color) {
+            case game::WHITE_COLOR:
+              color = base::Console::COLOR_RED;
+              break;
+            case game::BLACK_COLOR:
+              color = base::Console::COLOR_GREEN;
+              break;
+            case game::NO_COLOR:
+              color = base::Console::COLOR_BLACK;
+              break;
+          }
+          PrintColoredFillChar(color,
+              board_color == game::NO_COLOR ? PARTIAL_FILL : FULL_FILL);
           found_by_line[line / lmul] = true;
           found_by_col[col / cmul] = true;
           continue;
@@ -132,14 +174,56 @@ void ConsoleGame::Run() {
   const int kMaxCommandSize = 256;
   char cmd_buffer[kMaxCommandSize];
   Draw();
-  while (std::cin.getline(cmd_buffer, kMaxCommandSize)) {
-    std::string command(cmd_buffer);
+  do {
+    const std::string command(cmd_buffer);
     if (command == "q" || command == "Q") {
       break;
     }
+    std::string last_command_status;
+    if (!command.empty()) {
+      last_command_status = ProcessCommand(command);
+    }
     Draw();
+    std::cout << "\n\n";
+    base::Console::ColoredPrintf(base::Console::COLOR_WHITE,
+                                 last_command_status.c_str());
+    std::cout << "\n\n";
     std::cout << "Next command or 'q' to quit: ";
+    std::cout.flush();
+  } while (std::cin.getline(cmd_buffer, kMaxCommandSize));
+}
+
+std::string ConsoleGame::ProcessCommand(const std::string& command) {
+  std::istringstream iss(command);
+  iss >> std::skipws;
+
+  if (game_.current_player() == game::NO_COLOR) {
+    game_.Initialize();
+    return "Game started.";
   }
+
+  game::PlayerAction action(game_.current_player(), game_.next_action_type());
+  game::BoardLocation source(-1, -1);
+  game::BoardLocation destination(-1, -1);
+  switch (action.type()) {
+    case game::PlayerAction::MOVE_PIECE:
+      iss >> source >> destination;
+      break;
+    case game::PlayerAction::PLACE_PIECE:
+      iss >> destination;
+      break;
+    case game::PlayerAction::REMOVE_PIECE:
+      iss >> source;
+      break;
+  }
+  action.set_source(source);
+  action.set_destination(destination);
+
+  if (!game_.CanExecutePlayerAction(action)) {
+    return "Invalid player action";
+  }
+  game_.ExecutePlayerAction(action);
+  return "Command executed successfully";
 }
 
 }  // namespace console_game

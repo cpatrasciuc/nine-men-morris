@@ -5,6 +5,8 @@
 #ifndef CONSOLE_GAME_CONSOLE_GAME_H_
 #define CONSOLE_GAME_CONSOLE_GAME_H_
 
+#include <string>
+
 #include "base/basic_macros.h"
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
@@ -24,6 +26,8 @@ class ConsoleGame {
   void Run();
 
  private:
+  std::string ProcessCommand(const std::string& command);
+
   game::Game game_;
 
   DISALLOW_COPY_AND_ASSIGN(ConsoleGame);

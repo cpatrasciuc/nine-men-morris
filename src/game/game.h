@@ -29,6 +29,10 @@ class GAME_EXPORT Game {
 
   PieceColor current_player() const { return current_player_; }
 
+  PlayerAction::ActionType next_action_type() const {
+    return next_action_type_;
+  }
+
   // Returns the color of the winning player. It should only be called after the
   // game is over.
   PieceColor winner() const;
