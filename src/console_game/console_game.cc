@@ -189,14 +189,14 @@ void ConsoleGame::Draw() {
 
 void ConsoleGame::Run() {
   const int kMaxCommandSize = 256;
-  char cmd_buffer[kMaxCommandSize];
-  Draw();
+  char cmd_buffer[kMaxCommandSize] = { 0 };
+  game_.Initialize();
+  std::string last_command_status("Game started");
   do {
     const std::string command(cmd_buffer);
     if (command == "q" || command == "Q") {
       break;
     }
-    std::string last_command_status;
     if (!command.empty()) {
       last_command_status = ProcessCommand(command);
     }
@@ -218,11 +218,6 @@ void ConsoleGame::Run() {
 std::string ConsoleGame::ProcessCommand(const std::string& command) {
   std::istringstream iss(command);
   iss >> std::skipws;
-
-  if (game_.current_player() == game::NO_COLOR) {
-    game_.Initialize();
-    return "Game started.";
-  }
 
   game::PlayerAction action(game_.current_player(), game_.next_action_type());
   game::BoardLocation source(-1, -1);

@@ -15,6 +15,9 @@ namespace game {
 Game::Game(const GameOptions& game_options)
     : game_options_(game_options),
       board_(game_options.game_type()),
+      moves_(),
+      pieces_in_hand_(),
+      current_player_(NO_COLOR),
       next_action_type_(PlayerAction::PLACE_PIECE),
       is_game_over_(false),
       winner_(NO_COLOR) {
@@ -26,6 +29,8 @@ PieceColor Game::winner() const {
 }
 
 void Game::Initialize() {
+  // TODO(game): Add a death test for this
+  DCHECK(current_player_ == NO_COLOR) << "Game is already initialized";
   int piece_count = GetInitialPieceCountByGameType(game_options_.game_type());
   pieces_in_hand_.insert(std::make_pair(WHITE_COLOR, piece_count));
   pieces_in_hand_.insert(std::make_pair(BLACK_COLOR, piece_count));
