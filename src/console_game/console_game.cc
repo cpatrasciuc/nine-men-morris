@@ -205,6 +205,11 @@ void ConsoleGame::Run() {
     base::Console::ColoredPrintf(base::Console::COLOR_WHITE,
                                  last_command_status.c_str());
     std::cout << "\n\n";
+    if (game_.is_game_over()) {
+      std::cout << (game_.winner() == game::WHITE_COLOR ? "Red" : "Green")
+                << " player wins." << std::endl;
+      break;
+    }
     std::cout << "Next command or 'q' to quit: ";
     std::cout.flush();
   } while (std::cin.getline(cmd_buffer, kMaxCommandSize));
