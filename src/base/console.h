@@ -5,9 +5,11 @@
 #ifndef BASE_CONSOLE_H_
 #define BASE_CONSOLE_H_
 
+#include "base/base_export.h"
+
 namespace base {
 
-class Console {
+class BASE_EXPORT Console {
  public:
   // Constants that can be used for text color (i.e. foreground color)
   enum Color {
