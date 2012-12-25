@@ -4,11 +4,11 @@
 
 #include "console_game/console_game.h"
 
+#include <iomanip>
 #include <istream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <iomanip>
 
 #include "base/console.h"
 #include "game/board_location.h"
