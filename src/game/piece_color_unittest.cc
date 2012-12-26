@@ -15,6 +15,7 @@ TEST(PieceColor, GetOpponent) {
 }
 
 TEST(PieceColorDeathTest, DEBUG_ONLY_TEST(GetOpponentInvalidColor)) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   ASSERT_DEATH(GetOpponent(NO_COLOR), "");
 }
 
