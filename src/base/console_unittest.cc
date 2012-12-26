@@ -56,14 +56,12 @@ TEST(Console, ColoredPrintf) {
   if (!Console::IsColoredOutputSupported()) {
     std::cout << "Colored output is not supported." << std::endl;
   }
-  const char* const color_names[] = {
-    "black", "red", "green", "orange", "blue", "magenta", "cyan", "white"
-  };
+  const char* const color_names[] = { "black", "red", "green", "orange", "blue",
+      "magenta", "cyan", "white", "default" };
   for (size_t i = 0; i < arraysize(color_names); ++i) {
     Console::Color color = static_cast<Console::Color>(i);
     Console::ColoredPrintf(color, "This should be %s.\n", color_names[i]);
   }
-  std::cout << "This should be default" << std::endl;
 }
 
 TEST(Console, ClearScreen) {

@@ -21,7 +21,8 @@ class BASE_EXPORT Console {
     COLOR_BLUE,
     COLOR_MAGENTA,
     COLOR_CYAN,
-    COLOR_WHITE
+    COLOR_WHITE,
+    COLOR_DEFAULT
   };
 
   // Checks if the standard output supports colors (i.e. if the output file

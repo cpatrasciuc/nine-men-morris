@@ -20,7 +20,7 @@ bool Console::IsColoredOutputSupported() {
 
 // static
 void Console::ColoredPrintf(Console::Color color, const char* fmt, ...) {
-  bool use_colors = IsColoredOutputSupported();
+  bool use_colors = (color != COLOR_DEFAULT) && IsColoredOutputSupported();
   if (use_colors) {
     std::string color_code = base::ToString(static_cast<int>(color) + 30);
     std::printf("\033[0;%sm", color_code.c_str());
