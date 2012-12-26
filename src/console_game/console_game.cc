@@ -121,7 +121,7 @@ void ConsoleGame::Draw() {
               text_color = base::Console::COLOR_GREEN;
               break;
             case game::NO_COLOR:
-              text_color = base::Console::COLOR_BLACK;
+              text_color = base::Console::COLOR_DEFAULT;
               break;
           }
           PrintColoredFillChar(text_color,
@@ -151,7 +151,7 @@ void ConsoleGame::Draw() {
         }
       }
       if (horizontal) {
-        PrintColoredFillChar(base::Console::COLOR_BLACK, HORIZONTAL_LINE);
+        PrintColoredFillChar(base::Console::COLOR_DEFAULT, HORIZONTAL_LINE);
         continue;
       }
 
@@ -175,13 +175,13 @@ void ConsoleGame::Draw() {
         }
       }
       if (vertical) {
-        PrintColoredFillChar(base::Console::COLOR_BLACK, VERTICAL_LINE);
+        PrintColoredFillChar(base::Console::COLOR_DEFAULT, VERTICAL_LINE);
         continue;
       }
 
       // If we reached this point it means that no special character should be
       // printed for the current coordinates.
-      PrintColoredFillChar(base::Console::COLOR_BLACK, EMPTY);
+      PrintColoredFillChar(base::Console::COLOR_DEFAULT, EMPTY);
     }
     std::cout << std::endl;
   }
