@@ -54,7 +54,7 @@ class CommandHandler {
 // This is the default command handler that handles the MOVE, PLACE and REMOVE
 // commands. For convenience, the verbs for these commands can be omitted. The
 // command type will be deduced from the game model.
-class DefaultCommandHandler {
+class DefaultCommandHandler : public CommandHandler {
  public:
   DefaultCommandHandler();
   virtual ~DefaultCommandHandler();
