@@ -19,7 +19,7 @@ namespace console_game {
 // One can create a sub-class of CommandHandler, implement the ProcessCommand()
 // method and register the new handler to a game by specifying the command name.
 //
-// For example, if you have:
+// For example, if one has:
 //   class MyCmdHandler : public CommandHandler {
 //     ...
 //    public:
@@ -29,17 +29,26 @@ namespace console_game {
 //     ...
 //   }
 //
-// You can register one instance of MyCmdHandler to an instance of ConsoleGame
+// An instance of MyCmdHandler can be registered to an instance of ConsoleGame
 // as follows:
-// TODO(command_handler): Finish documentation
+//   std::auto_ptr<CommandHandler> handler(new MyCmdHandler);
+//   console_game.AddCommandHandler("mycmd", handler);
+//
+// This handler will be called to process any command that starts with "mycmd".
+// Examples:
+//   mycmd
+//   mycmd a0 b1
+//   mycmd and some messages
+//   mycmd /path/to/a/file
+//
 class CommandHandler {
  public:
   CommandHandler();
   virtual ~CommandHandler();
 
-  // After you register this handler to a game to handle a given command type,
+  // After this handler is registered to a game to handle a given command type,
   // the game will in turn call this method every time the user types a command
-  // starting with the type you specified.
+  // starting with the specified type.
   // |command| will contain the entire command entered by the user.
   // |game| is the game model on which the command should operate.
   // The return value should be the status message that will be displayed to the
