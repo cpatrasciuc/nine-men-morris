@@ -5,6 +5,8 @@
 #ifndef CONSOLE_GAME_CONSOLE_GAME_H_
 #define CONSOLE_GAME_CONSOLE_GAME_H_
 
+#include <map>
+#include <memory>
 #include <string>
 
 #include "base/basic_macros.h"
@@ -17,9 +19,21 @@ class GameOptions;
 
 namespace console_game {
 
+class CommandHandler;
+
 class ConsoleGame {
  public:
   explicit ConsoleGame(const game::GameOptions& options);
+  ~ConsoleGame();
+
+  // Add a new command handler that will handle commands starting with
+  // |command_type|. Whenever a command of the form "command_type [args]" is
+  // entered by the used, the ProcessCommand() method of |handler| is called and
+  // the entire string is passed as argument together with a pointer to the game
+  // model.
+  // NOTE: |command_type| must not contain whitespace characters.
+  void AddCommandHandler(const std::string& command_type,
+                         std::auto_ptr<CommandHandler> handler);
 
   // Draws the current state of the game board.
   void Draw();
@@ -30,13 +44,12 @@ class ConsoleGame {
   void Run();
 
  private:
-  // Handle the latest user command and perform the necessary changes on the
-  // |game_| object. The method returns a string that represents the status of
-  // the command being run. The result is used to provide feedback to the user.
-  std::string ProcessCommand(const std::string& command);
-
   // The game model
   game::Game game_;
+
+  // A mapping from command types to command handlers. To add a new pair use the
+  // AddCommandHandler() method.
+  std::map<std::string, CommandHandler*> command_handlers_;
 
   DISALLOW_COPY_AND_ASSIGN(ConsoleGame);
 };

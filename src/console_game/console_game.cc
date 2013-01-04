@@ -5,11 +5,15 @@
 #include "console_game/console_game.h"
 
 #include <iomanip>
+#include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include "base/console.h"
+#include "base/log.h"
+#include "base/string_util.h"
 #include "console_game/command_handler.h"
 #include "game/board_location.h"
 #include "game/game_options.h"
@@ -19,6 +23,8 @@
 namespace console_game {
 
 namespace {
+
+const char kDefaultCommandHandlerEntry[] = "__DEFAULT__";
 
 enum CharType {
   EMPTY,
@@ -52,7 +58,27 @@ void PrintColoredFillChar(base::Console::Color color, CharType type) {
 
 }  // anonymous namespace
 
-ConsoleGame::ConsoleGame(const game::GameOptions& options) : game_(options) {}
+ConsoleGame::ConsoleGame(const game::GameOptions& options)
+    : game_(options),
+      command_handlers_() {
+  std::auto_ptr<CommandHandler> default_handler(new DefaultCommandHandler);
+  AddCommandHandler(kDefaultCommandHandlerEntry, default_handler);
+}
+
+ConsoleGame::~ConsoleGame() {
+  std::map<std::string, CommandHandler*>::iterator it;
+  for (it = command_handlers_.begin(); it != command_handlers_.end(); ++it) {
+    delete it->second;
+  }
+}
+
+void ConsoleGame::AddCommandHandler(const std::string& command_type,
+                                    std::auto_ptr<CommandHandler> handler) {
+  DCHECK_EQ(command_type.find_first_of(base::kWhiteSpaceChars),
+            std::string::npos);
+  CommandHandler* handler_ptr(handler.release());
+  command_handlers_.insert(std::make_pair(command_type, handler_ptr));
+}
 
 // TODO(console_game): Add detail explanation about this Draw() method
 void ConsoleGame::Draw() {
@@ -177,8 +203,19 @@ void ConsoleGame::Run() {
     if (command == "q" || command == "Q") {
       break;
     }
+
+    // TODO(console_game): Add help command
     if (!command.empty()) {
-      last_command_status = ProcessCommand(command);
+      // TODO(string_util): Add a method to transform a string to lowercase
+      const size_t pos = command.find_first_of(base::kWhiteSpaceChars);
+      const std::string command_type(command.substr(0, pos));
+      std::map<std::string, CommandHandler*>::iterator it =
+          command_handlers_.find(command_type);
+      if (it == command_handlers_.end()) {
+        it = command_handlers_.find(kDefaultCommandHandlerEntry);
+      }
+      DCHECK(it != command_handlers_.end());
+      last_command_status = it->second->ProcessCommand(command, &game_);
     }
     Draw();
     std::cout << "\n\n";
@@ -193,11 +230,6 @@ void ConsoleGame::Run() {
     std::cout << "Next command or 'q' to quit: ";
     std::cout.flush();
   } while (std::cin.getline(cmd_buffer, kMaxCommandSize));
-}
-
-std::string ConsoleGame::ProcessCommand(const std::string& command) {
-  DefaultCommandHandler handler;
-  return handler.ProcessCommand(command, &game_);
 }
 
 }  // namespace console_game
