@@ -5,12 +5,12 @@
 #include "console_game/console_game.h"
 
 #include <iomanip>
-#include <istream>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include "base/console.h"
+#include "console_game/command_handler.h"
 #include "game/board_location.h"
 #include "game/game_options.h"
 #include "game/piece_color.h"
@@ -48,26 +48,6 @@ void PrintColoredFillChar(base::Console::Color color, CharType type) {
       break;
   }
   base::Console::ColoredPrintf(color, "%c", c);
-}
-
-std::istream& operator>>(std::istream& in, game::BoardLocation& location) {
-  char c = '?';
-  int line = -1;
-  int column = -1;
-  for (int i = 0; i < 2; i++) {
-    in.get(c);
-    if ('1' <= c && c <= '9') {
-      line = c - '1';
-    }
-    if ('a' <= c && c <= 'z') {
-      column = c - 'a';
-    }
-    if ('A' <= c && c <= 'Z') {
-      column = c - 'A';
-    }
-  }
-  location = game::BoardLocation(line, column);
-  return in;
 }
 
 }  // anonymous namespace
@@ -216,31 +196,8 @@ void ConsoleGame::Run() {
 }
 
 std::string ConsoleGame::ProcessCommand(const std::string& command) {
-  std::istringstream iss(command);
-  iss >> std::skipws;
-
-  game::PlayerAction action(game_.current_player(), game_.next_action_type());
-  game::BoardLocation source(-1, -1);
-  game::BoardLocation destination(-1, -1);
-  switch (action.type()) {
-    case game::PlayerAction::MOVE_PIECE:
-      iss >> source >> destination;
-      break;
-    case game::PlayerAction::PLACE_PIECE:
-      iss >> destination;
-      break;
-    case game::PlayerAction::REMOVE_PIECE:
-      iss >> source;
-      break;
-  }
-  action.set_source(source);
-  action.set_destination(destination);
-
-  if (!game_.CanExecutePlayerAction(action)) {
-    return "Invalid player action";
-  }
-  game_.ExecutePlayerAction(action);
-  return "Command executed successfully";
+  DefaultCommandHandler handler;
+  return handler.ProcessCommand(command, &game_);
 }
 
 }  // namespace console_game

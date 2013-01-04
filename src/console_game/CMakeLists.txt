@@ -1,4 +1,6 @@
 set(CONSOLE_GAME_SOURCE_FILES
+  command_handler.cc
+  command_handler.h
   console_game.cc
   console_game.h
 )
