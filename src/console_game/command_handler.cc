@@ -11,12 +11,21 @@
 #include <string>
 #include <vector>
 
+#include "base/basic_macros.h"
 #include "base/log.h"
 #include "base/string_util.h"
 #include "game/game.h"
 #include "game/player_action.h"
 
 namespace {
+
+const char* const kGameCommandNames[] = { "MOVE", "PLACE", "REMOVE" };
+
+const game::PlayerAction::ActionType kActionTypes[] = {
+  game::PlayerAction::MOVE_PIECE,
+  game::PlayerAction::PLACE_PIECE,
+  game::PlayerAction::REMOVE_PIECE
+};
 
 std::istream& operator>>(std::istream& in, game::BoardLocation& location) {
   char c = '?';
@@ -61,16 +70,12 @@ std::string DefaultCommandHandler::ProcessCommand(const std::string& command,
   }
 
   game::PlayerAction::ActionType type(game_model->next_action_type());
-  // TODO(string_util): Add case insensitive string compare
-  if (tokens[0] == "MOVE") {
-    type = game::PlayerAction::MOVE_PIECE;
-    tokens.erase(tokens.begin());
-  } else if (tokens[0] == "PLACE") {
-    type = game::PlayerAction::PLACE_PIECE;
-    tokens.erase(tokens.begin());
-  } else if (tokens[0] == "REMOVE") {
-    type = game::PlayerAction::REMOVE_PIECE;
-    tokens.erase(tokens.begin());
+  for (size_t i = 0; i < arraysize(kGameCommandNames); ++i) {
+    if (base::CompareIgnoreCase(tokens[0], kGameCommandNames[i]) == 0) {
+      type = kActionTypes[i];
+      tokens.erase(tokens.begin());
+      break;
+    }
   }
 
   std::stringstream buffer;
