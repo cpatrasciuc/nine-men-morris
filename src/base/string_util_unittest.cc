@@ -61,5 +61,16 @@ TEST(StringUtilTest, ToString) {
   EXPECT_EQ("10", ToString<int>(c));
 }
 
+TEST(StringUtilTest, CompareIgnoreCase) {
+  EXPECT_EQ(CompareIgnoreCase("Foo", "fOo"), 0);
+  EXPECT_LT(CompareIgnoreCase("Foo", "fOoo"), 0);
+  EXPECT_GT(CompareIgnoreCase("Foo", "bar"), 0);
+  EXPECT_LT(CompareIgnoreCase("Bar", "fOo"), 0);
+  EXPECT_GT(CompareIgnoreCase("Fooo", "fOo"), 0);
+  EXPECT_GT(CompareIgnoreCase("Foo", ""), 0);
+  EXPECT_LT(CompareIgnoreCase("", "Foo"), 0);
+  EXPECT_EQ(CompareIgnoreCase("", ""), 0);
+}
+
 }  // anonymous namespace
 }  // namespace base

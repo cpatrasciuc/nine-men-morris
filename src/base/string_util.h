@@ -39,6 +39,13 @@ std::string ToString(T t) {
   return oss.str();
 }
 
+// Compares two strings ignoring the case. It does not perform any copies.
+// The meaning of the return value is the following:
+//   - return value is 0 if a == b
+//   - return value is negative if a < b
+//   - return value is positive if a > b.
+BASE_EXPORT int CompareIgnoreCase(const std::string& a, const std::string& b);
+
 }  // namespace base
 
 #endif  // BASE_STRING_UTIL_H_

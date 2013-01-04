@@ -4,6 +4,8 @@
 
 #include "base/string_util.h"
 
+#include <string.h>
+
 namespace base {
 
 extern const char kWhiteSpaceChars[] = " \r\n\t";
@@ -31,6 +33,10 @@ void SplitString(const std::string& str,
                  std::vector<std::string>* tokens,
                  const std::string& delimiters) {
   SplitStringTemplate(str, tokens, delimiters);
+}
+
+int CompareIgnoreCase(const std::string& a, const std::string& b) {
+  return strcasecmp(a.c_str(), b.c_str());
 }
 
 }  // namespace base
