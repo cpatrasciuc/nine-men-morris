@@ -4,7 +4,9 @@
 
 #include "console_game/command_handler.h"
 
+#include <algorithm>
 #include <istream>
+#include <iterator>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -71,11 +73,9 @@ std::string DefaultCommandHandler::ProcessCommand(const std::string& command,
     tokens.erase(tokens.begin());
   }
 
-  // TODO(STL): Use the copy() function and a back inserter (?)
   std::stringstream buffer;
-  for (size_t i = 0; i < tokens.size(); ++i) {
-    buffer << tokens[i];
-  }
+  std::copy(tokens.begin(), tokens.end(),
+            std::ostream_iterator<std::string>(buffer));
 
   game::PlayerAction action(game_model->current_player(), type);
   game::BoardLocation source(-1, -1);
