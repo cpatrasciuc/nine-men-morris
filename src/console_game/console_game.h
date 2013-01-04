@@ -30,7 +30,7 @@ class ConsoleGame {
   void Run();
 
  private:
-  // Handle the latest user command and perform the neccesary changes on the
+  // Handle the latest user command and perform the necessary changes on the
   // |game_| object. The method returns a string that represents the status of
   // the command being run. The result is used to provide feedback to the user.
   std::string ProcessCommand(const std::string& command);
