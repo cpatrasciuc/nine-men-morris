@@ -8,7 +8,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <glob.h>
 
 #include "base/log.h"
 #include "base/string_util.h"
