@@ -31,7 +31,9 @@ class ConsoleGame {
   // entered by the used, the ProcessCommand() method of |handler| is called and
   // the entire string is passed as argument together with a pointer to the game
   // model.
-  // NOTE: |command_type| must not contain whitespace characters.
+  // NOTES:
+  //   - |command_type| must not contain whitespace characters.
+  //   - |command_type| will be treated in a case insensitive way.
   void AddCommandHandler(const std::string& command_type,
                          std::auto_ptr<CommandHandler> handler);
 

@@ -24,7 +24,7 @@ namespace console_game {
 
 namespace {
 
-const char kDefaultCommandHandlerEntry[] = "__DEFAULT__";
+const char kDefaultCommandHandlerEntry[] = "__default__";
 
 enum CharType {
   EMPTY,
@@ -77,7 +77,8 @@ void ConsoleGame::AddCommandHandler(const std::string& command_type,
   DCHECK_EQ(command_type.find_first_of(base::kWhiteSpaceChars),
             std::string::npos);
   CommandHandler* handler_ptr(handler.release());
-  command_handlers_.insert(std::make_pair(command_type, handler_ptr));
+  std::string lowercase_command_type(base::ToLowerCase(command_type));
+  command_handlers_.insert(std::make_pair(lowercase_command_type, handler_ptr));
 }
 
 // TODO(console_game): Add detail explanation about this Draw() method
@@ -206,9 +207,8 @@ void ConsoleGame::Run() {
 
     // TODO(console_game): Add help command
     if (!command.empty()) {
-      // TODO(string_util): Add a method to transform a string to lowercase
       const size_t pos = command.find_first_of(base::kWhiteSpaceChars);
-      const std::string command_type(command.substr(0, pos));
+      const std::string command_type(base::ToLowerCase(command.substr(0, pos)));
       std::map<std::string, CommandHandler*>::iterator it =
           command_handlers_.find(command_type);
       if (it == command_handlers_.end()) {
