@@ -4,7 +4,10 @@
 
 #include "base/string_util.h"
 
+#include <ctype.h>
 #include <string.h>
+
+#include <algorithm>
 
 namespace base {
 
@@ -37,6 +40,12 @@ void SplitString(const std::string& str,
 
 int CompareIgnoreCase(const std::string& a, const std::string& b) {
   return strcasecmp(a.c_str(), b.c_str());
+}
+
+std::string ToLowerCase(const std::string& str) {
+  std::string result(str);
+  std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+  return result;
 }
 
 }  // namespace base

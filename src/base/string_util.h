@@ -46,6 +46,9 @@ std::string ToString(T t) {
 //   - return value is positive if a > b.
 BASE_EXPORT int CompareIgnoreCase(const std::string& a, const std::string& b);
 
+// Transform a string to lowercase.
+BASE_EXPORT std::string ToLowerCase(const std::string& str);
+
 }  // namespace base
 
 #endif  // BASE_STRING_UTIL_H_

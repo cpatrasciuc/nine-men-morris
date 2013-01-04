@@ -72,5 +72,12 @@ TEST(StringUtilTest, CompareIgnoreCase) {
   EXPECT_EQ(CompareIgnoreCase("", ""), 0);
 }
 
+TEST(StringUtilTest, ToLowerCase) {
+  EXPECT_EQ("abc", ToLowerCase("ABC"));
+  EXPECT_EQ("abc", ToLowerCase("abc"));
+  EXPECT_EQ("a123a", ToLowerCase("a123A"));
+  EXPECT_EQ("", ToLowerCase(std::string()));
+}
+
 }  // anonymous namespace
 }  // namespace base
