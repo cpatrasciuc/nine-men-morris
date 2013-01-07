@@ -169,7 +169,7 @@ void ConsoleGame::Draw() {
       if (col % cmul == 1 && found_by_col[col / cmul]) {
         int i = line / lmul + 1;
         while (i < game_.board().size()) {
-          game::BoardLocation loc(i, col / 5);
+          game::BoardLocation loc(i, col / cmul);
           if (game_.board().IsValidLocation(loc)) {
             vertical = true;
             break;
