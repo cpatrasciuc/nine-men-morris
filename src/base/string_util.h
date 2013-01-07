@@ -49,6 +49,9 @@ BASE_EXPORT int CompareIgnoreCase(const std::string& a, const std::string& b);
 // Transform a string to lowercase.
 BASE_EXPORT std::string ToLowerCase(const std::string& str);
 
+// Removes whitespace at the beginning and at the end of the string.
+BASE_EXPORT std::string StripString(const std::string& str);
+
 }  // namespace base
 
 #endif  // BASE_STRING_UTIL_H_

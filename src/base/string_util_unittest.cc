@@ -79,5 +79,13 @@ TEST(StringUtilTest, ToLowerCase) {
   EXPECT_EQ("", ToLowerCase(std::string()));
 }
 
+TEST(StringUtilTest, StripString) {
+  EXPECT_EQ("foo \t  Bar", StripString("   \t \nfoo \t  Bar "));
+  EXPECT_EQ("foo", StripString("   foo"));
+  EXPECT_EQ("foo", StripString("foo   "));
+  EXPECT_EQ("", StripString(kWhiteSpaceChars));
+  EXPECT_EQ("", StripString(""));
+}
+
 }  // anonymous namespace
 }  // namespace base

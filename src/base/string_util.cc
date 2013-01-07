@@ -48,4 +48,13 @@ std::string ToLowerCase(const std::string& str) {
   return result;
 }
 
+std::string StripString(const std::string& str) {
+  const size_t start = str.find_first_not_of(kWhiteSpaceChars);
+  const size_t end = str.find_last_not_of(kWhiteSpaceChars);
+  if (start == std::string::npos) {
+    return std::string();
+  }
+  return str.substr(start, end - start + 1);
+}
+
 }  // namespace base
