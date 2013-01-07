@@ -107,6 +107,9 @@ void ConsoleGame::Draw() {
   }
   std::cout << "\n\n";
 
+  const bool is_three_men_morris(
+      game_.options().game_type() == game::GameOptions::THREE_MEN_MORRIS);
+
   for (int line = 0; line < lines; ++line) {
     if (line % lmul == 1) {
       std::cout << std::setw(indent - 1) << line / lmul + 1 << " ";
@@ -154,7 +157,7 @@ void ConsoleGame::Draw() {
         }
         if (line / lmul == game_.board().size() / 2 &&
             i == game_.board().size() / 2 + 1) {
-          horizontal = false;
+          horizontal = is_three_men_morris;
         }
       }
       if (horizontal) {
@@ -178,7 +181,7 @@ void ConsoleGame::Draw() {
         }
         if (col / cmul == game_.board().size() / 2 &&
             i == game_.board().size() / 2 + 1) {
-          vertical = false;
+          vertical = is_three_men_morris;
         }
       }
       if (vertical) {
