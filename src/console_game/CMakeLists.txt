@@ -3,6 +3,8 @@ set(CONSOLE_GAME_SOURCE_FILES
   command_handler.h
   console_game.cc
   console_game.h
+  save_game_command_handler.cc
+  save_game_command_handler.h
 )
 
 include_directories(
