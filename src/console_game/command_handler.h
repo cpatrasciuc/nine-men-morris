@@ -73,6 +73,15 @@ class CommandHandler {
                                      const std::string& args,
                                      game::Game* const game_model) = 0;
 
+  // Method used to obtain the help message for the command types handled by
+  // this handler. The |command_type| argument represents the command type for
+  // which help is requested. The method should fill the |format| argument with
+  // the format of the command and its arguments on one line. The |usage| string
+  // should be filled with the detailed explanation on how to use the command.
+  virtual void GetHelpMessage(const std::string& command_type,
+                              std::string* format,
+                              std::string* usage) = 0;
+
  private:
   DISALLOW_COPY_AND_ASSIGN(CommandHandler);
 };

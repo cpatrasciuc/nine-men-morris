@@ -10,12 +10,14 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "base/console.h"
 #include "base/log.h"
 #include "base/string_util.h"
 #include "console_game/command_handler.h"
+#include "console_game/help_command_handler.h"
 #include "console_game/player_actions_command_handler.h"
 #include "console_game/save_game_command_handler.h"
 #include "game/board_location.h"
@@ -59,11 +61,38 @@ void PrintColoredFillChar(base::Console::Color color, CharType type) {
   base::Console::ColoredPrintf(color, "%c", c);
 }
 
+// TODO(stl): Make this generic and move to base
+void SafeInsertToMap(const std::pair<std::string, CommandHandler*>& pair,
+                     std::map<std::string, CommandHandler*>* map) {
+  std::pair<std::map<std::string, CommandHandler*>::iterator, bool> result(
+      map->insert(pair));
+  if (!result.second) {
+    bool should_delete = true;
+    std::map<std::string, CommandHandler*>::const_iterator it;
+    for (it = map->begin(); it != map->end(); ++it) {
+      if ((it->second == result.first->second) && (it->first != pair.first)) {
+        should_delete = false;
+        break;
+      }
+    }
+    if (should_delete) {
+      delete result.first->second;
+    }
+    map->erase(result.first);
+    result = map->insert(pair);
+    DCHECK(result.second);
+  }
+}
+
 }  // anonymous namespace
 
 ConsoleGame::ConsoleGame(const game::GameOptions& options)
     : game_(options),
       command_handlers_() {
+  CommandHandler* help_handler(new HelpCommandHandler(command_handlers_));
+  SafeInsertToMap(std::make_pair(kDefaultCommandHandlerEntry, help_handler),
+                  &command_handlers_);
+  RegisterCommandHandler(std::auto_ptr<CommandHandler>(help_handler));
 }
 
 ConsoleGame::~ConsoleGame() {
@@ -93,15 +122,16 @@ void ConsoleGame::RegisterCommandHandler(
     }
     DCHECK_EQ(command_type.find_first_of(base::kWhiteSpaceChars),
               std::string::npos) << "No whitespace allow in command types";
-    command_handlers_.insert(
-        std::make_pair(base::ToLowerCase(command_types[i]), handler_ptr));
+    SafeInsertToMap(std::make_pair(command_type, handler_ptr),
+                    &command_handlers_);
   }
 }
 
 void ConsoleGame::SetupDefaultCommandHandlers() {
   std::auto_ptr<CommandHandler> action_handler(new PlayerActionsCommandHandler);
-  command_handlers_.insert(
-      std::make_pair(kDefaultCommandHandlerEntry, action_handler.get()));
+  SafeInsertToMap(
+      std::make_pair(kDefaultCommandHandlerEntry, action_handler.get()),
+      &command_handlers_);
   RegisterCommandHandler(action_handler);
   std::auto_ptr<CommandHandler> save_game_handler(new SaveGameCommandHandler);
   RegisterCommandHandler(save_game_handler);

@@ -43,4 +43,12 @@ std::string SaveGameCommandHandler::ProcessCommand(
   return std::string("Game saved successfully to: ") + file_name;
 }
 
+void SaveGameCommandHandler::GetHelpMessage(const std::string& command_type,
+                                            std::string* format,
+                                            std::string* usage) {
+  *format = "save <filename>";
+  *usage = "Saves the current state of the game to <filename>. "
+           "It uses text serialization.";
+}
+
 }  // namespace console_game

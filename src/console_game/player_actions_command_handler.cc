@@ -112,5 +112,25 @@ std::string PlayerActionsCommandHandler::ProcessCommand(
   return "Command executed successfully";
 }
 
+void PlayerActionsCommandHandler::GetHelpMessage(
+    const std::string& command_type, std::string* format, std::string* usage) {
+  if (command_type == "move") {
+    *format = "move <source line><source column> <dest line><dest column>";
+    *usage = "Move a piece from source to destination.";
+  } else if (command_type == "place") {
+    *format = "place <line><column>";
+    *usage = "Place a piece at the given position on the board.";
+  } else if (command_type == "remove") {
+    *format = "remove <line><column>";
+    *usage = "Remove the piece at the given position on the board.";
+  } else if (command_type == "") {
+    *format = "<line1><column1> [<line2><column2>]";
+    *usage = "Similar with move/place/remove, but the action type is deduced "
+             "from the current game state.";
+  } else {
+    NOTREACHED();
+  }
+}
+
 }  // namespace console_game
 

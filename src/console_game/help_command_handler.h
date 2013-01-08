@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CONSOLE_GAME_PLAYER_ACTIONS_COMMAND_HANDLER_H_
-#define CONSOLE_GAME_PLAYER_ACTIONS_COMMAND_HANDLER_H_
+#ifndef CONSOLE_GAME_HELP_COMMAND_HANDLER_H_
+#define CONSOLE_GAME_HELP_COMMAND_HANDLER_H_
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -16,13 +17,11 @@ class Game;
 
 namespace console_game {
 
-// This is the default command handler that handles the MOVE, PLACE and REMOVE
-// commands. For convenience, the verbs for these commands can be omitted. The
-// command type will be deduced from the game model.
-class PlayerActionsCommandHandler : public CommandHandler {
+class HelpCommandHandler : public CommandHandler {
  public:
-  PlayerActionsCommandHandler();
-  virtual ~PlayerActionsCommandHandler();
+  explicit HelpCommandHandler(
+      const std::map<std::string, CommandHandler*>& handlers);
+  virtual ~HelpCommandHandler();
 
   // CommandHandler interface
   virtual std::vector<std::string> SupportedCommandTypes() const;
@@ -32,9 +31,12 @@ class PlayerActionsCommandHandler : public CommandHandler {
   virtual void GetHelpMessage(const std::string& command_type,
                               std::string* format,
                               std::string* usage);
+
+ private:
+  const std::map<std::string, CommandHandler*>& handlers_;
 };
 
 }  // namespace console_game
 
-#endif  // CONSOLE_GAME_PLAYER_ACTIONS_COMMAND_HANDLER_H_
+#endif  // CONSOLE_GAME_HELP_COMMAND_HANDLER_H_
 

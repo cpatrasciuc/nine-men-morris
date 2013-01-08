@@ -21,11 +21,14 @@ class SaveGameCommandHandler : public CommandHandler {
   SaveGameCommandHandler();
   virtual ~SaveGameCommandHandler();
 
+  // CommandHandler interface
   virtual std::vector<std::string> SupportedCommandTypes() const;
-
   virtual std::string ProcessCommand(const std::string& command_type,
                                      const std::string& args,
                                      game::Game* const game_model);
+  virtual void GetHelpMessage(const std::string& command_type,
+                              std::string* format,
+                              std::string* usage);
 };
 
 }  // namespace console_game
