@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
   ::base::debug::EnableStackTraceDumpOnCrash();
   game::GameOptions options;
   console_game::ConsoleGame current_game(options);
-  current_game.AddDefaultCommandHandlers();
+  current_game.SetupDefaultCommandHandlers();
   current_game.Run();
   return 0;
 }

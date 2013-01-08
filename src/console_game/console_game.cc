@@ -97,7 +97,7 @@ void ConsoleGame::RegisterCommandHandler(
   }
 }
 
-void ConsoleGame::AddDefaultCommandHandlers() {
+void ConsoleGame::SetupDefaultCommandHandlers() {
   std::auto_ptr<CommandHandler> actions_handler(new DefaultCommandHandler);
   command_handlers_.insert(
       std::make_pair(kDefaultCommandHandlerEntry, actions_handler.get()));

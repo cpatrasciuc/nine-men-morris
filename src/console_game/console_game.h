@@ -32,7 +32,10 @@ class ConsoleGame {
   // handler's SupportedCommandTypes() method.
   void RegisterCommandHandler(std::auto_ptr<CommandHandler> handler);
 
-  void AddDefaultCommandHandlers();
+  // Adds default handlers for player actions and saving the game to a file. It
+  // should be used in all scenarios that don't imply custom handling of the
+  // above mentioned commands.
+  void SetupDefaultCommandHandlers();
 
   // Draws the current state of the game board.
   void Draw();
