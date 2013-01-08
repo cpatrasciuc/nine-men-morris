@@ -17,8 +17,6 @@ class Board;
 
 namespace console_game {
 
-class ConsoleRenderDelegate;
-
 // This class is responsible for drawing the game board. It performs all the
 // necessary logic and delegates the actual output to a Delegate instance.
 // This object is responsible for printing the given strings and characters.
@@ -58,10 +56,11 @@ class BoardRenderer {
     DISALLOW_COPY_AND_ASSIGN(Delegate);
   };
 
+  // If |delegate| is NULL, an instance of ConsoleRenderDelegate will be used
   explicit BoardRenderer(const game::Board& board,
                          Delegate* delegate = NULL);
 
-  // Draw the board
+  // Draw the current state of the board
   void Render();
 
  private:
