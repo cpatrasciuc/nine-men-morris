@@ -10,7 +10,7 @@
 #include <string>
 
 #include "base/basic_macros.h"
-#include "base/ptr/scoped_ptr.h"
+#include "console_game/board_renderer.h"
 #include "game/game.h"
 
 namespace game {
@@ -59,6 +59,9 @@ class ConsoleGame {
   // A mapping from command types to command handlers. To add a new pair use the
   // AddCommandHandler() method.
   std::map<std::string, CommandHandler*> command_handlers_;
+
+  // The renderer responsible for drawing the game board
+  BoardRenderer board_renderer_;
 
   DISALLOW_COPY_AND_ASSIGN(ConsoleGame);
 };
