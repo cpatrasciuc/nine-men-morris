@@ -287,7 +287,6 @@ void ConsoleGame::Run() {
       break;
     }
 
-    // TODO(console_game): Add help command
     last_command_status = ProcessCommand(command);
     Draw();
     std::cout << "\n\n";
