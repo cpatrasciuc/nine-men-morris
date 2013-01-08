@@ -11,7 +11,7 @@
 
 #include "console_game/command_handler.h"
 
-namespace Game {
+namespace game {
 class Game;
 }
 
