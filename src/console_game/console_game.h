@@ -37,6 +37,13 @@ class ConsoleGame {
   // above mentioned commands.
   void SetupDefaultCommandHandlers();
 
+  // Determines the command type from the argument and invokes the
+  // ProcessCommand() method of the corresponding command handler. If there is
+  // no handler that can be used for this command/command type, nothing is done.
+  // The result is a status message that can be used to provide feedback to the
+  // user.
+  std::string ProcessCommand(const std::string& command);
+
   // Draws the current state of the game board.
   void Draw();
 

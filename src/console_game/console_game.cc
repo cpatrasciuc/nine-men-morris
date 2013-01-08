@@ -107,6 +107,29 @@ void ConsoleGame::SetupDefaultCommandHandlers() {
   RegisterCommandHandler(save_game_handler);
 }
 
+std::string ConsoleGame::ProcessCommand(const std::string& command) {
+  if (command.empty()) {
+    return "Empty command";
+  }
+  const size_t pos = command.find_first_of(base::kWhiteSpaceChars);
+  std::string command_type(base::ToLowerCase(command.substr(0, pos)));
+  std::string args;
+  if (pos != std::string::npos) {
+    args = command.substr(pos);
+  }
+  std::map<std::string, CommandHandler*>::iterator it =
+      command_handlers_.find(command_type);
+  if (it == command_handlers_.end()) {
+    command_type = kDefaultCommandHandlerEntry;
+    args = command;
+    it = command_handlers_.find(kDefaultCommandHandlerEntry);
+  }
+  if (it != command_handlers_.end()) {
+    return it->second->ProcessCommand(command_type, args, &game_);
+  }
+  return "Invalid command";
+}
+
 // TODO(console_game): Add detail explanation about this Draw() method
 void ConsoleGame::Draw() {
   base::Console::ClearScreen();
@@ -235,27 +258,7 @@ void ConsoleGame::Run() {
     }
 
     // TODO(console_game): Add help command
-    if (!command.empty()) {
-      const size_t pos = command.find_first_of(base::kWhiteSpaceChars);
-      std::string command_type(base::ToLowerCase(command.substr(0, pos)));
-      std::string args;
-      if (pos != std::string::npos) {
-        args = command.substr(pos);
-      }
-      std::map<std::string, CommandHandler*>::iterator it =
-          command_handlers_.find(command_type);
-      if (it == command_handlers_.end()) {
-        command_type = kDefaultCommandHandlerEntry;
-        args = command;
-        it = command_handlers_.find(kDefaultCommandHandlerEntry);
-      }
-      if (it != command_handlers_.end()) {
-        last_command_status =
-            it->second->ProcessCommand(command_type, args, &game_);
-      } else {
-        last_command_status = "Invalid command";
-      }
-    }
+    last_command_status = ProcessCommand(command);
     Draw();
     std::cout << "\n\n";
     base::Console::ColoredPrintf(base::Console::COLOR_WHITE,
