@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <string>
+#include <vector>
 
 #include "base/basic_macros.h"
 #include "base/log.h"
@@ -15,23 +16,27 @@
 
 namespace console_game {
 
-// static
-const char SaveGameCommandHandler::kSaveGameCommandName[] = "save";
+namespace {
+
+const char kSaveGameCommandName[] = "save";
+
+}  // anonymous namespace
 
 SaveGameCommandHandler::SaveGameCommandHandler() {}
 
 SaveGameCommandHandler::~SaveGameCommandHandler() {}
 
-std::string SaveGameCommandHandler::ProcessCommand(const std::string& command,
-                                                   game::Game* game_model) {
-  const std::string actual_command(
-      base::ToLowerCase(base::StripString(command)));
-  const size_t command_name_length = arraysize(kSaveGameCommandName) - 1;
-  DCHECK_EQ(actual_command.find(kSaveGameCommandName), 0);
-  DCHECK_EQ(actual_command[command_name_length], ' ')
-      << actual_command[command_name_length];
-  const std::string file_name(
-      base::StripString(actual_command.substr(command_name_length)));
+std::vector<std::string> SaveGameCommandHandler::SupportedCommandTypes() const {
+  std::vector<std::string> result;
+  result.push_back(kSaveGameCommandName);
+  return result;
+}
+
+std::string SaveGameCommandHandler::ProcessCommand(
+    const std::string& command_type,
+    const std::string& args,
+    game::Game* const game_model) {
+  const std::string file_name(base::StripString(args));
   std::ofstream out(file_name.c_str());
   game::GameSerializer::SerializeTo(*game_model, &out, false);
   out.close();

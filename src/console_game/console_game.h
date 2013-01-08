@@ -26,16 +26,13 @@ class ConsoleGame {
   explicit ConsoleGame(const game::GameOptions& options);
   ~ConsoleGame();
 
-  // Add a new command handler that will handle commands starting with
-  // |command_type|. Whenever a command of the form "command_type [args]" is
-  // entered by the used, the ProcessCommand() method of |handler| is called and
-  // the entire string is passed as argument together with a pointer to the game
-  // model.
-  // NOTES:
-  //   - |command_type| must not contain whitespace characters.
-  //   - |command_type| will be treated in a case insensitive way.
-  void AddCommandHandler(const std::string& command_type,
-                         std::auto_ptr<CommandHandler> handler);
+  // Register a new command handler. This handler's ProcessCommand() method will
+  // be called whenever a command of the form "command_type [args]" is
+  // entered by the user and command_type is found in the vector returned by the
+  // handler's SupportedCommandTypes() method.
+  void AddCommandHandler(std::auto_ptr<CommandHandler> handler);
+
+  void AddDefaultCommandHandlers();
 
   // Draws the current state of the game board.
   void Draw();

@@ -59,21 +59,30 @@ DefaultCommandHandler::DefaultCommandHandler() {}
 
 DefaultCommandHandler::~DefaultCommandHandler() {}
 
-std::string DefaultCommandHandler::ProcessCommand(const std::string& command,
-                                                  game::Game* game_model) {
+std::vector<std::string> DefaultCommandHandler::SupportedCommandTypes() const {
+  std::vector<std::string> result;
+  for (size_t i = 0; i < arraysize(kGameCommandNames); ++i) {
+    result.push_back(kGameCommandNames[i]);
+  }
+  return result;
+}
+
+std::string DefaultCommandHandler::ProcessCommand(
+    const std::string& command_type,
+    const std::string& args,
+    game::Game* const game_model) {
   DCHECK(game_model != NULL);
 
   std::vector<std::string> tokens;
-  base::SplitString(command, &tokens);
-  if (tokens.empty()) {
+  base::SplitString(args, &tokens);
+  if (args.empty()) {
     return "Empty command";
   }
 
   game::PlayerAction::ActionType type(game_model->next_action_type());
   for (size_t i = 0; i < arraysize(kGameCommandNames); ++i) {
-    if (base::CompareIgnoreCase(tokens[0], kGameCommandNames[i]) == 0) {
+    if (base::CompareIgnoreCase(command_type, kGameCommandNames[i]) == 0) {
       type = kActionTypes[i];
-      tokens.erase(tokens.begin());
       break;
     }
   }

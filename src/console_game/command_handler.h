@@ -6,6 +6,7 @@
 #define CONSOLE_GAME_COMMAND_HANDLER_H_
 
 #include <string>
+#include <vector>
 
 #include "base/basic_macros.h"
 
@@ -17,7 +18,8 @@ namespace console_game {
 
 // This class can be used to add custom commands to a console game instance.
 // One can create a sub-class of CommandHandler, implement the ProcessCommand()
-// method and register the new handler to a game by specifying the command name.
+// method and register the new handler to a game by specifying the command types
+// that are supported through the SupportedCommandTypes() method.
 //
 // For example, if one has:
 //   class MyCmdHandler : public CommandHandler {
@@ -26,13 +28,19 @@ namespace console_game {
 //     std::string ProcessCommand(....) {
 //       // Do something
 //     }
+//
+//     std::vector<std::string> SupportedCommandTypes() const {
+//       std::vector<std::string> result;
+//       result.push_back("mycmd");
+//       return result;
+//     }
 //     ...
 //   }
 //
 // An instance of MyCmdHandler can be registered to an instance of ConsoleGame
 // as follows:
 //   std::auto_ptr<CommandHandler> handler(new MyCmdHandler);
-//   console_game.AddCommandHandler("mycmd", handler);
+//   console_game.AddCommandHandler(handler);
 //
 // This handler will be called to process any command that starts with "mycmd".
 // Examples:
@@ -46,15 +54,24 @@ class CommandHandler {
   CommandHandler();
   virtual ~CommandHandler();
 
+  // The list of command types (i.e. starting tokens) supported by this handler.
+  // NOTE:
+  //   Each element of the vector:
+  //     - must not contain whitespace characters.
+  //     - will be treated in a case insensitive way.
+  virtual std::vector<std::string> SupportedCommandTypes() const = 0;
+
   // After this handler is registered to a game to handle a given command type,
   // the game will in turn call this method every time the user types a command
   // starting with the specified type.
-  // |command| will contain the entire command entered by the user.
+  // |command_type| will contain the command type that triggered this call.
+  // |args| contain the rest of the command line entered by the user.
   // |game| is the game model on which the command should operate.
   // The return value should be the status message that will be displayed to the
   // user after the command is processed.
-  virtual std::string ProcessCommand(const std::string& command,
-                                     game::Game* game_model) = 0;
+  virtual std::string ProcessCommand(const std::string& command_type,
+                                     const std::string& args,
+                                     game::Game* const game_model) = 0;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(CommandHandler);
@@ -68,8 +85,11 @@ class DefaultCommandHandler : public CommandHandler {
   DefaultCommandHandler();
   virtual ~DefaultCommandHandler();
 
-  virtual std::string ProcessCommand(const std::string& command,
-                                     game::Game* game_model);
+  virtual std::vector<std::string> SupportedCommandTypes() const;
+
+  virtual std::string ProcessCommand(const std::string& command_type,
+                                     const std::string& args,
+                                     game::Game* const game_model);
 };
 
 }  // namespace console_game

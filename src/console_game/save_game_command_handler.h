@@ -6,6 +6,7 @@
 #define CONSOLE_GAME_SAVE_GAME_COMMAND_HANDLER_H_
 
 #include <string>
+#include <vector>
 
 #include "console_game/command_handler.h"
 
@@ -17,13 +18,14 @@ namespace console_game {
 
 class SaveGameCommandHandler : public CommandHandler {
  public:
-  static const char kSaveGameCommandName[];
-
   SaveGameCommandHandler();
   virtual ~SaveGameCommandHandler();
 
-  virtual std::string ProcessCommand(const std::string& command,
-                                     game::Game* game_model);
+  virtual std::vector<std::string> SupportedCommandTypes() const;
+
+  virtual std::string ProcessCommand(const std::string& command_type,
+                                     const std::string& args,
+                                     game::Game* const game_model);
 };
 
 }  // namespace console_game
