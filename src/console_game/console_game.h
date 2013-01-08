@@ -30,7 +30,7 @@ class ConsoleGame {
   // be called whenever a command of the form "command_type [args]" is
   // entered by the user and command_type is found in the vector returned by the
   // handler's SupportedCommandTypes() method.
-  void AddCommandHandler(std::auto_ptr<CommandHandler> handler);
+  void RegisterCommandHandler(std::auto_ptr<CommandHandler> handler);
 
   void AddDefaultCommandHandlers();
 

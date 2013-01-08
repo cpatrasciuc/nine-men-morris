@@ -77,7 +77,8 @@ ConsoleGame::~ConsoleGame() {
   }
 }
 
-void ConsoleGame::AddCommandHandler(std::auto_ptr<CommandHandler> handler) {
+void ConsoleGame::RegisterCommandHandler(
+    std::auto_ptr<CommandHandler> handler) {
   if (!handler.get()) {
     return;
   }
@@ -100,9 +101,9 @@ void ConsoleGame::AddDefaultCommandHandlers() {
   std::auto_ptr<CommandHandler> actions_handler(new DefaultCommandHandler);
   command_handlers_.insert(
       std::make_pair(kDefaultCommandHandlerEntry, actions_handler.get()));
-  AddCommandHandler(actions_handler);
+  RegisterCommandHandler(actions_handler);
   std::auto_ptr<CommandHandler> save_game_handler(new SaveGameCommandHandler);
-  AddCommandHandler(save_game_handler);
+  RegisterCommandHandler(save_game_handler);
 }
 
 // TODO(console_game): Add detail explanation about this Draw() method
