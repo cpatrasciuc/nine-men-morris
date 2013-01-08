@@ -3,6 +3,8 @@ set(CONSOLE_GAME_SOURCE_FILES
   command_handler.h
   console_game.cc
   console_game.h
+  player_actions_command_handler.cc
+  player_actions_command_handler.h
   save_game_command_handler.cc
   save_game_command_handler.h
 )

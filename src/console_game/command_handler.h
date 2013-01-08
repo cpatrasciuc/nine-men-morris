@@ -77,21 +77,6 @@ class CommandHandler {
   DISALLOW_COPY_AND_ASSIGN(CommandHandler);
 };
 
-// This is the default command handler that handles the MOVE, PLACE and REMOVE
-// commands. For convenience, the verbs for these commands can be omitted. The
-// command type will be deduced from the game model.
-class DefaultCommandHandler : public CommandHandler {
- public:
-  DefaultCommandHandler();
-  virtual ~DefaultCommandHandler();
-
-  virtual std::vector<std::string> SupportedCommandTypes() const;
-
-  virtual std::string ProcessCommand(const std::string& command_type,
-                                     const std::string& args,
-                                     game::Game* const game_model);
-};
-
 }  // namespace console_game
 
 #endif  // CONSOLE_GAME_COMMAND_HANDLER_H_

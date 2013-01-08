@@ -16,6 +16,7 @@
 #include "base/log.h"
 #include "base/string_util.h"
 #include "console_game/command_handler.h"
+#include "console_game/player_actions_command_handler.h"
 #include "console_game/save_game_command_handler.h"
 #include "game/board_location.h"
 #include "game/game_options.h"
@@ -98,10 +99,10 @@ void ConsoleGame::RegisterCommandHandler(
 }
 
 void ConsoleGame::SetupDefaultCommandHandlers() {
-  std::auto_ptr<CommandHandler> actions_handler(new DefaultCommandHandler);
+  std::auto_ptr<CommandHandler> action_handler(new PlayerActionsCommandHandler);
   command_handlers_.insert(
-      std::make_pair(kDefaultCommandHandlerEntry, actions_handler.get()));
-  RegisterCommandHandler(actions_handler);
+      std::make_pair(kDefaultCommandHandlerEntry, action_handler.get()));
+  RegisterCommandHandler(action_handler);
   std::auto_ptr<CommandHandler> save_game_handler(new SaveGameCommandHandler);
   RegisterCommandHandler(save_game_handler);
 }
