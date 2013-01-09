@@ -13,14 +13,22 @@ set(CONSOLE_GAME_SOURCE_FILES
   save_game_command_handler.h
 )
 
+set(CONSOLE_GAME_UNITTESTS_SOURCE_FILES
+  board_renderer_unittest.cc
+)
+
 include_directories(
   ../
+  ../gtest/include
 )
 
 add_definitions("-DCONSOLE_GAME_IMPLEMENTATION")
 
 add_library(console_game ${CONSOLE_GAME_SOURCE_FILES})
 target_link_libraries(console_game base game)
+
+add_executable(console_game_unittests ${CONSOLE_GAME_UNITTESTS_SOURCE_FILES} ../base/test_runner.cc)
+target_link_libraries(console_game_unittests gtest console_game)
 
 add_executable(console_game.exe console_game_main.cc)
 target_link_libraries(console_game.exe console_game)
