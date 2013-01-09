@@ -17,7 +17,6 @@ class GAME_EXPORT GameOptions {
     THREE_MEN_MORRIS,
     SIX_MEN_MORRIS,
     NINE_MEN_MORRIS,
-    // TODO(game): TWELVE_MEN_MORRIS
   };
 
   // Initializes a new object with the default game options.
