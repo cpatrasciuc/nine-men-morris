@@ -29,7 +29,6 @@ PieceColor Game::winner() const {
 }
 
 void Game::Initialize() {
-  // TODO(game): Add a death test for this
   DCHECK(current_player_ == NO_COLOR) << "Game is already initialized";
   int piece_count = GetInitialPieceCountByGameType(game_options_.game_type());
   pieces_in_hand_.insert(std::make_pair(WHITE_COLOR, piece_count));

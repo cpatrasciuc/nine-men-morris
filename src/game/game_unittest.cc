@@ -103,6 +103,14 @@ TEST(GameTest, RemovePieceFromOpponentMill) {
   EXPECT_TRUE(game->CanExecutePlayerAction(remove_from_mill));
 }
 
+TEST(GameDeathTest, DEBUG_ONLY_TEST(DoubleInitialization)) {
+  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+  const GameOptions options;
+  Game game(options);
+  game.Initialize();
+  ASSERT_DEATH(game.Initialize(), "");
+}
+
 }  // anonymous namespace
 }  // namespace game
 
