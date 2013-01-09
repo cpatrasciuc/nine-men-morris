@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "console_game/command_handler.h"
+#include "console_game/console_game_export.h"
 
 namespace game {
 class Game;
@@ -16,7 +17,7 @@ class Game;
 
 namespace console_game {
 
-class SaveGameCommandHandler : public CommandHandler {
+class CONSOLE_GAME_EXPORT SaveGameCommandHandler : public CommandHandler {
  public:
   SaveGameCommandHandler();
   virtual ~SaveGameCommandHandler();

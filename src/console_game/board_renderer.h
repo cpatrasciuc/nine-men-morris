@@ -9,6 +9,7 @@
 
 #include "base/basic_macros.h"
 #include "base/ptr/scoped_ptr.h"
+#include "console_game/console_game_export.h"
 #include "game/piece_color.h"
 
 namespace game {
@@ -21,7 +22,7 @@ namespace console_game {
 // necessary logic and delegates the actual output to a Delegate instance.
 // This object is responsible for printing the given strings and characters.
 // For more details see ConsoleRenderDelegate.
-class BoardRenderer {
+class CONSOLE_GAME_EXPORT BoardRenderer {
  public:
   // Enum used to represent different spots during the rendering of a board.
   enum FillType {
@@ -73,7 +74,8 @@ class BoardRenderer {
   DISALLOW_COPY_AND_ASSIGN(BoardRenderer);
 };
 
-class ConsoleRenderDelegate : public BoardRenderer::Delegate {
+class CONSOLE_GAME_EXPORT ConsoleRenderDelegate
+    : public BoardRenderer::Delegate {
  public:
   ConsoleRenderDelegate();
   virtual ~ConsoleRenderDelegate();

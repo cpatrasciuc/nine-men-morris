@@ -17,5 +17,10 @@ include_directories(
   ../
 )
 
-add_executable(console_game ${CONSOLE_GAME_SOURCE_FILES} console_game_main.cc)
+add_definitions("-DCONSOLE_GAME_IMPLEMENTATION")
+
+add_library(console_game ${CONSOLE_GAME_SOURCE_FILES})
 target_link_libraries(console_game base game)
+
+add_executable(console_game.exe console_game_main.cc)
+target_link_libraries(console_game.exe console_game)

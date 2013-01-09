@@ -11,6 +11,7 @@
 
 #include "base/basic_macros.h"
 #include "console_game/board_renderer.h"
+#include "console_game/console_game_export.h"
 #include "game/game.h"
 
 namespace game {
@@ -21,7 +22,7 @@ namespace console_game {
 
 class CommandHandler;
 
-class ConsoleGame {
+class CONSOLE_GAME_EXPORT ConsoleGame {
  public:
   explicit ConsoleGame(const game::GameOptions& options);
   ~ConsoleGame();

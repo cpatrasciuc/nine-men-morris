@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "base/basic_macros.h"
+#include "console_game/console_game_export.h"
 
 namespace game {
 class Game;
@@ -49,7 +50,7 @@ namespace console_game {
 //   mycmd and some messages
 //   mycmd /path/to/a/file
 //
-class CommandHandler {
+class CONSOLE_GAME_EXPORT CommandHandler {
  public:
   CommandHandler();
   virtual ~CommandHandler();

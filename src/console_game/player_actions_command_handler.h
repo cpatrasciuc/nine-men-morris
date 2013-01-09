@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "console_game/command_handler.h"
+#include "console_game/console_game_export.h"
 
 namespace Game {
 class Game;
@@ -19,7 +20,7 @@ namespace console_game {
 // This is the default command handler that handles the MOVE, PLACE and REMOVE
 // commands. For convenience, the verbs for these commands can be omitted. The
 // command type will be deduced from the game model.
-class PlayerActionsCommandHandler : public CommandHandler {
+class CONSOLE_GAME_EXPORT PlayerActionsCommandHandler : public CommandHandler {
  public:
   PlayerActionsCommandHandler();
   virtual ~PlayerActionsCommandHandler();
