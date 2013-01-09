@@ -154,23 +154,24 @@ void ConsoleRenderDelegate::PrintFillChar(BoardRenderer::FillType fill_type,
       break;
   }
 
-  char c('?');
+  std::string str;
   switch (fill_type) {
     case BoardRenderer::EMPTY:
-      c = ' ';
+      str = " ";
       break;
     case BoardRenderer::VERTICAL_LINE:
-      c = '|';
+      str = "|";
       break;
     case BoardRenderer::HORIZONTAL_LINE:
-      c = '_';
+      str = "_";
       break;
     case BoardRenderer::FILL:
-      c = (color == game::NO_COLOR) ? 176 : 178;
+      // http://www.fileformat.info/info/unicode/block/block_elements/images.htm
+      str = (color == game::NO_COLOR) ? "\xe2\x96\x91" : "\xe2\x96\x93";
       break;
   }
 
-  base::Console::ColoredPrintf(output_color, "%c", c);
+  base::Console::ColoredPrintf(output_color, "%s", str.c_str());
 }
 
 }  // namespace console_game
