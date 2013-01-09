@@ -103,7 +103,7 @@ TEST(BoardRenderer, BoardRenderer) {
       "     NNN_______NNN_______BBBE\n"
       "   5 NNNEEEEEEENNNEEEEEEEBBBE\n",
 
-      // Three men morris
+      // Three men morris board
       "      A    B    C  \n"
       "\n"
       "     WWW__NNN__NNNE\n"
@@ -121,6 +121,8 @@ TEST(BoardRenderer, BoardRenderer) {
     game::GameOptions::SIX_MEN_MORRIS,
     game::GameOptions::THREE_MEN_MORRIS
   };
+
+  ASSERT_EQ(arraysize(game_types), arraysize(expected_output));
 
   for (size_t i = 0; i < arraysize(game_types); ++i) {
     game::Board board(game_types[i]);
