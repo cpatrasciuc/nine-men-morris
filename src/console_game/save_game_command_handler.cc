@@ -35,7 +35,7 @@ std::vector<std::string> SaveGameCommandHandler::SupportedCommandTypes() const {
 std::string SaveGameCommandHandler::ProcessCommand(
     const std::string& command_type,
     const std::string& args,
-    game::Game* const game_model) {
+    game::Game* game_model) {
   const std::string file_name(base::StripString(args));
   std::ofstream out(file_name.c_str());
   game::GameSerializer::SerializeTo(*game_model, &out, false);

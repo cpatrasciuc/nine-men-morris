@@ -67,7 +67,7 @@ PlayerActionsCommandHandler::SupportedCommandTypes() const {
 std::string PlayerActionsCommandHandler::ProcessCommand(
     const std::string& command_type,
     const std::string& args,
-    game::Game* const game_model) {
+    game::Game* game_model) {
   DCHECK(game_model != NULL);
 
   std::vector<std::string> tokens;

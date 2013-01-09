@@ -72,7 +72,7 @@ class CONSOLE_GAME_EXPORT CommandHandler {
   // user after the command is processed.
   virtual std::string ProcessCommand(const std::string& command_type,
                                      const std::string& args,
-                                     game::Game* const game_model) = 0;
+                                     game::Game* game_model) = 0;
 
   // Method used to obtain the help message for the command types handled by
   // this handler. The |command_type| argument represents the command type for

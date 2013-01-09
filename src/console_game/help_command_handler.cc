@@ -30,7 +30,7 @@ std::vector<std::string> HelpCommandHandler::SupportedCommandTypes() const {
 
 std::string HelpCommandHandler::ProcessCommand(const std::string& command_type,
                                                const std::string& args,
-                                               game::Game* const game_model) {
+                                               game::Game* game_model) {
   base::Console::ClearScreen();
   std::map<std::string, CommandHandler*>::const_iterator it;
   for (it = handlers_.begin(); it != handlers_.end(); ++it) {
