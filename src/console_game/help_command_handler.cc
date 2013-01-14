@@ -34,7 +34,9 @@ std::vector<std::string> HelpCommandHandler::SupportedCommandTypes() const {
 bool HelpCommandHandler::ProcessCommand(const std::string& command_type,
                                         const std::string& args,
                                         game::Game* game_model) {
-  base::Console::ClearScreen();
+  if (IsInteractive()) {
+    base::Console::ClearScreen();
+  }
   std::map<std::string, CommandHandler*>::const_iterator it;
   for (it = handlers_.begin(); it != handlers_.end(); ++it) {
     std::string format;
@@ -46,7 +48,7 @@ bool HelpCommandHandler::ProcessCommand(const std::string& command_type,
     (*out_) << "    " << usage << std::endl;
     (*out_) << std::endl;
   }
-  if (out_ == &std::cout) {
+  if (IsInteractive()) {
     std::cout << "Press <Enter> to continue ...";
     std::cin.get();
   }
@@ -58,6 +60,10 @@ void HelpCommandHandler::GetHelpMessage(const std::string& command_type,
                                         std::string* usage) {
   *format = command_type;
   *usage = "Displays the help message.";
+}
+
+bool HelpCommandHandler::IsInteractive() const {
+  return out_ == &std::cout;
 }
 
 }  // namespace console_game

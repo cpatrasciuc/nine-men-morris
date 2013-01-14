@@ -42,6 +42,10 @@ class CONSOLE_GAME_EXPORT HelpCommandHandler : public CommandHandler {
                               std::string* usage);
 
  private:
+  // Checks if the handler should run in interactive mode (i.e. clean console
+  // screen and wait for a key press after displaying the help message).
+  bool IsInteractive() const;
+
   const std::map<std::string, CommandHandler*>& handlers_;
   std::ostream* out_;
 };
