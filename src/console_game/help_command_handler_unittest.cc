@@ -62,6 +62,7 @@ TEST(HelpCommandHandler, Basic) {
     EXPECT_NE(std::string::npos, help_message.find(expected_usage));
   }
 
+  // TODO(stl): Replace this with scoped_values_map
   std::map<std::string, CommandHandler*>::iterator it;
   for (it = handlers.begin(); it != handlers.end(); ++it) {
     delete it->second;
