@@ -5,7 +5,9 @@
 #ifndef CONSOLE_GAME_HELP_COMMAND_HANDLER_H_
 #define CONSOLE_GAME_HELP_COMMAND_HANDLER_H_
 
+#include <iostream>
 #include <map>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -20,8 +22,14 @@ namespace console_game {
 
 class CONSOLE_GAME_EXPORT HelpCommandHandler : public CommandHandler {
  public:
+  // The |handlers| argument must contain the command types and their associated
+  // command handlers for which a help message will be generated. The optional
+  // |out| argument is the stream to which the help message will be printed. If
+  // |out| is equal to std::cout, the handler will wait for a key press after
+  // displaying the help message.
   explicit HelpCommandHandler(
-      const std::map<std::string, CommandHandler*>& handlers);
+      const std::map<std::string, CommandHandler*>& handlers,
+      std::ostream* out = &std::cout);
   virtual ~HelpCommandHandler();
 
   // CommandHandler interface
@@ -35,6 +43,7 @@ class CONSOLE_GAME_EXPORT HelpCommandHandler : public CommandHandler {
 
  private:
   const std::map<std::string, CommandHandler*>& handlers_;
+  std::ostream* out_;
 };
 
 }  // namespace console_game

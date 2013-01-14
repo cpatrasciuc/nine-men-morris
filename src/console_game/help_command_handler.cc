@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <map>
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -16,8 +17,10 @@
 namespace console_game {
 
 HelpCommandHandler::HelpCommandHandler(
-    const std::map<std::string, CommandHandler*>& handlers)
-    : handlers_(handlers) {}
+    const std::map<std::string, CommandHandler*>& handlers, std::ostream* out)
+    : handlers_(handlers), out_(out) {
+  DCHECK(out);
+}
 
 HelpCommandHandler::~HelpCommandHandler() {}
 
@@ -39,12 +42,14 @@ bool HelpCommandHandler::ProcessCommand(const std::string& command_type,
     it->second->GetHelpMessage(it->first, &format, &usage);
     DCHECK(!format.empty());
     DCHECK(!usage.empty());
-    std::cout << "  " << format << std::endl;
-    std::cout << "    " << usage << std::endl;
-    std::cout << std::endl;
+    (*out_) << "  " << format << std::endl;
+    (*out_) << "    " << usage << std::endl;
+    (*out_) << std::endl;
   }
-  std::cout << "Press <Enter> to continue ...";
-  std::cin.get();
+  if (out_ == &std::cout) {
+    std::cout << "Press <Enter> to continue ...";
+    std::cin.get();
+  }
   return true;
 }
 
