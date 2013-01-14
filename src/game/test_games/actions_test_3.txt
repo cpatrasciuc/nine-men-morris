@@ -1,0 +1,9 @@
+# This game is used to quickly simulate a PLACE, then a MOVE and a REMOVE action
+256
+48
+5
+PLACE WHITE 0 0
+PLACE BLACK 0 2
+PLACE WHITE 1 0
+PLACE BLACK 1 2
+PLACE WHITE 2 1
