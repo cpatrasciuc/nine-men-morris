@@ -6,6 +6,7 @@
 
 #include <unistd.h>
 
+#include <cstdarg>
 #include <cstdio>
 #include <string>
 
