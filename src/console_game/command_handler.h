@@ -68,11 +68,11 @@ class CONSOLE_GAME_EXPORT CommandHandler {
   // |command_type| will contain the command type that triggered this call.
   // |args| contain the rest of the command line entered by the user.
   // |game| is the game model on which the command should operate.
-  // The return value should be the status message that will be displayed to the
-  // user after the command is processed.
-  virtual std::string ProcessCommand(const std::string& command_type,
-                                     const std::string& args,
-                                     game::Game* game_model) = 0;
+  // The return value is |true| if the command was executed successfully;
+  // |false| otherwise.
+  virtual bool ProcessCommand(const std::string& command_type,
+                              const std::string& args,
+                              game::Game* game_model) = 0;
 
   // Method used to obtain the help message for the command types handled by
   // this handler. The |command_type| argument represents the command type for

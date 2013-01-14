@@ -122,7 +122,10 @@ std::string ConsoleGame::ProcessCommand(const std::string& command) {
     it = command_handlers_.find(kDefaultCommandHandlerEntry);
   }
   if (it != command_handlers_.end()) {
-    return it->second->ProcessCommand(command_type, args, &game_);
+    bool result = it->second->ProcessCommand(command_type, args, &game_);
+    if (result) {
+      return "Command executed successfully";
+    }
   }
   return "Invalid command";
 }

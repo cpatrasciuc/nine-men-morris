@@ -27,9 +27,9 @@ class CONSOLE_GAME_EXPORT PlayerActionsCommandHandler : public CommandHandler {
 
   // CommandHandler interface
   virtual std::vector<std::string> SupportedCommandTypes() const;
-  virtual std::string ProcessCommand(const std::string& command_type,
-                                     const std::string& args,
-                                     game::Game* game_model);
+  virtual bool ProcessCommand(const std::string& command_type,
+                              const std::string& args,
+                              game::Game* game_model);
   virtual void GetHelpMessage(const std::string& command_type,
                               std::string* format,
                               std::string* usage);

@@ -64,7 +64,7 @@ PlayerActionsCommandHandler::SupportedCommandTypes() const {
   return result;
 }
 
-std::string PlayerActionsCommandHandler::ProcessCommand(
+bool PlayerActionsCommandHandler::ProcessCommand(
     const std::string& command_type,
     const std::string& args,
     game::Game* game_model) {
@@ -73,7 +73,7 @@ std::string PlayerActionsCommandHandler::ProcessCommand(
   std::vector<std::string> tokens;
   base::SplitString(args, &tokens);
   if (args.empty()) {
-    return "Empty command";
+    return false;
   }
 
   game::PlayerAction::ActionType type(game_model->next_action_type());
@@ -106,10 +106,10 @@ std::string PlayerActionsCommandHandler::ProcessCommand(
   action.set_destination(destination);
 
   if (!game_model->CanExecutePlayerAction(action)) {
-    return "Invalid player action";
+    return false;
   }
   game_model->ExecutePlayerAction(action);
-  return "Command executed successfully";
+  return true;
 }
 
 void PlayerActionsCommandHandler::GetHelpMessage(

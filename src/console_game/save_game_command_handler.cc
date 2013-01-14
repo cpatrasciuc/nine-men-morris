@@ -32,7 +32,7 @@ std::vector<std::string> SaveGameCommandHandler::SupportedCommandTypes() const {
   return result;
 }
 
-std::string SaveGameCommandHandler::ProcessCommand(
+bool SaveGameCommandHandler::ProcessCommand(
     const std::string& command_type,
     const std::string& args,
     game::Game* game_model) {
@@ -40,7 +40,7 @@ std::string SaveGameCommandHandler::ProcessCommand(
   std::ofstream out(file_name.c_str());
   game::GameSerializer::SerializeTo(*game_model, &out, false);
   out.close();
-  return std::string("Game saved successfully to: ") + file_name;
+  return true;
 }
 
 void SaveGameCommandHandler::GetHelpMessage(const std::string& command_type,

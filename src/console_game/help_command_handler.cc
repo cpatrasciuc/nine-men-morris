@@ -28,9 +28,9 @@ std::vector<std::string> HelpCommandHandler::SupportedCommandTypes() const {
   return result;
 }
 
-std::string HelpCommandHandler::ProcessCommand(const std::string& command_type,
-                                               const std::string& args,
-                                               game::Game* game_model) {
+bool HelpCommandHandler::ProcessCommand(const std::string& command_type,
+                                        const std::string& args,
+                                        game::Game* game_model) {
   base::Console::ClearScreen();
   std::map<std::string, CommandHandler*>::const_iterator it;
   for (it = handlers_.begin(); it != handlers_.end(); ++it) {
@@ -45,7 +45,7 @@ std::string HelpCommandHandler::ProcessCommand(const std::string& command_type,
   }
   std::cout << "Press <Enter> to continue ...";
   std::cin.get();
-  return "Help message displayed successfully";
+  return true;
 }
 
 void HelpCommandHandler::GetHelpMessage(const std::string& command_type,
