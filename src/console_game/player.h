@@ -29,7 +29,7 @@ class CONSOLE_GAME_EXPORT Player {
   const game::PieceColor color() const { return color_; }
 
   void set_current_game(ConsoleGame* game_ptr, const game::PieceColor color);
-  ConsoleGame* current_game() { return current_game_; }
+  ConsoleGame* current_game() const { return current_game_; }
 
   virtual std::string GetNextAction(game::Game* game_model) = 0;
 
