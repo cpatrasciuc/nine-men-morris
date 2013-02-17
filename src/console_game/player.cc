@@ -20,7 +20,7 @@ void Player::set_current_game(ConsoleGame* game_ptr,
   DCHECK(game_ptr);
   DCHECK(color != game::NO_COLOR);
   DCHECK_EQ(current_game_, NULL);
-  DCHECK_EQ(color, game::NO_COLOR);
+  DCHECK_EQ(color_, game::NO_COLOR);
   color_ = color;
   current_game_ = game_ptr;
 }
