@@ -13,6 +13,8 @@
 using console_game::HumanPlayer;
 using console_game::Player;
 
+// TODO(console_game): Add command line options
+
 int main(int argc, char **argv) {
   ::base::debug::EnableStackTraceDumpOnCrash();
   game::GameOptions options;
