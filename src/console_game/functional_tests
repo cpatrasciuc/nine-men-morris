@@ -1,0 +1,4 @@
+#!/bin/sh
+
+TEST_FOLDER=`dirname $0`
+python -m unittest discover -v -c -s $TEST_FOLDER -t $TEST_FOLDER
