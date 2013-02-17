@@ -107,8 +107,10 @@ std::string HumanPlayer::GetNextAction(game::Game* game_model) {
 
   std::cout << "Next command for " << name() << ": ";
   std::cout.flush();
-  // TODO(human player): Quit if stdin is closed.
-  std::cin.getline(cmd_buffer, kMaxCommandSize);
+  if (!std::cin.getline(cmd_buffer, kMaxCommandSize)) {
+    current_game()->Quit();
+    return std::string();
+  };
 
   std::string command(cmd_buffer);
   if (command.empty()) {
