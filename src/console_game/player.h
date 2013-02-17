@@ -26,7 +26,7 @@ class Player {
 
   const game::PieceColor color() const { return color_; }
 
-  virtual const game::PlayerAction& GetNextAction(const game::Game& game) = 0;
+  virtual game::PlayerAction GetNextAction(const game::Game& game) = 0;
 
  private:
   const std::string name_;
