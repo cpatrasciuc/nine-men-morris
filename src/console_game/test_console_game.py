@@ -70,3 +70,8 @@ class ConsoleGameFunctionalTests(unittest.TestCase):
 		self.generateInputFile(commands)
 		self.runGame()
 		
+	def testClosedStdin(self):
+		commands = []
+		self.generateInputFile(commands)
+		self.runGame()
+		
