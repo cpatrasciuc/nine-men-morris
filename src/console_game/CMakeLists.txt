@@ -7,6 +7,8 @@ set(CONSOLE_GAME_SOURCE_FILES
   console_game.h
   help_command_handler.cc
   help_command_handler.h
+  player.cc
+  player.h
   player_actions_command_handler.cc
   player_actions_command_handler.h
   save_game_command_handler.cc
