@@ -5,11 +5,11 @@
 #ifndef CONSOLE_GAME_CONSOLE_GAME_H_
 #define CONSOLE_GAME_CONSOLE_GAME_H_
 
-#include <map>
 #include <memory>
 #include <string>
 
 #include "base/basic_macros.h"
+#include "base/ptr/scoped_ptr.h"
 #include "console_game/board_renderer.h"
 #include "console_game/console_game_export.h"
 #include "game/game.h"
@@ -21,29 +21,14 @@ class GameOptions;
 namespace console_game {
 
 class CommandHandler;
+class Player;
 
 class CONSOLE_GAME_EXPORT ConsoleGame {
  public:
-  explicit ConsoleGame(const game::GameOptions& options);
+  ConsoleGame(const game::GameOptions& options,
+              std::auto_ptr<Player> white_player,
+              std::auto_ptr<Player> black_player);
   ~ConsoleGame();
-
-  // Register a new command handler. This handler's ProcessCommand() method will
-  // be called whenever a command of the form "command_type [args]" is
-  // entered by the user and command_type is found in the vector returned by the
-  // handler's SupportedCommandTypes() method.
-  void RegisterCommandHandler(std::auto_ptr<CommandHandler> handler);
-
-  // Adds default handlers for player actions and saving the game to a file. It
-  // should be used in all scenarios that don't imply custom handling of the
-  // above mentioned commands.
-  void SetupDefaultCommandHandlers();
-
-  // Determines the command type from the argument and invokes the
-  // ProcessCommand() method of the corresponding command handler. If there is
-  // no handler that can be used for this command/command type, nothing is done.
-  // The result is a status message that can be used to provide feedback to the
-  // user.
-  std::string ProcessCommand(const std::string& command);
 
   // Draws the current state of the game board.
   void Draw();
@@ -54,15 +39,15 @@ class CONSOLE_GAME_EXPORT ConsoleGame {
   void Run();
 
  private:
-  // The game model
+  // The game model.
   game::Game game_;
 
-  // A mapping from command types to command handlers. To add a new pair use the
-  // AddCommandHandler() method.
-  std::map<std::string, CommandHandler*> command_handlers_;
-
-  // The renderer responsible for drawing the game board
+  // The renderer responsible for drawing the game board.
   BoardRenderer board_renderer_;
+
+  // The two Player instances used to query for actions during the game.
+  base::ptr::scoped_ptr<Player> white_player_;
+  base::ptr::scoped_ptr<Player> black_player_;
 
   DISALLOW_COPY_AND_ASSIGN(ConsoleGame);
 };

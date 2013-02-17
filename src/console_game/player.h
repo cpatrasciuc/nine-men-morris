@@ -8,29 +8,35 @@
 #include <string>
 
 #include "base/basic_macros.h"
+#include "console_game/console_game_export.h"
 #include "game/piece_color.h"
 
 namespace game {
 class Game;
-class PlayerAction;
 }
 
 namespace console_game {
 
-class Player {
+class ConsoleGame;
+
+class CONSOLE_GAME_EXPORT Player {
  public:
-  Player(const std::string& name, const game::PieceColor& color);
+  explicit Player(const std::string& name);
   virtual ~Player();
 
   const std::string& name() const { return name_; }
 
   const game::PieceColor color() const { return color_; }
 
-  virtual game::PlayerAction GetNextAction(const game::Game& game) = 0;
+  void set_current_game(ConsoleGame* game_ptr, const game::PieceColor color);
+  ConsoleGame* current_game() { return current_game_; }
+
+  virtual std::string GetNextAction(game::Game* game_model) = 0;
 
  private:
   const std::string name_;
-  const game::PieceColor color_;
+  game::PieceColor color_;
+  ConsoleGame* current_game_;
 
   DISALLOW_COPY_AND_ASSIGN(Player);
 };
