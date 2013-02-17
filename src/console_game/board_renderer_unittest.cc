@@ -28,7 +28,7 @@ class TestRenderDelegate : public BoardRenderer::Delegate {
 
   virtual void PrintFillChar(BoardRenderer::FillType fill_type,
                              game::PieceColor color = game::NO_COLOR) {
-    char c;
+    char c = '?';
     switch (fill_type) {
       case BoardRenderer::EMPTY:
         c = 'E';
