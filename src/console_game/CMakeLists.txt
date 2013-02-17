@@ -19,6 +19,7 @@ set(CONSOLE_GAME_SOURCE_FILES
 
 set(CONSOLE_GAME_UNITTESTS_SOURCE_FILES
   board_renderer_unittest.cc
+  console_game_unittest.cc
   help_command_handler_unittest.cc
   player_actions_command_handler_unittest.cc
   ../game/game_test_helper.cc
