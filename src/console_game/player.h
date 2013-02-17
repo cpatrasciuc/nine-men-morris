@@ -11,8 +11,8 @@
 #include "game/piece_color.h"
 
 namespace game {
-class PlayerAction;
 class Game;
+class PlayerAction;
 }
 
 namespace console_game {
