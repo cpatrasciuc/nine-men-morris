@@ -26,11 +26,23 @@ class CONSOLE_GAME_EXPORT Player {
 
   const std::string& name() const { return name_; }
 
+  // The color of the player in its current associated game. The result is only
+  // valid after the Player instance was added to a ConsoleGame instance using
+  // the set_current_game() method. Before this, the method returns NO_COLOR.
   const game::PieceColor color() const { return color_; }
 
+  // Add this Player to an instance of ConsoleGame. The second argument
+  // represents the color associated to this Player in the game.
   void set_current_game(ConsoleGame* game_ptr, const game::PieceColor color);
   ConsoleGame* current_game() const { return current_game_; }
 
+  // This method is used to query this Player for the next game action that it
+  // wants to take. The method should perform the required changes on the game
+  // model object and return a string that represents a status message of the
+  // last action. This string is used to provide feedback in the user interface.
+  //
+  // TODO(console_game): Enhance the interface here. Don't expose the whole game
+  // model, since one player might perform actions for the other color too.
   virtual std::string GetNextAction(game::Game* game_model) = 0;
 
  private:
