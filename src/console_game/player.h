@@ -7,6 +7,7 @@
 
 #include <string>
 
+#include "base/basic_macros.h"
 #include "game/piece_color.h"
 
 namespace game {
@@ -30,6 +31,8 @@ class Player {
  private:
   const std::string name_;
   const game::PieceColor color_;
+
+  DISALLOW_COPY_AND_ASSIGN(Player);
 };
 
 }  // namespace console_game
