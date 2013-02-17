@@ -21,7 +21,8 @@ ConsoleGame::ConsoleGame(const game::GameOptions& options,
     : game_(options),
       board_renderer_(game_.board()),
       white_player_(white_player.release()),
-      black_player_(black_player.release()) {
+      black_player_(black_player.release()),
+      should_quit_(false) {
   white_player_->set_current_game(this, game::WHITE_COLOR);
   black_player_->set_current_game(this, game::BLACK_COLOR);
 }
@@ -34,15 +35,10 @@ void ConsoleGame::Draw() {
 }
 
 void ConsoleGame::Run() {
+  should_quit_ = false;
   game_.Initialize();
   std::string last_command_status("Game started");
   do {
-    // TODO(human_player) : Add a quit method
-    /*const std::string command(cmd_buffer);
-    if (command == "q" || command == "Q") {
-      break;
-    }*/
-
     Draw();
     std::cout << "\n\n";
     base::Console::ColoredPrintf(base::Console::COLOR_WHITE,
@@ -57,7 +53,7 @@ void ConsoleGame::Run() {
         game_.current_player() == game::WHITE_COLOR ?
         white_player_->GetNextAction(&game_) :
         black_player_->GetNextAction(&game_);
-  } while (true);
+  } while (!should_quit_);
 }
 
 }  // namespace console_game

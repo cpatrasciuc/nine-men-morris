@@ -11,6 +11,7 @@
 #include "base/log.h"
 #include "base/string_util.h"
 #include "console_game/command_handler.h"
+#include "console_game/console_game.h"
 #include "console_game/help_command_handler.h"
 #include "console_game/human_player.h"
 #include "console_game/player.h"
@@ -115,6 +116,10 @@ std::string HumanPlayer::GetNextAction(game::Game* game_model) {
   }
   const size_t pos = command.find_first_of(base::kWhiteSpaceChars);
   std::string command_type(base::ToLowerCase(command.substr(0, pos)));
+  if (command_type == "q" || command_type == "quit") {
+    current_game()->Quit();
+    return std::string();
+  }
   std::string args;
   if (pos != std::string::npos) {
     args = command.substr(pos);
