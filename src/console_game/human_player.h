@@ -46,8 +46,6 @@ class CONSOLE_GAME_EXPORT HumanPlayer : public Player {
   virtual std::string GetNextAction(game::Game* game_model);
 
  private:
-  std::string ProcessCommand(const std::string& command);
-
   // A mapping from command types to command handlers. To add a new pair use the
   // AddCommandHandler() method.
   std::map<std::string, CommandHandler*> command_handlers_;
