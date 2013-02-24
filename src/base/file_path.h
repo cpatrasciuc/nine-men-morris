@@ -6,6 +6,7 @@
 #define BASE_FILE_PATH_H_
 
 #include <string>
+#include <vector>
 
 #include "base/base_export.h"
 
@@ -78,6 +79,12 @@ class BASE_EXPORT FilePath {
   // Returns |true| if this file path refers to a file; false otherwise. If this
   // path refers to an inexistent location, the method returns false.
   bool IsFile() const;
+
+  // If this file path refers to a directory, for each directory entry (both
+  // files and subdirectories) a corresponding FilePath instance is appended to
+  // the contents vector. The vector is not cleared before insertion.
+  // If this file path refers to a file, the method doesn't do anything.
+  void GetDirContents(std::vector<FilePath>* contents) const;
 
   // Returns a file path that represents the current directory (i.e. ".").
   static FilePath CurrentDir();

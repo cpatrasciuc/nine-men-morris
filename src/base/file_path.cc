@@ -4,6 +4,7 @@
 
 #include "base/file_path.h"
 
+#include <dirent.h>
 #include <fcntl.h>
 #include <libgen.h>
 #include <linux/limits.h>
@@ -11,6 +12,9 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include <string>
+#include <vector>
 
 #include "base/log.h"
 #include "base/ptr/scoped_malloc_ptr.h"
@@ -139,6 +143,32 @@ bool FilePath::IsDir() const {
 
 bool FilePath::IsFile() const {
   return CheckFileType(RealPath().value().c_str(), S_IFREG);
+}
+
+void FilePath::GetDirContents(std::vector<FilePath>* contents) const {
+  DCHECK(contents);
+  if (!IsDir()) {
+    return;
+  }
+  const FilePath absolute_path(RealPath());
+  DIR* dir_ptr = opendir(absolute_path.value().c_str());
+  if (!dir_ptr) {
+    ELOG(ERROR) << "Could not open directory " << path_;
+  }
+  struct dirent* dir_entry = NULL;
+  // According to this blog entry, readdir() is safe enough, so we ignore the
+  // cppline.py error.
+  // http://elliotth.blogspot.ro/2012/10/how-not-to-use-readdirr3.html
+  while ((dir_entry = readdir(dir_ptr))) {  // NOLINT(runtime/threadsafe_fn)
+    if (CurrentDir().value() == dir_entry->d_name) {
+      continue;
+    }
+    if (ParentDir().value() == dir_entry->d_name) {
+      continue;
+    }
+    contents->push_back(absolute_path.Append(dir_entry->d_name));
+  }
+  closedir(dir_ptr);
 }
 
 // static

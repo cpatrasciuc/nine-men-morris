@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <string>
+#include <vector>
+
 #include "base/basic_macros.h"
 #include "base/file_path.h"
 #include "gtest/gtest.h"
@@ -198,6 +201,32 @@ TEST(FilePath, IsFile) {
   EXPECT_TRUE(current_file.IsFile());
   FilePath inexistent_path("/inexistent/path");
   EXPECT_FALSE(inexistent_path.IsFile());
+}
+
+TEST(FilePath, GetDirContents) {
+  std::vector<FilePath> contents;
+  FilePath invalid_path("/invalid/path");
+  invalid_path.GetDirContents(&contents);
+  EXPECT_TRUE(contents.empty());
+
+  FilePath::CurrentDir().Append("base").GetDirContents(&contents);
+  FilePath this_file(__FILE__);
+  this_file = this_file.BaseName();
+
+  bool found = false;
+  for (size_t i = 0; i < contents.size(); ++i) {
+    EXPECT_NE(FilePath::CurrentDir().value(), contents[i].value());
+    EXPECT_NE(FilePath::ParentDir().value(), contents[i].value());
+    if (contents[i].BaseName().value() == this_file.value()) {
+      found = true;
+      this_file = contents[i];
+    }
+  }
+  EXPECT_TRUE(found);
+
+  contents.clear();
+  this_file.GetDirContents(&contents);
+  EXPECT_TRUE(contents.empty());
 }
 
 }  // anonymous namespace
