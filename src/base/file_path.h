@@ -86,6 +86,11 @@ class BASE_EXPORT FilePath {
   // If this file path refers to a file, the method doesn't do anything.
   void GetDirContents(std::vector<FilePath>* contents) const;
 
+  // Remove the file or folder referred by this path. If the location is a
+  // folder, it must be empty (otherwise use RecursivelyDeleteDir()). If this
+  // path refers to an inexistent location, the method doesn't do anything.
+  void Delete() const;
+
   // Returns a file path that represents the current directory (i.e. ".").
   static FilePath CurrentDir();
 
@@ -98,6 +103,9 @@ class BASE_EXPORT FilePath {
  private:
   StringType path_;
 };
+
+// Completely deletes the directory rooted at dir_path.
+BASE_EXPORT void RecursivelyDeleteDir(const FilePath& dir_path);
 
 // This macro should be used when hard coding file paths in the code. On Linux
 // it has no effect. On Windows it will convert it to a wide string.

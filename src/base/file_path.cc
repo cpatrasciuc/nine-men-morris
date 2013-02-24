@@ -171,6 +171,15 @@ void FilePath::GetDirContents(std::vector<FilePath>* contents) const {
   closedir(dir_ptr);
 }
 
+void FilePath::Delete() const {
+  if (Exists()) {
+    const int result = IsDir() ? rmdir(path_.c_str()) : unlink(path_.c_str());
+    if (result) {
+      ELOG(ERROR) << "Could not delete " << path_;
+    }
+  }
+}
+
 // static
 FilePath FilePath::CurrentDir() {
   return FilePath(kCurrentDirString);
@@ -183,5 +192,19 @@ FilePath FilePath::ParentDir() {
 
 // static
 const FilePath::CharType FilePath::separator = '/';
+
+void RecursivelyDeleteDir(const FilePath& dir_path) {
+  DCHECK(dir_path.IsDir());
+  std::vector<FilePath> contents;
+  dir_path.GetDirContents(&contents);
+  for (size_t i = 0; i < contents.size(); ++i) {
+    if (contents[i].IsDir()) {
+      RecursivelyDeleteDir(contents[i]);
+    } else {
+      contents[i].Delete();
+    }
+  }
+  dir_path.Delete();
+}
 
 }  // namespace base

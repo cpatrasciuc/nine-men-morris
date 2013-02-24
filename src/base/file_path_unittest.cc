@@ -229,5 +229,7 @@ TEST(FilePath, GetDirContents) {
   EXPECT_TRUE(contents.empty());
 }
 
+// TODO(file_path): Write unittests for RecursivelyDeleteDir().
+
 }  // anonymous namespace
 }  // namespace base
