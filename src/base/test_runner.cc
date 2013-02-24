@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(cpatrasciuc): Auto-generated this file when a test target is built.
-
 #include "base/debug/stacktrace.h"
 #include "gtest/gtest.h"
 
