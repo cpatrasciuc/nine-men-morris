@@ -36,6 +36,7 @@ class CONSOLE_GAME_EXPORT HumanPlayer : public Player {
   // above mentioned commands.
   void SetupDefaultCommandHandlers();
 
+ private:
   // Player interface
   //
   // First, it reads one line from standard input. Then, it determines the
@@ -45,7 +46,6 @@ class CONSOLE_GAME_EXPORT HumanPlayer : public Player {
   // message that can be used to provide feedback to the user.
   virtual std::string GetNextAction(game::Game* game_model);
 
- private:
   // A mapping from command types to command handlers. To add a new pair use the
   // AddCommandHandler() method.
   std::map<std::string, CommandHandler*> command_handlers_;

@@ -28,6 +28,7 @@ class TestPlayer : public Player {
     action_queue_.push(action);
   }
 
+ private:
   // Player interface
   virtual std::string GetNextAction(game::Game* game_model) {
     EXPECT_FALSE(action_queue_.empty());
@@ -36,7 +37,6 @@ class TestPlayer : public Player {
     return std::string();
   }
 
- private:
   std::queue<game::PlayerAction> action_queue_;
 
   DISALLOW_COPY_AND_ASSIGN(TestPlayer);
