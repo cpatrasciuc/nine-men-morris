@@ -32,6 +32,7 @@ class CONSOLE_GAME_EXPORT HelpCommandHandler : public CommandHandler {
       std::ostream* out = &std::cout);
   virtual ~HelpCommandHandler();
 
+ private:
   // CommandHandler interface
   virtual std::vector<std::string> SupportedCommandTypes() const;
   virtual bool ProcessCommand(const std::string& command_type,
@@ -41,7 +42,6 @@ class CONSOLE_GAME_EXPORT HelpCommandHandler : public CommandHandler {
                               std::string* format,
                               std::string* usage);
 
- private:
   // Checks if the handler should run in interactive mode (i.e. clean console
   // screen and wait for a key press after displaying the help message).
   bool IsInteractive() const;

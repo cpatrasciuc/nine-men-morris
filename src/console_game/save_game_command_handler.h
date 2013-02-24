@@ -22,6 +22,7 @@ class CONSOLE_GAME_EXPORT SaveGameCommandHandler : public CommandHandler {
   SaveGameCommandHandler();
   virtual ~SaveGameCommandHandler();
 
+ private:
   // CommandHandler interface
   virtual std::vector<std::string> SupportedCommandTypes() const;
   virtual bool ProcessCommand(const std::string& command_type,

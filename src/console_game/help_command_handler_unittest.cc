@@ -23,6 +23,7 @@ class DummyHandler : public CommandHandler {
  public:
   DummyHandler() {}
 
+ private:
   // CommandHandler interface
   virtual std::vector<std::string> SupportedCommandTypes() const {
     return std::vector<std::string>();
@@ -40,6 +41,8 @@ class DummyHandler : public CommandHandler {
     *format = command_type + kFormatSuffix;
     *usage = command_type + kUsageSuffix;
   };
+
+  DISALLOW_COPY_AND_ASSIGN(DummyHandler);
 };
 
 TEST(HelpCommandHandler, Basic) {
@@ -52,7 +55,7 @@ TEST(HelpCommandHandler, Basic) {
     handlers.insert(std::make_pair(commands[i], new DummyHandler()));
   }
 
-  handler.ProcessCommand("help", "", NULL);
+  static_cast<CommandHandler*>(&handler)->ProcessCommand("help", "", NULL);
 
   const std::string help_message(out.str());
   for (size_t i = 0; i < arraysize(commands); ++i) {
@@ -73,7 +76,8 @@ TEST(HelpCommandHandler, EmptyHandlers) {
   std::map<std::string, CommandHandler*> empty_map;
   std::ostringstream out;
   HelpCommandHandler handler(empty_map, &out);
-  EXPECT_TRUE(handler.ProcessCommand("help", "", NULL));
+  EXPECT_TRUE(
+      static_cast<CommandHandler*>(&handler)->ProcessCommand("help", "", NULL));
   EXPECT_EQ("", out.str());
 }
 
