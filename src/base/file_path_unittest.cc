@@ -184,5 +184,13 @@ TEST(FilePath, Exists) {
   EXPECT_FALSE(current_file.Append("0123456789").Exists());
 }
 
+TEST(FilePath, IsDir) {
+  EXPECT_TRUE(FilePath::CurrentDir().IsDir());
+  FilePath current_file(__FILE__);
+  EXPECT_FALSE(current_file.IsDir());
+  FilePath inexistent_path("/inexistent/path/");
+  EXPECT_FALSE(inexistent_path.IsDir());
+}
+
 }  // anonymous namespace
 }  // namespace base

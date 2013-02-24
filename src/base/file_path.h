@@ -67,6 +67,14 @@ class BASE_EXPORT FilePath {
   // that the path does not exist and returns false.
   bool Exists() const;
 
+  // Derive, from the path pointed to by this, an absolute path that names the
+  // same file, whose resolution does not involve '.', '..', or symbolic links.
+  FilePath RealPath() const;
+
+  // Returns |true| if this file path refers to a directory. False otherwise. If
+  // this path refers to an inexistent location, the method returns false.
+  bool IsDir() const;
+
   // Returns a file path that represents the current directory (i.e. ".").
   static FilePath CurrentDir();
 

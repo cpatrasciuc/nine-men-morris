@@ -4,12 +4,30 @@
 
 #include "base/file_path.h"
 
+#include <fcntl.h>
 #include <libgen.h>
+#include <linux/limits.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include "base/log.h"
 #include "base/ptr/scoped_malloc_ptr.h"
+
+namespace {
+
+bool CheckFileType(const char* path, int mask) {
+  struct stat stat_info;
+  int result = lstat(path, &stat_info);
+  if (result == -1) {
+    ELOG(ERROR) << "Could not get file info for " << path;
+    return false;
+  }
+  return (stat_info.st_mode & mask) != 0;
+}
+
+}  // anonymous namespace
 
 namespace base {
 
@@ -102,6 +120,21 @@ bool FilePath::Exists() const {
     ELOG(ERROR) << "Existence test for " << path_;
   }
   return result != -1;
+}
+
+FilePath FilePath::RealPath() const {
+  char actual_path[PATH_MAX + 1];
+  char* result = realpath(path_.c_str(), actual_path);
+  if (!result) {
+    ELOG(ERROR) << "Could not obtain the real path of " << path_;
+    return FilePath();
+  }
+  actual_path[PATH_MAX] = '\0';
+  return FilePath(actual_path);
+}
+
+bool FilePath::IsDir() const {
+  return CheckFileType(RealPath().value().c_str(), S_IFDIR);
 }
 
 // static
