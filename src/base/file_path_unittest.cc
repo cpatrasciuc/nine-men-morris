@@ -17,15 +17,15 @@ namespace {
 TEST(FilePath, Basic) {
   const FilePath empty_path;
   EXPECT_TRUE(empty_path.empty());
-  EXPECT_EQ("", empty_path.value());
-  const FilePath non_empty_path("/foo/bar.baz");
+  EXPECT_EQ(FILE_PATH_LITERAL(""), empty_path.value());
+  const FilePath non_empty_path(FILE_PATH_LITERAL("/foo/bar.baz"));
   EXPECT_FALSE(non_empty_path.empty());
-  EXPECT_EQ("/foo/bar.baz", non_empty_path.value());
+  EXPECT_EQ(FILE_PATH_LITERAL("/foo/bar.baz"), non_empty_path.value());
 }
 
 TEST(FilePath, StaticUtilities) {
-  EXPECT_EQ(".", FilePath::CurrentDir().value());
-  EXPECT_EQ("..", FilePath::ParentDir().value());
+  EXPECT_EQ(FILE_PATH_LITERAL("."), FilePath::CurrentDir().value());
+  EXPECT_EQ(FILE_PATH_LITERAL(".."), FilePath::ParentDir().value());
 }
 
 TEST(FilePath, DirName) {
@@ -181,7 +181,7 @@ TEST(FilePath, Append) {
 }
 
 TEST(FilePath, Exists) {
-  const FilePath current_file(__FILE__);
+  const FilePath current_file(FILE_PATH_LITERAL(__FILE__));
   EXPECT_TRUE(current_file.Exists());
   EXPECT_TRUE(current_file.DirName().Exists());
   EXPECT_FALSE(current_file.Append("0123456789").Exists());
@@ -189,9 +189,9 @@ TEST(FilePath, Exists) {
 
 TEST(FilePath, IsDir) {
   EXPECT_TRUE(FilePath::CurrentDir().IsDir());
-  FilePath current_file(__FILE__);
+  FilePath current_file(FILE_PATH_LITERAL(__FILE__));
   EXPECT_FALSE(current_file.IsDir());
-  FilePath inexistent_path("/inexistent/path/");
+  FilePath inexistent_path(FILE_PATH_LITERAL("/inexistent/path/"));
   EXPECT_FALSE(inexistent_path.IsDir());
 }
 
@@ -199,17 +199,19 @@ TEST(FilePath, IsFile) {
   EXPECT_FALSE(FilePath::CurrentDir().IsFile());
   FilePath current_file(__FILE__);
   EXPECT_TRUE(current_file.IsFile());
-  FilePath inexistent_path("/inexistent/path");
+  FilePath inexistent_path(FILE_PATH_LITERAL("/inexistent/path"));
   EXPECT_FALSE(inexistent_path.IsFile());
 }
 
 TEST(FilePath, GetDirContents) {
   std::vector<FilePath> contents;
-  FilePath invalid_path("/invalid/path");
+  const FilePath invalid_path(FILE_PATH_LITERAL("/invalid/path"));
   invalid_path.GetDirContents(&contents);
   EXPECT_TRUE(contents.empty());
 
-  FilePath::CurrentDir().Append("base").GetDirContents(&contents);
+  const FilePath dir_path(
+      FilePath::CurrentDir().Append(FILE_PATH_LITERAL("base")));
+  dir_path.GetDirContents(&contents);
   FilePath this_file(__FILE__);
   this_file = this_file.BaseName();
 
