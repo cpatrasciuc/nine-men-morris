@@ -24,17 +24,18 @@ class CONSOLE_GAME_EXPORT Player {
   explicit Player(const std::string& name);
   virtual ~Player();
 
+  // Add this Player to an instance of ConsoleGame. The second argument
+  // represents the color associated to this Player in the game.
+  void Initialize(ConsoleGame* game_ptr, const game::PieceColor color);
+
   const std::string& name() const { return name_; }
+
+  ConsoleGame* current_game() const { return current_game_; }
 
   // The color of the player in its current associated game. The result is only
   // valid after the Player instance was added to a ConsoleGame instance using
   // the set_current_game() method. Before this, the method returns NO_COLOR.
   const game::PieceColor color() const { return color_; }
-
-  // Add this Player to an instance of ConsoleGame. The second argument
-  // represents the color associated to this Player in the game.
-  void set_current_game(ConsoleGame* game_ptr, const game::PieceColor color);
-  ConsoleGame* current_game() const { return current_game_; }
 
   // This method is used to query this Player for the next game action that it
   // wants to take. The method should perform the required changes on the game

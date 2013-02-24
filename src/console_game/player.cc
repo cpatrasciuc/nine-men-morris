@@ -15,8 +15,7 @@ Player::Player(const std::string& name)
 
 Player::~Player() {}
 
-void Player::set_current_game(ConsoleGame* game_ptr,
-                              const game::PieceColor color) {
+void Player::Initialize(ConsoleGame* game_ptr, const game::PieceColor color) {
   DCHECK(game_ptr);
   DCHECK(color != game::NO_COLOR);
   DCHECK_EQ(current_game_, NULL);

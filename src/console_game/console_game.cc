@@ -23,8 +23,8 @@ ConsoleGame::ConsoleGame(const game::GameOptions& options,
       white_player_(white_player.release()),
       black_player_(black_player.release()),
       should_quit_(false) {
-  white_player_->set_current_game(this, game::WHITE_COLOR);
-  black_player_->set_current_game(this, game::BLACK_COLOR);
+  white_player_->Initialize(this, game::WHITE_COLOR);
+  black_player_->Initialize(this, game::BLACK_COLOR);
 }
 
 ConsoleGame::~ConsoleGame() {}
