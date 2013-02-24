@@ -192,5 +192,13 @@ TEST(FilePath, IsDir) {
   EXPECT_FALSE(inexistent_path.IsDir());
 }
 
+TEST(FilePath, IsFile) {
+  EXPECT_FALSE(FilePath::CurrentDir().IsFile());
+  FilePath current_file(__FILE__);
+  EXPECT_TRUE(current_file.IsFile());
+  FilePath inexistent_path("/inexistent/path");
+  EXPECT_FALSE(inexistent_path.IsFile());
+}
+
 }  // anonymous namespace
 }  // namespace base

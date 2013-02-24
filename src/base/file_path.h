@@ -71,9 +71,13 @@ class BASE_EXPORT FilePath {
   // same file, whose resolution does not involve '.', '..', or symbolic links.
   FilePath RealPath() const;
 
-  // Returns |true| if this file path refers to a directory. False otherwise. If
+  // Returns |true| if this file path refers to a directory; false otherwise. If
   // this path refers to an inexistent location, the method returns false.
   bool IsDir() const;
+
+  // Returns |true| if this file path refers to a file; false otherwise. If this
+  // path refers to an inexistent location, the method returns false.
+  bool IsFile() const;
 
   // Returns a file path that represents the current directory (i.e. ".").
   static FilePath CurrentDir();

@@ -137,6 +137,10 @@ bool FilePath::IsDir() const {
   return CheckFileType(RealPath().value().c_str(), S_IFDIR);
 }
 
+bool FilePath::IsFile() const {
+  return CheckFileType(RealPath().value().c_str(), S_IFREG);
+}
+
 // static
 FilePath FilePath::CurrentDir() {
   return FilePath(kCurrentDirString);
