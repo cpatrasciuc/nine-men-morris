@@ -11,6 +11,8 @@ set(BASE_SOURCE_FILES
 	debug/stacktrace.h
 	file_path.cc
 	file_path.h
+	file_util.cc
+	file_util.h
 	location.cc
 	location.h
 	log.cc
@@ -54,6 +56,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
 	console_unittest.cc
 	debug/stacktrace_unittest.cc
 	file_path_unittest.cc
+	file_util_unittest.cc
 	location_unittest.cc
 	log_unittest.cc
 	ptr/ref_ptr_unittest.cc
