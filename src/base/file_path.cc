@@ -128,7 +128,7 @@ bool FilePath::Exists() const {
 
 FilePath FilePath::RealPath() const {
   char actual_path[PATH_MAX + 1];
-  char* result = realpath(path_.c_str(), actual_path);
+  const char* result = realpath(path_.c_str(), actual_path);
   if (!result) {
     ELOG(ERROR) << "Could not obtain the real path of " << path_;
     return FilePath();
