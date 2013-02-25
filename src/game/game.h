@@ -99,7 +99,6 @@ class GAME_EXPORT Game {
   // Store the game state internally. Initially it is set to |false|. Once the
   // game reaches its end state, the variable is switched to |true| and no other
   // player action can be executed.
-  // TODO(game): Decide if actions can be undone once the game is over.
   bool is_game_over_;
 
   // Once the game is over, stores the winning color.
