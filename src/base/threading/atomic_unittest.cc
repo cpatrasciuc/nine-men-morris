@@ -61,8 +61,6 @@ TYPED_TEST(AtomicTest, BasicOperations) {
   EXPECT_EQ(TypeParam(10), atomic.Get());
 }
 
-// TODO(threading): Write tests for Atomic<bool> if supported.
-
 }  // anonymous namespace
 }  // namespace threading
 }  // namespace base
