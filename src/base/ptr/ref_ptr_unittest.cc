@@ -94,7 +94,7 @@ TEST(RefPtrTest, DISABLED_CyclicDependency) {
   two->set_dependency(one);
 }
 
-class ThreadSafeHelper : public RefCountedThreadSafe {};
+class ThreadSafeHelper : public RefCountedThreadSafe<ThreadSafeHelper> {};
 
 void PassByValue(ref_ptr<ThreadSafeHelper> ptr) {
   const ref_ptr<ThreadSafeHelper> dummy(ptr);

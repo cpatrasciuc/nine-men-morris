@@ -21,7 +21,6 @@ set(BASE_SOURCE_FILES
 	ptr/default_ownership_policy.h
 	ptr/default_storage_policy.h
 	ptr/malloc_storage_policy.h
-	ptr/ref_counted.cc
 	ptr/ref_counted.h
 	ptr/ref_counted_ownership_policy.h
 	ptr/ref_ptr.h
