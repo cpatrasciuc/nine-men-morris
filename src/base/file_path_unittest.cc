@@ -12,42 +12,42 @@
 namespace base {
 namespace {
 
-// TODO(file_path): Change the hard coded paths to use FILE_PATH_LITERAL
+#define FPL(x) FILE_PATH_LITERAL(x)
 
 TEST(FilePath, Basic) {
   const FilePath empty_path;
   EXPECT_TRUE(empty_path.empty());
-  EXPECT_EQ(FILE_PATH_LITERAL(""), empty_path.value());
-  const FilePath non_empty_path(FILE_PATH_LITERAL("/foo/bar.baz"));
+  EXPECT_EQ(FPL(""), empty_path.value());
+  const FilePath non_empty_path(FPL("/foo/bar.baz"));
   EXPECT_FALSE(non_empty_path.empty());
-  EXPECT_EQ(FILE_PATH_LITERAL("/foo/bar.baz"), non_empty_path.value());
+  EXPECT_EQ(FPL("/foo/bar.baz"), non_empty_path.value());
 }
 
 TEST(FilePath, StaticUtilities) {
-  EXPECT_EQ(FILE_PATH_LITERAL("."), FilePath::CurrentDir().value());
-  EXPECT_EQ(FILE_PATH_LITERAL(".."), FilePath::ParentDir().value());
+  EXPECT_EQ(FPL("."), FilePath::CurrentDir().value());
+  EXPECT_EQ(FPL(".."), FilePath::ParentDir().value());
 }
 
 TEST(FilePath, DirName) {
   const char* const tests[] = {
-    "", ".",
-    "/foo/bar/baz.txt", "/foo/bar",
-    "bar/baz.txt", "bar",
-    "baz.txt", ".",
-    "/foo/bar/baz", "/foo/bar",
-    "/foo/bar/baz/", "/foo/bar",
-    "/foo/bar/baz//", "/foo/bar",
-    "foo/", ".",
-    "/foo", "/",
-    "/foo/", "/",
-    "foo/bar", "foo",
-    "foo/bar/", "foo",
-    "foo/bar//", "foo",
-    "foo//bar//", "foo",
-    ".", ".",
-    "/", "/",
-    "//", "//",
-    "///", "/"
+    FPL(""), FPL("."),
+    FPL("/foo/bar/baz.txt"), FPL("/foo/bar"),
+    FPL("bar/baz.txt"), FPL("bar"),
+    FPL("baz.txt"), FPL("."),
+    FPL("/foo/bar/baz"), FPL("/foo/bar"),
+    FPL("/foo/bar/baz/"), FPL("/foo/bar"),
+    FPL("/foo/bar/baz//"), FPL("/foo/bar"),
+    FPL("foo/"), FPL("."),
+    FPL("/foo"), FPL("/"),
+    FPL("/foo/"), FPL("/"),
+    FPL("foo/bar"), FPL("foo"),
+    FPL("foo/bar/"), FPL("foo"),
+    FPL("foo/bar//"), FPL("foo"),
+    FPL("foo//bar//"), FPL("foo"),
+    FPL("."), FPL("."),
+    FPL("/"), FPL("/"),
+    FPL("//"), FPL("//"),
+    FPL("///"), FPL("/")
   };
   for (size_t i = 0; i < arraysize(tests); i += 2) {
     const FilePath file_path(tests[i]);
@@ -57,26 +57,26 @@ TEST(FilePath, DirName) {
 
 TEST(FilePath, BaseName) {
   const char* const tests[] = {
-    "", ".",
-    "foo", "foo",
-    "/fo/bar", "bar",
-    "/foo/bar/", "bar",
-    "/foo/bar//", "bar",
-    "/foo/bar/baz.txt", "baz.txt",
-    "/foo", "foo",
-    "/", "/",
-    "//", "/",
-    "///", "/",
-    "foo/", "foo",
-    "foo/bar", "bar",
-    "foo/bar/", "bar",
-    "foo/bar//", "bar",
-    "foo//bar//", "bar",
-    "foo//bar/", "bar",
-    "foo//bar", "bar",
-    "//foo/bar", "bar",
-    "//foo/", "foo",
-    "//foo", "foo"
+    FPL(""), FPL("."),
+    FPL("foo"), FPL("foo"),
+    FPL("/fo/bar"), FPL("bar"),
+    FPL("/foo/bar/"), FPL("bar"),
+    FPL("/foo/bar//"), FPL("bar"),
+    FPL("/foo/bar/baz.txt"), FPL("baz.txt"),
+    FPL("/foo"), FPL("foo"),
+    FPL("/"), FPL("/"),
+    FPL("//"), FPL("/"),
+    FPL("///"), FPL("/"),
+    FPL("foo/"), FPL("foo"),
+    FPL("foo/bar"), FPL("bar"),
+    FPL("foo/bar/"), FPL("bar"),
+    FPL("foo/bar//"), FPL("bar"),
+    FPL("foo//bar//"), FPL("bar"),
+    FPL("foo//bar/"), FPL("bar"),
+    FPL("foo//bar"), FPL("bar"),
+    FPL("//foo/bar"), FPL("bar"),
+    FPL("//foo/"), FPL("foo"),
+    FPL("//foo"), FPL("foo")
   };
   for (size_t i = 0; i < arraysize(tests); i += 2) {
     const FilePath file_path(tests[i]);
@@ -85,51 +85,52 @@ TEST(FilePath, BaseName) {
 }
 
 TEST(FilePath, IsAbsolute) {
-  EXPECT_TRUE(FilePath("/").IsAbsolute());
-  EXPECT_TRUE(FilePath("//").IsAbsolute());
-  EXPECT_TRUE(FilePath("///").IsAbsolute());
-  EXPECT_TRUE(FilePath("/foo").IsAbsolute());
-  EXPECT_FALSE(FilePath("").IsAbsolute());
-  EXPECT_FALSE(FilePath(".").IsAbsolute());
-  EXPECT_FALSE(FilePath("..").IsAbsolute());
-  EXPECT_FALSE(FilePath("foo/").IsAbsolute());
-  EXPECT_FALSE(FilePath("foo/bar").IsAbsolute());
+  EXPECT_TRUE(FilePath(FPL("/")).IsAbsolute());
+  EXPECT_TRUE(FilePath(FPL("//")).IsAbsolute());
+  EXPECT_TRUE(FilePath(FPL("///")).IsAbsolute());
+  EXPECT_TRUE(FilePath(FPL("/foo")).IsAbsolute());
+  EXPECT_FALSE(FilePath(FPL("")).IsAbsolute());
+  EXPECT_FALSE(FilePath(FPL(".")).IsAbsolute());
+  EXPECT_FALSE(FilePath(FPL("..")).IsAbsolute());
+  EXPECT_FALSE(FilePath(FPL("foo/")).IsAbsolute());
+  EXPECT_FALSE(FilePath(FPL("foo/bar")).IsAbsolute());
 }
 
 TEST(FilePath, Extension) {
-  EXPECT_EQ("", FilePath("").Extension().value());
-  EXPECT_EQ("", FilePath("foo").Extension().value());
-  EXPECT_EQ("", FilePath("/foo").Extension().value());
-  EXPECT_EQ("", FilePath("/foo/").Extension().value());
-  EXPECT_EQ("", FilePath("foo.txt/").Extension().value());
-  EXPECT_EQ(".txt", FilePath("foo.txt").Extension().value());
-  EXPECT_EQ(".txt", FilePath("/foo/bar/baz.txt").Extension().value());
-  EXPECT_EQ(".txt", FilePath("/foo/bar.baz/qux.txt").Extension().value());
+  EXPECT_EQ(FPL(""), FilePath(FPL("")).Extension().value());
+  EXPECT_EQ(FPL(""), FilePath(FPL("foo")).Extension().value());
+  EXPECT_EQ(FPL(""), FilePath(FPL("/foo")).Extension().value());
+  EXPECT_EQ(FPL(""), FilePath(FPL("/foo/")).Extension().value());
+  EXPECT_EQ(FPL(""), FilePath(FPL("foo.txt/")).Extension().value());
+  EXPECT_EQ(FPL(".txt"), FilePath(FPL("foo.txt")).Extension().value());
+  EXPECT_EQ(FPL(".txt"), FilePath(FPL("/foo/bar/baz.txt")).Extension().value());
+  EXPECT_EQ(FPL(".txt"),
+            FilePath(FPL("/foo/bar.baz/qux.txt")).Extension().value());
 }
 
 TEST(FilePath, AddExtension) {
   const char* const tests[] = {
-    "", "", "",
-    "", "txt", "",
-    ".", "txt", "",
-    "..", "txt", "",
-    ".", "", "",
-    "foo.dll", "txt", "foo.dll.txt",
-    "./foo.dll", "txt", "./foo.dll.txt",
-    "foo..dll", "txt", "foo..dll.txt",
-    "foo.dll", ".txt", "foo.dll.txt",
-    "foo", "txt", "foo.txt",
-    "foo.", "txt", "foo..txt",
-    "foo..", "txt", "foo...txt",
-    "foo", ".txt", "foo.txt",
-    "foo.baz.dll", "txt", "foo.baz.dll.txt",
-    "foo.baz.dll", ".txt", "foo.baz.dll.txt",
-    "foo.dll", "", "foo.dll",
-    "foo.dll", ".", "foo.dll",
-    "foo", "", "foo",
-    "foo", ".", "foo",
-    "foo.baz.dll", "", "foo.baz.dll",
-    "foo.baz.dll", ".", "foo.baz.dll",
+    FPL(""), FPL(""), FPL(""),
+    FPL(""), FPL("txt"), FPL(""),
+    FPL("."), FPL("txt"), FPL(""),
+    FPL(".."), FPL("txt"), FPL(""),
+    FPL("."), FPL(""), FPL(""),
+    FPL("foo.dll"), FPL("txt"), FPL("foo.dll.txt"),
+    FPL("./foo.dll"), FPL("txt"), FPL("./foo.dll.txt"),
+    FPL("foo..dll"), FPL("txt"), FPL("foo..dll.txt"),
+    FPL("foo.dll"), FPL(".txt"), FPL("foo.dll.txt"),
+    FPL("foo"), FPL("txt"), FPL("foo.txt"),
+    FPL("foo."), FPL("txt"), FPL("foo..txt"),
+    FPL("foo.."), FPL("txt"), FPL("foo...txt"),
+    FPL("foo"), FPL(".txt"), FPL("foo.txt"),
+    FPL("foo.baz.dll"), FPL("txt"), FPL("foo.baz.dll.txt"),
+    FPL("foo.baz.dll"), FPL(".txt"), FPL("foo.baz.dll.txt"),
+    FPL("foo.dll"), FPL(""), FPL("foo.dll"),
+    FPL("foo.dll"), FPL("."), FPL("foo.dll"),
+    FPL("foo"), FPL(""), FPL("foo"),
+    FPL("foo"), FPL("."), FPL("foo"),
+    FPL("foo.baz.dll"), FPL(""), FPL("foo.baz.dll"),
+    FPL("foo.baz.dll"), FPL("."), FPL("foo.baz.dll")
   };
   for (size_t i = 0; i < arraysize(tests); i += 3) {
     const FilePath file_path(tests[i]);
@@ -140,20 +141,20 @@ TEST(FilePath, AddExtension) {
 
 TEST(FilePath, StripTrailingSeparators) {
   const char* const tests[] = {
-    "", "",
-    "/", "/",
-    "//", "/",
-    "///", "/",
-    "////", "/",
-    "foo/", "foo",
-    "foo//", "foo",
-    "foo///", "foo",
-    "foo////", "foo",
-    "/foo", "/foo",
-    "/foo/", "/foo",
-    "/foo//", "/foo",
-    "/foo///", "/foo",
-    "/foo////", "/foo",
+    FPL(""), FPL(""),
+    FPL("/"), FPL("/"),
+    FPL("//"), FPL("/"),
+    FPL("///"), FPL("/"),
+    FPL("////"), FPL("/"),
+    FPL("foo/"), FPL("foo"),
+    FPL("foo//"), FPL("foo"),
+    FPL("foo///"), FPL("foo"),
+    FPL("foo////"), FPL("foo"),
+    FPL("/foo"), FPL("/foo"),
+    FPL("/foo/"), FPL("/foo"),
+    FPL("/foo//"), FPL("/foo"),
+    FPL("/foo///"), FPL("/foo"),
+    FPL("/foo////"), FPL("/foo")
   };
   for (size_t i = 0; i < arraysize(tests); i += 2) {
     const FilePath file_path(tests[i]);
@@ -163,14 +164,14 @@ TEST(FilePath, StripTrailingSeparators) {
 
 TEST(FilePath, Append) {
   const char* const tests[] = {
-    "", "foo", "foo",
-    ".", "bar", "./bar",
-    "/", "foo", "/foo",
-    "/foo", "", "/foo",
-    "/foo/", "", "/foo",
-    "//foo", "", "//foo",
-    "//foo/", "", "//foo",
-    "//", "foo", "/foo"
+    FPL(""), FPL("foo"), FPL("foo"),
+    FPL("."), FPL("bar"), FPL("./bar"),
+    FPL("/"), FPL("foo"), FPL("/foo"),
+    FPL("/foo"), FPL(""), FPL("/foo"),
+    FPL("/foo/"), FPL(""), FPL("/foo"),
+    FPL("//foo"), FPL(""), FPL("//foo"),
+    FPL("//foo/"), FPL(""), FPL("//foo"),
+    FPL("//"), FPL("foo"), FPL("/foo")
   };
   for (size_t i = 0; i < arraysize(tests); i += 3) {
     const FilePath initial_path(tests[i]);
@@ -181,38 +182,37 @@ TEST(FilePath, Append) {
 }
 
 TEST(FilePath, Exists) {
-  const FilePath current_file(FILE_PATH_LITERAL(__FILE__));
+  const FilePath current_file(FPL(__FILE__));
   EXPECT_TRUE(current_file.Exists());
   EXPECT_TRUE(current_file.DirName().Exists());
-  EXPECT_FALSE(current_file.Append("0123456789").Exists());
+  EXPECT_FALSE(current_file.Append(FPL("0123456789")).Exists());
 }
 
 TEST(FilePath, IsDir) {
   EXPECT_TRUE(FilePath::CurrentDir().IsDir());
-  FilePath current_file(FILE_PATH_LITERAL(__FILE__));
+  FilePath current_file(FPL(__FILE__));
   EXPECT_FALSE(current_file.IsDir());
-  FilePath inexistent_path(FILE_PATH_LITERAL("/inexistent/path/"));
+  FilePath inexistent_path(FPL("/inexistent/path/"));
   EXPECT_FALSE(inexistent_path.IsDir());
 }
 
 TEST(FilePath, IsFile) {
   EXPECT_FALSE(FilePath::CurrentDir().IsFile());
-  FilePath current_file(__FILE__);
+  FilePath current_file(FPL(__FILE__));
   EXPECT_TRUE(current_file.IsFile());
-  FilePath inexistent_path(FILE_PATH_LITERAL("/inexistent/path"));
+  FilePath inexistent_path(FPL("/inexistent/path"));
   EXPECT_FALSE(inexistent_path.IsFile());
 }
 
 TEST(FilePath, GetDirContents) {
   std::vector<FilePath> contents;
-  const FilePath invalid_path(FILE_PATH_LITERAL("/invalid/path"));
+  const FilePath invalid_path(FPL("/invalid/path"));
   invalid_path.GetDirContents(&contents);
   EXPECT_TRUE(contents.empty());
 
-  const FilePath dir_path(
-      FilePath::CurrentDir().Append(FILE_PATH_LITERAL("base")));
+  const FilePath dir_path(FilePath::CurrentDir().Append(FPL("base")));
   dir_path.GetDirContents(&contents);
-  FilePath this_file(__FILE__);
+  FilePath this_file(FPL(__FILE__));
   this_file = this_file.BaseName();
 
   bool found = false;
