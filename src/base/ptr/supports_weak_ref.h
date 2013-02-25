@@ -16,16 +16,19 @@
 namespace base {
 namespace ptr {
 
-// TODO(visibility): Make the public methods available only to
-// WeakOwnershipPolicy
-
 template <class T>
 class SupportsWeakRef {
- public:
-  typedef typename DefaultStoragePolicy<T>::PointerType PointerType;
-
+ protected:
+  SupportsWeakRef() : weak_refs_() {}
   ~SupportsWeakRef() {
     std::for_each(weak_refs_.begin(), weak_refs_.end(), Invalidate);
+  }
+
+ private:
+  typedef typename DefaultStoragePolicy<T>::PointerType PointerType;
+
+  static void Invalidate(const WeakRefObserver* p) {
+    p->set_valid(false);
   }
 
   void AddWeakRef(const WeakRefObserver* refferer) const {
@@ -42,12 +45,9 @@ class SupportsWeakRef {
     weak_refs_.erase(it);
   }
 
- private:
-  static void Invalidate(const WeakRefObserver* p) {
-    p->set_valid(false);
-  }
-
   mutable std::deque<const WeakRefObserver*> weak_refs_;
+
+  template <class U> friend class WeakOwnershipPolicy;
 };
 
 }  // namespace ptr
