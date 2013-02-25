@@ -10,22 +10,6 @@
 namespace base {
 namespace ptr {
 
-RefCounted::RefCounted() : ref_count_(0) {}
-
-RefCounted::~RefCounted() {
-  DCHECK_EQ(ref_count_, 0) << "Manually deleted RefCounted object";
-}
-
-void RefCounted::AddRef() const {
-  ++ref_count_;
-}
-
-bool RefCounted::Release() const {
-  DCHECK_GT(ref_count_, 0) << "Too many calls to Release(): " << this;
-  --ref_count_;
-  return (ref_count_ == 0);
-}
-
 RefCountedThreadSafe::RefCountedThreadSafe() : ref_count_(0) {}
 
 RefCountedThreadSafe::~RefCountedThreadSafe() {

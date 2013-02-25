@@ -49,7 +49,7 @@ TEST(WeakPtrTest, Assignment) {
   EXPECT_EQ(ptr1, ptr2);
 }
 
-class RefCountedHelper : public RefCounted,
+class RefCountedHelper : public RefCounted<RefCountedHelper>,
                          public SupportsWeakRef<RefCountedHelper> {
  public:
   RefCountedHelper() {}

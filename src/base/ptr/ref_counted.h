@@ -6,26 +6,36 @@
 #define BASE_PTR_REF_COUNTED_H_
 
 #include "base/base_export.h"
+#include "base/log.h"
 #include "base/threading/atomic.h"
 
 namespace base {
 namespace ptr {
 
-// TODO(smart_pointers) : Make this a class template
 // TODO(visibility): Make the public methods visible only to
 //                   RefCountedOwnershipPolicy
+template <typename T>
 class BASE_EXPORT RefCounted {
  public:
-  void AddRef() const;
-  bool Release() const;
+  void AddRef() const {
+    ++ref_count_;
+  }
+
+  bool Release() const {
+    DCHECK_GT(ref_count_, 0) << "Too many calls to Release(): " << this;
+    --ref_count_;
+    return (ref_count_ == 0);
+  }
 
   const bool HasOnlyOneRef() const {
     return ref_count_ == 1;
   }
 
  protected:
-  RefCounted();
-  ~RefCounted();
+  RefCounted() : ref_count_(0) {}
+  ~RefCounted() {
+    DCHECK_EQ(ref_count_, 0) << "Manually deleted RefCounted object";
+  }
 
  private:
   mutable int ref_count_;

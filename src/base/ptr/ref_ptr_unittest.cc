@@ -14,7 +14,7 @@ namespace base {
 namespace ptr {
 namespace {
 
-class Helper : public RefCounted {
+class Helper : public RefCounted<Helper> {
  public:
   bool ConstMethod() const {
     return true;
@@ -75,7 +75,7 @@ TEST(RefPtrTest, PassByValue) {
   EXPECT_TRUE(ptr->HasOnlyOneRef());
 }
 
-class CyclicDepsHelper : public RefCounted {
+class CyclicDepsHelper : public RefCounted<CyclicDepsHelper> {
  public:
   void set_dependency(ref_ptr<CyclicDepsHelper> dep) {
     dep_ = dep;

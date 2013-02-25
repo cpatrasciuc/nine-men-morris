@@ -38,7 +38,7 @@ class Helper {
   }
 };
 
-class RefCountedHelper : public base::ptr::RefCounted {
+class RefCountedHelper : public base::ptr::RefCounted<RefCountedHelper> {
  public:
   explicit RefCountedHelper(int x) : x_(x) {}
   int test_method() { return x_; }
