@@ -13,8 +13,6 @@
 namespace base {
 namespace ptr {
 
-// TODO(visibility): Make the public methods visible only to
-//                   RefCountedOwnershipPolicy
 template <typename T>
 class BASE_EXPORT RefCounted {
  public:
