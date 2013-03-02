@@ -291,10 +291,14 @@ bool DeserializeActionsFromTextStream(std::istream* in,
 //   - the value of white_starts() on the 4th bit
 //   - the value of jumps_allowed() on the 5th bit
 int8_t EncodeGameOptions(const GameOptions& options) {
+#if ((__GNUC__ * 100) + __GNUC_MINOR__) >= 406
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wtautological-constant-out-of-range-compare"
+#endif
   DCHECK_LT(options.game_type(), 1 << 4);
+#if ((__GNUC__ * 100) + __GNUC_MINOR__) >= 406
 #pragma GCC diagnostic pop
+#endif
   int8_t result = static_cast<int8_t>(options.game_type());
   result |= (options.white_starts() ? 1 : 0) << 4;
   result |= (options.jumps_allowed() ? 1 : 0) << 5;
