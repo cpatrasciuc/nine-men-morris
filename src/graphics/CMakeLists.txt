@@ -22,4 +22,7 @@ add_definitions("-DGRAPHICS_IMPLEMENTATION")
 add_library(graphics ${GRAPHICS_SOURCE_FILES})
 target_link_libraries(graphics base game)
 
+add_executable(graphics_exe graphics_temp_main.cc)
+target_link_libraries(graphics_exe graphics)
+
 
