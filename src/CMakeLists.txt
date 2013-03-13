@@ -6,6 +6,12 @@ project(nine-men-morris)
 cmake_policy(SET CMP0015 NEW)
 
 if(RELEASE)
+  set(CMAKE_BUILD_TYPE "Release")
+else()
+  set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+if(RELEASE)
   set(cflags "-Werror -pthread -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O2 -fdata-sections -ffunction-sections")
   set(only_cxx_flags "-fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
   set(only_c_flags "")
