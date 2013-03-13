@@ -2,6 +2,9 @@ cmake_minimum_required (VERSION 2.8)
 
 project(nine-men-morris)
 
+# Relative link directories are relative to the source directory.
+cmake_policy(SET CMP0015 NEW)
+
 if(RELEASE)
   set(cflags "-Werror -pthread -fno-exceptions -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O2 -fdata-sections -ffunction-sections")
   set(only_cxx_flags "-fno-rtti -fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
