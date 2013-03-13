@@ -6,17 +6,18 @@ project(nine-men-morris)
 cmake_policy(SET CMP0015 NEW)
 
 if(RELEASE)
-  set(cflags "-Werror -pthread -fno-exceptions -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O2 -fdata-sections -ffunction-sections")
-  set(only_cxx_flags "-fno-rtti -fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
+  set(cflags "-Werror -pthread -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O2 -fdata-sections -ffunction-sections")
+  set(only_cxx_flags "-fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
   set(only_c_flags "")
   set(ldflags "-pthread -Wl,-z,noexecstack -fPIC -Wl,--threads -Wl,--thread-count=4 -Wl,--icf=none -Wl,-O1 -Wl,--as-needed -Wl,--gc-sections")
 else()
-  set(cflags "-Werror -pthread -fno-exceptions -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O0 -g --coverage")
-  set(only_cxx_flags "-fno-rtti -fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
+  set(cflags "-Werror -pthread -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O0 -g --coverage")
+  set(only_cxx_flags " -fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
   set(only_c_flags "")
   set(ldflags "-pthread -Wl,-z,noexecstack -fPIC -Wl,--threads -Wl,--thread-count=4 -Wl,--icf=none")
 endif()
 
+# TODO(compile flags): Add -fno-rtti and -fno-exceptions
 set(CMAKE_C_FLAGS "${cflags} ${only_c_flags}")
 set(CMAKE_CXX_FLAGS "${cflags} ${only_cxx_flags}")
 

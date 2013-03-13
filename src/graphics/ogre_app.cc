@@ -4,6 +4,8 @@
 
 #include "graphics/ogre_app.h"
 
+#include "OGRE/OgreRoot.h"
+
 namespace graphics {
 
 OgreApp::OgreApp() {}
@@ -11,6 +13,8 @@ OgreApp::OgreApp() {}
 OgreApp::~OgreApp() {}
 
 int OgreApp::RunMainLoop() {
+  Ogre::Root* root = new Ogre::Root();
+  delete root;
   return 0;
 }
 
