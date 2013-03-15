@@ -5,6 +5,8 @@ set(BASE_SOURCE_FILES
 	bind_policy.h
 	binders.h
 	callable.h
+	command_line.cc
+	command_line.h
 	console.cc
 	console.h
 	debug/stacktrace.cc
@@ -52,6 +54,7 @@ set(BASE_SOURCE_FILES
 set(BASE_UNITTESTS_SOURCE_FILES
 	bind_unittest.cc
 	callable_unittest.cc
+	command_line_unittest.cc
 	console_unittest.cc
 	debug/stacktrace_unittest.cc
 	file_path_unittest.cc
