@@ -13,10 +13,10 @@
 #include "console_game/human_player.h"
 #include "console_game/player.h"
 
+namespace {
+
 using console_game::HumanPlayer;
 using console_game::Player;
-
-namespace {
 
 const char kGameTypeSwitch[] = "--game-type";
 const char kHelpSwitch[] = "--help";
