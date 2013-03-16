@@ -16,7 +16,6 @@
 using console_game::HumanPlayer;
 using console_game::Player;
 
-// TODO(console_game): Add command line options
 namespace {
 
 const char kGameTypeSwitch[] = "--game-type";
