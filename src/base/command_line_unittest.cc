@@ -7,6 +7,7 @@
 #include "gtest/gtest.h"
 
 namespace base {
+namespace {
 
 TEST(CommandLine, Init) {
   const char* const argv[] = {
@@ -157,4 +158,6 @@ TEST(CommandLineDeathTest, GetValueOfMissingSwitch) {
   CommandLine cmd_line;
   ASSERT_DEATH(cmd_line.GetSwitchValue("--not-found-switch"), "");
 }
+
+}  // anonymous namespace
 }  // namespace base
