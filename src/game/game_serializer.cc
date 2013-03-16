@@ -291,8 +291,6 @@ bool DeserializeActionsFromTextStream(std::istream* in,
 //   - the value of white_starts() on the 4th bit
 //   - the value of jumps_allowed() on the 5th bit
 int8_t EncodeGameOptions(const GameOptions& options) {
-  // TODO(pragma): Enable the following pragma.
-  // GCC diagnostic ignored "-Wtautological-constant-out-of-range-compare"
   DCHECK_LT(static_cast<int>(options.game_type()), 1 << 4);
   int8_t result = static_cast<int8_t>(options.game_type());
   result |= (options.white_starts() ? 1 : 0) << 4;
