@@ -139,21 +139,21 @@ TEST(CommandLine, AppendArgument) {
   }
 }
 
-TEST(CommandLineDeathTest, DoubleInitialization) {
+TEST(CommandLineDeathTest, DEBUG_ONLY_TEST(DoubleInitialization)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   CommandLine cmd_line;
   cmd_line.Init(0, NULL);
   ASSERT_DEATH(cmd_line.Init(0, NULL), "");
 }
 
-TEST(CommandLineDeathTest, InvalidSwitches) {
+TEST(CommandLineDeathTest, DEBUG_ONLY_TEST(InvalidSwitches)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   CommandLine cmd_line;
   ASSERT_DEATH(cmd_line.AppendSwitch("no-initial-dashes"), "");
   ASSERT_DEATH(cmd_line.AppendSwitch("--switch-with-equal-sign=invalid"), "");
 }
 
-TEST(CommandLineDeathTest, GetValueOfMissingSwitch) {
+TEST(CommandLineDeathTest, DEBUG_ONLY_TEST(GetValueOfMissingSwitch)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   CommandLine cmd_line;
   ASSERT_DEATH(cmd_line.GetSwitchValue("--not-found-switch"), "");
