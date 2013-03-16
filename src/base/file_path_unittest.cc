@@ -242,24 +242,29 @@ TEST(FilePath, RecursivelyDeleteDir) {
   ScopedTempDir temp_dir("TestRecursivelyDeleteDir");
   ASSERT_TRUE(temp_dir.Create());
   std::vector<FilePath> created_paths;
+
   FilePath test_dir(temp_dir.Get().Append(FPL("test_dir")));
   int result = mkdir(test_dir.value().c_str(), permissions);
   ELOG_IF(ERROR, result) << "Cannot create test dir " << test_dir.value();
   ASSERT_EQ(0, result);
   created_paths.push_back(test_dir);
+
   FilePath file_in_test_dir(test_dir.Append(FPL("file01")));
   std::ofstream file_in_test_dir_stream(file_in_test_dir.value().c_str());
   file_in_test_dir_stream.close();
   created_paths.push_back(file_in_test_dir);
+
   FilePath test_subdir(test_dir.Append(FPL("test_subdir")));
   result = mkdir(test_subdir.value().c_str(), permissions);
   ELOG_IF(ERROR, result) << "Cannot create subdir " << test_subdir.value();
   ASSERT_EQ(0, result);
   created_paths.push_back(test_subdir);
+
   FilePath file_in_test_subdir(test_subdir.Append(FPL("file02")));
   std::ofstream file_in_test_subdir_stream(file_in_test_subdir.value().c_str());
   file_in_test_subdir_stream.close();
   created_paths.push_back(file_in_test_subdir);
+
   FilePath symlink_in_test_subdir(test_subdir.Append(FPL("symlink")));
   result = symlink(file_in_test_dir.value().c_str(),
                    symlink_in_test_subdir.value().c_str());
@@ -267,6 +272,7 @@ TEST(FilePath, RecursivelyDeleteDir) {
                          << symlink_in_test_subdir.value();
   ASSERT_EQ(0, result);
   created_paths.push_back(symlink_in_test_subdir);
+
   for (size_t i = 0; i < created_paths.size(); ++i) {
     EXPECT_TRUE(created_paths[i].Exists()) << created_paths[i].value();
   }
