@@ -5,6 +5,8 @@
 #include "graphics/ogre_app.h"
 
 int main(int argc, char** argv) {
-  graphics::OgreApp app;
-  return app.RunMainLoop();
+  graphics::OgreApp app("Temp test for OgreApp");
+  app.Init();
+  app.RunMainLoop();
+  return 0;
 }
