@@ -119,11 +119,7 @@ FilePath FilePath::Append(const StringType& file_path_str) const {
 }
 
 bool FilePath::Exists() const {
-  const int result = access(path_.c_str(), F_OK);
-  if (result == -1) {
-    ELOG(ERROR) << "Existence test for " << path_;
-  }
-  return result != -1;
+  return IsDir() || IsFile();
 }
 
 FilePath FilePath::RealPath() const {
@@ -138,11 +134,11 @@ FilePath FilePath::RealPath() const {
 }
 
 bool FilePath::IsDir() const {
-  return CheckFileType(RealPath().value().c_str(), S_IFDIR);
+  return CheckFileType(path_.c_str(), S_IFDIR);
 }
 
 bool FilePath::IsFile() const {
-  return CheckFileType(RealPath().value().c_str(), S_IFREG);
+  return CheckFileType(path_.c_str(), S_IFREG);
 }
 
 void FilePath::GetDirContents(std::vector<FilePath>* contents) const {

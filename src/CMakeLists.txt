@@ -43,8 +43,6 @@ add_subdirectory(base)
 
 add_subdirectory(game)
 
-#add_subdirectory(engine)
-
 add_subdirectory(console_game)
 
 add_subdirectory(graphics)

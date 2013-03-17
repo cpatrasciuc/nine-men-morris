@@ -29,8 +29,10 @@ class ConsoleGameFunctionalTests(unittest.TestCase):
     f.write("\n".join(commands))
     f.close()
     
-  def runGame(self):
-    result = subprocess.call([self.getExeName()], stdin=open(self.input_file))
+  def runGame(self, options=[]):
+    cmd_line = [self.getExeName()]
+    cmd_line.extend(options)
+    result = subprocess.call(cmd_line, stdin=open(self.input_file))
     self.assertEquals(0, result)
   
   def testQuitGame(self):
@@ -47,8 +49,7 @@ class ConsoleGameFunctionalTests(unittest.TestCase):
     output_lines = open(save_file_name).readlines()
     self.assertEquals(["256", "50", "0"], [x.strip() for x in output_lines])
     
-  # TODO(functional_test): Enable this after cmd line options are supported
-  def DISABLED_testFullSixMenMorrisGame(self):
+  def testFullSixMenMorrisGame(self):
     folder = os.path.abspath(os.path.dirname(__file__))
     test_game_file = os.path.join(folder, "../game/test_games/full_6.txt")
     lines = open(test_game_file).readlines()
@@ -63,7 +64,7 @@ class ConsoleGameFunctionalTests(unittest.TestCase):
       else:
         raise ValueError(lines[i])
     self.generateInputFile(lines)
-    self.runGame()
+    self.runGame(["--game-type=6"])
     
   def testDummyNineMenMorrisActions(self):
     commands = ["invalid cmd", "help", "a", "a1", "g7", "quit"]
@@ -74,4 +75,9 @@ class ConsoleGameFunctionalTests(unittest.TestCase):
     commands = []
     self.generateInputFile(commands)
     self.runGame()
+    
+  def testUsage(self):
+    commands = []
+    self.generateInputFile(commands)
+    self.runGame(["--help"])
     

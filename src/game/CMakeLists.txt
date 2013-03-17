@@ -29,12 +29,12 @@ set(GAME_UNITTESTS_SOURCE_FILES
 )
 
 include_directories(
-	../
-	../gtest/include
+  ../
+  ../gtest/include
 )
 
 link_directories(
-	../gtest/
+  ../gtest/
 )
 
 add_definitions("-DGAME_IMPLEMENTATION")
