@@ -16,11 +16,23 @@
 #include "OGRE/OgreViewport.h"
 #include "OGRE/OgreWindowEventUtilities.h"
 
+#include "OIS/OISEvents.h"
+#include "OIS/OISInputManager.h"
+#include "OIS/OISKeyboard.h"
+#include "OIS/OISMouse.h"
+
+#include "base/log.h"
+#include "base/string_util.h"
+
 namespace graphics {
 
 OgreApp::OgreApp(const std::string& name) : name_(name) {}
 
-OgreApp::~OgreApp() {}
+OgreApp::~OgreApp() {
+  Ogre::WindowEventUtilities::removeWindowEventListener(render_window_, this);
+  windowClosed(render_window_);
+  DCHECK(!input_manager_);
+}
 
 bool OgreApp::Init() {
   // TODO(ogre): Pass the plugin file name?
@@ -45,20 +57,65 @@ bool OgreApp::Init() {
   const Ogre::Real height(viewport->getActualHeight());
   camera_->setAspectRatio(width / height);
 
+  OIS::ParamList params;
+  size_t window_handle = 0;
+  render_window_->getCustomAttribute("WINDOW", &window_handle);
+  params.insert(std::make_pair("WINDOW", base::ToString(window_handle)));
+#if defined(OIS_LINUX_PLATFORM)
+  params.insert(std::make_pair("x11_mouse_grab", "false"));
+  params.insert(std::make_pair("x11_mouse_hide", "false"));
+  params.insert(std::make_pair("x11_keyboard_grab", "false"));
+  params.insert(std::make_pair("XAutoRepeatOn", "true"));
+#endif
+  input_manager_ = OIS::InputManager::createInputSystem(params);
+  keyboard_ = static_cast<OIS::Keyboard*>(
+      input_manager_->createInputObject(OIS::OISKeyboard, true));
+  mouse_ = static_cast<OIS::Mouse*>(
+      input_manager_->createInputObject(OIS::OISMouse, true));
+
+  // TODO(OIS): Destroy the OIS system
+  windowResized(render_window_);
+  Ogre::WindowEventUtilities::addWindowEventListener(render_window_, this);
+
   return true;
 }
 
 void OgreApp::RunMainLoop() {
   // TODO(ogre): Replace this with root_->startRendering() and delete #include
-  while (true) {
-    Ogre::WindowEventUtilities::messagePump();
-    if (render_window_->isClosed()) {
-      break;
-    }
-    if (!root_->renderOneFrame()) {
-      break;
+  root_->addFrameListener(this);
+  root_->startRendering();
+}
+
+void OgreApp::windowResized(Ogre::RenderWindow* render_window) {
+  unsigned int width, height, depth;
+  int left, top;
+  render_window_->getMetrics(width, height, depth, left, top);
+  const OIS::MouseState& mouse_state = mouse_->getMouseState();
+  mouse_state.width = width;
+  mouse_state.height = height;
+}
+
+void OgreApp::windowClosed(Ogre::RenderWindow* render_window) {
+  if (render_window == render_window_) {
+    if (input_manager_) {
+      input_manager_->destroyInputObject(mouse_);
+      input_manager_->destroyInputObject(keyboard_);
+      OIS::InputManager::destroyInputSystem(input_manager_);
+      input_manager_ = NULL;
     }
   }
+}
+
+bool OgreApp::frameRenderingQueued(const Ogre::FrameEvent& event) {
+  if (render_window_->isClosed()) {
+    return false;
+  }
+  keyboard_->capture();
+  mouse_->capture();
+  if (keyboard_->isKeyDown(OIS::KC_ESCAPE)) {
+    return false;
+  }
+  return true;
 }
 
 }  // namespace graphics
