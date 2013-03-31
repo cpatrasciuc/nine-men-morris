@@ -11,6 +11,8 @@ if(NOT OIS_FOUND)
 endif()
 
 set(GRAPHICS_SOURCE_FILES
+  game_state.cc
+  game_state.h
   graphics_export.h
   ogre_app.cc
   ogre_app.h
