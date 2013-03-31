@@ -102,7 +102,6 @@ void OgreApp::PopState() {
 }
 
 void OgreApp::RunMainLoop() {
-  // TODO(ogre): Replace this with root_->startRendering() and delete #include
   root_->addFrameListener(this);
   keyboard_->setEventCallback(this);
   mouse_->setEventCallback(this);
