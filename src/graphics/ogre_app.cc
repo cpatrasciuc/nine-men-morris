@@ -4,6 +4,7 @@
 
 #include "graphics/ogre_app.h"
 
+#include <stack>
 #include <string>
 
 #include "OGRE/OgreCamera.h"
@@ -23,12 +24,18 @@
 
 #include "base/log.h"
 #include "base/string_util.h"
+#include "graphics/game_state.h"
 
 namespace graphics {
 
 OgreApp::OgreApp(const std::string& name) : name_(name) {}
 
 OgreApp::~OgreApp() {
+  while (!states_.empty()) {
+    states_.top()->Exit();
+    states_.pop();
+  }
+
   Ogre::WindowEventUtilities::removeWindowEventListener(render_window_, this);
   windowClosed(render_window_);
   DCHECK(!input_manager_);
@@ -42,6 +49,8 @@ bool OgreApp::Init() {
   if (!(root_->restoreConfig() || root_->showConfigDialog())) {
     return false;
   }
+
+  states_.push(new GameState(this));
 
   render_window_ = root_->initialise(true, name_);
   scene_manager_ = root_->createSceneManager("DefaultSceneManager");
@@ -116,6 +125,38 @@ bool OgreApp::frameRenderingQueued(const Ogre::FrameEvent& event) {
     return false;
   }
   return true;
+}
+
+bool OgreApp::frameStarted(const Ogre::FrameEvent& event) {
+  return states_.top()->frameStarted(event);
+}
+
+bool OgreApp::frameEnded(const Ogre::FrameEvent& event) {
+  return states_.top()->frameEnded(event);
+}
+
+bool OgreApp::keyPressed(const OIS::KeyEvent& event) {
+  return static_cast<OIS::KeyListener*>(states_.top())->keyPressed(event);
+}
+
+bool OgreApp::keyReleased(const OIS::KeyEvent& event) {
+  return static_cast<OIS::KeyListener*>(states_.top())->keyReleased(event);
+}
+
+bool OgreApp::mouseMoved(const OIS::MouseEvent& event) {
+  return static_cast<OIS::MouseListener*>(states_.top())->mouseMoved(event);
+}
+
+bool OgreApp::mousePressed(const OIS::MouseEvent& event,
+                           OIS::MouseButtonID id) {
+  OIS::MouseListener* listener(static_cast<OIS::MouseListener*>(states_.top()));
+  return listener->mousePressed(event, id);
+}
+
+bool OgreApp::mouseReleased(const OIS::MouseEvent& event,
+                            OIS::MouseButtonID id) {
+  OIS::MouseListener* listener(static_cast<OIS::MouseListener*>(states_.top()));
+  return listener->mouseReleased(event, id);
 }
 
 }  // namespace graphics

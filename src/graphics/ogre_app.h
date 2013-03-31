@@ -5,10 +5,15 @@
 #ifndef GRAPHICS_OGRE_APP_H_
 #define GRAPHICS_OGRE_APP_H_
 
+#include <stack>
 #include <string>
 
 #include "OGRE/OgreFrameListener.h"
 #include "OGRE/OgreWindowEventUtilities.h"
+
+#include "OIS/OISEvents.h"
+#include "OIS/OISKeyboard.h"
+#include "OIS/OISMouse.h"
 
 #include "base/basic_macros.h"
 #include "base/ptr/scoped_ptr.h"
@@ -24,14 +29,17 @@ class SceneManager;
 
 namespace OIS {
 class InputManager;
-class Keyboard;
-class Mouse;
 }
 
 namespace graphics {
 
+class GameState;
+
 class GRAPHICS_EXPORT OgreApp
-    : public Ogre::WindowEventListener, public Ogre::FrameListener {
+    : public Ogre::FrameListener,
+      public Ogre::WindowEventListener,
+      public OIS::KeyListener,
+      public OIS::MouseListener {
  public:
   explicit OgreApp(const std::string& name);
   ~OgreApp();
@@ -47,12 +55,25 @@ class GRAPHICS_EXPORT OgreApp
   void RunMainLoop();
 
  private:
+  // FrameListener overrides
+  virtual bool frameStarted(const Ogre::FrameEvent& event);
+  virtual bool frameRenderingQueued(const Ogre::FrameEvent& event);
+  virtual bool frameEnded(const Ogre::FrameEvent& event);
+
   // WindowEventListener overrides
   virtual void windowResized(Ogre::RenderWindow* render_window);
   virtual void windowClosed(Ogre::RenderWindow* render_window);
 
-  // FrameListener overrides
-  virtual bool frameRenderingQueued(const Ogre::FrameEvent& event);
+  // KeyListener interface
+  virtual bool keyPressed(const OIS::KeyEvent& event);
+  virtual bool keyReleased(const OIS::KeyEvent& event);
+
+  // MouseListener interface
+  virtual bool mouseMoved(const OIS::MouseEvent& event);
+  virtual bool mousePressed(const OIS::MouseEvent& event,
+                            OIS::MouseButtonID id);
+  virtual bool mouseReleased(const OIS::MouseEvent& event,
+                             OIS::MouseButtonID id);
 
   const std::string name_;
   base::ptr::scoped_ptr<Ogre::Root> root_;
@@ -63,6 +84,8 @@ class GRAPHICS_EXPORT OgreApp
   OIS::InputManager* input_manager_;
   OIS::Keyboard* keyboard_;
   OIS::Mouse* mouse_;
+
+  std::stack<GameState*> states_;
 
   DISALLOW_COPY_AND_ASSIGN(OgreApp);
 };

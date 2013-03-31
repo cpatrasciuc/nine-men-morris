@@ -5,8 +5,12 @@
 #ifndef GRAPHICS_GAME_STATE_H_
 #define GRAPHICS_GAME_STATE_H_
 
-#include <OGRE/OgreFrameListener.h>
-#include <OGRE/OgreWindowEventUtilities.h>
+#include "OGRE/OgreFrameListener.h"
+#include "OGRE/OgreWindowEventUtilities.h"
+
+#include "OIS/OISEvents.h"
+#include "OIS/OISKeyboard.h"
+#include "OIS/OISMouse.h"
 
 #include "base/basic_macros.h"
 #include "graphics/graphics_export.h"
@@ -18,7 +22,10 @@ class OgreApp;
 // http://gamedevgeek.com/tutorials/managing-game-states-in-c/
 // http://www.ogre3d.org/tikiwiki/tiki-index.php?page=Managing+Game+States+with+OGRE
 class GRAPHICS_EXPORT GameState
-    : public Ogre::FrameListener, public Ogre::WindowEventListener {
+    : public Ogre::FrameListener,
+      public Ogre::WindowEventListener,
+      public OIS::KeyListener,
+      public OIS::MouseListener {
  public:
   explicit GameState(OgreApp* app);
   virtual ~GameState();
@@ -34,6 +41,17 @@ class GRAPHICS_EXPORT GameState
   virtual void Render();
 
  private:
+    // KeyListener interface
+  virtual bool keyPressed(const OIS::KeyEvent& event);
+  virtual bool keyReleased(const OIS::KeyEvent& event);
+
+  // MouseListener interface
+  virtual bool mouseMoved(const OIS::MouseEvent& event);
+  virtual bool mousePressed(const OIS::MouseEvent& event,
+                            OIS::MouseButtonID id);
+  virtual bool mouseReleased(const OIS::MouseEvent& event,
+                             OIS::MouseButtonID id);
+
   OgreApp* const app_;
 
   DISALLOW_COPY_AND_ASSIGN(GameState);
