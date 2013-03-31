@@ -20,8 +20,6 @@ void GameState::Pause() {}
 
 void GameState::Resume() {}
 
-void GameState::Render() {}
-
 bool GameState::keyPressed(const OIS::KeyEvent& event) { return false; }
 
 bool GameState::keyReleased(const OIS::KeyEvent& event) { return false; }

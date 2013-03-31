@@ -38,8 +38,6 @@ class GRAPHICS_EXPORT GameState
   virtual void Pause();
   virtual void Resume();
 
-  virtual void Render();
-
  private:
     // KeyListener interface
   virtual bool keyPressed(const OIS::KeyEvent& event);
