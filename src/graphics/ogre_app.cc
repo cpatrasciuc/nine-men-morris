@@ -32,8 +32,7 @@ OgreApp::OgreApp(const std::string& name) : name_(name) {}
 
 OgreApp::~OgreApp() {
   while (!states_.empty()) {
-    states_.top()->Exit();
-    states_.pop();
+    PopState();
   }
 
   Ogre::WindowEventUtilities::removeWindowEventListener(render_window_, this);
@@ -87,6 +86,23 @@ bool OgreApp::Init() {
   Ogre::WindowEventUtilities::addWindowEventListener(render_window_, this);
 
   return true;
+}
+
+void OgreApp::PushState(GameState* state) {
+  if (!states_.empty()) {
+    states_.top()->Pause();
+  }
+  states_.push(state);
+  states_.top()->Initialize();
+}
+
+void OgreApp::PopState() {
+  DCHECK(!states_.empty());
+  states_.top()->Exit();
+  states_.pop();
+  if (!states_.empty()) {
+    states_.top()->Resume();
+  }
 }
 
 void OgreApp::RunMainLoop() {
