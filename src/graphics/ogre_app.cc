@@ -31,13 +31,9 @@ namespace graphics {
 OgreApp::OgreApp(const std::string& name) : name_(name) {}
 
 OgreApp::~OgreApp() {
-  while (!states_.empty()) {
-    PopState();
-  }
-
-  Ogre::WindowEventUtilities::removeWindowEventListener(render_window_, this);
-  windowClosed(render_window_);
   DCHECK(!input_manager_);
+  DCHECK(!keyboard_);
+  DCHECK(!mouse_);
 }
 
 bool OgreApp::Init() {
@@ -48,8 +44,6 @@ bool OgreApp::Init() {
   if (!(root_->restoreConfig() || root_->showConfigDialog())) {
     return false;
   }
-
-  states_.push(new GameState(this));
 
   render_window_ = root_->initialise(true, name_);
   scene_manager_ = root_->createSceneManager("DefaultSceneManager");
@@ -102,13 +96,22 @@ void OgreApp::PopState() {
   states_.pop();
   if (!states_.empty()) {
     states_.top()->Resume();
+  } else {
+    root_->queueEndRendering();
   }
 }
 
 void OgreApp::RunMainLoop() {
   // TODO(ogre): Replace this with root_->startRendering() and delete #include
   root_->addFrameListener(this);
+  keyboard_->setEventCallback(this);
+  mouse_->setEventCallback(this);
   root_->startRendering();
+  while (!states_.empty()) {
+    PopState();
+  }
+  Ogre::WindowEventUtilities::removeWindowEventListener(render_window_, this);
+  windowClosed(render_window_);
 }
 
 void OgreApp::windowResized(Ogre::RenderWindow* render_window) {
@@ -118,16 +121,27 @@ void OgreApp::windowResized(Ogre::RenderWindow* render_window) {
   const OIS::MouseState& mouse_state = mouse_->getMouseState();
   mouse_state.width = width;
   mouse_state.height = height;
+
+  if (!states_.empty()) {
+    states_.top()->windowResized(render_window);
+  }
 }
 
 void OgreApp::windowClosed(Ogre::RenderWindow* render_window) {
   if (render_window == render_window_) {
     if (input_manager_) {
+      keyboard_->setEventCallback(NULL);
+      mouse_->setEventCallback(NULL);
       input_manager_->destroyInputObject(mouse_);
       input_manager_->destroyInputObject(keyboard_);
       OIS::InputManager::destroyInputSystem(input_manager_);
       input_manager_ = NULL;
+      keyboard_ = NULL;
+      mouse_ = NULL;
     }
+  }
+  if (!states_.empty()) {
+    states_.top()->windowClosed(render_window);
   }
 }
 
@@ -137,10 +151,10 @@ bool OgreApp::frameRenderingQueued(const Ogre::FrameEvent& event) {
   }
   keyboard_->capture();
   mouse_->capture();
-  if (keyboard_->isKeyDown(OIS::KC_ESCAPE)) {
-    return false;
+  if (!states_.empty()) {
+    return states_.top()->frameRenderingQueued(event);
   }
-  return true;
+  return false;
 }
 
 bool OgreApp::frameStarted(const Ogre::FrameEvent& event) {
