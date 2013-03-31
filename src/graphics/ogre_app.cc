@@ -106,7 +106,9 @@ void OgreApp::RunMainLoop() {
   root_->addFrameListener(this);
   keyboard_->setEventCallback(this);
   mouse_->setEventCallback(this);
-  root_->startRendering();
+  if (!states_.empty()) {
+    root_->startRendering();
+  }
   while (!states_.empty()) {
     PopState();
   }
