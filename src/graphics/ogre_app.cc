@@ -75,7 +75,6 @@ bool OgreApp::Init() {
   mouse_ = static_cast<OIS::Mouse*>(
       input_manager_->createInputObject(OIS::OISMouse, true));
 
-  // TODO(OIS): Destroy the OIS system
   windowResized(render_window_);
   Ogre::WindowEventUtilities::addWindowEventListener(render_window_, this);
 
