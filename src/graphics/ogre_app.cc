@@ -86,6 +86,7 @@ void OgreApp::PushState(GameState* state) {
     states_.top()->Pause();
   }
   states_.push(state);
+  // TODO(game_states): Check the return value of game state methods
   states_.top()->Initialize();
 }
 
