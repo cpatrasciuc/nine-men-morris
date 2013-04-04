@@ -6,6 +6,7 @@
 
 #include "graphics/ogre_app.h"
 #include "graphics/game_state.h"
+#include "graphics/playing_state.h"
 
 namespace {
 
@@ -26,7 +27,8 @@ class EmptyGameState : public graphics::GameState {
 int main(int argc, char** argv) {
   graphics::OgreApp app("Temp test for OgreApp");
   app.Init();
-  EmptyGameState game_state(&app);
+  // EmptyGameState game_state(&app);
+  graphics::PlayingState game_state(&app);
   app.PushState(&game_state);
   app.RunMainLoop();
   return 0;

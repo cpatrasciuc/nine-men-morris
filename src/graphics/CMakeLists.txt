@@ -16,6 +16,8 @@ set(GRAPHICS_SOURCE_FILES
   graphics_export.h
   ogre_app.cc
   ogre_app.h
+  playing_state.cc
+  playing_state.h
 )
 
 set(GRAPHICS_UNITTESTS_SOURCE_FILES
