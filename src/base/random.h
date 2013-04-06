@@ -25,6 +25,7 @@ class BASE_EXPORT MersenneTwister32 {
   uint32_t Next();
 
  private:
+  // Update the internal state after each kStateSize-th call to Next().
   void GenerateNumbers();
 
   // Constants specific to the Mersenne Twister algorithm.
