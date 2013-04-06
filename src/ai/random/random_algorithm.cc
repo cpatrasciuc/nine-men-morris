@@ -112,13 +112,12 @@ void GetValidRemoveActions(const game::Game& game_model,
 }  // anonymous namespace
 
 RandomAlgorithm::RandomAlgorithm()
-    : AIAlgorithm(),
-      random_number_generator_(new base::Function<int(void)>(&std::rand)) {
+    : random_number_generator_(new base::Function<int(void)>(&std::rand)) {
   std::srand(std::time(NULL));
 }
 
 RandomAlgorithm::RandomAlgorithm(std::auto_ptr<RandomNumberGenerator> random)
-    : AIAlgorithm(), random_number_generator_(random.release()) {
+    : random_number_generator_(random.release()) {
 }
 
 game::PlayerAction RandomAlgorithm::GetNextAction(const game::Game& model) {
