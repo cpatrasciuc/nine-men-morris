@@ -19,6 +19,7 @@ set(BASE_SOURCE_FILES
   location.h
   log.cc
   log.h
+  method.h
   ptr/array_storage_policy.h
   ptr/default_ownership_policy.h
   ptr/default_storage_policy.h
