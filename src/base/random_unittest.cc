@@ -52,5 +52,14 @@ TEST(Random, MersenneTwister32) {
   }
 }
 
+TEST(Random, TwoGeneratorsWithSameSeed) {
+  const uint32_t seed = 987654321;
+  MersenneTwister32 first(seed);
+  MersenneTwister32 second(seed);
+  for (int i = 0; i < 1000; ++i) {
+    EXPECT_EQ(first.Next(), second.Next()) << i;
+  }
+}
+
 }  // anonymous namespace
 }  // namespace base
