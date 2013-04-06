@@ -36,6 +36,8 @@ add_subdirectory(base)
 
 add_subdirectory(game)
 
+add_subdirectory(ai)
+
 add_subdirectory(console_game)
 
 # Hack to make all gtest symbols visible; by default we compile with -fvisibility=hidden
