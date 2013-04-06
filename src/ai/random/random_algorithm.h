@@ -26,6 +26,12 @@ class AI_EXPORT RandomAlgorithm : public AIAlgorithm {
  public:
   typedef base::Callable<int(void)> RandomNumberGenerator;
 
+  // The no-argument constructor uses std::rand() to generate random numbers. It
+  // also calls std::srand(std::time(NULL)).
+  RandomAlgorithm();
+
+  // This constructor allows the users of this class to provide their own random
+  // number generator.
   explicit RandomAlgorithm(std::auto_ptr<RandomNumberGenerator> random);
 
  private:

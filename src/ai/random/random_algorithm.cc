@@ -4,6 +4,8 @@
 
 #include "ai/random/random_algorithm.h"
 
+#include <cstdlib>
+#include <ctime>
 #include <memory>
 #include <vector>
 
@@ -13,6 +15,7 @@
 #include "game/game.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
+#include "base/function.h"
 
 namespace ai {
 namespace random {
@@ -107,6 +110,12 @@ void GetValidRemoveActions(const game::Game& game_model,
 }
 
 }  // anonymous namespace
+
+RandomAlgorithm::RandomAlgorithm()
+    : AIAlgorithm(),
+      random_number_generator_(new base::Function<int(void)>(&std::rand)) {
+  std::srand(std::time(NULL));
+}
 
 RandomAlgorithm::RandomAlgorithm(std::auto_ptr<RandomNumberGenerator> random)
     : AIAlgorithm(), random_number_generator_(random.release()) {
