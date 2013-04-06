@@ -27,7 +27,7 @@ class BASE_EXPORT MersenneTwister32 {
  private:
   void GenerateNumbers();
 
-  // Constants specific to the Mersenne Twister algorithm
+  // Constants specific to the Mersenne Twister algorithm.
   static const size_t kStateSize;
   static const size_t kShiftSize;
   static const uint32_t kBitmask;
