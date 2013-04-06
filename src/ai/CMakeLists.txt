@@ -2,9 +2,12 @@ set(AI_SOURCE_FILES
   ai_algorithm.cc
   ai_algorithm.h
   ai_export.h
+  random/random_algorithm.cc
+  random/random_algorithm.h
 )
 
 set(AI_UNITTESTS_SOURCE_FILES
+  random/random_algorithm_unittest.cc
 )
 
 include_directories(
