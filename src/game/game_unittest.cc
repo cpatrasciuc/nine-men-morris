@@ -104,6 +104,44 @@ TEST(GameTest, RemovePieceFromOpponentMill) {
   EXPECT_TRUE(game->CanExecutePlayerAction(remove_from_mill));
 }
 
+TEST(GameTest, CanJump) {
+  std::auto_ptr<Game> game = LoadSavedGameForTests("full_6");
+  ASSERT_TRUE(game.get());
+  std::vector<PlayerAction> actions;
+  game->DumpActionList(&actions);
+  for (size_t i = actions.size(); i > 0; --i) {
+    game->UndoLastAction();
+    if (game->next_action_type() != PlayerAction::MOVE_PIECE) {
+      EXPECT_FALSE(game->CanJump()) << i;
+    } else if ((i >= 27) && (game->current_player() == BLACK_COLOR)) {
+      EXPECT_TRUE(game->CanJump()) << i;
+    } else if ((i >= 61) && (game->current_player() == WHITE_COLOR)) {
+      EXPECT_TRUE(game->CanJump()) << i;
+    } else {
+      EXPECT_FALSE(game->CanJump()) << i;
+    }
+  }
+
+  // Now the saved game is replayed but jumps are completely disabled using the
+  // game options. The first invalid move is expected to be a jump.
+  GameOptions options(game->options());
+  options.set_jumps_allowed(false);
+  Game no_jump_game(options);
+  no_jump_game.Initialize();
+  for (size_t i = 0; i < actions.size(); ++i) {
+    EXPECT_FALSE(no_jump_game.CanJump());
+    if (no_jump_game.CanExecutePlayerAction(actions[i])) {
+      no_jump_game.ExecutePlayerAction(actions[i]);
+    } else {
+      // TODO(player_action): Add a IsJump() method to the PlayerAction class.
+      EXPECT_EQ(PlayerAction::MOVE_PIECE, actions[i].type());
+      EXPECT_FALSE(no_jump_game.board().IsAdjacent(actions[i].source(),
+                                                   actions[i].destination()));
+      break;
+    }
+  }
+}
+
 TEST(GameDeathTest, DEBUG_ONLY_TEST(DoubleInitialization)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   const GameOptions options;
