@@ -105,4 +105,14 @@ void PlayerAction::Undo(Board* board) const {
   }
 }
 
+bool PlayerAction::IsJumpOn(const Board& board) const {
+  if (action_type_ != MOVE_PIECE) {
+    return false;
+  }
+  if (!board.IsValidLocation(source_) || !board.IsValidLocation(destination_)) {
+    return false;
+  }
+  return !board.IsAdjacent(source_, destination_);
+}
+
 }  // namespace game
