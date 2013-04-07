@@ -37,14 +37,15 @@ RandomAlgorithm* GetRandomTestPlayer(MersenneTwister32* generator) {
   return new RandomAlgorithm(binding);
 }
 
-TEST(RandomAlgorithm, ThreeMenMorrisFullGame) {
-  const int max_moves = 100;
+void RunTestGame(game::GameOptions::GameType game_type, bool allow_jumps) {
+  const int max_moves = 1000;
   MersenneTwister32 white_random(12345);
   MersenneTwister32 black_random(54321);
   scoped_ptr<AIAlgorithm> white(GetRandomTestPlayer(&white_random));
   scoped_ptr<AIAlgorithm> black(GetRandomTestPlayer(&black_random));
   game::GameOptions game_options;
-  game_options.set_game_type(game::GameOptions::THREE_MEN_MORRIS);
+  game_options.set_game_type(game_type);
+  game_options.set_jumps_allowed(allow_jumps);
   game::Game test_game(game_options);
   test_game.Initialize();
   for (int i = 0; i < max_moves; ++i) {
@@ -58,6 +59,23 @@ TEST(RandomAlgorithm, ThreeMenMorrisFullGame) {
   }
   EXPECT_TRUE(test_game.is_game_over());
 }
+
+class RandomAlgorithmFullGameTest
+    : public ::testing::TestWithParam<game::GameOptions::GameType> {
+};
+
+TEST_P(RandomAlgorithmFullGameTest, NoJumpsAllowed) {
+  RunTestGame(GetParam(), false);
+}
+
+const game::GameOptions::GameType test_game_types[] = {
+    game::GameOptions::THREE_MEN_MORRIS,
+    game::GameOptions::SIX_MEN_MORRIS,
+    game::GameOptions::NINE_MEN_MORRIS
+};
+INSTANTIATE_TEST_CASE_P(RandomAlgorithmTest,
+                        RandomAlgorithmFullGameTest,
+                        ::testing::ValuesIn(test_game_types));
 
 }  // anonymous namespace
 }  // namespace random
