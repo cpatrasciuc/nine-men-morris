@@ -2,11 +2,13 @@ set(AI_SOURCE_FILES
   ai_algorithm.cc
   ai_algorithm.h
   ai_export.h
+  alphabeta/alphabeta.h
   random/random_algorithm.cc
   random/random_algorithm.h
 )
 
 set(AI_UNITTESTS_SOURCE_FILES
+  alphabeta/alphabeta_unittest.cc
   random/random_algorithm_unittest.cc
 )
 
