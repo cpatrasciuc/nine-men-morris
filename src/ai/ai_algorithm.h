@@ -7,8 +7,11 @@
 
 #include "ai/ai_export.h"
 #include "base/basic_macros.h"
-#include "game/game.h"
 #include "game/player_action.h"
+
+namespace game {
+class Game;
+}
 
 namespace ai {
 

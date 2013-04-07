@@ -11,8 +11,11 @@
 #include "ai/ai_export.h"
 #include "base/callable.h"
 #include "base/ptr/scoped_ptr.h"
-#include "game/game.h"
 #include "game/player_action.h"
+
+namespace game {
+class Game;
+}
 
 namespace ai {
 namespace random {
