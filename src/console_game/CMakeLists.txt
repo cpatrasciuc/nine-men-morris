@@ -1,4 +1,6 @@
 set(CONSOLE_GAME_SOURCE_FILES
+  ai_player.cc
+  ai_player.h
   board_renderer.cc
   board_renderer.h
   command_handler.cc
