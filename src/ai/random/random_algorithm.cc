@@ -26,29 +26,34 @@ void GetValidMoveActions(const game::Game& game_model,
                          std::vector<game::PlayerAction>* actions) {
   DCHECK_EQ(game_model.next_action_type(), game::PlayerAction::MOVE_PIECE);
   const game::Board& board = game_model.board();
+  std::vector<game::BoardLocation> piece_locations;
+  std::vector<game::BoardLocation> empty_locations;
   for (int line = 0; line < board.size(); ++line) {
     for (int col = 0; col < board.size(); ++col) {
-      const game::BoardLocation source(line, col);
-      if (!board.IsValidLocation(source)) {
+      const game::BoardLocation loc(line, col);
+      if (!board.IsValidLocation(loc)) {
         continue;
       }
-      if (board.GetPieceAt(source) != game_model.current_player()) {
-        continue;
-      }
-      std::vector<game::BoardLocation> neighbours;
-      board.GetAdjacentLocations(source, &neighbours);
-      for (size_t i = 0; i < neighbours.size(); ++i) {
-        if (board.GetPieceAt(neighbours[i]) == game::NO_COLOR) {
-          game::PlayerAction action(game_model.current_player(),
-                                    game::PlayerAction::MOVE_PIECE);
-          action.set_source(source);
-          action.set_destination(neighbours[i]);
-          actions->push_back(action);
-        }
+      const game::PieceColor loc_color = board.GetPieceAt(loc);
+      if (loc_color == game::NO_COLOR) {
+        empty_locations.push_back(loc);
+      } else if (loc_color == game_model.current_player()) {
+        piece_locations.push_back(loc);
       }
     }
   }
-  // TODO(game): Add a game::Game::CanJump() method and use it here.
+  for (size_t i = 0; i < piece_locations.size(); ++i) {
+    for (size_t j = 0; j < empty_locations.size(); ++j) {
+      game::PlayerAction action(game_model.current_player(),
+                                game::PlayerAction::MOVE_PIECE);
+      action.set_source(piece_locations[i]);
+      action.set_destination(empty_locations[j]);
+      if ((!game_model.CanJump()) && action.IsJumpOn(board)) {
+        continue;
+      }
+      actions->push_back(action);
+    }
+  }
 }
 
 void GetValidPlaceActions(const game::Game& game_model,

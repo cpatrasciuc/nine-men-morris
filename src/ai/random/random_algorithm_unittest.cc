@@ -68,6 +68,10 @@ TEST_P(RandomAlgorithmFullGameTest, NoJumpsAllowed) {
   RunTestGame(GetParam(), false);
 }
 
+TEST_P(RandomAlgorithmFullGameTest, JumpsAllowed) {
+  RunTestGame(GetParam(), true);
+}
+
 const game::GameOptions::GameType test_game_types[] = {
     game::GameOptions::THREE_MEN_MORRIS,
     game::GameOptions::SIX_MEN_MORRIS,
