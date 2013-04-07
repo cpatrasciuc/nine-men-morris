@@ -10,6 +10,7 @@
 #include "ai/random/random_algorithm.h"
 #include "base/bind.h"
 #include "base/function.h"
+#include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 #include "base/random.h"
 #include "game/game.h"
@@ -38,7 +39,7 @@ RandomAlgorithm* GetRandomTestPlayer(MersenneTwister32* generator) {
 }
 
 void RunTestGame(game::GameOptions::GameType game_type, bool allow_jumps) {
-  const int max_moves = 1000;
+  const int max_moves = 250;
   MersenneTwister32 white_random(12345);
   MersenneTwister32 black_random(54321);
   scoped_ptr<AIAlgorithm> white(GetRandomTestPlayer(&white_random));
@@ -54,6 +55,7 @@ void RunTestGame(game::GameOptions::GameType game_type, bool allow_jumps) {
     game::PlayerAction action(next_player->GetNextAction(test_game));
     test_game.ExecutePlayerAction(action);
     if (test_game.is_game_over()) {
+      LOG(INFO) << "Finished after " << i << " moves.";
       break;
     }
   }
