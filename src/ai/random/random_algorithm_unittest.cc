@@ -10,7 +10,6 @@
 #include "ai/random/random_algorithm.h"
 #include "base/bind.h"
 #include "base/function.h"
-#include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 #include "base/random.h"
 #include "game/game.h"
