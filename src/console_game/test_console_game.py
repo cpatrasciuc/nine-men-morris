@@ -80,4 +80,12 @@ class ConsoleGameFunctionalTests(unittest.TestCase):
     commands = []
     self.generateInputFile(commands)
     self.runGame(["--help"])
+
+  def testFullNineMenMorrisGameWithAIPlayers(self):
+    # TODO(python tests): Refactor the need to provide empty command file
+    commands = []
+    self.generateInputFile(commands)
+    self.runGame(["--game-type=9",
+                  "--white-player=random",
+                  "--black-player=random"])
     
