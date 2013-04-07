@@ -22,7 +22,7 @@ const char kGameTypeSwitch[] = "--game-type";
 const char kHelpSwitch[] = "--help";
 
 void Usage() {
-  std::cout << "Posible command line options:" << std::endl;
+  std::cout << "Possible command line options:" << std::endl;
   std::cout << "\t" << kGameTypeSwitch << "=3|6|9" << std::endl;
   std::cout << "\t\t" << "Specifies the game type: three/six/nine men morris;"
             << std::endl;
