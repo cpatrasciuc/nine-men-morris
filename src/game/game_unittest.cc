@@ -133,10 +133,7 @@ TEST(GameTest, CanJump) {
     if (no_jump_game.CanExecutePlayerAction(actions[i])) {
       no_jump_game.ExecutePlayerAction(actions[i]);
     } else {
-      // TODO(player_action): Add a IsJump() method to the PlayerAction class.
-      EXPECT_EQ(PlayerAction::MOVE_PIECE, actions[i].type());
-      EXPECT_FALSE(no_jump_game.board().IsAdjacent(actions[i].source(),
-                                                   actions[i].destination()));
+      EXPECT_TRUE(actions[i].IsJumpOn(no_jump_game.board()));
       break;
     }
   }
