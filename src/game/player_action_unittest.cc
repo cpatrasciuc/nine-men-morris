@@ -7,6 +7,7 @@
 
 #include "base/basic_macros.h"
 #include "game/board.h"
+#include "game/game_options.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
 #include "gtest/gtest.h"
@@ -209,6 +210,36 @@ TEST(PlayerAction, RemovePieceFromMill) {
   EXPECT_FALSE(remove_from_mill.CanExecuteOn(board));
   board.RemovePiece(free_piece);
   EXPECT_TRUE(remove_from_mill.CanExecuteOn(board));
+}
+
+TEST(PlayerAction, IsJump) {
+  Board board9(GameOptions::NINE_MEN_MORRIS);
+  Board board3(GameOptions::THREE_MEN_MORRIS);
+
+  PlayerAction move_action(WHITE_COLOR, PlayerAction::MOVE_PIECE);
+  move_action.set_source(BoardLocation(0, 0));
+  move_action.set_destination(BoardLocation(0, 1));
+  EXPECT_FALSE(move_action.IsJumpOn(board3));
+  EXPECT_FALSE(move_action.IsJumpOn(board9));
+  move_action.set_destination(BoardLocation(0, 2));
+  EXPECT_TRUE(move_action.IsJumpOn(board3));
+  EXPECT_FALSE(move_action.IsJumpOn(board9));
+  move_action.set_destination(BoardLocation(0, 3));
+  EXPECT_FALSE(move_action.IsJumpOn(board3));
+  EXPECT_FALSE(move_action.IsJumpOn(board9));
+  move_action.set_destination(BoardLocation(0, 6));
+  EXPECT_FALSE(move_action.IsJumpOn(board3));
+  EXPECT_TRUE(move_action.IsJumpOn(board9));
+
+  PlayerAction remove_action(WHITE_COLOR, PlayerAction::REMOVE_PIECE);
+  remove_action.set_source(BoardLocation(0, 0));
+  EXPECT_FALSE(remove_action.IsJumpOn(board3));
+  EXPECT_FALSE(remove_action.IsJumpOn(board9));
+
+  PlayerAction place_action(WHITE_COLOR, PlayerAction::PLACE_PIECE);
+  place_action.set_destination(BoardLocation(0, 0));
+  EXPECT_FALSE(place_action.IsJumpOn(board3));
+  EXPECT_FALSE(place_action.IsJumpOn(board9));
 }
 
 TEST(PlayerActionDeathTest, DEBUG_ONLY_TEST(ExecuteOrUndoInvalidAction)) {
