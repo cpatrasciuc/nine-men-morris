@@ -22,24 +22,27 @@ namespace ai {
 namespace random {
 namespace {
 
-int GetNextRandomAsInt(base::MersenneTwister32* generator) {
+using base::MersenneTwister32;
+using base::ptr::scoped_ptr;
+
+int GetNextRandomAsInt(MersenneTwister32* generator) {
   return static_cast<int>(generator->Next());
 }
 
-RandomAlgorithm* GetRandomTestPlayer(base::MersenneTwister32* generator) {
-  base::Function<int(base::MersenneTwister32*)>* wrapper =
-      new base::Function<int(base::MersenneTwister32*)>(&GetNextRandomAsInt);
-  std::auto_ptr<RandomAlgorithm::RandomNumberGenerator> bind_ptr(
-      base::Bind(wrapper, generator));
-  return new RandomAlgorithm(bind_ptr);
+RandomAlgorithm* GetRandomTestPlayer(MersenneTwister32* generator) {
+  typedef base::Function<int(MersenneTwister32*)> RandomWrapper;
+  typedef RandomAlgorithm::RandomNumberGenerator RandomNumberGenerator;
+  RandomWrapper* wrapper = new RandomWrapper(&GetNextRandomAsInt);
+  std::auto_ptr<RandomNumberGenerator> binding(base::Bind(wrapper, generator));
+  return new RandomAlgorithm(binding);
 }
 
 TEST(RandomAlgorithm, ThreeMenMorrisFullGame) {
   const int max_moves = 100;
-  base::MersenneTwister32 white_random(12345);
-  base::MersenneTwister32 black_random(54321);
-  base::ptr::scoped_ptr<AIAlgorithm> white(GetRandomTestPlayer(&white_random));
-  base::ptr::scoped_ptr<AIAlgorithm> black(GetRandomTestPlayer(&black_random));
+  MersenneTwister32 white_random(12345);
+  MersenneTwister32 black_random(54321);
+  scoped_ptr<AIAlgorithm> white(GetRandomTestPlayer(&white_random));
+  scoped_ptr<AIAlgorithm> black(GetRandomTestPlayer(&black_random));
   game::GameOptions game_options;
   game_options.set_game_type(game::GameOptions::THREE_MEN_MORRIS);
   game::Game test_game(game_options);
