@@ -50,6 +50,12 @@ class GAME_EXPORT Game {
   // Execute the given |action| and update the game state based on its result.
   void ExecutePlayerAction(const PlayerAction& action);
 
+  // Returns |true| if the current player is allowed to perform a jump. This
+  // happens when the current player has less then four pieces left on the
+  // board, no pieces are to be placed, |game_options.jumps_allowed() is set
+  // to |true| and the next type of action is |PlayerAction::MOVE_PIECE|.
+  bool CanJump() const;
+
   // Undo the last executed action and update the game state accordingly.
   void UndoLastAction();
 

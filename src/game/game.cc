@@ -118,6 +118,20 @@ void Game::ExecutePlayerAction(const PlayerAction& action) {
   UpdateGameState();
 }
 
+bool Game::CanJump() const {
+  DCHECK(current_player_ != game::NO_COLOR);
+  if (!game_options_.jumps_allowed()) {
+    return false;
+  }
+  if (next_action_type_ != PlayerAction::MOVE_PIECE) {
+    return false;
+  }
+  if (board_.GetPieceCountByColor(current_player_) > 3) {
+    return false;
+  }
+  return true;
+}
+
 void Game::UndoLastAction() {
   if (moves_.empty()) {
     return;
