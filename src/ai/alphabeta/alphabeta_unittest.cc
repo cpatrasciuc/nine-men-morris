@@ -3,8 +3,10 @@
 // found in the LICENSE file.
 
 #include <memory>
+#include <set>
 
 #include "ai/alphabeta/alphabeta.h"
+#include "base/basic_macros.h"
 #include "gtest/gtest.h"
 
 namespace ai {
@@ -71,8 +73,13 @@ class TestDelegate : public AlphaBeta<int, double>::Delegate {
     scores_[32] = 6;
   }
 
+  const std::set<int>& visited_states() const {
+    return visited_states_;
+  }
+
  private:
   virtual bool IsTerminal(const int& state) {
+    visited_states_.insert(state);
     return scores_.count(state) > 0;
   };
 
@@ -83,7 +90,7 @@ class TestDelegate : public AlphaBeta<int, double>::Delegate {
   }
 
   virtual void GetSuccessors(const int& state, std::vector<int>* successors) {
-    // TODO(alphabeta): Mark the visited states and verifies at the end
+    visited_states_.insert(state);
     ASSERT_GT(children_.count(state), 0U);
     const std::vector<int>& children = children_[state];
     successors->insert(successors->end(), children.begin(), children.end());
@@ -91,12 +98,18 @@ class TestDelegate : public AlphaBeta<int, double>::Delegate {
 
   std::map<int, std::vector<int> > children_;
   std::map<int, double> scores_;
+  std::set<int> visited_states_;
 };
 
-TEST(AlphaBeta, AbstractGameTree) {
+TEST(AlphaBeta, AbstractGame) {
+  const int v[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 19,
+                    20, 21, 22, 24, 25, 26, 28, 29 };
+  TestDelegate* delegate = new TestDelegate();
   AlphaBeta<int, double> alpha_beta(
-      std::auto_ptr<AlphaBeta<int, double>::Delegate>(new TestDelegate()));
+      (std::auto_ptr<AlphaBeta<int, double>::Delegate>(delegate)));
   EXPECT_EQ(2, alpha_beta.GetBestSuccessor(0, 1000));
+  const std::set<int> expected_visited_states(v, v + arraysize(v));
+  EXPECT_EQ(expected_visited_states, delegate->visited_states());
 }
 
 }  // anonymous namespace
