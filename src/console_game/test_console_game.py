@@ -13,7 +13,7 @@ class ConsoleGameFunctionalTests(unittest.TestCase):
   
   def getExeName(self):
     folder = os.path.abspath(os.path.dirname(__file__))
-    return os.path.join(folder, "console_game.exe")
+    return os.path.join(folder, "console_game")
   
   def setUp(self):
     self.input_file = None
