@@ -22,8 +22,8 @@ AIPlayer::AIPlayer(const std::string& name,
 std::string AIPlayer::GetNextAction(game::Game* game_model) {
   const game::PlayerAction action(algorithm_->GetNextAction(*game_model));
   game_model->ExecutePlayerAction(action);
-  std::ostringstream msg(name());
-  msg << " ";
+  std::ostringstream msg;
+  msg << name() << " ";
   switch (action.type()) {
     case game::PlayerAction::MOVE_PIECE:
       msg << "moved from " << action.source() << " to " << action.destination();
