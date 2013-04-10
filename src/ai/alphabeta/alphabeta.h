@@ -22,6 +22,11 @@ namespace alphabeta {
 // operations like copying or testing for equality should not take too much
 // time. The |Score| class is used to store the result of evaluating the
 // states corresponding to the leafs of the partially constructed game tree.
+// Requirements for template classes:
+//   - The State class must provide a default constructor, copy constructor,
+//     assignment operator and == operator.
+//   - The Score class must be copyable, assignable and must provide the < and
+//     == operators.
 template <class State, class Score = int>
 class AlphaBeta {
  public:
@@ -85,13 +90,13 @@ class AlphaBeta {
     if (max_player) {
       for (size_t i = 0; i < successors.size(); ++i) {
         Score s = Search(successors[i], depth - 1, alpha, beta, !max_player);
-        if (s > alpha) {
+        if (alpha < s) {
           alpha = s;
           if (store_best_successor) {
             best_successor_ = successors[i];
           }
         }
-        if (beta <= alpha) {
+        if (beta < alpha || beta == alpha) {
           break;
         }
       }
@@ -105,7 +110,7 @@ class AlphaBeta {
           best_successor_ = successors[i];
         }
       }
-      if (beta <= alpha) {
+      if (beta < alpha || beta == alpha) {
         break;
       }
     }
