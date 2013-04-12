@@ -11,6 +11,7 @@ set(AI_SOURCE_FILES
 
 set(AI_UNITTESTS_SOURCE_FILES
   alphabeta/alphabeta_unittest.cc
+  game_state_unittest.cc
   random/random_algorithm_unittest.cc
 )
 
