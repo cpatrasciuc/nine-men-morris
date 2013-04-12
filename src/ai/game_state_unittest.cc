@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include "ai/game_state.h"
+#include "base/basic_macros.h"
 #include "game/piece_color.h"
 #include "gtest/gtest.h"
 
@@ -19,7 +20,7 @@ TEST(GameState, PiecesInHand) {
   EXPECT_EQ(9, state.pieces_in_hand(game::BLACK_COLOR));
 }
 
-TEST(GameStateDeathTest, PiecesInHand) {
+TEST(GameStateDeathTest, DEBUG_ONLY_TEST(PiecesInHand)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   GameState state;
   ASSERT_DEATH(state.pieces_in_hand(game::NO_COLOR), "");
