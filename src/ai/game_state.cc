@@ -11,6 +11,12 @@
 
 namespace ai {
 
+namespace {
+
+const size_t kPlayerColorPos = 0;
+
+}  // anonymous namespace
+
 GameState::GameState() : s_() {}
 
 GameState::GameState(const GameState& other) : s_(other.s_) {}
@@ -18,10 +24,11 @@ GameState::GameState(const GameState& other) : s_(other.s_) {}
 GameState::~GameState() {}
 
 game::PieceColor GameState::current_player() const {
-  return game::WHITE_COLOR;
+  return s_.test(kPlayerColorPos) ? game::BLACK_COLOR : game::WHITE_COLOR;
 }
 
 void GameState::set_current_player(const game::PieceColor player_color) {
+  s_.set(kPlayerColorPos, player_color == game::BLACK_COLOR);
 }
 
 int GameState::pieces_in_hand(const game::PieceColor player_color) const {
