@@ -3,6 +3,8 @@ set(AI_SOURCE_FILES
   ai_algorithm.h
   ai_export.h
   alphabeta/alphabeta.h
+  game_state.cc
+  game_state.h
   random/random_algorithm.cc
   random/random_algorithm.h
 )
