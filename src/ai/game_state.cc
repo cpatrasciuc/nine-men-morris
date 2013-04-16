@@ -21,7 +21,6 @@
 using game::BoardLocation;
 using game::GameOptions;
 
-using std::queue;
 using std::map;
 
 namespace ai {
@@ -49,7 +48,7 @@ const map<BoardLocation, int>& GetLocationIndices(GameOptions::GameType type) {
   map<BoardLocation, int>& indices = kIndicesCache[type];
   if (indices.empty()) {
     game::Board board(type);
-    queue<BoardLocation> bfs_queue;
+    std::queue<BoardLocation> bfs_queue;
     const BoardLocation start(0, 0);
     int index = 0;
     indices.insert(std::make_pair(start, index++));
