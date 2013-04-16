@@ -4,6 +4,9 @@
 
 #include "ai/game_state.h"
 #include "base/basic_macros.h"
+#include "game/board.h"
+#include "game/board_location.h"
+#include "game/game_options.h"
 #include "game/piece_color.h"
 #include "gtest/gtest.h"
 
@@ -18,6 +21,16 @@ TEST(GameState, PiecesInHand) {
   state.set_pieces_in_hand(game::BLACK_COLOR, 9);
   EXPECT_EQ(5, state.pieces_in_hand(game::WHITE_COLOR));
   EXPECT_EQ(9, state.pieces_in_hand(game::BLACK_COLOR));
+}
+
+TEST(GameState, EncodeAndDecode) {
+  game::Board board(game::GameOptions::NINE_MEN_MORRIS);
+  board.AddPiece(game::BoardLocation(0, 0), game::WHITE_COLOR);
+  board.AddPiece(game::BoardLocation(3, 0), game::WHITE_COLOR);
+  board.AddPiece(game::BoardLocation(0, 3), game::BLACK_COLOR);
+  board.AddPiece(game::BoardLocation(6, 6), game::BLACK_COLOR);
+  GameState state;
+  state.Encode(board);
 }
 
 TEST(GameStateDeathTest, DEBUG_ONLY_TEST(PiecesInHand)) {
