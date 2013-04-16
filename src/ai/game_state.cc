@@ -18,15 +18,15 @@
 #include "game/game_options.h"
 #include "game/piece_color.h"
 
-namespace ai {
-
-namespace {
-
 using game::BoardLocation;
 using game::GameOptions;
 
 using std::queue;
 using std::map;
+
+namespace ai {
+
+namespace {
 
 map<GameOptions::GameType, map<BoardLocation, int> > kIndicesCache;
 
