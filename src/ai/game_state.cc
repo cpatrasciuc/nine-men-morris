@@ -122,6 +122,25 @@ void GameState::Encode(const game::Board& board) {
   }
 }
 
-void GameState::Decode(game::Board* board) const {}
+void GameState::Decode(game::Board* board) const {
+  DCHECK(board);
+  const GameOptions::GameType type = GetGameTypeFromBoardSize(board->size());
+  const map<BoardLocation, int>& indices = GetLocationIndices(type);
+  map<BoardLocation, int>::const_iterator it;
+  for (it = indices.begin(); it != indices.end(); ++it) {
+    game::PieceColor color = game::NO_COLOR;
+    const int pos = it->second + 9;
+    if (s_.test(pos)) {
+      color = game::WHITE_COLOR;
+    }
+    if (s_.test(pos + indices.size())) {
+      DCHECK_EQ(color, game::NO_COLOR);
+      color = game::BLACK_COLOR;
+    }
+    if (color != game::NO_COLOR) {
+      board->AddPiece(it->first, color);
+    }
+  }
+}
 
 }  // namespace ai
