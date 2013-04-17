@@ -23,14 +23,22 @@ TEST(GameState, PiecesInHand) {
   EXPECT_EQ(9, state.pieces_in_hand(game::BLACK_COLOR));
 }
 
-TEST(GameState, EncodeAndDecode) {
-  const game::GameOptions::GameType game_type =
-      game::GameOptions::NINE_MEN_MORRIS;
+class GameStateCodecTest
+    : public ::testing::TestWithParam<game::GameOptions::GameType> {
+};
+
+TEST_P(GameStateCodecTest, EncodeAndDecode) {
+  const game::GameOptions::GameType game_type = GetParam();
   game::Board board(game_type);
-  board.AddPiece(game::BoardLocation(0, 0), game::WHITE_COLOR);
-  board.AddPiece(game::BoardLocation(3, 0), game::WHITE_COLOR);
-  board.AddPiece(game::BoardLocation(0, 3), game::BLACK_COLOR);
-  board.AddPiece(game::BoardLocation(6, 6), game::BLACK_COLOR);
+  const int size = board.size();
+  EXPECT_TRUE(board.AddPiece(game::BoardLocation(0, 0),
+                             game::WHITE_COLOR));
+  EXPECT_TRUE(board.AddPiece(game::BoardLocation(size / 2, 0),
+                             game::WHITE_COLOR));
+  EXPECT_TRUE(board.AddPiece(game::BoardLocation(0, size / 2),
+                             game::BLACK_COLOR));
+  EXPECT_TRUE(board.AddPiece(game::BoardLocation(size - 1, size - 1),
+                             game::BLACK_COLOR));
   GameState state;
   state.Encode(board);
   game::Board decoded_board(game_type);
@@ -44,6 +52,12 @@ TEST(GameState, EncodeAndDecode) {
     }
   }
 }
+
+INSTANTIATE_TEST_CASE_P(GameStateCodecTestInstance,
+                        GameStateCodecTest,
+                        ::testing::Values(game::GameOptions::THREE_MEN_MORRIS,
+                                          game::GameOptions::SIX_MEN_MORRIS,
+                                          game::GameOptions::NINE_MEN_MORRIS));
 
 TEST(GameStateDeathTest, DEBUG_ONLY_TEST(PiecesInHand)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
