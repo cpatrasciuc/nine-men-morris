@@ -17,7 +17,7 @@ class GameState;
 
 class AI_EXPORT GameStateGenerator {
  public:
-  explicit GameStateGenerator(game::GameOptions::GameType game_type);
+  explicit GameStateGenerator(const game::GameOptions& game_options);
 
   void GetSuccessors(const GameState& state, std::vector<GameState>* succ);
 
@@ -25,7 +25,7 @@ class AI_EXPORT GameStateGenerator {
   void GetPlaceSuccessors(const GameState& state, std::vector<GameState>* succ);
   void GetMoveSuccessors(const GameState& state, std::vector<GameState>* succ);
 
-  game::GameOptions::GameType game_type_;
+  const game::GameOptions game_options_;
 };
 
 }  // namespace ai

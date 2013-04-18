@@ -15,16 +15,15 @@ namespace {
 
 TEST(GameStateGenerator, Place) {
   // TODO(game_state): Run this over all board sizes
-  const game::GameOptions::GameType game_type =
-      game::GameOptions::NINE_MEN_MORRIS;
-  game::Board board(game_type);
+  const game::GameOptions game_options;
+  game::Board board(game_options.game_type());
   GameState start;
   start.set_pieces_in_hand(game::WHITE_COLOR, 9);
   start.set_pieces_in_hand(game::BLACK_COLOR, 9);
   start.set_current_player(game::WHITE_COLOR);
   start.Encode(board);
   std::vector<GameState> successors;
-  GameStateGenerator generator(game_type);
+  GameStateGenerator generator(game_options);
   generator.GetSuccessors(start, &successors);
   unsigned int valid_locations_count = 0U;
   for (int line = 0; line < board.size(); ++line) {
@@ -41,6 +40,47 @@ TEST(GameStateGenerator, Place) {
   EXPECT_EQ(9, second.pieces_in_hand(game::BLACK_COLOR));
   successors.clear();
   generator.GetSuccessors(second, &successors);
+  EXPECT_EQ(valid_locations_count - 1, successors.size());
+}
+
+TEST(GameStateGenerator, SimpleMove) {
+  game::GameOptions game_options;
+  game_options.set_jumps_allowed(false);
+  game::Board board(game_options.game_type());
+  GameState start;
+  start.set_current_player(game::WHITE_COLOR);
+  game::BoardLocation piece_location(0, 0);
+  board.AddPiece(piece_location, game::WHITE_COLOR);
+  start.Encode(board);
+  GameStateGenerator generator(game_options);
+  std::vector<GameState> successors;
+  generator.GetSuccessors(start, &successors);
+  std::vector<game::BoardLocation> adjacent_locations;
+  board.GetAdjacentLocations(piece_location, &adjacent_locations);
+  EXPECT_EQ(adjacent_locations.size(), successors.size());
+}
+
+TEST(GameStateGenerator, Jumps) {
+  game::GameOptions game_options;
+  game::Board board(game_options.game_type());
+  GameState start;
+  start.set_current_player(game::WHITE_COLOR);
+  game::BoardLocation piece_location(0, 0);
+  board.AddPiece(piece_location, game::WHITE_COLOR);
+  start.Encode(board);
+  GameStateGenerator generator(game_options);
+  std::vector<GameState> successors;
+  generator.GetSuccessors(start, &successors);
+  // TODO(game_state): Refactor the duplicated code across test
+  // TODO(game_state): Write unit tests for moves that close a mill
+  unsigned int valid_locations_count = 0U;
+  for (int line = 0; line < board.size(); ++line) {
+    for (int col = 0; col < board.size(); ++col) {
+      if (board.IsValidLocation(game::BoardLocation(line, col))) {
+        ++valid_locations_count;
+      }
+    }
+  }
   EXPECT_EQ(valid_locations_count - 1, successors.size());
 }
 
