@@ -64,34 +64,40 @@ void GameStateGenerator::GetSuccessors(const GameState& state,
 
 void GameStateGenerator::GetPlaceSuccessors(const GameState& state,
     std::vector<GameState>* successors) {
-  // TODO(game_state): Consider place actions that generate a mill
   game::Board board(game_options_.game_type());
   state.Decode(&board);
   const game::PieceColor player = state.current_player();
   const game::PieceColor opponent = game::GetOpponent(player);
-  for (int line = 0; line < board.size(); ++line) {
-    for (int col = 0; col < board.size(); ++col) {
-      const game::BoardLocation loc(line, col);
-      if (!board.IsValidLocation(loc)) {
-        continue;
-      }
-      if (board.GetPieceAt(loc) != game::NO_COLOR) {
-        continue;
-      }
-      bool result = board.AddPiece(loc, player);
-      if (result) {
-        GameState successor;
+  std::vector<game::BoardLocation> player_loc;
+  std::vector<game::BoardLocation> empty_loc;
+  std::vector<game::BoardLocation> opponent_loc;
+  FilterBoardLocations(board, player, &player_loc, &opponent_loc, &empty_loc);
+  for (size_t i = 0; i < empty_loc.size(); ++i) {
+    bool result = board.AddPiece(empty_loc[i], player);
+    if (result) {
+      if (board.IsPartOfMill(empty_loc[i])) {
+        for (size_t k = 0; k < opponent_loc.size(); ++k) {
+          board.RemovePiece(opponent_loc[k]);
+          GameState successor(state);
+          successor.set_current_player(opponent);
+          successor.set_pieces_in_hand(player,
+                                       state.pieces_in_hand(player) - 1);
+          successor.Encode(board);
+          successors->push_back(successor);
+          board.AddPiece(opponent_loc[k], opponent);
+        }
+      } else {
+        GameState successor(state);
         successor.set_current_player(opponent);
         successor.set_pieces_in_hand(player, state.pieces_in_hand(player) - 1);
-        successor.set_pieces_in_hand(opponent, state.pieces_in_hand(opponent));
         successor.Encode(board);
         successors->push_back(successor);
-      } else {
-        NOTREACHED();
       }
-      result = board.RemovePiece(loc);
-      DCHECK(result);
+    } else {
+      NOTREACHED();
     }
+    result = board.RemovePiece(empty_loc[i]);
+    DCHECK(result);
   }
 }
 

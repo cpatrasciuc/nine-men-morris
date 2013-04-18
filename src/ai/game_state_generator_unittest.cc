@@ -68,6 +68,97 @@ TEST_P(GameStateGeneratorTest, Place) {
   EXPECT_EQ(valid_locations_count - 1, successors.size());
 }
 
+TEST_P(GameStateGeneratorTest, PlaceAndRemoveFreePiece) {
+  GameState start;
+  start.set_pieces_in_hand(game::WHITE_COLOR, 9);
+  start.set_pieces_in_hand(game::BLACK_COLOR, 9);
+  start.set_current_player(game::WHITE_COLOR);
+  const game::BoardLocation white_locations[] = {
+    game::BoardLocation(0, 0),
+    game::BoardLocation(board().size() / 2, 0),
+    game::BoardLocation(board().size() - 1, 0)
+  };
+  const game::BoardLocation black_locations[] = {
+    game::BoardLocation(0, board().size() - 1),
+    game::BoardLocation(board().size() / 2, board().size() - 1),
+    game::BoardLocation(board().size() - 1, board().size() - 1)
+  };
+  for (size_t i = 0; i < arraysize(white_locations); ++i) {
+    EXPECT_TRUE(board().AddPiece(white_locations[i], game::WHITE_COLOR));
+  }
+    for (size_t i = 0; i < arraysize(black_locations); ++i) {
+    EXPECT_TRUE(board().AddPiece(black_locations[i], game::BLACK_COLOR));
+  }
+  const game::BoardLocation free_piece(board().size() - 1, board().size() / 2);
+  EXPECT_TRUE(board().AddPiece(free_piece, game::BLACK_COLOR));
+  EXPECT_TRUE(board().RemovePiece(white_locations[0]));
+  start.Encode(board());
+  std::vector<GameState> successors;
+  generator().GetSuccessors(start, &successors);
+  int expected_state_count = GetTotalBoardLocationCount() -
+                             arraysize(white_locations) -
+                             arraysize(black_locations);
+  EXPECT_EQ(expected_state_count, static_cast<int>(successors.size()));
+  for (size_t i = 0; i < successors.size(); ++i) {
+    game::Board decoded_board(game_options().game_type());
+    successors[i].Decode(&decoded_board);
+    const int decoded_black_pieces =
+        decoded_board.GetPieceCountByColor(game::BLACK_COLOR);
+    if (decoded_board.GetPieceAt(white_locations[0]) == game::WHITE_COLOR) {
+      EXPECT_EQ(decoded_board.IsPartOfMill(game::BoardLocation(0, 0)),
+                decoded_black_pieces == arraysize(black_locations));
+      EXPECT_EQ(game::NO_COLOR, decoded_board.GetPieceAt(free_piece));
+    } else {
+      EXPECT_EQ(static_cast<int>(arraysize(black_locations)) + 1,
+                decoded_black_pieces);
+    }
+  }
+}
+
+TEST_P(GameStateGeneratorTest, PlaceAndRemoveNoFreePiece) {
+  GameState start;
+  start.set_pieces_in_hand(game::WHITE_COLOR, 9);
+  start.set_pieces_in_hand(game::BLACK_COLOR, 9);
+  start.set_current_player(game::WHITE_COLOR);
+  const game::BoardLocation white_locations[] = {
+    game::BoardLocation(0, 0),
+    game::BoardLocation(board().size() / 2, 0),
+    game::BoardLocation(board().size() - 1, 0)
+  };
+  const game::BoardLocation black_locations[] = {
+    game::BoardLocation(0, board().size() - 1),
+    game::BoardLocation(board().size() / 2, board().size() - 1),
+    game::BoardLocation(board().size() - 1, board().size() - 1)
+  };
+  for (size_t i = 0; i < arraysize(white_locations); ++i) {
+    EXPECT_TRUE(board().AddPiece(white_locations[i], game::WHITE_COLOR));
+  }
+    for (size_t i = 0; i < arraysize(black_locations); ++i) {
+    EXPECT_TRUE(board().AddPiece(black_locations[i], game::BLACK_COLOR));
+  }
+  EXPECT_TRUE(board().RemovePiece(white_locations[0]));
+  start.Encode(board());
+  std::vector<GameState> successors;
+  generator().GetSuccessors(start, &successors);
+  int expected_state_count = GetTotalBoardLocationCount() -
+                             arraysize(white_locations) -
+                             arraysize(black_locations) + 3;
+  EXPECT_EQ(expected_state_count, static_cast<int>(successors.size()));
+  for (size_t i = 0; i < successors.size(); ++i) {
+    game::Board decoded_board(game_options().game_type());
+    successors[i].Decode(&decoded_board);
+    const int decoded_black_pieces =
+        decoded_board.GetPieceCountByColor(game::BLACK_COLOR);
+    if (decoded_board.GetPieceAt(white_locations[0]) == game::WHITE_COLOR) {
+      EXPECT_EQ(decoded_board.IsPartOfMill(game::BoardLocation(0, 0)),
+                decoded_black_pieces == arraysize(black_locations) - 1);
+    } else {
+      EXPECT_EQ(static_cast<int>(arraysize(black_locations)),
+                decoded_black_pieces);
+    }
+  }
+}
+
 TEST_P(GameStateGeneratorTest, Moves) {
   GameState start;
   start.set_current_player(game::WHITE_COLOR);
