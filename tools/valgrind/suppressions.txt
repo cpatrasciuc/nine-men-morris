@@ -61,4 +61,52 @@
    fun:_ZN7testing8internal12UnitTestImpl11RunAllTestsEv
    fun:_ZN7testing8internal38HandleSehExceptionsInMethodIfSupportedINS0_12UnitTestImplEbEET0_PT_MS4_FS3_vEPKc
    fun:_ZN7testing8internal35HandleExceptionsInMethodIfSupportedINS0_12UnitTestImplEbEET0_PT_MS4_FS3_vEPKc
-}i
+}
+{
+   Uninitialized variable in libc.
+   Memcheck:Value8
+   fun:_itoa_word
+   fun:vfprintf
+   fun:vsnprintf
+   fun:snprintf
+   fun:_ZN7testing12_GLOBAL__N_126PrintByteSegmentInObjectToEPKhmmPSo
+   fun:_ZN7testing12_GLOBAL__N_124PrintBytesInObjectToImplEPKhmPSo
+   fun:_ZN7testing9internal220PrintBytesInObjectToEPKhmPSo
+   fun:_ZN7testing9internal220TypeWithoutFormatterIN4game11GameOptionsELNS0_8TypeKindE2EE10PrintValueERKS3_PSo
+   fun:_ZN7testing9internal2lsIcSt11char_traitsIcEN4game11GameOptionsEEERSt13basic_ostreamIT_T0_ESA_RKT1_
+   fun:_ZN16testing_internal26DefaultPrintNonContainerToIN4game11GameOptionsEEEvRKT_PSo
+   fun:_ZN7testing8internal14DefaultPrintToIN4game11GameOptionsEEEvcNS0_13bool_constantILb0EEERKT_PSo
+   fun:_ZN7testing8internal7PrintToIN4game11GameOptionsEEEvRKT_PSo
+}
+{
+   Conditional jump based on uninitialized variable in libc (see above).
+   Memcheck:Cond
+   fun:_itoa_word
+   fun:vfprintf
+   fun:vsnprintf
+   fun:snprintf
+   fun:_ZN7testing12_GLOBAL__N_126PrintByteSegmentInObjectToEPKhmmPSo
+   fun:_ZN7testing12_GLOBAL__N_124PrintBytesInObjectToImplEPKhmPSo
+   fun:_ZN7testing9internal220PrintBytesInObjectToEPKhmPSo
+   fun:_ZN7testing9internal220TypeWithoutFormatterIN4game11GameOptionsELNS0_8TypeKindE2EE10PrintValueERKS3_PSo
+   fun:_ZN7testing9internal2lsIcSt11char_traitsIcEN4game11GameOptionsEEERSt13basic_ostreamIT_T0_ESA_RKT1_
+   fun:_ZN16testing_internal26DefaultPrintNonContainerToIN4game11GameOptionsEEEvRKT_PSo
+   fun:_ZN7testing8internal14DefaultPrintToIN4game11GameOptionsEEEvcNS0_13bool_constantILb0EEERKT_PSo
+   fun:_ZN7testing8internal7PrintToIN4game11GameOptionsEEEvRKT_PSo
+}
+{
+   Same issue as above
+   Memcheck:Cond
+   fun:vfprintf
+   fun:vsnprintf
+   fun:snprintf
+   fun:_ZN7testing12_GLOBAL__N_126PrintByteSegmentInObjectToEPKhmmPSo
+   fun:_ZN7testing12_GLOBAL__N_124PrintBytesInObjectToImplEPKhmPSo
+   fun:_ZN7testing9internal220PrintBytesInObjectToEPKhmPSo
+   fun:_ZN7testing9internal220TypeWithoutFormatterIN4game11GameOptionsELNS0_8TypeKindE2EE10PrintValueERKS3_PSo
+   fun:_ZN7testing9internal2lsIcSt11char_traitsIcEN4game11GameOptionsEEERSt13basic_ostreamIT_T0_ESA_RKT1_
+   fun:_ZN16testing_internal26DefaultPrintNonContainerToIN4game11GameOptionsEEEvRKT_PSo
+   fun:_ZN7testing8internal14DefaultPrintToIN4game11GameOptionsEEEvcNS0_13bool_constantILb0EEERKT_PSo
+   fun:_ZN7testing8internal7PrintToIN4game11GameOptionsEEEvRKT_PSo
+   fun:_ZN7testing8internal16UniversalPrinterIN4game11GameOptionsEE5PrintERKS3_PSo
+}
