@@ -86,6 +86,52 @@ TEST_P(GameStateGeneratorTest, Moves) {
   }
 }
 
+TEST_P(GameStateGeneratorTest, MovesWithMill) {
+  GameState state;
+  state.set_current_player(game::WHITE_COLOR);
+  const game::BoardLocation white_locations[] = {
+    game::BoardLocation(0, board().size() / 2),
+    game::BoardLocation(board().size() / 2, 0),
+    game::BoardLocation(board().size() - 1, 0)
+  };
+  std::vector<game::BoardLocation> black_locations;
+  for (size_t i = 0; i < arraysize(white_locations); ++i) {
+    EXPECT_TRUE(board().AddPiece(white_locations[i], game::WHITE_COLOR));
+    board().GetAdjacentLocations(white_locations[i], &black_locations);
+  }
+  // Place black pieces so that white can only move to (0, 0).
+  int black_pieces = 0;
+  for (size_t i = 0; i < black_locations.size(); ++i) {
+    if (black_locations[i] == game::BoardLocation(0, 0)) {
+      continue;
+    }
+    if (board().GetPieceAt(black_locations[i]) == game::NO_COLOR) {
+      EXPECT_TRUE(board().AddPiece(black_locations[i], game::BLACK_COLOR));
+      ++black_pieces;
+    }
+  }
+  state.Encode(board());
+  std::vector<GameState> successors;
+  generator().GetSuccessors(state, &successors);
+  int expected_state_count = black_pieces + 1;
+  if (game_options().jumps_allowed()) {
+    const int empty_locations = GetTotalBoardLocationCount() -
+                                arraysize(white_locations) -
+                                black_pieces;
+    expected_state_count =
+        empty_locations * arraysize(white_locations) + black_pieces - 1;
+  }
+  EXPECT_EQ(expected_state_count, static_cast<int>(successors.size()));
+  for (size_t i = 0; i < successors.size(); ++i) {
+    game::Board decoded_board(game_options().game_type());
+    successors[i].Decode(&decoded_board);
+    const int decoded_black_pieces =
+        decoded_board.GetPieceCountByColor(game::BLACK_COLOR);
+    EXPECT_EQ(decoded_board.IsPartOfMill(game::BoardLocation(0, 0)),
+              decoded_black_pieces == black_pieces - 1);
+  }
+}
+
 game::GameOptions ConstructGameOptions(game::GameOptions::GameType type,
                                        bool allow_jumps) {
   game::GameOptions result;
