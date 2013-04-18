@@ -2,8 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <vector>
+
 #include "ai/game_state.h"
 #include "ai/game_state_generator.h"
+#include "base/basic_macros.h"
 #include "game/board.h"
 #include "game/board_location.h"
 // TODO(game_type): Extract the GameType enum in a separate header.
@@ -71,9 +74,8 @@ TEST_P(GameStateGeneratorTest, Moves) {
   game::BoardLocation piece_location(0, 0);
   board().AddPiece(piece_location, game::WHITE_COLOR);
   start.Encode(board());
-  GameStateGenerator generator(game_options());
   std::vector<GameState> successors;
-  generator.GetSuccessors(start, &successors);
+  generator().GetSuccessors(start, &successors);
   // TODO(game_state): Write unit tests for moves that close a mill
   if (game_options().jumps_allowed()) {
     EXPECT_EQ(GetTotalBoardLocationCount() - 1, successors.size());
