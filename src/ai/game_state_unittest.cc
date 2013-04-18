@@ -30,6 +30,10 @@ TEST(GameState, PiecesInHand) {
   state.set_pieces_in_hand(game::BLACK_COLOR, 9);
   EXPECT_EQ(5, state.pieces_in_hand(game::WHITE_COLOR));
   EXPECT_EQ(9, state.pieces_in_hand(game::BLACK_COLOR));
+  state.set_pieces_in_hand(game::WHITE_COLOR, 0);
+  state.set_pieces_in_hand(game::BLACK_COLOR, 0);
+  EXPECT_EQ(0, state.pieces_in_hand(game::WHITE_COLOR));
+  EXPECT_EQ(0, state.pieces_in_hand(game::BLACK_COLOR));
 }
 
 class GameStateCodecTest

@@ -101,6 +101,13 @@ void GameState::set_pieces_in_hand(const game::PieceColor player_color,
   uint64_t bitmask = static_cast<uint64_t>(count) << 1;
   if (player_color == game::BLACK_COLOR) {
     bitmask <<= 4;
+    for (int i = 5; i <= 8; ++i) {
+      s_.set(i, false);
+    }
+  } else {
+    for (int i = 1; i <= 4; ++i) {
+      s_.set(i, false);
+    }
   }
   s_ |= bitmask;
 }
