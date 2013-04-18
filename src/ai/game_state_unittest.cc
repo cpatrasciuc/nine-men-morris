@@ -13,6 +13,15 @@
 namespace ai {
 namespace {
 
+TEST(GameState, CurrentPlayer) {
+  GameState state;
+  EXPECT_EQ(game::WHITE_COLOR, state.current_player());
+  state.set_current_player(game::BLACK_COLOR);
+  EXPECT_EQ(game::BLACK_COLOR, state.current_player());
+  state.set_current_player(game::WHITE_COLOR);
+  EXPECT_EQ(game::WHITE_COLOR, state.current_player());
+}
+
 TEST(GameState, PiecesInHand) {
   GameState state;
   EXPECT_EQ(0, state.pieces_in_hand(game::WHITE_COLOR));
