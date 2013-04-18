@@ -51,7 +51,8 @@ TEST_P(GameStateCodecTest, EncodeAndDecode) {
   GameState state;
   state.Encode(board);
   game::Board decoded_board(game_type);
-  state.Decode(&decoded_board);
+  GameState copied_state(state);
+  copied_state.Decode(&decoded_board);
   for (int line = 0; line < board.size(); ++line) {
     for (int col = 0; col < board.size(); ++col) {
       const game::BoardLocation loc(line, col);
