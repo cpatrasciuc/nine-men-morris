@@ -19,7 +19,7 @@ namespace ai {
 class AI_EXPORT GameState {
  public:
   GameState();
-  explicit GameState(const GameState& other);
+  GameState(const GameState& other);
   ~GameState();
 
   game::PieceColor current_player() const;
