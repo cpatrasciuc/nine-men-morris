@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "ai/ai_export.h"
-
+#include "base/basic_macros.h"
 #include "game/game_options.h"
 
 namespace ai {
@@ -26,6 +26,8 @@ class AI_EXPORT GameStateGenerator {
   void GetMoveSuccessors(const GameState& state, std::vector<GameState>* succ);
 
   const game::GameOptions game_options_;
+
+  DISALLOW_COPY_AND_ASSIGN(GameStateGenerator);
 };
 
 }  // namespace ai
