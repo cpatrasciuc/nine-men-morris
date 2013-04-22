@@ -167,7 +167,6 @@ TEST_P(GameStateGeneratorTest, Moves) {
   start.Encode(board());
   std::vector<GameState> successors;
   generator().GetSuccessors(start, &successors);
-  // TODO(game_state): Write unit tests for moves that close a mill
   if (game_options().jumps_allowed()) {
     EXPECT_EQ(GetTotalBoardLocationCount() - 1, successors.size());
   } else {
