@@ -31,7 +31,8 @@ class AI_EXPORT GameState {
   void Encode(const game::Board& board);
   void Decode(game::Board* board) const;
 
-  // TODO(game_state): Explicitly declare the assignment operator.
+  GameState& operator=(const GameState& other);
+  bool operator==(const GameState& other);
 
  private:
   std::bitset<64> s_;

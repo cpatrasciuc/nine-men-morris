@@ -36,6 +36,23 @@ TEST(GameState, PiecesInHand) {
   EXPECT_EQ(0, state.pieces_in_hand(game::BLACK_COLOR));
 }
 
+TEST(GameState, Operators) {
+  GameState first;
+  first.set_current_player(game::WHITE_COLOR);
+  GameState second;
+  second.set_current_player(game::BLACK_COLOR);
+  EXPECT_FALSE(first == second);
+  first = second;
+  EXPECT_TRUE(first == second);
+  first.set_pieces_in_hand(game::BLACK_COLOR, 10);
+  EXPECT_FALSE(first == second);
+  second.set_pieces_in_hand(game::BLACK_COLOR, 10);
+  EXPECT_TRUE(first == second);
+  EXPECT_TRUE(first == first);
+  first = first;
+  EXPECT_TRUE(first == second);
+}
+
 class GameStateCodecTest
     : public ::testing::TestWithParam<game::GameOptions::GameType> {
 };

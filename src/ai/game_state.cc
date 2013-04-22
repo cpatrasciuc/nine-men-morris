@@ -150,4 +150,15 @@ void GameState::Decode(game::Board* board) const {
   }
 }
 
+GameState& GameState::operator=(const GameState& other) {
+  if (this != &other) {
+    s_ = other.s_;
+  }
+  return *this;
+}
+
+bool GameState::operator==(const GameState& other) {
+  return s_ == other.s_;
+}
+
 }  // namespace ai
