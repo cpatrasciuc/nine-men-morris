@@ -54,7 +54,7 @@ TEST(GameState, Operators) {
   EXPECT_TRUE(first == second);
 }
 
-class GameStateCodecTest
+class GameStateTest
     : public ::testing::TestWithParam<game::GameOptions::GameType> {
  protected:
   void SetUpTestBoard(game::Board* board) {
@@ -70,7 +70,7 @@ class GameStateCodecTest
   }
 };
 
-TEST_P(GameStateCodecTest, EncodeAndDecode) {
+TEST_P(GameStateTest, EncodeAndDecode) {
   const game::GameOptions::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
@@ -89,7 +89,7 @@ TEST_P(GameStateCodecTest, EncodeAndDecode) {
   }
 }
 
-TEST_P(GameStateCodecTest, GetPlayerActionsSimplePlace) {
+TEST_P(GameStateTest, GetPlayerActionsSimplePlace) {
   const game::GameOptions::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
@@ -111,7 +111,7 @@ TEST_P(GameStateCodecTest, GetPlayerActionsSimplePlace) {
   EXPECT_EQ(game::WHITE_COLOR, actions[0].player_color());
 }
 
-TEST_P(GameStateCodecTest, GetPlayerActionsPlaceWithMill) {
+TEST_P(GameStateTest, GetPlayerActionsPlaceWithMill) {
   const game::GameOptions::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
@@ -138,7 +138,7 @@ TEST_P(GameStateCodecTest, GetPlayerActionsPlaceWithMill) {
   EXPECT_EQ(game::WHITE_COLOR, actions[1].player_color());
 }
 
-TEST_P(GameStateCodecTest, GetPlayerActionsSimpleMove) {
+TEST_P(GameStateTest, GetPlayerActionsSimpleMove) {
   const game::GameOptions::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
@@ -160,7 +160,7 @@ TEST_P(GameStateCodecTest, GetPlayerActionsSimpleMove) {
   EXPECT_EQ(game::WHITE_COLOR, actions[0].player_color());
 }
 
-TEST_P(GameStateCodecTest, GetPlayerActionsMoveWithMill) {
+TEST_P(GameStateTest, GetPlayerActionsMoveWithMill) {
   const game::GameOptions::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
@@ -187,8 +187,8 @@ TEST_P(GameStateCodecTest, GetPlayerActionsMoveWithMill) {
   EXPECT_EQ(game::WHITE_COLOR, actions[1].player_color());
 }
 
-INSTANTIATE_TEST_CASE_P(GameStateCodecTestInstance,
-                        GameStateCodecTest,
+INSTANTIATE_TEST_CASE_P(GameStateTestInstance,
+                        GameStateTest,
                         ::testing::Values(game::GameOptions::THREE_MEN_MORRIS,
                                           game::GameOptions::SIX_MEN_MORRIS,
                                           game::GameOptions::NINE_MEN_MORRIS));
