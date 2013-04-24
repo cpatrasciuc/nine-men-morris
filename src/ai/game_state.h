@@ -6,9 +6,12 @@
 #define AI_GAME_STATE_H_
 
 #include <bitset>
+#include <vector>
 
 #include "ai/ai_export.h"
+#include "game/game_options.h"
 #include "game/piece_color.h"
+#include "game/player_action.h"
 
 namespace game {
 class Board;
@@ -33,6 +36,16 @@ class AI_EXPORT GameState {
 
   GameState& operator=(const GameState& other);
   bool operator==(const GameState& other);
+
+  // Utility method that determines the actions that must be played in order to
+  // reach the game state encoded by |to| from the game state encoded by |from|.
+  // The first element of the result is the MOVE or PLACE action that the player
+  // must perform in the state encoded by |from|. If this action closes a mill,
+  // the result will contain a second element representing the REMOVE action
+  // that must be performed in order to reach the state encoded by |to|.
+  // If |to| is not a direct successor of |from| the behavior is undefined.
+  static std::vector<game::PlayerAction> GetPlayerAction(const GameState& from,
+      const GameState& to, game::GameOptions::GameType game_type);
 
  private:
   std::bitset<64> s_;

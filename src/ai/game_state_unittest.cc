@@ -8,6 +8,7 @@
 #include "game/board_location.h"
 #include "game/game_options.h"
 #include "game/piece_color.h"
+#include "game/player_action.h"
 #include "gtest/gtest.h"
 
 namespace ai {
@@ -55,20 +56,24 @@ TEST(GameState, Operators) {
 
 class GameStateCodecTest
     : public ::testing::TestWithParam<game::GameOptions::GameType> {
+ protected:
+  void SetUpTestBoard(game::Board* board) {
+    const int size = board->size();
+    EXPECT_TRUE(board->AddPiece(game::BoardLocation(0, 0),
+                                game::WHITE_COLOR));
+    EXPECT_TRUE(board->AddPiece(game::BoardLocation(size / 2, 0),
+                                game::WHITE_COLOR));
+    EXPECT_TRUE(board->AddPiece(game::BoardLocation(0, size / 2),
+                                game::BLACK_COLOR));
+    EXPECT_TRUE(board->AddPiece(game::BoardLocation(size - 1, size - 1),
+                                game::BLACK_COLOR));
+  }
 };
 
 TEST_P(GameStateCodecTest, EncodeAndDecode) {
   const game::GameOptions::GameType game_type = GetParam();
   game::Board board(game_type);
-  const int size = board.size();
-  EXPECT_TRUE(board.AddPiece(game::BoardLocation(0, 0),
-                             game::WHITE_COLOR));
-  EXPECT_TRUE(board.AddPiece(game::BoardLocation(size / 2, 0),
-                             game::WHITE_COLOR));
-  EXPECT_TRUE(board.AddPiece(game::BoardLocation(0, size / 2),
-                             game::BLACK_COLOR));
-  EXPECT_TRUE(board.AddPiece(game::BoardLocation(size - 1, size - 1),
-                             game::BLACK_COLOR));
+  SetUpTestBoard(&board);
   GameState state;
   state.Encode(board);
   game::Board decoded_board(game_type);
@@ -82,6 +87,104 @@ TEST_P(GameStateCodecTest, EncodeAndDecode) {
       }
     }
   }
+}
+
+TEST_P(GameStateCodecTest, GetPlayerActionsSimplePlace) {
+  const game::GameOptions::GameType game_type = GetParam();
+  game::Board board(game_type);
+  SetUpTestBoard(&board);
+  GameState from;
+  from.set_current_player(game::WHITE_COLOR);
+  from.set_pieces_in_hand(game::WHITE_COLOR, 3);
+  from.Encode(board);
+  const game::BoardLocation destination(0, board.size() - 1);
+  EXPECT_TRUE(board.AddPiece(destination, game::WHITE_COLOR));
+  GameState to;
+  to.set_current_player(game::BLACK_COLOR);
+  to.set_pieces_in_hand(game::WHITE_COLOR, 2);
+  to.Encode(board);
+  const std::vector<game::PlayerAction> actions =
+      GameState::GetPlayerAction(from, to, game_type);
+  EXPECT_EQ(1U, actions.size());
+  EXPECT_EQ(game::PlayerAction::PLACE_PIECE, actions[0].type());
+  EXPECT_EQ(destination, actions[0].destination());
+  EXPECT_EQ(game::WHITE_COLOR, actions[0].player_color());
+}
+
+TEST_P(GameStateCodecTest, GetPlayerActionsPlaceWithMill) {
+  const game::GameOptions::GameType game_type = GetParam();
+  game::Board board(game_type);
+  SetUpTestBoard(&board);
+  GameState from;
+  from.set_current_player(game::WHITE_COLOR);
+  from.set_pieces_in_hand(game::WHITE_COLOR, 3);
+  from.Encode(board);
+  const game::BoardLocation destination(board.size() - 1, 0);
+  const game::BoardLocation remove_loc(board.size() - 1, board.size() - 1);
+  EXPECT_TRUE(board.AddPiece(destination, game::WHITE_COLOR));
+  EXPECT_TRUE(board.RemovePiece(remove_loc));
+  GameState to;
+  to.set_current_player(game::BLACK_COLOR);
+  to.set_pieces_in_hand(game::WHITE_COLOR, 2);
+  to.Encode(board);
+  const std::vector<game::PlayerAction> actions =
+      GameState::GetPlayerAction(from, to, game_type);
+  EXPECT_EQ(2U, actions.size());
+  EXPECT_EQ(game::PlayerAction::PLACE_PIECE, actions[0].type());
+  EXPECT_EQ(destination, actions[0].destination());
+  EXPECT_EQ(game::WHITE_COLOR, actions[0].player_color());
+  EXPECT_EQ(game::PlayerAction::REMOVE_PIECE, actions[1].type());
+  EXPECT_EQ(remove_loc, actions[1].source());
+  EXPECT_EQ(game::WHITE_COLOR, actions[1].player_color());
+}
+
+TEST_P(GameStateCodecTest, GetPlayerActionsSimpleMove) {
+  const game::GameOptions::GameType game_type = GetParam();
+  game::Board board(game_type);
+  SetUpTestBoard(&board);
+  GameState from;
+  from.set_current_player(game::WHITE_COLOR);
+  from.Encode(board);
+  const game::BoardLocation source(0, 0);
+  const game::BoardLocation destination(board.size() - 1, 0);
+  board.MovePiece(source, destination);
+  GameState to;
+  to.set_current_player(game::BLACK_COLOR);
+  to.Encode(board);
+  const std::vector<game::PlayerAction> actions =
+      GameState::GetPlayerAction(from, to, game_type);
+  EXPECT_EQ(1U, actions.size());
+  EXPECT_EQ(game::PlayerAction::MOVE_PIECE, actions[0].type());
+  EXPECT_EQ(source, actions[0].source());
+  EXPECT_EQ(destination, actions[0].destination());
+  EXPECT_EQ(game::WHITE_COLOR, actions[0].player_color());
+}
+
+TEST_P(GameStateCodecTest, GetPlayerActionsMoveWithMill) {
+  const game::GameOptions::GameType game_type = GetParam();
+  game::Board board(game_type);
+  SetUpTestBoard(&board);
+  GameState from;
+  from.set_current_player(game::WHITE_COLOR);
+  from.Encode(board);
+  const game::BoardLocation source(0, 0);
+  const game::BoardLocation destination(board.size() - 1, 0);
+  const game::BoardLocation remove_loc(board.size() - 1, board.size() - 1);
+  board.MovePiece(source, destination);
+  board.RemovePiece(remove_loc);
+  GameState to;
+  to.set_current_player(game::BLACK_COLOR);
+  to.Encode(board);
+  const std::vector<game::PlayerAction> actions =
+      GameState::GetPlayerAction(from, to, game_type);
+  EXPECT_EQ(2U, actions.size());
+  EXPECT_EQ(game::PlayerAction::MOVE_PIECE, actions[0].type());
+  EXPECT_EQ(source, actions[0].source());
+  EXPECT_EQ(destination, actions[0].destination());
+  EXPECT_EQ(game::WHITE_COLOR, actions[0].player_color());
+  EXPECT_EQ(game::PlayerAction::REMOVE_PIECE, actions[1].type());
+  EXPECT_EQ(remove_loc, actions[1].source());
+  EXPECT_EQ(game::WHITE_COLOR, actions[1].player_color());
 }
 
 INSTANTIATE_TEST_CASE_P(GameStateCodecTestInstance,

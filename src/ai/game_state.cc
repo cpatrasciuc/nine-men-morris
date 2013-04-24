@@ -17,6 +17,7 @@
 #include "game/board_location.h"
 #include "game/game_options.h"
 #include "game/piece_color.h"
+#include "game/player_action.h"
 
 using game::BoardLocation;
 using game::GameOptions;
@@ -159,6 +160,60 @@ GameState& GameState::operator=(const GameState& other) {
 
 bool GameState::operator==(const GameState& other) {
   return s_ == other.s_;
+}
+
+// static
+std::vector<game::PlayerAction> GameState::GetPlayerAction(
+    const GameState& from,
+    const GameState& to,
+    game::GameOptions::GameType game_type) {
+  const game::PieceColor player = from.current_player();
+  DCHECK_EQ(player, game::GetOpponent(to.current_player()));
+  DCHECK_EQ(from.pieces_in_hand(game::GetOpponent(player)),
+            to.pieces_in_hand(game::GetOpponent(player)));
+  const map<BoardLocation, int>& indices = GetLocationIndices(game_type);
+  const int offset = (player == game::WHITE_COLOR ? 9 : 9 + indices.size());
+  const int opp_offset = (player == game::WHITE_COLOR ? 9 + indices.size() : 9);
+  game::BoardLocation source(-1, -1);
+  game::BoardLocation destination(-1, -1);
+  game::BoardLocation remove(-1, -1);
+  // TODO(game_state): define a typedef for this.
+  map<BoardLocation, int>::const_iterator it;
+  for (it = indices.begin(); it != indices.end(); ++it) {
+    const int pos = it->second + offset;
+    const int opp_pos = it->second + opp_offset;
+    if (!from.s_.test(pos) && to.s_.test(pos)) {
+      DCHECK_EQ(destination.line(), -1);
+      destination = it->first;
+    } else if (from.s_.test(pos) && !to.s_.test(pos)) {
+      DCHECK_EQ(source.line(), -1);
+      source = it->first;
+    } else if (from.s_.test(opp_pos) && !to.s_.test(opp_pos)) {
+      DCHECK_EQ(remove.line(), -1);
+      remove = it->first;
+    }
+  }
+  std::vector<game::PlayerAction> result;
+  if (source.line() == -1) {
+    DCHECK_GT(from.pieces_in_hand(player), 0);
+    DCHECK_EQ(from.pieces_in_hand(player), to.pieces_in_hand(player) + 1);
+    game::PlayerAction place_action(player, game::PlayerAction::PLACE_PIECE);
+    place_action.set_destination(destination);
+    result.push_back(place_action);
+  } else {
+    DCHECK_EQ(from.pieces_in_hand(player), 0);
+    DCHECK_EQ(to.pieces_in_hand(player), 0);
+    game::PlayerAction move_action(player, game::PlayerAction::MOVE_PIECE);
+    move_action.set_source(source);
+    move_action.set_destination(destination);
+    result.push_back(move_action);
+  }
+  if (remove.line() != -1) {
+    game::PlayerAction remove_action(player, game::PlayerAction::REMOVE_PIECE);
+    remove_action.set_source(remove);
+    result.push_back(remove_action);
+  }
+  return result;
 }
 
 }  // namespace ai
