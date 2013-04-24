@@ -8,7 +8,7 @@
 #include "console_game/board_renderer.h"
 #include "game/board.h"
 #include "game/board_location.h"
-#include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 #include "gtest/gtest.h"
 
@@ -116,10 +116,10 @@ TEST(BoardRenderer, BoardRenderer) {
       "   3 NNNEENNNEEBBBE\n"
   };
 
-  const game::GameOptions::GameType game_types[] = {
-    game::GameOptions::NINE_MEN_MORRIS,
-    game::GameOptions::SIX_MEN_MORRIS,
-    game::GameOptions::THREE_MEN_MORRIS
+  const game::GameType game_types[] = {
+    game::NINE_MEN_MORRIS,
+    game::SIX_MEN_MORRIS,
+    game::THREE_MEN_MORRIS
   };
 
   ASSERT_EQ(arraysize(game_types), arraysize(expected_output));

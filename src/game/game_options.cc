@@ -4,6 +4,8 @@
 
 #include "game/game_options.h"
 
+#include "game/game_type.h"
+
 namespace game {
 
 GameOptions::GameOptions()

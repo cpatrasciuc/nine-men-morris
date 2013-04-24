@@ -7,7 +7,7 @@
 
 #include "base/basic_macros.h"
 #include "game/board.h"
-#include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
 #include "gtest/gtest.h"
@@ -213,8 +213,8 @@ TEST(PlayerAction, RemovePieceFromMill) {
 }
 
 TEST(PlayerAction, IsJump) {
-  Board board9(GameOptions::NINE_MEN_MORRIS);
-  Board board3(GameOptions::THREE_MEN_MORRIS);
+  Board board9(NINE_MEN_MORRIS);
+  Board board3(THREE_MEN_MORRIS);
 
   PlayerAction move_action(WHITE_COLOR, PlayerAction::MOVE_PIECE);
   move_action.set_source(BoardLocation(0, 0));

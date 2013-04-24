@@ -13,7 +13,7 @@
 #include "base/basic_macros.h"
 #include "base/log.h"
 #include "game/board_location.h"
-#include "game/game_options.h"
+#include "game/game_type.h"
 
 using std::map;
 using std::vector;
@@ -22,13 +22,13 @@ namespace game {
 
 namespace {
 
-int GetBoardSizeFromGameType(GameOptions::GameType type) {
+int GetBoardSizeFromGameType(GameType type) {
   switch (type) {
-    case GameOptions::THREE_MEN_MORRIS:
+    case THREE_MEN_MORRIS:
       return 3;
-    case GameOptions::SIX_MEN_MORRIS:
+    case SIX_MEN_MORRIS:
       return 5;
-    case GameOptions::NINE_MEN_MORRIS:
+    case NINE_MEN_MORRIS:
       return 7;
   }
   NOTREACHED();
@@ -51,7 +51,7 @@ class PieceColorEqualTo
 
 }  // anonymous namespace
 
-Board::Board(GameOptions::GameType type)
+Board::Board(GameType type)
     : size_(GetBoardSizeFromGameType(type)), pieces_() {}
 
 int Board::GetPieceCountByColor(PieceColor color) const {

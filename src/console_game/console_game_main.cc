@@ -9,6 +9,7 @@
 #include "base/command_line.h"
 #include "base/debug/stacktrace.h"
 #include "game/game_options.h"
+#include "game/game_type.h"
 #include "console_game/console_game.h"
 #include "console_game/human_player.h"
 #include "console_game/player.h"
@@ -35,11 +36,11 @@ bool RunConsoleGame(const base::CommandLine& cmd_line) {
   if (cmd_line.HasSwitch(kGameTypeSwitch)) {
     const std::string game_type(cmd_line.GetSwitchValue(kGameTypeSwitch));
     if (game_type == "3") {
-      options.set_game_type(game::GameOptions::THREE_MEN_MORRIS);
+      options.set_game_type(game::THREE_MEN_MORRIS);
     } else if (game_type == "6") {
-      options.set_game_type(game::GameOptions::SIX_MEN_MORRIS);
+      options.set_game_type(game::SIX_MEN_MORRIS);
     } else if (game_type == "9") {
-      options.set_game_type(game::GameOptions::NINE_MEN_MORRIS);
+      options.set_game_type(game::NINE_MEN_MORRIS);
     } else {
       Usage();
       return false;

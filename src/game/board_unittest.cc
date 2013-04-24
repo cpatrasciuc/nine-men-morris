@@ -10,7 +10,7 @@
 #include "base/basic_macros.h"
 #include "game/board.h"
 #include "game/board_location.h"
-#include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 #include "gtest/gtest.h"
 
@@ -144,7 +144,7 @@ TEST(Board, PieceCount) {
 }
 
 TEST(Board, AddGetRemove) {
-  Board board(GameOptions::SIX_MEN_MORRIS);
+  Board board(SIX_MEN_MORRIS);
   BoardLocation loc(0, 0);
   EXPECT_EQ(0, board.piece_count());
   EXPECT_EQ(NO_COLOR, board.GetPieceAt(loc));
