@@ -15,6 +15,7 @@
 #include "base/random.h"
 #include "game/game.h"
 #include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
 #include "gtest/gtest.h"
@@ -38,7 +39,7 @@ RandomAlgorithm* GetRandomTestPlayer(MersenneTwister32* generator) {
   return new RandomAlgorithm(binding);
 }
 
-void RunTestGame(game::GameOptions::GameType game_type, bool allow_jumps) {
+void RunTestGame(game::GameType game_type, bool allow_jumps) {
   const int max_moves = 250;
   MersenneTwister32 white_random(12345);
   MersenneTwister32 black_random(54321);
@@ -63,7 +64,7 @@ void RunTestGame(game::GameOptions::GameType game_type, bool allow_jumps) {
 }
 
 class RandomAlgorithmFullGameTest
-    : public ::testing::TestWithParam<game::GameOptions::GameType> {
+    : public ::testing::TestWithParam<game::GameType> {
 };
 
 TEST_P(RandomAlgorithmFullGameTest, NoJumpsAllowed) {
@@ -74,10 +75,10 @@ TEST_P(RandomAlgorithmFullGameTest, JumpsAllowed) {
   RunTestGame(GetParam(), true);
 }
 
-const game::GameOptions::GameType test_game_types[] = {
-    game::GameOptions::THREE_MEN_MORRIS,
-    game::GameOptions::SIX_MEN_MORRIS,
-    game::GameOptions::NINE_MEN_MORRIS
+const game::GameType test_game_types[] = {
+    game::THREE_MEN_MORRIS,
+    game::SIX_MEN_MORRIS,
+    game::NINE_MEN_MORRIS
 };
 INSTANTIATE_TEST_CASE_P(RandomAlgorithmTest,
                         RandomAlgorithmFullGameTest,

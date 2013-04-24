@@ -12,6 +12,7 @@
 #include "game/board.h"
 #include "game/game_export.h"
 #include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
 
@@ -66,7 +67,7 @@ class GAME_EXPORT Game {
 
   // Utility method that returns the number of pieces that a player starts with
   // based on the game type.
-  static int GetInitialPieceCountByGameType(GameOptions::GameType type);
+  static int GetInitialPieceCountByGameType(GameType type);
 
  private:
   // Update the next player to move and the expected action type, based on the

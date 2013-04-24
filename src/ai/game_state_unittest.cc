@@ -6,7 +6,7 @@
 #include "base/basic_macros.h"
 #include "game/board.h"
 #include "game/board_location.h"
-#include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
 #include "gtest/gtest.h"
@@ -54,8 +54,7 @@ TEST(GameState, Operators) {
   EXPECT_TRUE(first == second);
 }
 
-class GameStateTest
-    : public ::testing::TestWithParam<game::GameOptions::GameType> {
+class GameStateTest : public ::testing::TestWithParam<game::GameType> {
  protected:
   void SetUpTestBoard(game::Board* board) {
     const int size = board->size();
@@ -71,7 +70,7 @@ class GameStateTest
 };
 
 TEST_P(GameStateTest, EncodeAndDecode) {
-  const game::GameOptions::GameType game_type = GetParam();
+  const game::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
   GameState state;
@@ -90,7 +89,7 @@ TEST_P(GameStateTest, EncodeAndDecode) {
 }
 
 TEST_P(GameStateTest, GetPlayerActionsSimplePlace) {
-  const game::GameOptions::GameType game_type = GetParam();
+  const game::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
   GameState from;
@@ -112,7 +111,7 @@ TEST_P(GameStateTest, GetPlayerActionsSimplePlace) {
 }
 
 TEST_P(GameStateTest, GetPlayerActionsPlaceWithMill) {
-  const game::GameOptions::GameType game_type = GetParam();
+  const game::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
   GameState from;
@@ -139,7 +138,7 @@ TEST_P(GameStateTest, GetPlayerActionsPlaceWithMill) {
 }
 
 TEST_P(GameStateTest, GetPlayerActionsSimpleMove) {
-  const game::GameOptions::GameType game_type = GetParam();
+  const game::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
   GameState from;
@@ -161,7 +160,7 @@ TEST_P(GameStateTest, GetPlayerActionsSimpleMove) {
 }
 
 TEST_P(GameStateTest, GetPlayerActionsMoveWithMill) {
-  const game::GameOptions::GameType game_type = GetParam();
+  const game::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
   GameState from;
@@ -189,9 +188,9 @@ TEST_P(GameStateTest, GetPlayerActionsMoveWithMill) {
 
 INSTANTIATE_TEST_CASE_P(GameStateTestInstance,
                         GameStateTest,
-                        ::testing::Values(game::GameOptions::THREE_MEN_MORRIS,
-                                          game::GameOptions::SIX_MEN_MORRIS,
-                                          game::GameOptions::NINE_MEN_MORRIS));
+                        ::testing::Values(game::THREE_MEN_MORRIS,
+                                          game::SIX_MEN_MORRIS,
+                                          game::NINE_MEN_MORRIS));
 
 TEST(GameStateDeathTest, DEBUG_ONLY_TEST(PiecesInHand)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";

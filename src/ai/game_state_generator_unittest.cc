@@ -9,8 +9,8 @@
 #include "base/basic_macros.h"
 #include "game/board.h"
 #include "game/board_location.h"
-// TODO(game_type): Extract the GameType enum in a separate header.
 #include "game/game_options.h"
+#include "game/game_type.h"
 #include "gtest/gtest.h"
 
 namespace ai {
@@ -222,8 +222,7 @@ TEST_P(GameStateGeneratorTest, MovesWithMill) {
   }
 }
 
-game::GameOptions ConstructGameOptions(game::GameOptions::GameType type,
-                                       bool allow_jumps) {
+game::GameOptions ConstructGameOptions(game::GameType type, bool allow_jumps) {
   game::GameOptions result;
   result.set_game_type(type);
   result.set_jumps_allowed(allow_jumps);
@@ -231,12 +230,12 @@ game::GameOptions ConstructGameOptions(game::GameOptions::GameType type,
 }
 
 game::GameOptions test_scenarios[] = {
-  ConstructGameOptions(game::GameOptions::THREE_MEN_MORRIS, true),
-  ConstructGameOptions(game::GameOptions::THREE_MEN_MORRIS, false),
-  ConstructGameOptions(game::GameOptions::SIX_MEN_MORRIS, true),
-  ConstructGameOptions(game::GameOptions::SIX_MEN_MORRIS, false),
-  ConstructGameOptions(game::GameOptions::NINE_MEN_MORRIS, true),
-  ConstructGameOptions(game::GameOptions::NINE_MEN_MORRIS, false)
+  ConstructGameOptions(game::THREE_MEN_MORRIS, true),
+  ConstructGameOptions(game::THREE_MEN_MORRIS, false),
+  ConstructGameOptions(game::SIX_MEN_MORRIS, true),
+  ConstructGameOptions(game::SIX_MEN_MORRIS, false),
+  ConstructGameOptions(game::NINE_MEN_MORRIS, true),
+  ConstructGameOptions(game::NINE_MEN_MORRIS, false)
 };
 
 INSTANTIATE_TEST_CASE_P(GameStateGeneratorTestInstance,

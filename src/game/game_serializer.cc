@@ -16,6 +16,7 @@
 #include "base/log.h"
 #include "game/game.h"
 #include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
 
@@ -300,7 +301,7 @@ int8_t EncodeGameOptions(const GameOptions& options) {
 
 GameOptions DecodeGameOptions(int8_t encoding) {
   GameOptions options;
-  options.set_game_type(static_cast<GameOptions::GameType>(encoding & 0x0F));
+  options.set_game_type(static_cast<GameType>(encoding & 0x0F));
   options.set_white_starts(encoding & 0b00010000);
   options.set_jumps_allowed(encoding & 0b00100000);
   return options;

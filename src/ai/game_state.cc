@@ -15,12 +15,11 @@
 #include "base/log.h"
 #include "game/board.h"
 #include "game/board_location.h"
-#include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
 
 using game::BoardLocation;
-using game::GameOptions;
 
 using std::map;
 
@@ -28,24 +27,24 @@ namespace ai {
 
 namespace {
 
-map<GameOptions::GameType, map<BoardLocation, int> > kIndicesCache;
+map<game::GameType, map<BoardLocation, int> > kIndicesCache;
 
-GameOptions::GameType GetGameTypeFromBoardSize(int board_size) {
+game::GameType GetGameTypeFromBoardSize(int board_size) {
   switch (board_size) {
     case 3:
-      return GameOptions::THREE_MEN_MORRIS;
+      return game::THREE_MEN_MORRIS;
     case 5:
-      return GameOptions::SIX_MEN_MORRIS;
+      return game::SIX_MEN_MORRIS;
     case 7:
-      return GameOptions::NINE_MEN_MORRIS;
+      return game::NINE_MEN_MORRIS;
     default:
       NOTREACHED();
   }
   NOTREACHED();
-  return GameOptions::THREE_MEN_MORRIS;
+  return game::THREE_MEN_MORRIS;
 }
 
-const map<BoardLocation, int>& GetLocationIndices(GameOptions::GameType type) {
+const map<BoardLocation, int>& GetLocationIndices(game::GameType type) {
   map<BoardLocation, int>& indices = kIndicesCache[type];
   if (indices.empty()) {
     game::Board board(type);
@@ -132,7 +131,7 @@ void GameState::Encode(const game::Board& board) {
 
 void GameState::Decode(game::Board* board) const {
   DCHECK(board);
-  const GameOptions::GameType type = GetGameTypeFromBoardSize(board->size());
+  const game::GameType type = GetGameTypeFromBoardSize(board->size());
   const map<BoardLocation, int>& indices = GetLocationIndices(type);
   map<BoardLocation, int>::const_iterator it;
   for (it = indices.begin(); it != indices.end(); ++it) {
@@ -166,7 +165,7 @@ bool GameState::operator==(const GameState& other) {
 std::vector<game::PlayerAction> GameState::GetTransition(
     const GameState& from,
     const GameState& to,
-    game::GameOptions::GameType game_type) {
+    game::GameType game_type) {
   const game::PieceColor player = from.current_player();
   DCHECK_EQ(player, game::GetOpponent(to.current_player()));
   DCHECK_EQ(from.pieces_in_hand(game::GetOpponent(player)),

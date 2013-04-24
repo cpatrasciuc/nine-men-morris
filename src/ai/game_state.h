@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "ai/ai_export.h"
-#include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
 
@@ -45,7 +45,7 @@ class AI_EXPORT GameState {
   // that must be performed in order to reach the state encoded by |to|.
   // If |to| is not a direct successor of |from| the behavior is undefined.
   static std::vector<game::PlayerAction> GetTransition(const GameState& from,
-      const GameState& to, game::GameOptions::GameType game_type);
+      const GameState& to, game::GameType game_type);
 
  private:
   std::bitset<64> s_;

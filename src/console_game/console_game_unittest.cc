@@ -57,7 +57,7 @@ TEST(ConsoleGame, FullSixMenMorrisGame) {
     }
   }
   game::GameOptions options;
-  options.set_game_type(game::GameOptions::SIX_MEN_MORRIS);
+  options.set_game_type(game::SIX_MEN_MORRIS);
   ConsoleGame test_console_game(options,
                                 std::auto_ptr<Player>(white_player),
                                 std::auto_ptr<Player>(black_player));

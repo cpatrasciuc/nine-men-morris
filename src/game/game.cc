@@ -9,6 +9,7 @@
 
 #include "base/log.h"
 #include "game/game_options.h"
+#include "game/game_type.h"
 
 namespace game {
 
@@ -182,13 +183,13 @@ int Game::GetPiecesInHand(const PieceColor player_color) const {
 }
 
 // static
-int Game::GetInitialPieceCountByGameType(GameOptions::GameType type) {
+int Game::GetInitialPieceCountByGameType(GameType type) {
   switch (type) {
-    case GameOptions::NINE_MEN_MORRIS:
+    case NINE_MEN_MORRIS:
       return 9;
-    case GameOptions::SIX_MEN_MORRIS:
+    case SIX_MEN_MORRIS:
       return 6;
-    case GameOptions::THREE_MEN_MORRIS:
+    case THREE_MEN_MORRIS:
       return 3;
   }
   NOTREACHED();
