@@ -104,7 +104,7 @@ TEST_P(GameStateCodecTest, GetPlayerActionsSimplePlace) {
   to.set_pieces_in_hand(game::WHITE_COLOR, 2);
   to.Encode(board);
   const std::vector<game::PlayerAction> actions =
-      GameState::GetPlayerAction(from, to, game_type);
+      GameState::GetTransition(from, to, game_type);
   EXPECT_EQ(1U, actions.size());
   EXPECT_EQ(game::PlayerAction::PLACE_PIECE, actions[0].type());
   EXPECT_EQ(destination, actions[0].destination());
@@ -128,7 +128,7 @@ TEST_P(GameStateCodecTest, GetPlayerActionsPlaceWithMill) {
   to.set_pieces_in_hand(game::WHITE_COLOR, 2);
   to.Encode(board);
   const std::vector<game::PlayerAction> actions =
-      GameState::GetPlayerAction(from, to, game_type);
+      GameState::GetTransition(from, to, game_type);
   EXPECT_EQ(2U, actions.size());
   EXPECT_EQ(game::PlayerAction::PLACE_PIECE, actions[0].type());
   EXPECT_EQ(destination, actions[0].destination());
@@ -152,7 +152,7 @@ TEST_P(GameStateCodecTest, GetPlayerActionsSimpleMove) {
   to.set_current_player(game::BLACK_COLOR);
   to.Encode(board);
   const std::vector<game::PlayerAction> actions =
-      GameState::GetPlayerAction(from, to, game_type);
+      GameState::GetTransition(from, to, game_type);
   EXPECT_EQ(1U, actions.size());
   EXPECT_EQ(game::PlayerAction::MOVE_PIECE, actions[0].type());
   EXPECT_EQ(source, actions[0].source());
@@ -176,7 +176,7 @@ TEST_P(GameStateCodecTest, GetPlayerActionsMoveWithMill) {
   to.set_current_player(game::BLACK_COLOR);
   to.Encode(board);
   const std::vector<game::PlayerAction> actions =
-      GameState::GetPlayerAction(from, to, game_type);
+      GameState::GetTransition(from, to, game_type);
   EXPECT_EQ(2U, actions.size());
   EXPECT_EQ(game::PlayerAction::MOVE_PIECE, actions[0].type());
   EXPECT_EQ(source, actions[0].source());

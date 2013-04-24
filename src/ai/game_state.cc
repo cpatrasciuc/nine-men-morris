@@ -163,7 +163,7 @@ bool GameState::operator==(const GameState& other) {
 }
 
 // static
-std::vector<game::PlayerAction> GameState::GetPlayerAction(
+std::vector<game::PlayerAction> GameState::GetTransition(
     const GameState& from,
     const GameState& to,
     game::GameOptions::GameType game_type) {

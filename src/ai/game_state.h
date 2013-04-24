@@ -44,7 +44,7 @@ class AI_EXPORT GameState {
   // the result will contain a second element representing the REMOVE action
   // that must be performed in order to reach the state encoded by |to|.
   // If |to| is not a direct successor of |from| the behavior is undefined.
-  static std::vector<game::PlayerAction> GetPlayerAction(const GameState& from,
+  static std::vector<game::PlayerAction> GetTransition(const GameState& from,
       const GameState& to, game::GameOptions::GameType game_type);
 
  private:
