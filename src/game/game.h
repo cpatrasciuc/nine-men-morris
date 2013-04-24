@@ -34,6 +34,10 @@ class GAME_EXPORT Game {
     return next_action_type_;
   }
 
+  int pieces_in_hand(PieceColor player) {
+    return pieces_in_hand_[player];
+  }
+
   // Returns the color of the winning player. It should only be called after the
   // game is over.
   PieceColor winner() const;
