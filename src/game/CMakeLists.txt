@@ -19,6 +19,7 @@ set(GAME_SOURCE_FILES
 set(GAME_UNITTESTS_SOURCE_FILES
   board_unittest.cc
   board_location_unittest.cc
+  game_options_unittest.cc
   game_unittest.cc
   game_serializer_unittest.cc
   game_test_helper.cc
