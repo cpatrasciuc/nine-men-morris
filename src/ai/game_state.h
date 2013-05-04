@@ -37,6 +37,9 @@ class AI_EXPORT GameState {
   GameState& operator=(const GameState& other);
   bool operator==(const GameState& other);
 
+  // This must be declared so one can use GameState objects as std::map keys.
+  bool operator<(const GameState& other) const;
+
   // Utility method that determines the actions that must be played in order to
   // reach the game state encoded by |to| from the game state encoded by |from|.
   // The first element of the result is the MOVE or PLACE action that the player

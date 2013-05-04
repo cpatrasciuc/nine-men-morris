@@ -161,6 +161,10 @@ bool GameState::operator==(const GameState& other) {
   return s_ == other.s_;
 }
 
+bool GameState::operator<(const GameState& other) const {
+  return s_.to_ulong() < other.s_.to_ulong();
+}
+
 // static
 std::vector<game::PlayerAction> GameState::GetTransition(
     const GameState& from,

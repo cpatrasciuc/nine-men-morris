@@ -43,15 +43,21 @@ TEST(GameState, Operators) {
   GameState second;
   second.set_current_player(game::BLACK_COLOR);
   EXPECT_FALSE(first == second);
+  EXPECT_TRUE((first < second) != (second < first));
   first = second;
   EXPECT_TRUE(first == second);
+  EXPECT_FALSE((first < second) != (second < first));
   first.set_pieces_in_hand(game::BLACK_COLOR, 10);
   EXPECT_FALSE(first == second);
+  EXPECT_TRUE((first < second) != (second < first));
   second.set_pieces_in_hand(game::BLACK_COLOR, 10);
   EXPECT_TRUE(first == second);
+  EXPECT_FALSE((first < second) != (second < first));
   EXPECT_TRUE(first == first);
+  EXPECT_FALSE((first < first) != (first < first));
   first = first;
   EXPECT_TRUE(first == second);
+  EXPECT_FALSE((first < second) != (second < first));
 }
 
 class GameStateTest : public ::testing::TestWithParam<game::GameType> {
