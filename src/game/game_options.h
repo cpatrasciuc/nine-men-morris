@@ -31,6 +31,9 @@ class GAME_EXPORT GameOptions {
   bool white_starts() const { return white_starts_; }
   void set_white_starts(bool white_starts) { white_starts_ = white_starts; }
 
+  bool operator==(const GameOptions& other) const;
+  bool operator!=(const GameOptions& other) const;
+
  private:
   GameType game_type_;
   bool jumps_allowed_;

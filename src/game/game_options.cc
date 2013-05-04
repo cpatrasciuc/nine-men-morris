@@ -14,4 +14,14 @@ GameOptions::GameOptions()
       white_starts_(true) {
 }
 
+bool GameOptions::operator==(const GameOptions& other) const {
+  return (game_type_ == other.game_type_) &&
+         (jumps_allowed_ == other.jumps_allowed_) &&
+         (white_starts_ == other.white_starts_);
+}
+
+bool GameOptions::operator !=(const GameOptions& other) const {
+  return !((*this) == other);
+}
+
 }  // namespace game
