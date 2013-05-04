@@ -3,6 +3,8 @@ set(AI_SOURCE_FILES
   ai_algorithm.h
   ai_export.h
   alphabeta/alphabeta.h
+  alphabeta/alphabeta_algorithm.cc
+  alphabeta/alphabeta_algorithm.h
   game_state.cc
   game_state.h
   game_state_generator.cc
@@ -13,6 +15,7 @@ set(AI_SOURCE_FILES
 
 set(AI_UNITTESTS_SOURCE_FILES
   alphabeta/alphabeta_unittest.cc
+  alphabeta/alphabeta_algorithm_unittest.cc
   game_state_generator_unittest.cc
   game_state_unittest.cc
   random/random_algorithm_unittest.cc
