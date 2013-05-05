@@ -11,10 +11,10 @@
 #include "ai/ai_algorithm.h"
 #include "ai/ai_export.h"
 #include "ai/alphabeta/alphabeta.h"
+#include "ai/alphabeta/evaluators.h"
 #include "ai/game_state.h"
 #include "ai/game_state_generator.h"
 #include "base/basic_macros.h"
-#include "base/callable.h"
 #include "game/board_location.h"
 #include "game/player_action.h"
 
@@ -26,15 +26,13 @@ class GameOptions;
 namespace ai {
 namespace alphabeta {
 
-typedef base::Callable<double(const game::Board&, bool)>* Evaluator;
-
 class AI_EXPORT AlphaBetaAlgorithm
-    : public AIAlgorithm, public AlphaBeta<GameState, double>::Delegate {
+    : public AIAlgorithm, public AlphaBeta<GameState>::Delegate {
  public:
   AlphaBetaAlgorithm(const game::GameOptions& options,
       int search_depth,
       const std::vector<Evaluator>& evaluators,
-      const std::vector<double>& weights = std::vector<double>());
+      const std::vector<int>& weights = std::vector<int>());
   ~AlphaBetaAlgorithm();
 
  private:
@@ -43,7 +41,7 @@ class AI_EXPORT AlphaBetaAlgorithm
 
   // AlphaBeta<GameState, double>::Delegate interface
   virtual bool IsTerminal(const GameState& state);
-  virtual double Evaluate(const GameState& state, bool max_player);
+  virtual int Evaluate(const GameState& state, bool max_player);
   virtual void GetSuccessors(const GameState& state,
                              std::vector<GameState>* successors);
 
@@ -52,7 +50,7 @@ class AI_EXPORT AlphaBetaAlgorithm
   int depth_;
 
   std::vector<Evaluator> evaluators_;
-  std::vector<double> weights_;
+  std::vector<int> weights_;
 
   GameStateGenerator generator_;
 

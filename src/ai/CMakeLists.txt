@@ -5,6 +5,8 @@ set(AI_SOURCE_FILES
   alphabeta/alphabeta.h
   alphabeta/alphabeta_algorithm.cc
   alphabeta/alphabeta_algorithm.h
+  alphabeta/evaluators.cc
+  alphabeta/evaluators.h
   game_state.cc
   game_state.h
   game_state_generator.cc

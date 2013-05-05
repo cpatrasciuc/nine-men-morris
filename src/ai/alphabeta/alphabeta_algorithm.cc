@@ -10,6 +10,7 @@
 
 #include "ai/ai_algorithm.h"
 #include "ai/alphabeta/alphabeta.h"
+#include "ai/alphabeta/evaluators.h"
 #include "ai/game_state.h"
 #include "ai/game_state_generator.h"
 #include "base/basic_macros.h"
@@ -29,9 +30,9 @@ const game::BoardLocation kInvalidLocation(-1, -1);
 // Since the AlphaBeta class takes ownership of the delegate, this is needed to
 // wrap a pointer to a AlphaBetaAlgorithm when it is passed to an AlphaBeta
 // instance, so that it is not deleted when the algorithm completes.
-class ProxyPtr : public AlphaBeta<GameState, double>::Delegate {
+class ProxyPtr : public AlphaBeta<GameState>::Delegate {
  public:
-  explicit ProxyPtr(AlphaBeta<GameState, double>::Delegate* alg) : alg_(alg) {}
+  explicit ProxyPtr(AlphaBeta<GameState>::Delegate* alg) : alg_(alg) {}
 
  private:
   // AlphaBeta<GameState, double>::Delegate interface
@@ -39,7 +40,7 @@ class ProxyPtr : public AlphaBeta<GameState, double>::Delegate {
     return alg_->IsTerminal(state);
   };
 
-  virtual double Evaluate(const GameState& state, bool max_player) {
+  virtual int Evaluate(const GameState& state, bool max_player) {
     return alg_->Evaluate(state, max_player);
   };
 
@@ -48,7 +49,7 @@ class ProxyPtr : public AlphaBeta<GameState, double>::Delegate {
     alg_->GetSuccessors(state, successors);
   };
 
-  AlphaBeta<GameState, double>::Delegate* const alg_;
+  AlphaBeta<GameState>::Delegate* const alg_;
 
   DISALLOW_COPY_AND_ASSIGN(ProxyPtr);
 };
@@ -58,7 +59,7 @@ class ProxyPtr : public AlphaBeta<GameState, double>::Delegate {
 AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options,
                                        int search_depth,
                                        const std::vector<Evaluator>& evaluators,
-                                       const std::vector<double>& weights)
+                                       const std::vector<int>& weights)
     : options_(options),
       depth_(search_depth),
       evaluators_(evaluators),
@@ -89,9 +90,8 @@ game::PlayerAction AlphaBetaAlgorithm::GetNextAction(
     action.set_source(remove_location_);
     return action;
   }
-  std::auto_ptr<AlphaBeta<GameState, double>::Delegate> delegate(
-      new ProxyPtr(this));
-  AlphaBeta<GameState, double> alphabeta(delegate);
+  std::auto_ptr<AlphaBeta<GameState>::Delegate> delegate(new ProxyPtr(this));
+  AlphaBeta<GameState> alphabeta(delegate);
   GameState origin;
   origin.set_current_player(game_model.current_player());
   origin.set_pieces_in_hand(
@@ -140,13 +140,12 @@ bool AlphaBetaAlgorithm::IsTerminal(const GameState& state) {
   return successors.empty();
 }
 
-double AlphaBetaAlgorithm::Evaluate(const GameState& state,
-                                    bool max_player) {
+int AlphaBetaAlgorithm::Evaluate(const GameState& state, bool max_player) {
   game::Board board(options_.game_type());
   state.Decode(&board);
-  double result = 0;
+  int result = 0;
   for (size_t i = 0; i < evaluators_.size(); ++i) {
-    result += weights_[i] * ((*evaluators_[i])(board, max_player));
+    result += weights_[i] * ((*evaluators_[i])(board, state.current_player()));
   }
   return result;
 }
