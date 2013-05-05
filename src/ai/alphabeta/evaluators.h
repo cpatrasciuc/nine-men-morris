@@ -20,11 +20,13 @@ namespace alphabeta {
 typedef int(EvaluatorSignature)(const game::Board&, game::PieceColor);
 typedef base::Callable<EvaluatorSignature>* Evaluator;
 
-// Heuristic that count the available moves.
+// Heuristic that counts the number of actions available to the |player|.
 AI_EXPORT int Mobility(const game::Board& board, game::PieceColor player);
 
+// Heuristic that counts the difference between the number of remaining pieces.
 AI_EXPORT int Material(const game::Board& board, game::PieceColor player);
 
+// Heuristic that counts the difference between the number of closed mills.
 AI_EXPORT int Mills(const game::Board& board, game::PieceColor player);
 
 }  // namespace alphabeta
