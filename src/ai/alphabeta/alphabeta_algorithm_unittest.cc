@@ -4,7 +4,9 @@
 
 #include "ai/alphabeta/alphabeta_algorithm.h"
 #include "ai/alphabeta/evaluators.h"
+#include "base/function.h"
 #include "game/board.h"
+#include "game/board_location.h"
 #include "game/game.h"
 #include "game/game_options.h"
 #include "game/game_type.h"
@@ -14,17 +16,33 @@ namespace ai {
 namespace alphabeta {
 namespace {
 
-TEST(AlphaBetaAlgorithm, AlphaBetaAlgorithm) {
+// Evaluator that favors pieces in the upper corner of the board.
+int TestEvaluator(const game::Board& board, game::PieceColor player) {
+  const game::BoardLocation loc(board.size() - 1, board.size() - 1);
+  const game::PieceColor color = board.GetPieceAt(loc);
+  if (color == player) {
+    return 100;
+  }
+  if (color == game::NO_COLOR) {
+    return 0;
+  }
+  return -100;
+}
+
+TEST(AlphaBetaAlgorithm, Evaluators) {
+  std::vector<Evaluator> evaluators;
+  evaluators.push_back(new base::Function<EvaluatorSignature>(&TestEvaluator));
   game::GameOptions options;
   options.set_game_type(game::THREE_MEN_MORRIS);
   game::Game test_game(options);
   test_game.Initialize();
-  AlphaBetaAlgorithm alg(options);
+  AlphaBetaAlgorithm alg(options, 2, evaluators);
   game::PlayerAction action =
       static_cast<AIAlgorithm*>(&alg)->GetNextAction(test_game);
-  EXPECT_FALSE(true) << action.source();
-  EXPECT_FALSE(true) << action.destination();
-  EXPECT_FALSE(true) << action.type();
+  const int board_size = test_game.board().size();
+  const game::BoardLocation upper_corner(board_size - 1, board_size - 1);
+  EXPECT_EQ(game::PlayerAction::PLACE_PIECE, action.type());
+  EXPECT_EQ(upper_corner, action.destination());
 }
 
 }  // anonymous namespace
