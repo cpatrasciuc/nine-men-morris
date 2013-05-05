@@ -170,12 +170,12 @@ int AlphaBetaAlgorithm::Evaluate(const GameState& state, bool max_player) {
   }
   game::Board board(options_.game_type());
   state.Decode(&board);
-  int result = 0;
+  int score = 0;
   for (size_t i = 0; i < evaluators_.size(); ++i) {
-    result += weights_[i] * ((*evaluators_[i])(board, state.current_player()));
+    score += weights_[i] * ((*evaluators_[i])(board, state.current_player()));
   }
-  score_cache_.insert(std::make_pair(state, result));
-  return result;
+  score_cache_.insert(std::make_pair(state, score));
+  return score;
 }
 
 void AlphaBetaAlgorithm::GetSuccessors(const GameState& state,
