@@ -4,7 +4,6 @@
 
 #include "ai/alphabeta/alphabeta_algorithm.h"
 #include "ai/alphabeta/evaluators.h"
-#include "base/function.h"
 #include "game/board.h"
 #include "game/game.h"
 #include "game/game_options.h"
@@ -15,16 +14,12 @@ namespace ai {
 namespace alphabeta {
 namespace {
 
-TEST(AB, AB) {
-  std::vector<Evaluator> evaluators;
-  evaluators.push_back(new base::Function<EvaluatorSignature>(&Mobility));
-  evaluators.push_back(new base::Function<EvaluatorSignature>(&Material));
-  evaluators.push_back(new base::Function<EvaluatorSignature>(&Mills));
+TEST(AlphaBetaAlgorithm, AlphaBetaAlgorithm) {
   game::GameOptions options;
   options.set_game_type(game::THREE_MEN_MORRIS);
   game::Game test_game(options);
   test_game.Initialize();
-  AlphaBetaAlgorithm alg(options, 5, evaluators);
+  AlphaBetaAlgorithm alg(options);
   game::PlayerAction action =
       static_cast<AIAlgorithm*>(&alg)->GetNextAction(test_game);
   EXPECT_FALSE(true) << action.source();

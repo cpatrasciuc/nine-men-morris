@@ -14,6 +14,7 @@
 #include "ai/game_state.h"
 #include "ai/game_state_generator.h"
 #include "base/basic_macros.h"
+#include "base/function.h"
 #include "base/log.h"
 #include "game/board.h"
 #include "game/board_location.h"
@@ -55,6 +56,17 @@ class ProxyPtr : public AlphaBeta<GameState>::Delegate {
 };
 
 }  // anonymous namespace
+
+AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options)
+    : options_(options),
+      depth_(6),
+      generator_(options),
+      remove_location_(kInvalidLocation) {
+  evaluators_.push_back(new base::Function<EvaluatorSignature>(&Mobility));
+  evaluators_.push_back(new base::Function<EvaluatorSignature>(&Material));
+  evaluators_.push_back(new base::Function<EvaluatorSignature>(&Mills));
+  weights_.insert(weights_.end(), evaluators_.size(), 1.0);
+}
 
 AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options,
                                        int search_depth,

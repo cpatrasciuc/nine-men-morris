@@ -29,6 +29,7 @@ namespace alphabeta {
 class AI_EXPORT AlphaBetaAlgorithm
     : public AIAlgorithm, public AlphaBeta<GameState>::Delegate {
  public:
+  explicit AlphaBetaAlgorithm(const game::GameOptions& options);
   AlphaBetaAlgorithm(const game::GameOptions& options,
       int search_depth,
       const std::vector<Evaluator>& evaluators,
