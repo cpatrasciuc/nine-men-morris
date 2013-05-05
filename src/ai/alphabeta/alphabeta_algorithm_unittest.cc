@@ -4,11 +4,15 @@
 
 #include "ai/alphabeta/alphabeta_algorithm.h"
 #include "ai/alphabeta/evaluators.h"
+#include "ai/random/random_algorithm.h"
 #include "base/function.h"
+#include "base/ptr/scoped_ptr.h"
+#include "base/random.h"
 #include "game/board.h"
 #include "game/board_location.h"
 #include "game/game.h"
 #include "game/game_options.h"
+#include "game/game_serializer.h"
 #include "game/game_type.h"
 #include "gtest/gtest.h"
 
@@ -43,6 +47,33 @@ TEST(AlphaBetaAlgorithm, Evaluators) {
   const game::BoardLocation upper_corner(board_size - 1, board_size - 1);
   EXPECT_EQ(game::PlayerAction::PLACE_PIECE, action.type());
   EXPECT_EQ(upper_corner, action.destination());
+}
+
+TEST(AlphaBetaAlgorithm, VsRandom) {
+  const int max_moves = 250;
+  game::GameOptions options;
+  options.set_game_type(game::THREE_MEN_MORRIS);
+  options.set_jumps_allowed(false);
+  game::Game test_game(options);
+  base::ptr::scoped_ptr<AIAlgorithm> white(new random::RandomAlgorithm());
+  base::ptr::scoped_ptr<AIAlgorithm> black(new AlphaBetaAlgorithm(options));
+  test_game.Initialize();
+  for (int i = 0; i < max_moves; ++i) {
+    AIAlgorithm* next_player =
+        Get((test_game.current_player() == game::WHITE_COLOR) ? white : black);
+    game::PlayerAction action(next_player->GetNextAction(test_game));
+    test_game.ExecutePlayerAction(action);
+    if (test_game.is_game_over()) {
+      LOG(INFO) << "Finished after " << i << " moves.";
+      break;
+    }
+  }
+  EXPECT_TRUE(test_game.is_game_over());
+  if (test_game.winner() != game::BLACK_COLOR) {
+    game::GameSerializer::SerializeTo(test_game,
+        base::Log::default_output_stream, false);
+    FAIL() << "AlphaBeta could not beat Random";
+  }
 }
 
 }  // anonymous namespace
