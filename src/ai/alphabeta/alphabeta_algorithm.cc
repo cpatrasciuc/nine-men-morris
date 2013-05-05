@@ -4,6 +4,7 @@
 
 #include "ai/alphabeta/alphabeta_algorithm.h"
 
+#include <limits>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -20,6 +21,7 @@
 #include "game/board_location.h"
 #include "game/game.h"
 #include "game/game_options.h"
+#include "game/piece_color.h"
 #include "game/player_action.h"
 
 namespace ai {
@@ -61,7 +63,8 @@ AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options)
     : options_(options),
       depth_(6),
       generator_(options),
-      remove_location_(kInvalidLocation) {
+      remove_location_(kInvalidLocation),
+      max_player_color_(game::NO_COLOR) {
   evaluators_.push_back(new base::Function<EvaluatorSignature>(&Mobility));
   evaluators_.push_back(new base::Function<EvaluatorSignature>(&Material));
   evaluators_.push_back(new base::Function<EvaluatorSignature>(&Mills));
@@ -77,7 +80,8 @@ AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options,
       evaluators_(evaluators),
       weights_(weights),
       generator_(options),
-      remove_location_(kInvalidLocation) {
+      remove_location_(kInvalidLocation),
+      max_player_color_(game::NO_COLOR) {
   DCHECK(!evaluators.empty());
   if (weights_.empty()) {
     weights_.insert(weights_.begin(), evaluators_.size(), 1.0);
@@ -102,6 +106,7 @@ game::PlayerAction AlphaBetaAlgorithm::GetNextAction(
     action.set_source(remove_location_);
     return action;
   }
+  max_player_color_ = game_model.current_player();
   std::auto_ptr<AlphaBeta<GameState>::Delegate> delegate(new ProxyPtr(this));
   AlphaBeta<GameState> alphabeta(delegate);
   GameState origin;
@@ -135,7 +140,10 @@ bool AlphaBetaAlgorithm::IsTerminal(const GameState& state) {
   const int remaining_pieces_in_hand = state.pieces_in_hand(opponent);
   const int total_remaining_pieces =
       remaining_pieces_on_board + remaining_pieces_in_hand;
+  const int score = state.current_player() != max_player_color_ ?
+    std::numeric_limits<int>::max() : std::numeric_limits<int>::min();
   if (total_remaining_pieces <= 2) {
+    score_cache_.insert(std::make_pair(state, score));
     return true;
   }
   if (remaining_pieces_in_hand > 0) {
@@ -149,16 +157,24 @@ bool AlphaBetaAlgorithm::IsTerminal(const GameState& state) {
   // End of similar code.
   std::vector<GameState> successors;
   GetSuccessors(state, &successors);
+  if (successors.empty()) {
+    score_cache_.insert(std::make_pair(state, score));
+  }
   return successors.empty();
 }
 
 int AlphaBetaAlgorithm::Evaluate(const GameState& state, bool max_player) {
+  ScoreCache::const_iterator it = score_cache_.find(state);
+  if (it != score_cache_.end()) {
+    return it->second;
+  }
   game::Board board(options_.game_type());
   state.Decode(&board);
   int result = 0;
   for (size_t i = 0; i < evaluators_.size(); ++i) {
     result += weights_[i] * ((*evaluators_[i])(board, state.current_player()));
   }
+  score_cache_.insert(std::make_pair(state, result));
   return result;
 }
 

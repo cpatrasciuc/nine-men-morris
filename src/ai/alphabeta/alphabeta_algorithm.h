@@ -16,6 +16,7 @@
 #include "ai/game_state_generator.h"
 #include "base/basic_macros.h"
 #include "game/board_location.h"
+#include "game/piece_color.h"
 #include "game/player_action.h"
 
 namespace game {
@@ -59,6 +60,11 @@ class AI_EXPORT AlphaBetaAlgorithm
 
   typedef std::map<GameState, std::vector<GameState> > SuccessorCache;
   SuccessorCache successors_cache_;
+
+  typedef std::map<GameState, int> ScoreCache;
+  ScoreCache score_cache_;
+
+  game::PieceColor max_player_color_;
 
   DISALLOW_COPY_AND_ASSIGN(AlphaBetaAlgorithm);
 };
