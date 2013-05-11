@@ -22,19 +22,6 @@ namespace game {
 
 namespace {
 
-int GetBoardSizeFromGameType(GameOptions::GameType type) {
-  switch (type) {
-    case GameOptions::THREE_MEN_MORRIS:
-      return 3;
-    case GameOptions::SIX_MEN_MORRIS:
-      return 5;
-    case GameOptions::NINE_MEN_MORRIS:
-      return 7;
-  }
-  NOTREACHED();
-  return -1;
-}
-
 class PieceColorEqualTo
     : public std::unary_function<
         const std::pair<BoardLocation, PieceColor>&, bool> {
@@ -223,5 +210,18 @@ int Board::GetStep(int index) const {
   }
   return (size_ - 1 - 2 * index) / 2;
 };
+
+int GetBoardSizeFromGameType(GameOptions::GameType type) {
+  switch (type) {
+    case GameOptions::THREE_MEN_MORRIS:
+      return 3;
+    case GameOptions::SIX_MEN_MORRIS:
+      return 5;
+    case GameOptions::NINE_MEN_MORRIS:
+      return 7;
+  }
+  NOTREACHED();
+  return -1;
+}
 
 }  // namespace game
