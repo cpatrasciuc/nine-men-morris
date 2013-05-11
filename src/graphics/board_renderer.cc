@@ -159,6 +159,7 @@ void BoardRenderer::GenerateBoardTexture(OgreApp* app) {
 #ifdef DEBUG_MODE
   render_texture->writeContentsToFile("board_texture.png");
 #endif
+  app->ogre_root()->destroySceneManager(scene_manager);
 }
 
 }  // namespace graphics
