@@ -5,8 +5,10 @@
 #ifndef GRAPHICS_PLAYING_STATE_H_
 #define GRAPHICS_PLAYING_STATE_H_
 
+#include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
 #include "game/game_options.h"
+#include "graphics/board_renderer.h"
 #include "graphics/game_state.h"
 #include "graphics/graphics_export.h"
 
@@ -24,6 +26,7 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
   virtual bool keyPressed(const OIS::KeyEvent& event);
 
   game::Game game_;
+  base::ptr::scoped_ptr<BoardRenderer> board_renderer_;
 };
 
 }  // namespace graphics
