@@ -50,6 +50,8 @@ class GRAPHICS_EXPORT OgreApp
 
   Ogre::Camera* camera() { return camera_; }
 
+  Ogre::Root* ogre_root() { return Get(root_); }
+
   bool Init();
 
   void PushState(GameState* state);
