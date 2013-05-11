@@ -5,12 +5,14 @@ set(CMAKE_MODULE_PATH "/usr/lib64/OGRE/cmake/;${CMAKE_MODULE_PATH}")
 find_package(OGRE REQUIRED)
 
 find_package(OIS REQUIRED)
- 
+
 if(NOT OIS_FOUND)
 	message(SEND_ERROR "Failed to find OIS.")
 endif()
 
 set(GRAPHICS_SOURCE_FILES
+  board_utils.cc
+  board_utils.h
   game_state.cc
   game_state.h
   graphics_export.h
