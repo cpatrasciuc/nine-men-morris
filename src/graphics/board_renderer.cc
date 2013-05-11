@@ -75,12 +75,12 @@ void BoardRenderer::Initialize(OgreApp* app) {
   Ogre::SceneNode* const root = scene_manager->getRootSceneNode();
   root->createChildSceneNode()->attachObject(board_entity);
 
-  Ogre::MaterialPtr render_material =
+  Ogre::MaterialPtr board_material =
       Ogre::MaterialManager::getSingleton().create(kBoardMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  render_material->getTechnique(0)->getPass(0)
+  board_material->getTechnique(0)->getPass(0)
       ->createTextureUnitState(kBoardTextureName);
-  board_entity->setMaterial(render_material);
+  board_entity->setMaterial(board_material);
 }
 
 void BoardRenderer::GenerateBoardTexture(OgreApp* app) {
