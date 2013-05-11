@@ -5,12 +5,12 @@
 #ifndef GRAPHICS_BOARD_UTILS_H_
 #define GRAPHICS_BOARD_UTILS_H_
 
-#include "game/game_options.h"
 #include "graphics/graphics_export.h"
 
 #include "OGRE/OgreVector3.h"
 
 namespace game {
+class Board;
 class BoardLocation;
 }
 
@@ -21,7 +21,7 @@ namespace graphics {
 // always be at (1.0, 1.0) and the bottom left location will always be at (-1.0,
 // -1.0). The third coordinate is always 0.0.
 GRAPHICS_EXPORT Ogre::Vector3 BoardLocationTo3DCoord(
-    const game::BoardLocation& location, game::GameOptions::GameType type);
+    const game::BoardLocation& location, const game::Board& board);
 
 }  // namespace graphics
 
