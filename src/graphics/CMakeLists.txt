@@ -11,6 +11,8 @@ if(NOT OIS_FOUND)
 endif()
 
 set(GRAPHICS_SOURCE_FILES
+  board_renderer.cc
+  board_renderer.h
   board_utils.cc
   board_utils.h
   game_state.cc
