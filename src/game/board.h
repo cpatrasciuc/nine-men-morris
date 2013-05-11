@@ -81,8 +81,6 @@ class GAME_EXPORT Board {
   DISALLOW_COPY_AND_ASSIGN(Board);
 };
 
-GAME_EXPORT int GetBoardSizeFromGameType(GameOptions::GameType type);
-
 }  // namespace game
 
 #endif  // GAME_BOARD_H_
