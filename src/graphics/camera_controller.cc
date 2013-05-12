@@ -22,7 +22,7 @@ void CameraController::mouseMoved(const OIS::MouseEvent& event) {
   if (event.state.Z.rel != 0) {
     const Ogre::Vector3 camera_position = camera_->getPosition();
     Ogre::Vector3 delta(0, 0, event.state.Z.rel * 0.05f);
-    Ogre::Vector3 new_position = camera_position + delta;
+    const Ogre::Vector3 new_position = camera_position + delta;
     if (event.state.Z.rel > 0 && new_position.length() > max_distance_) {
       camera_->setPosition(Ogre::Vector3::ZERO);
       delta = Ogre::Vector3(0, 0, max_distance_);
