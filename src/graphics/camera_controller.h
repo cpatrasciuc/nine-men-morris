@@ -8,10 +8,11 @@
 #include "base/basic_macros.h"
 #include "graphics/graphics_export.h"
 
-#include "OGRE/OgreCamera.h"
-
-#include "OIS/OISEvents.h"
 #include "OIS/OISMouse.h"
+
+namespace Ogre {
+class Camera;
+}
 
 namespace graphics {
 
