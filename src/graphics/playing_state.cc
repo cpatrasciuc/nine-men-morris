@@ -16,10 +16,13 @@ namespace graphics {
 PlayingState::PlayingState(OgreApp* app, game::GameOptions game_options)
     : GameState(app),
       game_(game_options),
-      board_renderer_(new BoardRenderer(game_.board())) {}
+      board_renderer_(new BoardRenderer(game_.board())),
+      camera_controller_(app->camera()) {}
 
 bool PlayingState::Initialize() {
   board_renderer_->Initialize(app());
+  camera_controller_.set_min_distance(50);
+  camera_controller_.set_max_distance(200);
   return true;
 }
 
@@ -34,6 +37,22 @@ bool PlayingState::keyPressed(const OIS::KeyEvent& event) {
   if (event.key == OIS::KC_ESCAPE) {
     app()->PopState();
   }
+  return true;
+}
+
+bool PlayingState::mouseMoved(const OIS::MouseEvent& event) {
+  camera_controller_.mouseMoved(event);
+  return true;
+}
+
+bool PlayingState::mousePressed(const OIS::MouseEvent& event,
+                                OIS::MouseButtonID id) {
+  camera_controller_.mousePressed(event, id);
+  return true;
+}
+bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
+                                 OIS::MouseButtonID id) {
+  camera_controller_.mouseReleased(event, id);
   return true;
 }
 

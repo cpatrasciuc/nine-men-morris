@@ -9,6 +9,7 @@
 #include "game/game.h"
 #include "game/game_options.h"
 #include "graphics/board_renderer.h"
+#include "graphics/camera_controller.h"
 #include "graphics/game_state.h"
 #include "graphics/graphics_export.h"
 
@@ -23,10 +24,19 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
   virtual void Exit();
 
  private:
+  // KeyListener overrides
   virtual bool keyPressed(const OIS::KeyEvent& event);
+
+  // MouseListener overrides
+  virtual bool mouseMoved(const OIS::MouseEvent& event);
+  virtual bool mousePressed(const OIS::MouseEvent& event,
+                            OIS::MouseButtonID id);
+  virtual bool mouseReleased(const OIS::MouseEvent& event,
+                             OIS::MouseButtonID id);
 
   game::Game game_;
   base::ptr::scoped_ptr<BoardRenderer> board_renderer_;
+  CameraController camera_controller_;
 };
 
 }  // namespace graphics
