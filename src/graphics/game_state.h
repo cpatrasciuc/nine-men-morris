@@ -5,15 +5,15 @@
 #ifndef GRAPHICS_GAME_STATE_H_
 #define GRAPHICS_GAME_STATE_H_
 
+#include "base/basic_macros.h"
+#include "graphics/graphics_export.h"
+
 #include "OGRE/OgreFrameListener.h"
 #include "OGRE/OgreWindowEventUtilities.h"
 
 #include "OIS/OISEvents.h"
 #include "OIS/OISKeyboard.h"
 #include "OIS/OISMouse.h"
-
-#include "base/basic_macros.h"
-#include "graphics/graphics_export.h"
 
 namespace graphics {
 
@@ -39,7 +39,7 @@ class GRAPHICS_EXPORT GameState
   virtual void Resume();
 
  private:
-    // KeyListener interface
+  // KeyListener interface
   virtual bool keyPressed(const OIS::KeyEvent& event);
   virtual bool keyReleased(const OIS::KeyEvent& event);
 
