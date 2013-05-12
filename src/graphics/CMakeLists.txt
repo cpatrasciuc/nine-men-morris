@@ -15,6 +15,8 @@ set(GRAPHICS_SOURCE_FILES
   board_renderer.h
   board_utils.cc
   board_utils.h
+  camera_controller.cc
+  camera_controller.h
   game_state.cc
   game_state.h
   graphics_export.h
