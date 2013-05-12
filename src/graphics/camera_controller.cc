@@ -8,7 +8,6 @@
 #include "OGRE/OgreMath.h"
 #include "OGRE/OgreVector3.h"
 
-#include "OIS/OISEvents.h"
 #include "OIS/OISMouse.h"
 
 #include "base/log.h"
@@ -50,7 +49,7 @@ void CameraController::mouseMoved(const OIS::MouseEvent& event) {
     camera_->yaw(Ogre::Degree(-event.state.X.rel * 0.25f));
     camera_->moveRelative(Ogre::Vector3(0, 0, target_distance));
     const double pitch = camera_->getOrientation().getPitch().valueDegrees();
-    if ((pitch > -10 && pitch < 10) || (pitch > 90) || (pitch < -90)) {
+    if ((pitch > -10 && pitch < 10) || (pitch > 80) || (pitch < -80)) {
       camera_->setPosition(Ogre::Vector3::ZERO);
       camera_->pitch(-pitch_delta);
       camera_->moveRelative(Ogre::Vector3(0, 0, target_distance));
