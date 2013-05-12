@@ -10,8 +10,6 @@
 
 #include "OIS/OISMouse.h"
 
-#include "base/log.h"
-
 namespace graphics {
 
 CameraController::CameraController()
