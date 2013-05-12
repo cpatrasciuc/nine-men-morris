@@ -159,33 +159,54 @@ bool OgreApp::frameRenderingQueued(const Ogre::FrameEvent& event) {
 }
 
 bool OgreApp::frameStarted(const Ogre::FrameEvent& event) {
+  if (states_.empty()) {
+    return false;
+  }
   return states_.top()->frameStarted(event);
 }
 
 bool OgreApp::frameEnded(const Ogre::FrameEvent& event) {
+  if (states_.empty()) {
+    return false;
+  }
   return states_.top()->frameEnded(event);
 }
 
 bool OgreApp::keyPressed(const OIS::KeyEvent& event) {
+  if (states_.empty()) {
+    return false;
+  }
   return static_cast<OIS::KeyListener*>(states_.top())->keyPressed(event);
 }
 
 bool OgreApp::keyReleased(const OIS::KeyEvent& event) {
+  if (states_.empty()) {
+    return false;
+  }
   return static_cast<OIS::KeyListener*>(states_.top())->keyReleased(event);
 }
 
 bool OgreApp::mouseMoved(const OIS::MouseEvent& event) {
+  if (states_.empty()) {
+    return false;
+  }
   return static_cast<OIS::MouseListener*>(states_.top())->mouseMoved(event);
 }
 
 bool OgreApp::mousePressed(const OIS::MouseEvent& event,
                            OIS::MouseButtonID id) {
+  if (states_.empty()) {
+    return false;
+  }
   OIS::MouseListener* listener(static_cast<OIS::MouseListener*>(states_.top()));
   return listener->mousePressed(event, id);
 }
 
 bool OgreApp::mouseReleased(const OIS::MouseEvent& event,
                             OIS::MouseButtonID id) {
+  if (states_.empty()) {
+    return false;
+  }
   OIS::MouseListener* listener(static_cast<OIS::MouseListener*>(states_.top()));
   return listener->mouseReleased(event, id);
 }
