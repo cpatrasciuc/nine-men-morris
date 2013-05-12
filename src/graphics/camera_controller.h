@@ -15,12 +15,32 @@
 
 namespace graphics {
 
+// This class handles mouse events and lets the user navigate around the game
+// board. The camera will always look at the origin (0, 0, 0). The user can
+// zoom in/out by using the scroll wheel. The controller does not allow the
+// distance to the target (i.e. origin) to be outside of the following interval:
+// [min_distance, max_distance]. By default, this is set to [0, 10^9].
+// By holding down the right mouse button, the user can orbit around the target.
+// The controller imposes no restriction regarding horizontal orbiting. In the
+// vertical plane the controller ensures that the user won't go over the head
+// nor get too close to the ground plane.
+// Also see: http://www.ogre3d.org/tikiwiki/tiki-index.php?page=SdkCameraMan
 class GRAPHICS_EXPORT CameraController {
  public:
-  explicit CameraController(Ogre::Camera* camera = NULL);
+  CameraController();
 
+  // The camera that will be controlled by this instance. In order to disable
+  // (temporarily) the controller, set the camera to NULL.
+  Ogre::Camera* camera() const { return camera_; }
+  void set_camera(Ogre::Camera* camera) { camera_ = camera; }
+
+  // The controller won't let the user zoom in if the distance to the target
+  // will get smaller than |min_distance|.
   double min_distance() const { return min_distance_; }
   void set_min_distance(double min_distance) { min_distance_ = min_distance; }
+
+  // The controller won't let the user zoom out if the distance to the target
+  // will get greater than |max_distance|.
   double max_distance() const { return max_distance_; }
   void set_max_distance(double max_distance) { max_distance_ = max_distance; }
 

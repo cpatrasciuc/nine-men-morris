@@ -17,16 +17,18 @@ PlayingState::PlayingState(OgreApp* app, game::GameOptions game_options)
     : GameState(app),
       game_(game_options),
       board_renderer_(new BoardRenderer(game_.board())),
-      camera_controller_(app->camera()) {}
+      camera_controller_() {}
 
 bool PlayingState::Initialize() {
   board_renderer_->Initialize(app());
   camera_controller_.set_min_distance(50);
   camera_controller_.set_max_distance(200);
+  camera_controller_.set_camera(app()->camera());
   return true;
 }
 
 void PlayingState::Exit() {
+  camera_controller_.set_camera(NULL);
   Reset(board_renderer_);
   Ogre::SceneManager* const scene_manager = app()->scene_manager();
   Ogre::SceneNode* const root = scene_manager->getRootSceneNode();

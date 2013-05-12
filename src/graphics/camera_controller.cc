@@ -15,8 +15,8 @@
 
 namespace graphics {
 
-CameraController::CameraController(Ogre::Camera* camera)
-    : camera_(camera), min_distance_(0), max_distance_(1e9), orbiting_(false) {}
+CameraController::CameraController()
+    : camera_(NULL), min_distance_(0), max_distance_(1e9), orbiting_(false) {}
 
 void CameraController::mouseMoved(const OIS::MouseEvent& event) {
   if (!camera_) {
