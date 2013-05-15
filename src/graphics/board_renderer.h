@@ -29,6 +29,7 @@ class GRAPHICS_EXPORT BoardRenderer {
   void GenerateBoardTexture(OgreApp* app);
 
   const game::Board& board_;
+  // TODO(rtt_texture): Check if we need this for the whole lifecycle.
   Ogre::TexturePtr rtt_texture_;
   const int board_texture_size_;
 
