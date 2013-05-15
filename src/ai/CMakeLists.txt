@@ -18,6 +18,8 @@ set(AI_SOURCE_FILES
 set(AI_UNITTESTS_SOURCE_FILES
   alphabeta/alphabeta_unittest.cc
   alphabeta/alphabeta_algorithm_unittest.cc
+  alphabeta/genetic_algorithm.h
+  alphabeta/genetic_algorithm_unittest.cc
   game_state_generator_unittest.cc
   game_state_unittest.cc
   random/random_algorithm_unittest.cc
