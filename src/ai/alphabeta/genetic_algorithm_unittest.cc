@@ -30,8 +30,6 @@ class TestDelegate : public GeneticAlgorithm<TestChromosome>::Delegate {
     }
   }
 
-  virtual void Tournament(const Population& population) {}
-
   virtual double Fitness(const TestChromosome& individual) {
     return individual.count();
   };
