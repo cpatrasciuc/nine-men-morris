@@ -132,6 +132,7 @@ void BoardRenderer::Initialize(OgreApp* app) {
     sphere_entity->setCastShadows(false);
     const double scale = 0.005f / board_.size() * multiplier * 5;
     sphere_node->setScale(scale, 0.001, scale);
+    loc_map_.insert(std::make_pair(sphere_entity, locations[i]));
   }
 }
 

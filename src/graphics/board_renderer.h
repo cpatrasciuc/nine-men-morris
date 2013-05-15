@@ -5,6 +5,8 @@
 #ifndef GRAPHICS_BOARD_RENDERER_H_
 #define GRAPHICS_BOARD_RENDERER_H_
 
+#include <map>
+
 #include "base/basic_macros.h"
 #include "graphics/graphics_export.h"
 
@@ -12,6 +14,11 @@
 
 namespace game {
 class Board;
+class BoardLocation;
+}
+
+namespace Ogre {
+class Entity;
 }
 
 namespace graphics {
@@ -32,6 +39,7 @@ class GRAPHICS_EXPORT BoardRenderer {
   // TODO(rtt_texture): Check if we need this for the whole lifecycle.
   Ogre::TexturePtr rtt_texture_;
   const int board_texture_size_;
+  std::map<Ogre::Entity*, game::BoardLocation> loc_map_;
 
   DISALLOW_COPY_AND_ASSIGN(BoardRenderer);
 };
