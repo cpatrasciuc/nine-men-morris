@@ -62,15 +62,13 @@ void GetValidBoardLocations(const game::Board& board,
 
 BoardRenderer::BoardRenderer(const game::Board& board)
     : board_(board),
-      rtt_texture_(NULL),
       board_texture_size_(3) {}
 
 BoardRenderer::~BoardRenderer() {
   Ogre::MaterialManager::getSingleton().remove(kBoardMaterialName);
   Ogre::MaterialManager::getSingleton().remove(kLocationMaterialName);
   Ogre::MeshManager::getSingleton().remove(kBoardPlaneName);
-  Ogre::TextureManager::getSingleton().remove(rtt_texture_->getName());
-  rtt_texture_.setNull();
+  Ogre::TextureManager::getSingleton().remove(kBoardTextureName);
 }
 
 void BoardRenderer::Initialize(OgreApp* app) {
@@ -137,7 +135,7 @@ void BoardRenderer::Initialize(OgreApp* app) {
 }
 
 void BoardRenderer::GenerateBoardTexture(OgreApp* app) {
-  rtt_texture_ = Ogre::TextureManager::getSingleton().createManual(
+  Ogre::TexturePtr rtt_tex = Ogre::TextureManager::getSingleton().createManual(
       kBoardTextureName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
       Ogre::TEX_TYPE_2D,
@@ -154,8 +152,7 @@ void BoardRenderer::GenerateBoardTexture(OgreApp* app) {
   camera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
   camera->setOrthoWindow(board_texture_size_, board_texture_size_);
 
-  Ogre::RenderTexture* render_texture =
-      rtt_texture_->getBuffer()->getRenderTarget();
+  Ogre::RenderTexture* render_texture = rtt_tex->getBuffer()->getRenderTarget();
   render_texture->addViewport(camera);
   render_texture->getViewport(0)->setClearEveryFrame(true);
   render_texture->getViewport(0)->setBackgroundColour(Ogre::ColourValue::Black);
