@@ -109,6 +109,7 @@ void BoardRenderer::Initialize(OgreApp* app) {
   board_material->getTechnique(0)->getPass(0)
       ->createTextureUnitState(kBoardTextureName);
   board_entity->setMaterial(board_material);
+  board_entity->setCastShadows(false);
 
   std::vector<game::BoardLocation> locations;
   GetValidBoardLocations(board_, &locations);
@@ -128,6 +129,7 @@ void BoardRenderer::Initialize(OgreApp* app) {
     pos.y = 0;
     sphere_node->setPosition(pos * multiplier);
     sphere_entity->setMaterial(sphere_material);
+    sphere_entity->setCastShadows(false);
     const double scale = 0.005f / board_.size() * multiplier * 5;
     sphere_node->setScale(scale, 0.001, scale);
   }
