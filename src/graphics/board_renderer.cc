@@ -18,8 +18,10 @@
 
 #include "OGRE/OgreCamera.h"
 #include "OGRE/OgreColourValue.h"
+#include "OGRE/OgreCommon.h"
 #include "OGRE/OgreEntity.h"
 #include "OGRE/OgreHardwarePixelBuffer.h"
+#include "OGRE/OgreLight.h"
 #include "OGRE/OgreMaterial.h"
 #include "OGRE/OgreMaterialManager.h"
 #include "OGRE/OgreMeshManager.h"
@@ -40,6 +42,7 @@ const char kBoardMaterialName[] = "BoardMaterial";
 const char kBoardPlaneName[] = "BoardPlane";
 const char kBoardTextureName[] = "BoardTexture";
 const char kLocationMaterialName[] = "LocationMaterial";
+const char kMainLightName[] = "MainLight";
 const char kRttCameraName[] = "RttCamera";
 
 // TODO(board): Move this inside the board class?
@@ -74,13 +77,21 @@ void BoardRenderer::Initialize(OgreApp* app) {
   GenerateBoardTexture(app);
 
   Ogre::SceneManager* const scene_manager = app->scene_manager();
-  scene_manager->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
+  scene_manager->setAmbientLight(Ogre::ColourValue::Black);
+  scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
   const int multiplier = 10;
   const int board_size = board_texture_size_ * multiplier;
   Ogre::Camera* camera = app->camera();
   camera->setPosition(board_size, board_size, board_size);
   camera->lookAt(Ogre::Vector3::ZERO);
+
+  Ogre::Light* const main_light = scene_manager->createLight(kMainLightName);
+  main_light->setType(Ogre::Light::LT_DIRECTIONAL);
+  main_light->setDiffuseColour(Ogre::ColourValue::White);
+  main_light->setSpecularColour(Ogre::ColourValue::White);
+  main_light->setCastShadows(true);
+  main_light->setDirection(board_size, -board_size, -board_size);
 
   const Ogre::Plane board_plane(Ogre::Vector3::UNIT_Y, 0);
   Ogre::MeshManager::getSingleton().createPlane(kBoardPlaneName,
@@ -105,7 +116,6 @@ void BoardRenderer::Initialize(OgreApp* app) {
       Ogre::MaterialManager::getSingleton().create(kLocationMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   sphere_material->setDiffuse(1.0, 0, 0, 0.5);
-  sphere_material->setAmbient(1.0, 0.0, 0.0);
 
   for (size_t i = 0; i < locations.size(); ++i) {
     const std::string name = "Location" + base::ToString(i);
