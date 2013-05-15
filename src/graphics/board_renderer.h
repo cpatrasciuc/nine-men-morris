@@ -10,7 +10,6 @@
 
 #include "OGRE/OgreTexture.h"
 
-
 namespace game {
 class Board;
 }
@@ -31,6 +30,7 @@ class GRAPHICS_EXPORT BoardRenderer {
 
   const game::Board& board_;
   Ogre::TexturePtr rtt_texture_;
+  const int board_texture_size_;
 
   DISALLOW_COPY_AND_ASSIGN(BoardRenderer);
 };
