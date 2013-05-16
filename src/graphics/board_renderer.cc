@@ -115,6 +115,8 @@ void BoardRenderer::Initialize(OgreApp* app) {
       Ogre::MaterialManager::getSingleton().create(kLocationMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   sphere_material->setDiffuse(1.0, 0, 0, 0.5);
+  sphere_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+  sphere_material->setDepthWriteEnabled(false);
 
   for (size_t i = 0; i < locations.size(); ++i) {
     const std::string name = "Location" + base::ToString(i);
