@@ -47,7 +47,6 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
 
   OgreApp* app_;
   const game::Board& board_;
-  const int board_texture_size_;
   std::map<Ogre::Entity*, game::BoardLocation> loc_map_;
   Ogre::MovableObject* selected_location_;
 

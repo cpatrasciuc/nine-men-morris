@@ -50,6 +50,8 @@ const char kLocationMaterialName[] = "LocationMaterial";
 const char kMainLightName[] = "MainLight";
 const char kRttCameraName[] = "RttCamera";
 
+const int kBoardTextureSize = 3;
+
 // TODO(board): Move this inside the board class?
 void GetValidBoardLocations(const game::Board& board,
                             std::vector<game::BoardLocation>* locations) {
@@ -67,7 +69,6 @@ void GetValidBoardLocations(const game::Board& board,
 
 BoardRenderer::BoardRenderer(const game::Board& board)
     : board_(board),
-      board_texture_size_(3),
       selected_location_(NULL) {}
 
 BoardRenderer::~BoardRenderer() {
@@ -86,7 +87,7 @@ void BoardRenderer::Initialize(OgreApp* app) {
   scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
   const int multiplier = 10;
-  const int board_size = board_texture_size_ * multiplier;
+  const int board_size = kBoardTextureSize * multiplier;
   Ogre::Camera* const camera = app->camera();
   camera->setPosition(board_size, board_size, board_size);
   camera->lookAt(Ogre::Vector3::ZERO);
@@ -199,7 +200,7 @@ void BoardRenderer::GenerateBoardTexture(OgreApp* app) {
   camera->lookAt(Ogre::Vector3::ZERO);
   camera->setAspectRatio(1.0f);
   camera->setProjectionType(Ogre::PT_ORTHOGRAPHIC);
-  camera->setOrthoWindow(board_texture_size_, board_texture_size_);
+  camera->setOrthoWindow(kBoardTextureSize, kBoardTextureSize);
 
   Ogre::RenderTexture* render_texture = rtt_tex->getBuffer()->getRenderTarget();
   render_texture->addViewport(camera);
