@@ -13,6 +13,8 @@
 #include <vector>
 
 #include "base/log.h"
+#include "base/threading/lock.h"
+#include "base/threading/scoped_guard.h"
 #include "game/board.h"
 #include "game/board_location.h"
 #include "game/game_type.h"
@@ -28,6 +30,7 @@ namespace ai {
 namespace {
 
 map<game::GameType, map<BoardLocation, int> > kIndicesCache;
+base::threading::Lock kIndicesCacheLock;
 
 game::GameType GetGameTypeFromBoardSize(int board_size) {
   switch (board_size) {
@@ -45,6 +48,7 @@ game::GameType GetGameTypeFromBoardSize(int board_size) {
 }
 
 const map<BoardLocation, int>& GetLocationIndices(game::GameType type) {
+  base::threading::ScopedGuard _(&kIndicesCacheLock);
   map<BoardLocation, int>& indices = kIndicesCache[type];
   if (indices.empty()) {
     game::Board board(type);
