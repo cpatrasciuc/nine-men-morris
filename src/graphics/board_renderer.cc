@@ -80,7 +80,7 @@ void BoardRenderer::Initialize(OgreApp* app) {
 
   const int multiplier = 10;
   const int board_size = board_texture_size_ * multiplier;
-  Ogre::Camera* camera = app->camera();
+  Ogre::Camera* const camera = app->camera();
   camera->setPosition(board_size, board_size, board_size);
   camera->lookAt(Ogre::Vector3::ZERO);
 
@@ -145,9 +145,9 @@ void BoardRenderer::GenerateBoardTexture(OgreApp* app) {
       Ogre::PF_R8G8B8,
       Ogre::TU_RENDERTARGET);
 
-  Ogre::SceneManager* scene_manager =
+  Ogre::SceneManager* const scene_manager =
       app->ogre_root()->createSceneManager(Ogre::ST_GENERIC);
-  Ogre::Camera* camera = scene_manager->createCamera(kRttCameraName);
+  Ogre::Camera* const camera = scene_manager->createCamera(kRttCameraName);
   camera->setPosition(Ogre::Vector3(0, 0, 1000));
   camera->lookAt(Ogre::Vector3::ZERO);
   camera->setAspectRatio(1.0f);
