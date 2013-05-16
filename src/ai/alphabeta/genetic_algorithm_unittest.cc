@@ -18,7 +18,7 @@ typedef std::bitset<10> TestChromosome;
 
 class TestDelegate : public GeneticAlgorithm<TestChromosome>::Delegate {
  public:
-  typedef std::vector<TestChromosome> Population;
+  typedef GeneticAlgorithm<TestChromosome>::Population Population;
 
   TestDelegate() {}
 
@@ -65,6 +65,45 @@ TEST(GeneticAlgorithm, AllOnes) {
   genetic_algorithm.Run();
   const TestChromosome best = genetic_algorithm.best();
   EXPECT_TRUE(best.all()) << best.to_ulong();
+}
+
+class TestDelegateNoChanges
+    : public GeneticAlgorithm<TestChromosome>::Delegate {
+ public:
+  typedef GeneticAlgorithm<TestChromosome>::Population Population;
+
+  TestDelegateNoChanges() {}
+
+  virtual double Fitness(const TestChromosome& individual) {
+    EXPECT_FALSE(individual.any());
+    return individual.count();
+  };
+
+  virtual void Crossover(const TestChromosome& c1,
+                         const TestChromosome& c2,
+                         Population* population) {
+    FAIL() << "Should never be called";
+  }
+
+  virtual void Mutate(TestChromosome* individual) {
+    FAIL() << "Should never be called";
+  };
+
+ private:
+  DISALLOW_COPY_AND_ASSIGN(TestDelegateNoChanges);
+};
+
+TEST(GeneticAlgorithm, NoEvolution) {
+  std::auto_ptr<GeneticAlgorithm<TestChromosome>::Delegate> delegate;
+  delegate.reset(new TestDelegateNoChanges());
+  GeneticAlgorithm<TestChromosome> genetic_algorithm(delegate);
+  genetic_algorithm.set_max_generations(1000);
+  genetic_algorithm.set_population_size(100);
+  genetic_algorithm.set_crossover_rate(0.0);
+  genetic_algorithm.set_mutation_rate(0.0);
+  genetic_algorithm.Run();
+  const TestChromosome best = genetic_algorithm.best();
+  EXPECT_FALSE(best.any()) << best.to_ulong();
 }
 
 }  // anonymous namespace
