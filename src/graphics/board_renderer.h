@@ -30,7 +30,7 @@ class OgreApp;
 
 class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
  public:
-  explicit BoardRenderer(OgreApp* app, const game::Board& board);
+  BoardRenderer(OgreApp* app, const game::Board& board);
   ~BoardRenderer();
 
   void Initialize();
