@@ -52,6 +52,8 @@ class GRAPHICS_EXPORT OgreApp
 
   Ogre::Root* ogre_root() { return Get(root_); }
 
+  const OIS::Mouse& mouse() const { return *mouse_; }
+
   bool Init();
 
   void PushState(GameState* state);
