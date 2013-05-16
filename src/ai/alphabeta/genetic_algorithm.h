@@ -13,6 +13,7 @@
 
 #include "base/basic_macros.h"
 #include "base/ptr/scoped_ptr.h"
+#include "base/random.h"
 
 namespace ai {
 namespace alphabeta {
@@ -54,7 +55,7 @@ class GeneticAlgorithm {
     // implementations might simulate the natural selection algorithm, where
     // the selection probability is proportional with the fitness score.
     virtual const Chromosome& Selection(const Population& population) {
-      const int index = Rand() * population.size();
+      const int index = base::Random(population.size());
       return population[index];
     };
 
@@ -159,7 +160,7 @@ class GeneticAlgorithm {
     new_population.push_back(population_[0]);
     while (new_population.size() < population_.size()) {
       const Chromosome& mate1 = delegate_->Selection(population_);
-      if (Rand() < crossover_rate_) {
+      if (base::Random() < crossover_rate_) {
         const Chromosome& mate2 = delegate_->Selection(population_);
         delegate_->Crossover(mate1, mate2, &new_population);
       } else {
@@ -170,7 +171,7 @@ class GeneticAlgorithm {
       new_population.pop_back();
     }
     for (int i = 0; i < population_size_; ++i) {
-      if (Rand() < mutation_rate_) {
+      if (base::Random() < mutation_rate_) {
         delegate_->Mutate(&new_population[i]);
       }
     }
@@ -178,11 +179,6 @@ class GeneticAlgorithm {
     best_ = &population_[0];
     delegate_->ReportProgress(current_generation_,
                               delegate_->Fitness(population_[0]));
-  }
-
-  // Utility method used to obtain a random number in the interval [0.0, 1.0).
-  static double Rand() {
-    return static_cast<double>(std::rand()) / RAND_MAX;  // NOLINT
   }
 
   base::ptr::scoped_ptr<Delegate> delegate_;

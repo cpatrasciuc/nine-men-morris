@@ -51,6 +51,9 @@ class BASE_EXPORT MersenneTwister32 {
   DISALLOW_COPY_AND_ASSIGN(MersenneTwister32);
 };
 
+// Utility function used to obtain a random number in the interval [0.0, |max|).
+BASE_EXPORT double Random(double max = 1.0);
+
 }  // namespace base
 
 #endif  // BASE_RANDOM_H_

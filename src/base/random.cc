@@ -59,4 +59,8 @@ void MersenneTwister32::GenerateNumbers() {
   }
 }
 
+double Random(double max) {
+  return static_cast<double>(std::rand()) / RAND_MAX * max;  // NOLINT
+}
+
 }  // namespace base

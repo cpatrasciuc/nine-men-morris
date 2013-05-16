@@ -8,6 +8,7 @@
 
 #include "ai/alphabeta/genetic_algorithm.h"
 #include "base/basic_macros.h"
+#include "base/random.h"
 #include "gtest/gtest.h"
 
 namespace ai {
@@ -24,8 +25,7 @@ class TestDelegate : public GeneticAlgorithm<TestChromosome>::Delegate {
 
   virtual void GetInitialPopulation(int size, Population* population) {
     for (int i = 0; i < size; ++i) {
-      const int number =
-          static_cast<double>(std::rand()) / RAND_MAX * 1e10;  // NOLINT
+      const int number = base::Random(1e10);
       population->push_back(TestChromosome(number));
     }
   }
@@ -48,7 +48,7 @@ class TestDelegate : public GeneticAlgorithm<TestChromosome>::Delegate {
   }
 
   virtual void Mutate(TestChromosome* individual) {
-    const int idx = static_cast<double>(std::rand()) / RAND_MAX * 10;  // NOLINT
+    const int idx = base::Random(10);
     individual->flip(idx);
   };
 
