@@ -44,6 +44,7 @@ bool PlayingState::keyPressed(const OIS::KeyEvent& event) {
 
 bool PlayingState::mouseMoved(const OIS::MouseEvent& event) {
   camera_controller_.mouseMoved(event);
+  board_renderer_->mouseMoved(event);
   return true;
 }
 

@@ -25,14 +25,19 @@
 #include "OGRE/OgreMaterial.h"
 #include "OGRE/OgreMaterialManager.h"
 #include "OGRE/OgreMeshManager.h"
+#include "OGRE/OgreMovableObject.h"
 #include "OGRE/OgrePlane.h"
+#include "OGRE/OgreRay.h"
 #include "OGRE/OgreRenderTexture.h"
 #include "OGRE/OgreResourceGroupManager.h"
 #include "OGRE/OgreRoot.h"
 #include "OGRE/OgreSceneManager.h"
 #include "OGRE/OgreSceneNode.h"
+#include "OGRE/OgreSceneQuery.h"
 #include "OGRE/OgreTextureManager.h"
 #include "OGRE/OgreVector3.h"
+
+#include "OIS/OISMouse.h"
 
 namespace graphics {
 namespace {
@@ -62,7 +67,8 @@ void GetValidBoardLocations(const game::Board& board,
 
 BoardRenderer::BoardRenderer(const game::Board& board)
     : board_(board),
-      board_texture_size_(3) {}
+      board_texture_size_(3),
+      selected_location_(NULL) {}
 
 BoardRenderer::~BoardRenderer() {
   Ogre::MaterialManager::getSingleton().remove(kBoardMaterialName);
@@ -72,6 +78,7 @@ BoardRenderer::~BoardRenderer() {
 }
 
 void BoardRenderer::Initialize(OgreApp* app) {
+  app_ = app;
   GenerateBoardTexture(app);
 
   Ogre::SceneManager* const scene_manager = app->scene_manager();
@@ -132,8 +139,48 @@ void BoardRenderer::Initialize(OgreApp* app) {
     sphere_entity->setCastShadows(false);
     const double scale = 0.005f / board_.size() * multiplier * 5;
     sphere_node->setScale(scale, 0.001, scale);
+    sphere_entity->setVisible(false);
     loc_map_.insert(std::make_pair(sphere_entity, locations[i]));
   }
+}
+
+bool BoardRenderer::mouseMoved(const OIS::MouseEvent& event) {
+  if (selected_location_) {
+    selected_location_->setVisible(false);
+  }
+  Ogre::SceneManager* const scene_manager = app_->scene_manager();
+  Ogre::Camera* const camera = app_->camera();
+  const OIS::MouseState& mouse_state = app_->mouse().getMouseState();
+  const Ogre::Ray ray = camera->getCameraToViewportRay(
+      mouse_state.X.abs / double(mouse_state.width),
+      mouse_state.Y.abs / double(mouse_state.height));
+  Ogre::RaySceneQuery* ray_scene_query = scene_manager->createRayQuery(ray);
+  ray_scene_query->setSortByDistance(true);
+  const Ogre::RaySceneQueryResult query_result = ray_scene_query->execute();
+  for (size_t i = 0; i < query_result.size(); ++i) {
+    if (!query_result[i].movable) {
+      continue;
+    }
+    // TODO(selection): Replace this test with query mask bits
+    if (query_result[i].movable->getName().substr(0, 8) != "Location") {
+      continue;
+    }
+    selected_location_ = query_result[i].movable;
+    selected_location_->setVisible(true);
+    break;
+  }
+  scene_manager->destroyQuery(ray_scene_query);
+  return true;
+}
+
+bool BoardRenderer::mousePressed(const OIS::MouseEvent& event,
+                                 OIS::MouseButtonID id) {
+  return true;
+}
+
+bool BoardRenderer::mouseReleased(const OIS::MouseEvent& event,
+                                  OIS::MouseButtonID id) {
+  return true;
 }
 
 void BoardRenderer::GenerateBoardTexture(OgreApp* app) {

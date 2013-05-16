@@ -12,6 +12,8 @@
 
 #include "OGRE/OgreTexture.h"
 
+#include "OIS/OISMouse.h"
+
 namespace game {
 class Board;
 class BoardLocation;
@@ -19,25 +21,35 @@ class BoardLocation;
 
 namespace Ogre {
 class Entity;
+class MovableObject;
 }
 
 namespace graphics {
 
 class OgreApp;
 
-class GRAPHICS_EXPORT BoardRenderer {
+class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
  public:
   explicit BoardRenderer(const game::Board& board);
   ~BoardRenderer();
 
   void Initialize(OgreApp* app);
 
+  // MouseListener interface
+  virtual bool mouseMoved(const OIS::MouseEvent& event);
+  virtual bool mousePressed(const OIS::MouseEvent& event,
+                            OIS::MouseButtonID id);
+  virtual bool mouseReleased(const OIS::MouseEvent& event,
+                             OIS::MouseButtonID id);
+
  private:
   void GenerateBoardTexture(OgreApp* app);
 
+  OgreApp* app_;
   const game::Board& board_;
   const int board_texture_size_;
   std::map<Ogre::Entity*, game::BoardLocation> loc_map_;
+  Ogre::MovableObject* selected_location_;
 
   DISALLOW_COPY_AND_ASSIGN(BoardRenderer);
 };
