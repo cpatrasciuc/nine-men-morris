@@ -16,11 +16,11 @@ namespace graphics {
 PlayingState::PlayingState(OgreApp* app, game::GameOptions game_options)
     : GameState(app),
       game_(game_options),
-      board_renderer_(new BoardRenderer(game_.board())),
+      board_renderer_(new BoardRenderer(app, game_.board())),
       camera_controller_() {}
 
 bool PlayingState::Initialize() {
-  board_renderer_->Initialize(app());
+  board_renderer_->Initialize();
   camera_controller_.set_min_distance(50);
   camera_controller_.set_max_distance(200);
   camera_controller_.set_camera(app()->camera());

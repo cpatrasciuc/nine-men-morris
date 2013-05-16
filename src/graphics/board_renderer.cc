@@ -67,8 +67,9 @@ void GetValidBoardLocations(const game::Board& board,
 
 }  // anonymous namespace
 
-BoardRenderer::BoardRenderer(const game::Board& board)
-    : board_(board),
+BoardRenderer::BoardRenderer(OgreApp* app, const game::Board& board)
+    : app_(app),
+      board_(board),
       selected_location_(NULL) {}
 
 BoardRenderer::~BoardRenderer() {
@@ -78,17 +79,16 @@ BoardRenderer::~BoardRenderer() {
   Ogre::TextureManager::getSingleton().remove(kBoardTextureName);
 }
 
-void BoardRenderer::Initialize(OgreApp* app) {
-  app_ = app;
-  GenerateBoardTexture(app);
+void BoardRenderer::Initialize() {
+  GenerateBoardTexture();
 
-  Ogre::SceneManager* const scene_manager = app->scene_manager();
+  Ogre::SceneManager* const scene_manager = app_->scene_manager();
   scene_manager->setAmbientLight(Ogre::ColourValue::Black);
   scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
   const int multiplier = 10;
   const int board_size = kBoardTextureSize * multiplier;
-  Ogre::Camera* const camera = app->camera();
+  Ogre::Camera* const camera = app_->camera();
   camera->setPosition(board_size, board_size, board_size);
   camera->lookAt(Ogre::Vector3::ZERO);
 
@@ -184,7 +184,7 @@ bool BoardRenderer::mouseReleased(const OIS::MouseEvent& event,
   return true;
 }
 
-void BoardRenderer::GenerateBoardTexture(OgreApp* app) {
+void BoardRenderer::GenerateBoardTexture() {
   Ogre::TexturePtr rtt_tex = Ogre::TextureManager::getSingleton().createManual(
       kBoardTextureName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
@@ -194,7 +194,7 @@ void BoardRenderer::GenerateBoardTexture(OgreApp* app) {
       Ogre::TU_RENDERTARGET);
 
   Ogre::SceneManager* const scene_manager =
-      app->ogre_root()->createSceneManager(Ogre::ST_GENERIC);
+      app_->ogre_root()->createSceneManager(Ogre::ST_GENERIC);
   Ogre::Camera* const camera = scene_manager->createCamera(kRttCameraName);
   camera->setPosition(Ogre::Vector3(0, 0, 1000));
   camera->lookAt(Ogre::Vector3::ZERO);
@@ -251,7 +251,7 @@ void BoardRenderer::GenerateBoardTexture(OgreApp* app) {
 #ifdef DEBUG_MODE
   render_texture->writeContentsToFile("board_texture.png");
 #endif
-  app->ogre_root()->destroySceneManager(scene_manager);
+  app_->ogre_root()->destroySceneManager(scene_manager);
 }
 
 }  // namespace graphics

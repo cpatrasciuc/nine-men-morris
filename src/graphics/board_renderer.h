@@ -30,10 +30,10 @@ class OgreApp;
 
 class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
  public:
-  explicit BoardRenderer(const game::Board& board);
+  explicit BoardRenderer(OgreApp* app, const game::Board& board);
   ~BoardRenderer();
 
-  void Initialize(OgreApp* app);
+  void Initialize();
 
   // MouseListener interface
   virtual bool mouseMoved(const OIS::MouseEvent& event);
@@ -43,7 +43,7 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
                              OIS::MouseButtonID id);
 
  private:
-  void GenerateBoardTexture(OgreApp* app);
+  void GenerateBoardTexture();
 
   OgreApp* app_;
   const game::Board& board_;
