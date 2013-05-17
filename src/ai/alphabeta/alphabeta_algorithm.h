@@ -33,7 +33,7 @@ class AI_EXPORT AlphaBetaAlgorithm
   explicit AlphaBetaAlgorithm(const game::GameOptions& options);
   AlphaBetaAlgorithm(const game::GameOptions& options,
       int search_depth,
-      const std::vector<Evaluator>& evaluators,
+      const std::vector<Evaluator*>& evaluators,
       const std::vector<int>& weights = std::vector<int>());
   ~AlphaBetaAlgorithm();
 
@@ -51,7 +51,7 @@ class AI_EXPORT AlphaBetaAlgorithm
 
   int depth_;
 
-  std::vector<Evaluator> evaluators_;
+  std::vector<Evaluator*> evaluators_;
   std::vector<int> weights_;
 
   GameStateGenerator generator_;

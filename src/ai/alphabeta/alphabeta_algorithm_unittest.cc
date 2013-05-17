@@ -34,7 +34,7 @@ int TestEvaluator(const game::Board& board, game::PieceColor player) {
 }
 
 TEST(AlphaBetaAlgorithm, Evaluators) {
-  std::vector<Evaluator> evaluators;
+  std::vector<Evaluator*> evaluators;
   evaluators.push_back(new base::Function<EvaluatorSignature>(&TestEvaluator));
   game::GameOptions options;
   options.set_game_type(game::THREE_MEN_MORRIS);

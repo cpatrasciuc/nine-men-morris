@@ -26,7 +26,7 @@ int Mobility(const game::Board& board, game::PieceColor player) {
         board.GetAdjacentLocations(loc, &adjacent_locations);
         for (size_t i = 0; i < adjacent_locations.size(); ++i) {
           if (board.GetPieceAt(adjacent_locations[i])) {
-            result += board.GetPieceAt(loc) == player ? 1 : -1;
+            result += int(board.GetPieceAt(loc) == player);
           }
         }
       }
@@ -36,8 +36,7 @@ int Mobility(const game::Board& board, game::PieceColor player) {
 }
 
 int Material(const game::Board& board, game::PieceColor player) {
-  const game::PieceColor other = game::GetOpponent(player);
-  return board.GetPieceCountByColor(player) - board.GetPieceCountByColor(other);
+  return board.GetPieceCountByColor(player);
 }
 
 int Mills(const game::Board& board, game::PieceColor player) {
@@ -49,11 +48,17 @@ int Mills(const game::Board& board, game::PieceColor player) {
         continue;
       }
       if (board.IsPartOfMill(loc)) {
-        result += board.GetPieceAt(loc) == player ? 1 : -1;
+        result += int(board.GetPieceAt(loc) == player);
       }
     }
   }
   return result;
+}
+
+int OpponentEval(Evaluator* evaluator,
+                 const game::Board& board,
+                 game::PieceColor player) {
+  return (*evaluator)(board, game::GetOpponent(player));
 }
 
 }  // namespace alphabeta

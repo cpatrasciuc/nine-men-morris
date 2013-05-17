@@ -18,7 +18,7 @@ namespace alphabeta {
 
 // Handy definitions for the heuristics that evaluate a game state.
 typedef int(EvaluatorSignature)(const game::Board&, game::PieceColor);
-typedef base::Callable<EvaluatorSignature>* Evaluator;
+typedef base::Callable<EvaluatorSignature> Evaluator;
 
 // Heuristic that counts the number of actions available to the |player|.
 AI_EXPORT int Mobility(const game::Board& board, game::PieceColor player);
@@ -28,6 +28,12 @@ AI_EXPORT int Material(const game::Board& board, game::PieceColor player);
 
 // Heuristic that counts the difference between the number of closed mills.
 AI_EXPORT int Mills(const game::Board& board, game::PieceColor player);
+
+// Utility heuristic that evaluates the board using the given |evaluator|, but
+// from the opponent perspective.
+AI_EXPORT int OpponentEval(Evaluator* evaluator,
+                           const game::Board& board,
+                           game::PieceColor player);
 
 }  // namespace alphabeta
 }  // namespace ai
