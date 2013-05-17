@@ -69,9 +69,11 @@ class GeneticAlgorithm {
 
     // This method must be overridden if the user wants to track the progress of
     // the algorithm. The GeneticAlgorithm class will call back this method
-    // during its run and provides the current generation count and the current
-    // best fitness score after each generation.
-    virtual void ReportProgress(int generation_count, double best_score) {}
+    // during its run and provides the current generation count, the current
+    // best fitness score and the best found individual after each generation.
+    virtual void ReportProgress(int generation_count,
+                                double best_score,
+                                const Chromosome& best_individual) {}
 
    protected:
     Delegate() {}
@@ -178,7 +180,8 @@ class GeneticAlgorithm {
     std::swap(population_, new_population);
     best_ = &population_[0];
     delegate_->ReportProgress(current_generation_,
-                              delegate_->Fitness(population_[0]));
+                              delegate_->Fitness(population_[0]),
+                              population_[0]);
   }
 
   base::ptr::scoped_ptr<Delegate> delegate_;
