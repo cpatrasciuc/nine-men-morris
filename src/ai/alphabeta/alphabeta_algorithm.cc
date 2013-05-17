@@ -15,6 +15,7 @@
 #include "ai/game_state.h"
 #include "ai/game_state_generator.h"
 #include "base/basic_macros.h"
+#include "base/bind.h"
 #include "base/function.h"
 #include "base/log.h"
 #include "game/board.h"
@@ -27,6 +28,8 @@
 namespace ai {
 namespace alphabeta {
 namespace {
+
+const int kBestWeights[] = { 4, 0, 3, 3, -3, 2 };
 
 const game::BoardLocation kInvalidLocation(-1, -1);
 
@@ -65,10 +68,19 @@ AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options)
       generator_(options),
       remove_location_(kInvalidLocation),
       max_player_color_(game::NO_COLOR) {
-  evaluators_.push_back(new base::Function<EvaluatorSignature>(&Mobility));
-  evaluators_.push_back(new base::Function<EvaluatorSignature>(&Material));
-  evaluators_.push_back(new base::Function<EvaluatorSignature>(&Mills));
-  weights_.insert(weights_.end(), evaluators_.size(), 1.0);
+  typedef int(OppEvalSig)(Evaluator*, const game::Board&, game::PieceColor);
+  using base::Function;
+  evaluators_.push_back(new Function<EvaluatorSignature>(&Mobility));
+  evaluators_.push_back(new Function<EvaluatorSignature>(&Material));
+  evaluators_.push_back(new Function<EvaluatorSignature>(&Mills));
+  evaluators_.push_back(base::Bind(new Function<OppEvalSig>(&OpponentEval),
+      std::auto_ptr<Evaluator>(new Function<EvaluatorSignature>(&Mobility))));
+  evaluators_.push_back(base::Bind(new Function<OppEvalSig>(&OpponentEval),
+      std::auto_ptr<Evaluator>(new Function<EvaluatorSignature>(&Material))));
+  evaluators_.push_back(base::Bind(new Function<OppEvalSig>(&OpponentEval),
+      std::auto_ptr<Evaluator>(new Function<EvaluatorSignature>(&Mills))));
+  DCHECK_EQ(evaluators_.size(), arraysize(kBestWeights));
+  weights_.assign(kBestWeights, kBestWeights + evaluators_.size());
 }
 
 AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options,
