@@ -172,7 +172,7 @@ class GeneticAlgorithm {
     if (new_population.size() > population_.size()) {
       new_population.pop_back();
     }
-    for (int i = 0; i < population_size_; ++i) {
+    for (int i = 1; i < population_size_; ++i) {
       if (base::Random() < mutation_rate_) {
         delegate_->Mutate(&new_population[i]);
       }
