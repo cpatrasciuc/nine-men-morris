@@ -6,6 +6,7 @@
 #define GAME_BOARD_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "base/basic_macros.h"
@@ -70,11 +71,18 @@ class GAME_EXPORT Board {
   bool IsPartOfMill(const BoardLocation& location) const;
 
  private:
+  // Forward declaration of the internal class used to store the data related
+  // to each board location.
+  class BoardImpl;
+
   // Utility method that returns the distance between valid locations on the
   // line or column specified by |index|.
   int GetStep(int index) const;
 
   int size_;
+
+  // TODO(smart_ptr): Make our base::ptr::scoped_ptr work with incomplete types
+  std::auto_ptr<BoardImpl> impl_;
 
   std::map<BoardLocation, PieceColor> pieces_;
 

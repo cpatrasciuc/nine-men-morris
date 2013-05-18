@@ -6,9 +6,11 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <cstring>
 #include <functional>
 #include <map>
 #include <utility>
+#include <vector>
 
 #include "base/basic_macros.h"
 #include "base/log.h"
@@ -22,6 +24,8 @@ namespace game {
 
 namespace {
 
+const int kMaxBoardSize = 7;
+
 int GetBoardSizeFromGameType(GameType type) {
   switch (type) {
     case THREE_MEN_MORRIS:
@@ -33,6 +37,38 @@ int GetBoardSizeFromGameType(GameType type) {
   }
   NOTREACHED();
   return -1;
+}
+
+bool InternalIsValidLocation(int board_size, const BoardLocation& location) {
+  DCHECK_LT(board_size, kMaxBoardSize + 1);
+  DCHECK_LT(location.line(), kMaxBoardSize);
+  DCHECK_LT(location.column(), kMaxBoardSize);
+  DCHECK_GT(location.line(), -1);
+  DCHECK_GT(location.column(), -1);
+  // Special case for size_ == 3, where all locations are valid
+  if (board_size == 3) {
+    return true;
+  }
+  int l = location.line();
+  int c = location.column();
+  // Only the middle of the board is not allowed for the center line
+  if (l == board_size / 2) {
+    return (c != board_size / 2);
+  }
+  // Handle symmetry
+  if (l > board_size / 2) {
+    l = board_size - l - 1;
+  }
+  // Location from the middle column are allowed for all lines < size_ / 2
+  if (c == board_size / 2) {
+    return true;
+  }
+  // Handle symmetry
+  if (c > board_size / 2) {
+    c = board_size - c - 1;
+  }
+  // Check if the location is on the diagonal
+  return l == c;
 }
 
 class PieceColorEqualTo
@@ -51,8 +87,44 @@ class PieceColorEqualTo
 
 }  // anonymous namespace
 
+class Board::BoardImpl {
+ public:
+  explicit BoardImpl(GameType type) : valid_(NULL) {
+    std::map<GameType, std::vector<bool> >::iterator it =
+        kValidLocationsCache.find(type);
+    if (it == kValidLocationsCache.end()) {
+      const int board_size = GetBoardSizeFromGameType(type);
+      std::vector<bool> valid(kMaxBoardSize * kMaxBoardSize, false);
+      for (int line = 0; line < kMaxBoardSize; ++line) {
+        for (int col = 0; col < kMaxBoardSize; ++col) {
+          valid[line * kMaxBoardSize + col] =
+              InternalIsValidLocation(board_size, BoardLocation(line, col));
+        }
+      }
+      it = kValidLocationsCache.insert(std::make_pair(type, valid)).first;
+    }
+    valid_ = &it->second;
+  };
+
+  // This is a kMaxBoardSize * kMaxBoardSize matrix stored in vector form that
+  // specifies if a location (i, j) is valid or not.
+  std::vector<bool>* valid_;
+
+ private:
+  static std::map<GameType, std::vector<bool> > kValidLocationsCache;
+
+  DISALLOW_COPY_AND_ASSIGN(BoardImpl);
+};
+
+// static
+std::map<GameType, std::vector<bool> > Board::BoardImpl::kValidLocationsCache;
+
 Board::Board(GameType type)
-    : size_(GetBoardSizeFromGameType(type)), pieces_() {}
+    : size_(GetBoardSizeFromGameType(type)),
+      impl_(new BoardImpl(type)),
+      pieces_() {
+  DCHECK_LT(size_, kMaxBoardSize + 1);
+}
 
 int Board::GetPieceCountByColor(PieceColor color) const {
   DCHECK(color != NO_COLOR);
@@ -61,36 +133,10 @@ int Board::GetPieceCountByColor(PieceColor color) const {
                        PieceColorEqualTo(color));
 }
 
-bool Board::IsValidLocation(const BoardLocation& location) const {
-  // First check that the location is inside the board
-  if (location.line() >= size_ || location.column() >= size_ ||
-      location.line() < 0 || location.column() < 0) {
-    return false;
-  }
-  // Special case for size_ == 3, where all locations are valid
-  if (size_ == 3) {
-    return true;
-  }
-  int l = location.line();
-  int c = location.column();
-  // Only the middle of the board is not allowed for the center line
-  if (l == size_ / 2) {
-    return (c != size_ / 2);
-  }
-  // Handle symmetry
-  if (l > size_ / 2) {
-    l = size_ - l - 1;
-  }
-  // Location from the middle column are allowed for all lines < size_ / 2
-  if (c == size_ / 2) {
-    return true;
-  }
-  // Handle symmetry
-  if (c > size_ / 2) {
-    c = size_ - c - 1;
-  }
-  // Check if the location is on the diagonal
-  return l == c;
+bool Board::IsValidLocation(const BoardLocation& loc) const {
+  return loc.line() < size_ && loc.column() < size_ &&
+         loc.line() >= 0    && loc.column() >= 0 &&
+         (*(impl_->valid_))[loc.line() * kMaxBoardSize + loc.column()];
 }
 
 bool Board::IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
