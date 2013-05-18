@@ -89,6 +89,7 @@ class PieceColorEqualTo
 
 class Board::BoardImpl {
  public:
+  // TODO(game): Might want to make this ctor lighter and add an Init() method
   explicit BoardImpl(GameType type) : valid_(NULL) {
     std::map<GameType, std::vector<bool> >::iterator it =
         kValidLocationsCache.find(type);
