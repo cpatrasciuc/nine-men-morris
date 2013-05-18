@@ -30,6 +30,7 @@ if(RELEASE)
 else()
   add_definitions("-DDEBUG_MODE")
   add_definitions("-DENABLE_LOGGING")
+  add_definitions("-DENABLE_DCHECK")
 endif()
 
 add_subdirectory(base)
