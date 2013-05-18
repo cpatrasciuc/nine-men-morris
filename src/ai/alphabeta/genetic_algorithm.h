@@ -88,6 +88,7 @@ class GeneticAlgorithm {
         population_size_(100),
         crossover_rate_(0.9),
         mutation_rate_(0.01),
+        propagation_rate_(0.0),
         max_generations_(500),
         current_generation_(0),
         best_(NULL) {
@@ -109,6 +110,17 @@ class GeneticAlgorithm {
   // performed.
   double mutation_rate() const { return mutation_rate_; }
   void set_mutation_rate(double rate) { mutation_rate_ = rate; }
+
+  // A number between 0.0 and 1.0 specifying the percentage of the existing
+  // population (sorted in descending order based on fitness score) that gets
+  // automatically propagated to the next generation population. E.g. If the
+  // number is 0.25, it means that at each iteration the best 25% individuals
+  // are copied to the next generation.
+  //
+  // NOTE: The best individual is always propagated to the next generation, no
+  //       matter how small this rate is.
+  double propagation_rate() const { return propagation_rate_; }
+  void set_propagation_rate(double rate) { propagation_rate_ = rate; }
 
   // The number of generations through which the genetic algorithm will run the
   // population.
@@ -159,7 +171,11 @@ class GeneticAlgorithm {
     std::sort(population_.begin(), population_.end(),
         Comparator(Get(delegate_)));
     Population new_population;
-    new_population.push_back(population_[0]);
+    new_population.insert(new_population.end(), population_.begin(),
+        population_.begin() + propagation_rate_ * population_size_);
+    if (new_population.empty()) {
+      new_population.push_back(population_[0]);
+    }
     while (new_population.size() < population_.size()) {
       const Chromosome& mate1 = delegate_->Selection(population_);
       if (base::Random() < crossover_rate_) {
@@ -189,6 +205,7 @@ class GeneticAlgorithm {
   int population_size_;
   double crossover_rate_;
   double mutation_rate_;
+  double propagation_rate_;
   int max_generations_;
   int current_generation_;
   Chromosome* best_;

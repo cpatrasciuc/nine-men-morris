@@ -62,6 +62,7 @@ TEST(GeneticAlgorithm, AllOnes) {
   GeneticAlgorithm<TestChromosome> genetic_algorithm(delegate);
   genetic_algorithm.set_max_generations(1000);
   genetic_algorithm.set_population_size(100);
+  genetic_algorithm.set_propagation_rate(0.33);
   genetic_algorithm.Run();
   const TestChromosome best = genetic_algorithm.best();
   EXPECT_TRUE(best.all()) << best.to_ulong();
@@ -77,6 +78,11 @@ class TestDelegateNoChanges
   virtual double Fitness(const TestChromosome& individual) {
     EXPECT_FALSE(individual.any());
     return individual.count();
+  };
+
+  virtual const TestChromosome& Selection(const Population& population) {
+    EXPECT_TRUE(false) << "Should never be called";
+    return population[0];
   };
 
   virtual void Crossover(const TestChromosome& c1,
@@ -101,6 +107,7 @@ TEST(GeneticAlgorithm, NoEvolution) {
   genetic_algorithm.set_population_size(100);
   genetic_algorithm.set_crossover_rate(0.0);
   genetic_algorithm.set_mutation_rate(0.0);
+  genetic_algorithm.set_propagation_rate(1.0);
   genetic_algorithm.Run();
   const TestChromosome best = genetic_algorithm.best();
   EXPECT_FALSE(best.any()) << best.to_ulong();
