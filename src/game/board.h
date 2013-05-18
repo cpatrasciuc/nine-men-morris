@@ -21,10 +21,10 @@ class GAME_EXPORT Board {
  public:
   explicit Board(GameType type = NINE_MEN_MORRIS);
 
-  int size() const { return size_; }
+  int size() const;
 
   // Returns the number of pieces that are currently placed on the board
-  int piece_count() const { return pieces_.size(); }
+  int piece_count() const;
 
   // Returns the number of pieces placed on the board that have the given color.
   // |color| cannot be NO_COLOR.
@@ -75,16 +75,8 @@ class GAME_EXPORT Board {
   // to each board location.
   class BoardImpl;
 
-  // Utility method that returns the distance between valid locations on the
-  // line or column specified by |index|.
-  int GetStep(int index) const;
-
-  int size_;
-
   // TODO(smart_ptr): Make our base::ptr::scoped_ptr work with incomplete types
   std::auto_ptr<BoardImpl> impl_;
-
-  std::map<BoardLocation, PieceColor> pieces_;
 
   DISALLOW_COPY_AND_ASSIGN(Board);
 };

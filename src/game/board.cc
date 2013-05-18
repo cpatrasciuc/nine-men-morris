@@ -90,7 +90,9 @@ class PieceColorEqualTo
 class Board::BoardImpl {
  public:
   // TODO(game): Might want to make this ctor lighter and add an Init() method
-  explicit BoardImpl(GameType type) : valid_(NULL) {
+  explicit BoardImpl(GameType type)
+      : size_(GetBoardSizeFromGameType(type)), valid_(NULL), pieces_() {
+    DCHECK_LT(size_, kMaxBoardSize + 1);
     std::map<GameType, std::vector<bool> >::iterator it =
         kValidLocationsCache.find(type);
     if (it == kValidLocationsCache.end()) {
@@ -107,6 +109,154 @@ class Board::BoardImpl {
     valid_ = &it->second;
   };
 
+  int size() const { return size_; }
+
+  int piece_count() const { return pieces_.size(); }
+
+  int GetPieceCountByColor(PieceColor color) const {
+    DCHECK(color != NO_COLOR);
+    return std::count_if(pieces_.begin(),
+                         pieces_.end(),
+                         PieceColorEqualTo(color));
+  }
+
+  bool IsValidLocation(const BoardLocation& loc) const {
+    return loc.line() < size_ && loc.column() < size_ &&
+           loc.line() >= 0    && loc.column() >= 0 &&
+           (*valid_)[BoardImpl::IndexOf(loc)];
+  }
+
+  bool IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
+    DCHECK(IsValidLocation(b1));
+    DCHECK(IsValidLocation(b2));
+    int x = 0;
+    int y = 0;
+    int common_coordinate = 0;
+    if (b1.line() == b2.line()) {
+      x = b1.column();
+      y = b2.column();
+      common_coordinate = b1.line();
+    } else if (b1.column() == b2.column()) {
+      x = b1.line();
+      y = b2.line();
+      common_coordinate = b1.column();
+    }
+    if (common_coordinate > size_ / 2) {
+      common_coordinate = size_ - common_coordinate - 1;
+    }
+    if (abs(x - y) == GetStep(common_coordinate)) {
+      return true;
+    }
+    return false;
+  }
+
+  void GetAdjacentLocations(const BoardLocation& loc,
+      vector<BoardLocation>* adjacent_locations) const {
+    DCHECK(IsValidLocation(loc));
+    int horizontal_step = GetStep(loc.column());
+    int vertical_step = GetStep(loc.line());
+    int dx[] = { horizontal_step, -horizontal_step, 0, 0 };
+    int dy[] = { 0, 0, vertical_step, -vertical_step };
+    for (size_t i = 0; i < arraysize(dx); ++i) {
+      BoardLocation new_loc(loc.line() + dx[i], loc.column() + dy[i]);
+      if (IsValidLocation(new_loc)) {
+        adjacent_locations->push_back(new_loc);
+      }
+    }
+  }
+
+  bool AddPiece(const BoardLocation& location, PieceColor color) {
+    DCHECK(color != NO_COLOR);
+    if (!IsValidLocation(location)) {
+      return false;
+    }
+    map<BoardLocation, PieceColor>::iterator it = pieces_.find(location);
+    if (it != pieces_.end()) {
+      return false;
+    }
+    pieces_.insert(it, std::make_pair(location, color));
+    return true;
+  }
+
+  bool RemovePiece(const BoardLocation& location) {
+    map<BoardLocation, PieceColor>::iterator it = pieces_.find(location);
+    if (it == pieces_.end()) {
+      return false;
+    }
+    pieces_.erase(it);
+    return true;
+  }
+
+  PieceColor GetPieceAt(const BoardLocation& location) const {
+    DCHECK(IsValidLocation(location));
+    map<BoardLocation, PieceColor>::const_iterator it = pieces_.find(location);
+    if (it != pieces_.end()) {
+      return (*it).second;
+    }
+    return NO_COLOR;
+  }
+
+  void MovePiece(const BoardLocation& old_loc,
+                        const BoardLocation& new_loc) {
+    DCHECK(IsValidLocation(old_loc));
+    DCHECK(IsValidLocation(new_loc));
+    PieceColor color = GetPieceAt(old_loc);
+    DCHECK(color != NO_COLOR);
+    DCHECK_EQ(NO_COLOR, GetPieceAt(new_loc));
+    RemovePiece(old_loc);
+    AddPiece(new_loc, color);
+  }
+
+  bool IsPartOfMill(const BoardLocation& location) const {
+    PieceColor color = GetPieceAt(location);
+    if (color == NO_COLOR) {
+      return false;
+    }
+    int step = GetStep(location.column());
+    int dx[] = { -2 * step, -step, 0, step, 2 * step };
+    bool horizontal_pieces[arraysize(dx)] = { false };
+    for (size_t i = 0; i < arraysize(dx); ++i) {
+      BoardLocation loc(location.line() + dx[i], location.column());
+      if (IsValidLocation(loc)) {
+        if (GetPieceAt(loc) == color) {
+          horizontal_pieces[i] = true;
+          if (i >= 2) {
+            if (horizontal_pieces[i - 1] && horizontal_pieces[i - 2]) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    step = GetStep(location.line());
+    int dy[] = { -2 * step, -step, 0, step, 2 * step };
+    bool vertical_pieces[arraysize(dy)] = { false };
+    for (size_t i = 0; i < arraysize(dy); ++i) {
+      BoardLocation loc(location.line(), location.column() + dy[i]);
+      if (IsValidLocation(loc)) {
+        if (GetPieceAt(loc) == color) {
+          vertical_pieces[i] = true;
+          if (i >= 2) {
+            if (vertical_pieces[i - 1] && vertical_pieces[i - 2]) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+ private:
+  // Utility method that returns the distance between valid locations on the
+  // line or column specified by |index|.
+  int GetStep(int index) const {
+    if (index == size_ / 2) {
+      return 1;
+    }
+    return (size_ - 1 - 2 * index) / 2;
+  };
+
   // Utility method that computes the index of a given board location inside the
   // vectors used by BoardImpl to store various information regarding the board.
   static int IndexOf(const BoardLocation& loc) {
@@ -121,12 +271,15 @@ class Board::BoardImpl {
     return line * kMaxBoardSize + column;
   }
 
+  static std::map<GameType, std::vector<bool> > kValidLocationsCache;
+
+  int size_;
+
   // This is a kMaxBoardSize * kMaxBoardSize matrix stored in vector form that
   // specifies if a location (i, j) is valid or not.
   std::vector<bool>* valid_;
 
- private:
-  static std::map<GameType, std::vector<bool> > kValidLocationsCache;
+  std::map<BoardLocation, PieceColor> pieces_;
 
   DISALLOW_COPY_AND_ASSIGN(BoardImpl);
 };
@@ -134,155 +287,48 @@ class Board::BoardImpl {
 // static
 std::map<GameType, std::vector<bool> > Board::BoardImpl::kValidLocationsCache;
 
-Board::Board(GameType type)
-    : size_(GetBoardSizeFromGameType(type)),
-      impl_(new BoardImpl(type)),
-      pieces_() {
-  DCHECK_LT(size_, kMaxBoardSize + 1);
-}
+Board::Board(GameType type) : impl_(new BoardImpl(type)) {}
+
+int Board::size() const { return impl_->size(); }
+
+int Board::piece_count() const { return impl_->piece_count(); }
 
 int Board::GetPieceCountByColor(PieceColor color) const {
-  DCHECK(color != NO_COLOR);
-  return std::count_if(pieces_.begin(),
-                       pieces_.end(),
-                       PieceColorEqualTo(color));
+  return impl_->GetPieceCountByColor(color);
 }
 
 bool Board::IsValidLocation(const BoardLocation& loc) const {
-  return loc.line() < size_ && loc.column() < size_ &&
-         loc.line() >= 0    && loc.column() >= 0 &&
-         (*(impl_->valid_))[BoardImpl::IndexOf(loc)];
+  return impl_->IsValidLocation(loc);
 }
 
 bool Board::IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
-  DCHECK(IsValidLocation(b1));
-  DCHECK(IsValidLocation(b2));
-  int x = 0;
-  int y = 0;
-  int common_coordinate = 0;
-  if (b1.line() == b2.line()) {
-    x = b1.column();
-    y = b2.column();
-    common_coordinate = b1.line();
-  } else if (b1.column() == b2.column()) {
-    x = b1.line();
-    y = b2.line();
-    common_coordinate = b1.column();
-  }
-  if (common_coordinate > size_ / 2) {
-    common_coordinate = size_ - common_coordinate - 1;
-  }
-  if (abs(x - y) == GetStep(common_coordinate)) {
-    return true;
-  }
-  return false;
+  return impl_->IsAdjacent(b1, b2);
 }
 
 void Board::GetAdjacentLocations(const BoardLocation& loc,
     vector<BoardLocation>* adjacent_locations) const {
-  DCHECK(IsValidLocation(loc));
-  int horizontal_step = GetStep(loc.column());
-  int vertical_step = GetStep(loc.line());
-  int dx[] = { horizontal_step, -horizontal_step, 0, 0 };
-  int dy[] = { 0, 0, vertical_step, -vertical_step };
-  for (size_t i = 0; i < arraysize(dx); ++i) {
-    BoardLocation new_loc(loc.line() + dx[i], loc.column() + dy[i]);
-    if (IsValidLocation(new_loc)) {
-      adjacent_locations->push_back(new_loc);
-    }
-  }
+  impl_->GetAdjacentLocations(loc, adjacent_locations);
 }
 
 bool Board::AddPiece(const BoardLocation& location, PieceColor color) {
-  DCHECK(color != NO_COLOR);
-  if (!IsValidLocation(location)) {
-    return false;
-  }
-  map<BoardLocation, PieceColor>::iterator it = pieces_.find(location);
-  if (it != pieces_.end()) {
-    return false;
-  }
-  pieces_.insert(it, std::make_pair(location, color));
-  return true;
+  return impl_->AddPiece(location, color);
 }
 
 bool Board::RemovePiece(const BoardLocation& location) {
-  map<BoardLocation, PieceColor>::iterator it = pieces_.find(location);
-  if (it == pieces_.end()) {
-    return false;
-  }
-  pieces_.erase(it);
-  return true;
+  return impl_->RemovePiece(location);
 }
 
 PieceColor Board::GetPieceAt(const BoardLocation& location) const {
-  DCHECK(IsValidLocation(location));
-  map<BoardLocation, PieceColor>::const_iterator it = pieces_.find(location);
-  if (it != pieces_.end()) {
-    return (*it).second;
-  }
-  return NO_COLOR;
+  return impl_->GetPieceAt(location);
 }
 
 void Board::MovePiece(const BoardLocation& old_loc,
                       const BoardLocation& new_loc) {
-  DCHECK(IsValidLocation(old_loc));
-  DCHECK(IsValidLocation(new_loc));
-  PieceColor color = GetPieceAt(old_loc);
-  DCHECK(color != NO_COLOR);
-  DCHECK_EQ(NO_COLOR, GetPieceAt(new_loc));
-  RemovePiece(old_loc);
-  AddPiece(new_loc, color);
+  impl_->MovePiece(old_loc, new_loc);
 }
 
 bool Board::IsPartOfMill(const BoardLocation& location) const {
-  PieceColor color = GetPieceAt(location);
-  if (color == NO_COLOR) {
-    return false;
-  }
-
-  int step = GetStep(location.column());
-  int dx[] = { -2 * step, -step, 0, step, 2 * step };
-  bool horizontal_pieces[arraysize(dx)] = { false };
-  for (size_t i = 0; i < arraysize(dx); ++i) {
-    BoardLocation loc(location.line() + dx[i], location.column());
-    if (IsValidLocation(loc)) {
-      if (GetPieceAt(loc) == color) {
-        horizontal_pieces[i] = true;
-        if (i >= 2) {
-          if (horizontal_pieces[i - 1] && horizontal_pieces[i - 2]) {
-            return true;
-          }
-        }
-      }
-    }
-  }
-
-  step = GetStep(location.line());
-  int dy[] = { -2 * step, -step, 0, step, 2 * step };
-  bool vertical_pieces[arraysize(dy)] = { false };
-  for (size_t i = 0; i < arraysize(dy); ++i) {
-    BoardLocation loc(location.line(), location.column() + dy[i]);
-    if (IsValidLocation(loc)) {
-      if (GetPieceAt(loc) == color) {
-        vertical_pieces[i] = true;
-        if (i >= 2) {
-          if (vertical_pieces[i - 1] && vertical_pieces[i - 2]) {
-            return true;
-          }
-        }
-      }
-    }
-  }
-
-  return false;
+  return impl_->IsPartOfMill(location);
 }
-
-int Board::GetStep(int index) const {
-  if (index == size_ / 2) {
-    return 1;
-  }
-  return (size_ - 1 - 2 * index) / 2;
-};
 
 }  // namespace game
