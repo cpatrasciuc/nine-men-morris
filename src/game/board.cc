@@ -14,6 +14,8 @@
 
 #include "base/basic_macros.h"
 #include "base/log.h"
+#include "base/threading/lock.h"
+#include "base/threading/scoped_guard.h"
 #include "game/board_location.h"
 #include "game/game_type.h"
 #include "game/piece_color.h"
@@ -110,7 +112,13 @@ class Board::BoardImpl {
               InternalIsValidLocation(board_size, BoardLocation(line, col));
         }
       }
-      it = kValidLocationsCache.insert(std::make_pair(type, valid)).first;
+      {
+        base::threading::ScopedGuard first_lock(&kValidLocationCacheLock);
+        it = kValidLocationsCache.find(type);
+        if (it == kValidLocationsCache.end()) {
+          it = kValidLocationsCache.insert(std::make_pair(type, valid)).first;
+        }
+      }
     }
     valid_ = &it->second;
   };
@@ -283,6 +291,7 @@ class Board::BoardImpl {
   }
 
   static std::map<GameType, std::vector<bool> > kValidLocationsCache;
+  static base::threading::Lock kValidLocationCacheLock;
 
   int size_;
 
@@ -304,6 +313,9 @@ class Board::BoardImpl {
 
 // static
 std::map<GameType, std::vector<bool> > Board::BoardImpl::kValidLocationsCache;
+
+// static
+base::threading::Lock Board::BoardImpl::kValidLocationCacheLock;
 
 Board::Board(GameType type) : impl_(new BoardImpl(type)) {}
 
