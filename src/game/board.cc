@@ -97,7 +97,7 @@ class Board::BoardImpl {
       std::vector<bool> valid(kMaxBoardSize * kMaxBoardSize, false);
       for (int line = 0; line < kMaxBoardSize; ++line) {
         for (int col = 0; col < kMaxBoardSize; ++col) {
-          valid[line * kMaxBoardSize + col] =
+          valid[IndexOf(line, col)] =
               InternalIsValidLocation(board_size, BoardLocation(line, col));
         }
       }
@@ -105,6 +105,20 @@ class Board::BoardImpl {
     }
     valid_ = &it->second;
   };
+
+  // Utility method that computes the index of a given board location inside the
+  // vectors used by BoardImpl to store various information regarding the board.
+  static int IndexOf(const BoardLocation& loc) {
+    return IndexOf(loc.line(), loc.column());
+  }
+
+  static int IndexOf(const int line, const int column) {
+    DCHECK_LT(line, kMaxBoardSize);
+    DCHECK_LT(column, kMaxBoardSize);
+    DCHECK_GT(line, -1);
+    DCHECK_GT(column, -1);
+    return line * kMaxBoardSize + column;
+  }
 
   // This is a kMaxBoardSize * kMaxBoardSize matrix stored in vector form that
   // specifies if a location (i, j) is valid or not.
@@ -136,7 +150,7 @@ int Board::GetPieceCountByColor(PieceColor color) const {
 bool Board::IsValidLocation(const BoardLocation& loc) const {
   return loc.line() < size_ && loc.column() < size_ &&
          loc.line() >= 0    && loc.column() >= 0 &&
-         (*(impl_->valid_))[loc.line() * kMaxBoardSize + loc.column()];
+         (*(impl_->valid_))[BoardImpl::IndexOf(loc)];
 }
 
 bool Board::IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
