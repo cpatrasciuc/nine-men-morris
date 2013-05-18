@@ -74,20 +74,6 @@ bool InternalIsValidLocation(int board_size, const BoardLocation& location) {
   return l == c;
 }
 
-class PieceColorEqualTo
-    : public std::unary_function<
-        const std::pair<BoardLocation, PieceColor>&, bool> {
- public:
-  explicit PieceColorEqualTo(const PieceColor color) : color_(color) {}
-
-  bool operator()(const std::pair<BoardLocation, PieceColor>& p) const {
-    return p.second == color_;
-  }
-
- private:
-  PieceColor color_;
-};
-
 }  // anonymous namespace
 
 class Board::BoardImpl {
