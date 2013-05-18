@@ -51,7 +51,7 @@ const int kMaxMoves = 250;
 const int kSearchDepth = 2;
 
 game::GameOptions kGameOptions;
-base::threading::Lock kGlobalScoresLock(new base::threading::SpinLockImpl);
+base::threading::Lock kGlobalScoresLock;
 
 void GetEvaluators(std::vector<Evaluator*>* evaluators) {
   typedef int(OppEvalSig)(Evaluator*, const game::Board&, game::PieceColor);
