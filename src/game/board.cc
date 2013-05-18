@@ -294,8 +294,8 @@ class Board::BoardImpl {
   // should not be a problem).
   std::vector<PieceColor> pieces_;
 
-  // There variable store the piece count for each player to avoid traversing
-  // the |pieces_| matrix.
+  // These variable store the piece count for each player to avoid traversing
+  // the |pieces_| vector.
   int white_piece_count_;
   int black_piece_count_;
 
