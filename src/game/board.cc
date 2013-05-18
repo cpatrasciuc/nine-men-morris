@@ -16,6 +16,7 @@
 #include "base/log.h"
 #include "game/board_location.h"
 #include "game/game_type.h"
+#include "game/piece_color.h"
 
 using std::map;
 using std::vector;
@@ -91,7 +92,12 @@ class Board::BoardImpl {
  public:
   // TODO(game): Might want to make this ctor lighter and add an Init() method
   explicit BoardImpl(GameType type)
-      : size_(GetBoardSizeFromGameType(type)), valid_(NULL), pieces_() {
+      : size_(GetBoardSizeFromGameType(type)),
+        valid_(NULL),
+        // TODO(board): Check if we can reduce allocation to size_ * size_
+        pieces_(kMaxBoardSize * kMaxBoardSize, NO_COLOR),
+        white_piece_count_(0),
+        black_piece_count_(0) {
     DCHECK_LT(size_, kMaxBoardSize + 1);
     std::map<GameType, std::vector<bool> >::iterator it =
         kValidLocationsCache.find(type);
@@ -111,13 +117,11 @@ class Board::BoardImpl {
 
   int size() const { return size_; }
 
-  int piece_count() const { return pieces_.size(); }
+  int piece_count() const { return white_piece_count_ + black_piece_count_; }
 
   int GetPieceCountByColor(PieceColor color) const {
     DCHECK(color != NO_COLOR);
-    return std::count_if(pieces_.begin(),
-                         pieces_.end(),
-                         PieceColorEqualTo(color));
+    return (color == WHITE_COLOR) ? white_piece_count_ : black_piece_count_;
   }
 
   bool IsValidLocation(const BoardLocation& loc) const {
@@ -170,30 +174,37 @@ class Board::BoardImpl {
     if (!IsValidLocation(location)) {
       return false;
     }
-    map<BoardLocation, PieceColor>::iterator it = pieces_.find(location);
-    if (it != pieces_.end()) {
+    const int index = IndexOf(location);
+    if (pieces_[index] != NO_COLOR) {
       return false;
     }
-    pieces_.insert(it, std::make_pair(location, color));
+    if (color == WHITE_COLOR) {
+      ++white_piece_count_;
+    } else {
+      ++black_piece_count_;
+    }
+    pieces_[index] = color;
     return true;
   }
 
   bool RemovePiece(const BoardLocation& location) {
-    map<BoardLocation, PieceColor>::iterator it = pieces_.find(location);
-    if (it == pieces_.end()) {
+    DCHECK(IsValidLocation(location));
+    const int index = IndexOf(location);
+    const PieceColor color = pieces_[index];
+    if (color == NO_COLOR) {
       return false;
+    } else if (color == WHITE_COLOR) {
+      --white_piece_count_;
+    } else {
+      --black_piece_count_;
     }
-    pieces_.erase(it);
+    pieces_[index] = NO_COLOR;
     return true;
   }
 
   PieceColor GetPieceAt(const BoardLocation& location) const {
     DCHECK(IsValidLocation(location));
-    map<BoardLocation, PieceColor>::const_iterator it = pieces_.find(location);
-    if (it != pieces_.end()) {
-      return (*it).second;
-    }
-    return NO_COLOR;
+    return pieces_[IndexOf(location)];
   }
 
   void MovePiece(const BoardLocation& old_loc,
@@ -279,7 +290,14 @@ class Board::BoardImpl {
   // specifies if a location (i, j) is valid or not.
   std::vector<bool>* valid_;
 
-  std::map<BoardLocation, PieceColor> pieces_;
+  // Matrix representing the board (and a bit more for smaller games, but that
+  // should not be a problem).
+  std::vector<PieceColor> pieces_;
+
+  // There variable store the piece count for each player to avoid traversing
+  // the |pieces_| matrix.
+  int white_piece_count_;
+  int black_piece_count_;
 
   DISALLOW_COPY_AND_ASSIGN(BoardImpl);
 };
