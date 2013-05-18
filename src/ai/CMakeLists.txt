@@ -43,3 +43,12 @@ target_link_libraries(ai base game)
 # The unittests for this directory
 add_executable(ai_unittests ${AI_UNITTESTS_SOURCE_FILES} ../base/test_runner.cc)
 target_link_libraries(ai_unittests gtest base game ai)
+
+set(AI_TRAINER_SOURCE_FILES
+  ../base/threading/thread_pool_for_unittests.cc
+  alphabeta/alphabeta_algorithm_trainer.cc
+  alphabeta/genetic_algorithm.h
+)
+
+add_executable(ai_trainer ${AI_TRAINER_SOURCE_FILES})
+target_link_libraries(ai_trainer base game ai)
