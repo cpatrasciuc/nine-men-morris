@@ -28,18 +28,13 @@ void GetValidMoveActions(const game::Game& game_model,
   const game::Board& board = game_model.board();
   std::vector<game::BoardLocation> piece_locations;
   std::vector<game::BoardLocation> empty_locations;
-  for (int line = 0; line < board.size(); ++line) {
-    for (int col = 0; col < board.size(); ++col) {
-      const game::BoardLocation loc(line, col);
-      if (!board.IsValidLocation(loc)) {
-        continue;
-      }
-      const game::PieceColor loc_color = board.GetPieceAt(loc);
-      if (loc_color == game::NO_COLOR) {
-        empty_locations.push_back(loc);
-      } else if (loc_color == game_model.current_player()) {
-        piece_locations.push_back(loc);
-      }
+  const std::vector<game::BoardLocation>& locations = board.ValidLocations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    const game::PieceColor loc_color = board.GetPieceAt(locations[i]);
+    if (loc_color == game::NO_COLOR) {
+      empty_locations.push_back(locations[i]);
+    } else if (loc_color == game_model.current_player()) {
+      piece_locations.push_back(locations[i]);
     }
   }
   for (size_t i = 0; i < piece_locations.size(); ++i) {
@@ -60,20 +55,15 @@ void GetValidPlaceActions(const game::Game& game_model,
                           std::vector<game::PlayerAction>* actions) {
   DCHECK_EQ(game_model.next_action_type(), game::PlayerAction::PLACE_PIECE);
   const game::Board& board = game_model.board();
-  for (int line = 0; line < board.size(); ++line) {
-    for (int col = 0; col < board.size(); ++col) {
-      const game::BoardLocation loc(line, col);
-      if (!board.IsValidLocation(loc)) {
-        continue;
-      }
-      if (board.GetPieceAt(loc) != game::NO_COLOR) {
-        continue;
-      }
-      game::PlayerAction action(game_model.current_player(),
-                                game::PlayerAction::PLACE_PIECE);
-      action.set_destination(loc);
-      actions->push_back(action);
+  const std::vector<game::BoardLocation>& locations = board.ValidLocations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    if (board.GetPieceAt(locations[i]) != game::NO_COLOR) {
+      continue;
     }
+    game::PlayerAction action(game_model.current_player(),
+                              game::PlayerAction::PLACE_PIECE);
+    action.set_destination(locations[i]);
+    actions->push_back(action);
   }
 }
 
@@ -84,24 +74,19 @@ void GetValidRemoveActions(const game::Game& game_model,
   std::vector<game::BoardLocation> morris_locations;
   bool allow_remove_from_mill = true;
   game::PieceColor opponent = game::GetOpponent(game_model.current_player());
-  for (int line = 0; line < board.size(); ++line) {
-    for (int col = 0; col < board.size(); ++col) {
-      const game::BoardLocation loc(line, col);
-      if (!board.IsValidLocation(loc)) {
-        continue;
-      }
-      if (board.GetPieceAt(loc) != opponent) {
-        continue;
-      }
-      if (board.IsPartOfMill(loc)) {
-        morris_locations.push_back(loc);
-      } else {
-        allow_remove_from_mill = false;
-        game::PlayerAction action(game_model.current_player(),
-                                  game::PlayerAction::REMOVE_PIECE);
-        action.set_source(loc);
-        actions->push_back(action);
-      }
+  const std::vector<game::BoardLocation>& locations = board.ValidLocations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    if (board.GetPieceAt(locations[i]) != opponent) {
+      continue;
+    }
+    if (board.IsPartOfMill(locations[i])) {
+      morris_locations.push_back(locations[i]);
+    } else {
+      allow_remove_from_mill = false;
+      game::PlayerAction action(game_model.current_player(),
+                                game::PlayerAction::REMOVE_PIECE);
+      action.set_source(locations[i]);
+      actions->push_back(action);
     }
   }
   if (allow_remove_from_mill) {
