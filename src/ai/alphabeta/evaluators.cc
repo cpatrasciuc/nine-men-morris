@@ -14,20 +14,15 @@ namespace alphabeta {
 
 int Mobility(const game::Board& board, game::PieceColor player) {
   int result = 0;
-  for (int line = 0; line < board.size(); ++line) {
-    for (int col = 0; col < board.size(); ++col) {
-      const game::BoardLocation loc(line, col);
-      if (!board.IsValidLocation(loc)) {
-        continue;
-      }
-      const game::PieceColor color = board.GetPieceAt(loc);
-      if (color != game::NO_COLOR) {
-        std::vector<game::BoardLocation> adjacent_locations;
-        board.GetAdjacentLocations(loc, &adjacent_locations);
-        for (size_t i = 0; i < adjacent_locations.size(); ++i) {
-          if (board.GetPieceAt(adjacent_locations[i])) {
-            result += int(board.GetPieceAt(loc) == player);
-          }
+  const std::vector<game::BoardLocation>& locations = board.ValidLocations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    const game::PieceColor color = board.GetPieceAt(locations[i]);
+    if (color != game::NO_COLOR) {
+      std::vector<game::BoardLocation> adjacent_locations;
+      board.GetAdjacentLocations(locations[i], &adjacent_locations);
+      for (size_t i = 0; i < adjacent_locations.size(); ++i) {
+        if (board.GetPieceAt(adjacent_locations[i])) {
+          result += int(board.GetPieceAt(locations[i]) == player);
         }
       }
     }
@@ -41,15 +36,10 @@ int Material(const game::Board& board, game::PieceColor player) {
 
 int Mills(const game::Board& board, game::PieceColor player) {
   int result = 0;
-  for (int line = 0; line < board.size(); ++line) {
-    for (int col = 0; col < board.size(); ++col) {
-      const game::BoardLocation loc(line, col);
-      if (!board.IsValidLocation(loc)) {
-        continue;
-      }
-      if (board.IsPartOfMill(loc)) {
-        result += int(board.GetPieceAt(loc) == player);
-      }
+  const std::vector<game::BoardLocation>& locations = board.ValidLocations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    if (board.IsPartOfMill(locations[i])) {
+      result += int(board.GetPieceAt(locations[i]) == player);
     }
   }
   return result;
