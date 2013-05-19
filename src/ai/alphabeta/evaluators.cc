@@ -14,7 +14,7 @@ namespace alphabeta {
 
 int Mobility(const game::Board& board, game::PieceColor player) {
   int result = 0;
-  const std::vector<game::BoardLocation>& locations = board.ValidLocations();
+  const std::vector<game::BoardLocation>& locations = board.locations();
   for (size_t i = 0; i < locations.size(); ++i) {
     const game::PieceColor color = board.GetPieceAt(locations[i]);
     if (color != game::NO_COLOR) {
@@ -36,7 +36,7 @@ int Material(const game::Board& board, game::PieceColor player) {
 
 int Mills(const game::Board& board, game::PieceColor player) {
   int result = 0;
-  const std::vector<game::BoardLocation>& locations = board.ValidLocations();
+  const std::vector<game::BoardLocation>& locations = board.locations();
   for (size_t i = 0; i < locations.size(); ++i) {
     if (board.IsPartOfMill(locations[i])) {
       result += int(board.GetPieceAt(locations[i]) == player);

@@ -124,7 +124,7 @@ class Board::BoardImpl {
            (*valid_)[BoardImpl::IndexOf(loc)];
   }
 
-  const vector<BoardLocation>& ValidLocations() const {
+  const vector<BoardLocation>& locations() const {
     map<int, vector<BoardLocation> >::iterator it;
     {
       base::threading::ScopedGuard _(&valid_locations_cache_lock);
@@ -354,8 +354,8 @@ bool Board::IsValidLocation(const BoardLocation& loc) const {
   return impl_->IsValidLocation(loc);
 }
 
-const std::vector<BoardLocation>& Board::ValidLocations() const {
-  return impl_->ValidLocations();
+const std::vector<BoardLocation>& Board::locations() const {
+  return impl_->locations();
 }
 
 bool Board::IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {

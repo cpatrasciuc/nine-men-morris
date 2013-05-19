@@ -32,7 +32,7 @@ class GameStateGeneratorTest
   GameStateGenerator& generator() { return generator_; }
 
   unsigned int GetTotalBoardLocationCount() {
-    return board_.ValidLocations().size();
+    return board_.locations().size();
   }
 
  private:

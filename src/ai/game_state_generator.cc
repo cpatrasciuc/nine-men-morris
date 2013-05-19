@@ -23,7 +23,7 @@ void FilterBoardLocations(const game::Board& board,
                           std::vector<game::BoardLocation>* empty) {
   std::vector<game::BoardLocation> opponent;
   std::vector<game::BoardLocation> mills;
-  const std::vector<game::BoardLocation>& locations = board.ValidLocations();
+  const std::vector<game::BoardLocation>& locations = board.locations();
   for (size_t i = 0; i < locations.size(); ++i) {
     const game::PieceColor loc_color = board.GetPieceAt(locations[i]);
     if (loc_color == game::NO_COLOR) {

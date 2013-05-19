@@ -58,7 +58,7 @@ bool Game::CheckIfGameIsOver() const {
     return false;
   }
   // TODO(board): Optimize this search if needed
-  const std::vector<BoardLocation>& locations = board_.ValidLocations();
+  const std::vector<BoardLocation>& locations = board_.locations();
   for (size_t i = 0; i < locations.size(); ++i) {
     if (board_.GetPieceAt(locations[i]) != opponent) {
       continue;

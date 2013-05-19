@@ -36,7 +36,7 @@ class GAME_EXPORT Board {
 
   // Return a reference to the list of all valid board locations.
   // TODO(game): write unittests for this.
-  const std::vector<BoardLocation>& ValidLocations() const;
+  const std::vector<BoardLocation>& locations() const;
 
   // This function returns |true| if the two BoardLocations are adjacent. Both
   // locations must be valid.

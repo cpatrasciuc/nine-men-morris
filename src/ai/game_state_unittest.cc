@@ -86,7 +86,7 @@ TEST_P(GameStateTest, EncodeAndDecode) {
   game::Board decoded_board(game_type);
   GameState copied_state(state);
   copied_state.Decode(&decoded_board);
-  const std::vector<game::BoardLocation>& locs = board.ValidLocations();
+  const std::vector<game::BoardLocation>& locs = board.locations();
   for (size_t i = 0; i < locs.size(); ++i) {
     EXPECT_EQ(board.GetPieceAt(locs[i]),
               decoded_board.GetPieceAt(locs[i])) << locs[i];
