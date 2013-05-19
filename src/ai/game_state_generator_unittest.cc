@@ -32,15 +32,7 @@ class GameStateGeneratorTest
   GameStateGenerator& generator() { return generator_; }
 
   unsigned int GetTotalBoardLocationCount() {
-    unsigned int valid_locations_count = 0U;
-    for (int line = 0; line < board().size(); ++line) {
-      for (int col = 0; col < board().size(); ++col) {
-        if (board().IsValidLocation(game::BoardLocation(line, col))) {
-          ++valid_locations_count;
-        }
-      }
-    }
-    return valid_locations_count;
+    return board_.ValidLocations().size();
   }
 
  private:
