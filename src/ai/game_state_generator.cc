@@ -23,22 +23,20 @@ void FilterBoardLocations(const game::Board& board,
                           std::vector<game::BoardLocation>* empty) {
   std::vector<game::BoardLocation> opponent;
   std::vector<game::BoardLocation> mills;
-  for (int line = 0; line < board.size(); ++line) {
-    for (int col = 0; col < board.size(); ++col) {
-      const game::BoardLocation loc(line, col);
-      if (!board.IsValidLocation(loc)) {
-        continue;
-      }
-      const game::PieceColor loc_color = board.GetPieceAt(loc);
-      if (loc_color == game::NO_COLOR) {
-        empty->push_back(loc);
-      } else if (loc_color == player_color) {
-        player->push_back(loc);
-      } else if (board.IsPartOfMill(loc)) {
-        mills.push_back(loc);
-      } else {
-        opponent.push_back(loc);
-      }
+  const std::vector<game::BoardLocation>& locations = board.ValidLocations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    if (!board.IsValidLocation(locations[i])) {
+      continue;
+    }
+    const game::PieceColor loc_color = board.GetPieceAt(locations[i]);
+    if (loc_color == game::NO_COLOR) {
+      empty->push_back(locations[i]);
+    } else if (loc_color == player_color) {
+      player->push_back(locations[i]);
+    } else if (board.IsPartOfMill(locations[i])) {
+      mills.push_back(locations[i]);
+    } else {
+      opponent.push_back(locations[i]);
     }
   }
   if (opponent.empty()) {
