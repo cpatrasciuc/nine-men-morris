@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <vector>
+
 #include "ai/game_state.h"
 #include "base/basic_macros.h"
 #include "game/board.h"
@@ -84,13 +86,10 @@ TEST_P(GameStateTest, EncodeAndDecode) {
   game::Board decoded_board(game_type);
   GameState copied_state(state);
   copied_state.Decode(&decoded_board);
-  for (int line = 0; line < board.size(); ++line) {
-    for (int col = 0; col < board.size(); ++col) {
-      const game::BoardLocation loc(line, col);
-      if (decoded_board.IsValidLocation(loc)) {
-        EXPECT_EQ(board.GetPieceAt(loc), decoded_board.GetPieceAt(loc)) << loc;
-      }
-    }
+  const std::vector<game::BoardLocation>& locs = board.ValidLocations();
+  for (size_t i = 0; i < locs.size(); ++i) {
+    EXPECT_EQ(board.GetPieceAt(locs[i]),
+              decoded_board.GetPieceAt(locs[i])) << locs[i];
   }
 }
 
