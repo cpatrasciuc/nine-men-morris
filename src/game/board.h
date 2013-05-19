@@ -34,6 +34,10 @@ class GAME_EXPORT Board {
   // used to place a piece on it or move a piece to it.
   bool IsValidLocation(const BoardLocation& location) const;
 
+  // Return a reference to the list of all valid board locations.
+  // TODO(game): write unittests for this.
+  const std::vector<BoardLocation>& ValidLocations() const;
+
   // This function returns |true| if the two BoardLocations are adjacent. Both
   // locations must be valid.
   bool IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const;

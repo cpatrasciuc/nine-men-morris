@@ -88,8 +88,8 @@ class Board::BoardImpl {
         black_piece_count_(0) {
     DCHECK_LT(size_, kMaxBoardSize + 1);
     std::map<GameType, std::vector<bool> >::iterator it =
-        kValidLocationsCache.find(type);
-    if (it == kValidLocationsCache.end()) {
+        validity_cache.find(type);
+    if (it == validity_cache.end()) {
       const int board_size = GetBoardSizeFromGameType(type);
       std::vector<bool> valid(kMaxBoardSize * kMaxBoardSize, false);
       for (int line = 0; line < kMaxBoardSize; ++line) {
@@ -99,10 +99,10 @@ class Board::BoardImpl {
         }
       }
       {
-        base::threading::ScopedGuard first_lock(&kValidLocationCacheLock);
-        it = kValidLocationsCache.find(type);
-        if (it == kValidLocationsCache.end()) {
-          it = kValidLocationsCache.insert(std::make_pair(type, valid)).first;
+        base::threading::ScopedGuard first_lock(&validity_cache_lock);
+        it = validity_cache.find(type);
+        if (it == validity_cache.end()) {
+          it = validity_cache.insert(std::make_pair(type, valid)).first;
         }
       }
     }
@@ -122,6 +122,34 @@ class Board::BoardImpl {
     return loc.line() < size_ && loc.column() < size_ &&
            loc.line() >= 0    && loc.column() >= 0 &&
            (*valid_)[BoardImpl::IndexOf(loc)];
+  }
+
+  const vector<BoardLocation>& ValidLocations() const {
+    map<int, vector<BoardLocation> >::iterator it;
+    {
+      base::threading::ScopedGuard _(&valid_locations_cache_lock);
+      it = valid_locations_cache.find(size_);
+    }
+    if (it == valid_locations_cache.end()) {
+      vector<BoardLocation> result;
+      for (int line = 0; line < size_; ++line) {
+        for (int col = 0; col < size_; ++col) {
+          const BoardLocation loc(line, col);
+          if (IsValidLocation(loc)) {
+            result.push_back(loc);
+          }
+        }
+      }
+      {
+        base::threading::ScopedGuard _(&valid_locations_cache_lock);
+        it = valid_locations_cache.find(size_);
+        if (it == valid_locations_cache.end()) {
+          const std::pair<int, vector<BoardLocation> > p(size_, result);
+          it = valid_locations_cache.insert(p).first;
+        }
+      }
+    }
+    return it->second;
   }
 
   bool IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
@@ -276,8 +304,11 @@ class Board::BoardImpl {
     return line * kMaxBoardSize + column;
   }
 
-  static std::map<GameType, std::vector<bool> > kValidLocationsCache;
-  static base::threading::Lock kValidLocationCacheLock;
+  static std::map<GameType, std::vector<bool> > validity_cache;
+  static base::threading::Lock validity_cache_lock;
+
+  static map<int, vector<BoardLocation> > valid_locations_cache;
+  static base::threading::Lock valid_locations_cache_lock;
 
   int size_;
 
@@ -298,10 +329,16 @@ class Board::BoardImpl {
 };
 
 // static
-std::map<GameType, std::vector<bool> > Board::BoardImpl::kValidLocationsCache;
+std::map<GameType, std::vector<bool> > Board::BoardImpl::validity_cache;
 
 // static
-base::threading::Lock Board::BoardImpl::kValidLocationCacheLock;
+base::threading::Lock Board::BoardImpl::validity_cache_lock;
+
+// static
+map<int, vector<BoardLocation> > Board::BoardImpl::valid_locations_cache;
+
+// static
+base::threading::Lock Board::BoardImpl::valid_locations_cache_lock;
 
 Board::Board(GameType type) : impl_(new BoardImpl(type)) {}
 
@@ -315,6 +352,10 @@ int Board::GetPieceCountByColor(PieceColor color) const {
 
 bool Board::IsValidLocation(const BoardLocation& loc) const {
   return impl_->IsValidLocation(loc);
+}
+
+const std::vector<BoardLocation>& Board::ValidLocations() const {
+  return impl_->ValidLocations();
 }
 
 bool Board::IsAdjacent(const BoardLocation& b1, const BoardLocation& b2) const {
