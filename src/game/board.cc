@@ -149,14 +149,14 @@ class Board::BoardImpl {
   }
 
   void GetAdjacentLocations(const BoardLocation& loc,
-      vector<BoardLocation>* adjacent_locations) const {
+                            vector<BoardLocation>* adjacent_locations) const {
     DCHECK(IsValidLocation(loc));
-    int horizontal_step = GetStep(loc.column());
-    int vertical_step = GetStep(loc.line());
-    int dx[] = { horizontal_step, -horizontal_step, 0, 0 };
-    int dy[] = { 0, 0, vertical_step, -vertical_step };
+    const int horizontal_step = GetStep(loc.column());
+    const int vertical_step = GetStep(loc.line());
+    const int dx[] = { horizontal_step, -horizontal_step, 0, 0 };
+    const int dy[] = { 0, 0, vertical_step, -vertical_step };
     for (size_t i = 0; i < arraysize(dx); ++i) {
-      BoardLocation new_loc(loc.line() + dx[i], loc.column() + dy[i]);
+      const BoardLocation new_loc(loc.line() + dx[i], loc.column() + dy[i]);
       if (IsValidLocation(new_loc)) {
         adjacent_locations->push_back(new_loc);
       }
