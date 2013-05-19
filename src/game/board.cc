@@ -87,11 +87,11 @@ class Board::BoardImpl {
         white_piece_count_(0),
         black_piece_count_(0) {
     DCHECK_LT(size_, kMaxBoardSize + 1);
-    std::map<GameType, std::vector<bool> >::iterator it =
+    std::map<GameType, std::vector<char> >::iterator it =
         validity_cache.find(type);
     if (it == validity_cache.end()) {
       const int board_size = GetBoardSizeFromGameType(type);
-      std::vector<bool> valid(kMaxBoardSize * kMaxBoardSize, false);
+      std::vector<char> valid(kMaxBoardSize * kMaxBoardSize, 0);
       for (int line = 0; line < kMaxBoardSize; ++line) {
         for (int col = 0; col < kMaxBoardSize; ++col) {
           valid[IndexOf(line, col)] =
@@ -304,7 +304,7 @@ class Board::BoardImpl {
     return line * kMaxBoardSize + column;
   }
 
-  static std::map<GameType, std::vector<bool> > validity_cache;
+  static std::map<GameType, std::vector<char> > validity_cache;
   static base::threading::Lock validity_cache_lock;
 
   static map<int, vector<BoardLocation> > valid_locations_cache;
@@ -314,7 +314,7 @@ class Board::BoardImpl {
 
   // This is a kMaxBoardSize * kMaxBoardSize matrix stored in vector form that
   // specifies if a location (i, j) is valid or not.
-  std::vector<bool>* valid_;
+  std::vector<char>* valid_;
 
   // Matrix representing the board (and a bit more for smaller games, but that
   // should not be a problem).
@@ -329,7 +329,7 @@ class Board::BoardImpl {
 };
 
 // static
-std::map<GameType, std::vector<bool> > Board::BoardImpl::validity_cache;
+std::map<GameType, std::vector<char> > Board::BoardImpl::validity_cache;
 
 // static
 base::threading::Lock Board::BoardImpl::validity_cache_lock;
