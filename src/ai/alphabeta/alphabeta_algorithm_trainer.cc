@@ -133,7 +133,7 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
   }
 
   virtual void Mutate(Weights* weights) {
-    Randomize(weights, 0.2);
+    Randomize(weights, 0.5);
   }
 
   virtual void Process(Population* population) {
