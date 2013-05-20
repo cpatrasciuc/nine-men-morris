@@ -105,6 +105,7 @@ void RunGame(const Weights& w1, const Weights& w2, ScoreMap* scores) {
       (*scores)[w2] += 1;
     }
   }
+  std::cout.put('.');
 }
 
 class Trainer : public GeneticAlgorithm<Weights>::Delegate {
@@ -177,6 +178,7 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
   // virtual const Chromosome& Selection(const Population& population);
 
   virtual void ReportProgress(int gen, double score, const Weights& best) {
+    std::cout << std::endl;
     std::cout << "Generation count: " << gen << std::endl;
     std::cout << "Best score: " << static_cast<int>(score) << std::endl;
     std::cout << "Best weights: ";
@@ -210,12 +212,13 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
 
 int main(int argc, char** argv) {
   base::debug::EnableStackTraceDumpOnCrash();
-  kGameOptions.set_game_type(game::THREE_MEN_MORRIS);
+  kGameOptions.set_game_type(game::SIX_MEN_MORRIS);
   std::auto_ptr<GeneticAlgorithm<Weights>::Delegate> delegate;
   delegate.reset(new Trainer());
   GeneticAlgorithm<Weights> alg(delegate);
-  alg.set_max_generations(1);
+  alg.set_max_generations(200);
   alg.set_population_size(50);
+  alg.set_propagation_rate(0.3);
   const int game_count = alg.max_generations() *
       alg.population_size() * alg.population_size();
   std::cout << "Simulating " << alg.max_generations() << " generations of "
