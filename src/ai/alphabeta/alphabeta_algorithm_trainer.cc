@@ -45,8 +45,8 @@ using base::ptr::scoped_ptr;
 using base::threading::ThreadPoolForUnittests;
 
 const int kEvaluatorsCount = 6;
-const int kMaxWeight = 5;
-const int kMaxMoves = 250;
+const int kMaxWeight = 10;
+const int kMaxMoves = 500;
 const int kSearchDepth = 2;
 
 game::GameOptions kGameOptions;
@@ -221,9 +221,9 @@ int main(int argc, char** argv) {
   std::auto_ptr<GeneticAlgorithm<Weights>::Delegate> delegate;
   delegate.reset(new Trainer());
   GeneticAlgorithm<Weights> alg(delegate);
-  alg.set_max_generations(200);
+  alg.set_max_generations(500);
   alg.set_population_size(100);
-  alg.set_propagation_rate(0.2);
+  alg.set_propagation_rate(0.1);
   const int game_count = alg.max_generations() *
       alg.population_size() * alg.population_size();
   std::cout << "Simulating " << alg.max_generations() << " generations of "
