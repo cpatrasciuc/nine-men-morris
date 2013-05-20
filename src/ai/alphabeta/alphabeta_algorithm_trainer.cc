@@ -7,6 +7,7 @@
 #endif
 
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <iterator>
@@ -170,8 +171,21 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
     return it->second;
   }
 
-  // TODO(trainer): Implement "natural selection"
-  // virtual const Chromosome& Selection(const Population& population);
+  // The selection method favors individuals with higher fitness score. For
+  // more details regarding how is this achieved/implemented see the comments of
+  // ComputeAliasAndCutOffValues().
+  virtual const Weights& Selection(const Population& population) {
+    if (alias_.empty()) {
+      ComputeAliasAndCutOffValues(population.size());
+    }
+    const double a = base::Random();
+    const double b = base::Random();
+    int index = int(a * population.size());
+    if (b > cutoff_[index]) {
+      index = alias_[index];
+    }
+    return population[index];
+  }
 
   virtual void ReportProgress(int gen, double score, const Weights& best) {
     std::cout << "Generation count: " << gen << std::endl;
@@ -208,7 +222,64 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
     }
   }
 
+  // In order to choose randomly an individual from a population given a
+  // probability distribution P, we use Walker's algorithm. It requires O(N) set
+  // up cost and then it allows to sample in O(1).
+  // The probability distribution that we use is proportional with the fitness
+  // score, i.e. the first element of the population has the biggest chance of
+  // being picked and the last one has the smallest chance of being picked.
+  // For a detail description of the algorithm see:
+  // http://dl.acm.org/citation.cfm?id=355749
+  void ComputeAliasAndCutOffValues(const int population_size) {
+    const int n = population_size + 1;
+    alias_ = std::vector<int>(n);
+    cutoff_ = std::vector<double>(n);
+    const int total = ((n + 1) * n) / 2;
+    int probability = n;
+    std::vector<double> prob_dist(n, 0.0);
+    for (int i = 0; i < n; ++i) {
+      prob_dist[i] = double(probability) / total;
+      --probability;
+    }
+    std::vector<double> diff(n);
+    for (int i = 0; i < n; ++i) {
+      alias_[i] = i;
+      cutoff_[i] = 0.0;
+      diff[i] = prob_dist[i] - 1.0 / n;
+    }
+    for (int i = 0; i < n; ++i) {
+      double min = 0.0;
+      double max = 0.0;
+      int min_pos = 0;
+      int max_pos = 0;
+      for (int j = 0; j < n; ++j) {
+        if (diff[j] < min) {
+          min = diff[j];
+          min_pos = j;
+        }
+        if (diff[j] > max) {
+          max = diff[j];
+          max_pos = j;
+        }
+      }
+      double sum = 0.0;
+      for (int j = 0; j < n; ++j) {
+        sum += std::abs(diff[j]);
+      }
+      if (sum < 0.1e-5) {
+        break;
+      }
+      alias_[min_pos] = max_pos;
+      cutoff_[min_pos] = min * n;
+      diff[min_pos] = 0.0;
+      diff[max_pos] = min + max;
+    }
+  }
+
   ScoreMap scores_;
+
+  std::vector<int> alias_;
+  std::vector<double> cutoff_;
 
   DISALLOW_COPY_AND_ASSIGN(Trainer);
 };
