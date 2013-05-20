@@ -23,7 +23,6 @@
 #include "base/debug/stacktrace.h"
 #include "base/function.h"
 #include "base/location.h"
-#include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 #include "base/random.h"
 #include "base/threading/lock.h"
@@ -134,12 +133,7 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
   }
 
   virtual void Mutate(Weights* weights) {
-    const double mutation_probability = 0.2;
-    for (size_t i = 0; i < weights->size(); ++i) {
-      if (base::Random() < mutation_probability) {
-        (*weights)[i] = base::Random(2 * kMaxWeight) - kMaxWeight;
-      }
-    }
+    Randomize(weights, 0.2);
   }
 
   virtual void Process(Population* population) {
@@ -190,24 +184,27 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
   }
 
  private:
-  static void Randomize(Weights* w) {
-    for (size_t j = 0; j < w->size(); ++j) {
-      (*w)[j] = base::Random(2 * kMaxWeight) - kMaxWeight;
+  static void Randomize(Weights* w, double change_probability = 1.0) {
+    for (size_t i = 0; i < w->size(); ++i) {
+      if (base::Random() < change_probability) {
+        (*w)[i] = base::Random(2 * kMaxWeight) - kMaxWeight;
+      }
     }
   }
 
   void AppendUnique(Weights* weights, Population* pop) {
     while (std::find(pop->begin(), pop->end(), *weights) != pop->end()) {
-      LOG(INFO) << "Found duplicate individual";
       Randomize(weights);
     }
     pop->push_back(*weights);
   }
 
   void RemoveDuplicates(Population* population) {
-    Population new_population;
     for (size_t i = 0; i < population->size(); ++i) {
-      AppendUnique(&(*population)[i], &new_population);
+      const Population::iterator end = population->begin() + i;
+      while (std::find(population->begin(), end, (*population)[i]) != end) {
+        Mutate(&(*population)[i]);
+      }
     }
   }
 
