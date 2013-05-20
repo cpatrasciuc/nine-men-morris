@@ -20,6 +20,7 @@ namespace game {
 class GAME_EXPORT Board {
  public:
   explicit Board(GameType type = NINE_MEN_MORRIS);
+  ~Board();
 
   int size() const;
 

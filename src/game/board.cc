@@ -342,6 +342,13 @@ base::threading::Lock Board::BoardImpl::valid_locations_cache_lock;
 
 Board::Board(GameType type) : impl_(new BoardImpl(type)) {}
 
+// Explicit empty destructor required to correctly deallocate |impl_|, since it
+// is a smart pointer that uses an incomplete type. An empty destructor must
+// be defined here so it can see the definition of the BoardImpl destructor.
+// See: will-an-empty-destructor-do-the-same-thing-as-the-generated-destructor
+// on StackOverflow.
+Board::~Board() {}
+
 int Board::size() const { return impl_->size(); }
 
 int Board::piece_count() const { return impl_->piece_count(); }
