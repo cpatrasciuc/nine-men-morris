@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "base/basic_macros.h"
+#include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 #include "base/random.h"
 
@@ -45,7 +46,7 @@ class GeneticAlgorithm {
 
     // This method can be overridden if the user wants to perform additional
     // actions with the members of a population in-between generations.
-    virtual void Process(const Population& population) {}
+    virtual void Process(Population* population) {}
 
     // This method must return the fitness score of one individual.
     virtual double Fitness(const Chromosome& individual) = 0;
@@ -167,7 +168,8 @@ class GeneticAlgorithm {
   //   - Calls the user's ReportProgress() callback.
   void NextGeneration() {
     ++current_generation_;
-    delegate_->Process(population_);
+    delegate_->Process(&population_);
+    DCHECK_EQ(population_size_, population_.size());
     std::sort(population_.begin(), population_.end(),
         Comparator(Get(delegate_)));
     Population new_population;

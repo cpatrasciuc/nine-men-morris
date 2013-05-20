@@ -142,22 +142,22 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
     }
   }
 
-  virtual void Process(const Population& population) {
+  virtual void Process(Population* population) {
     scores_.clear();
     ThreadPoolForUnittests thread_pool(8);
     thread_pool.CreateThreads();
     thread_pool.StartThreads();
     int thread_idx = 0;
-    for (size_t i = 0; i < population.size(); ++i) {
-      for (size_t j = 0; j < population.size(); ++j) {
+    for (size_t i = 0; i < population->size(); ++i) {
+      for (size_t j = 0; j < population->size(); ++j) {
         if (i == j) {
           continue;
         }
         base::Closure* task = base::Bind(
             new base::Function<void(const Weights&, const Weights&, ScoreMap*)>(
                 &RunGame),
-            population[i],
-            population[j],
+            (*population)[i],
+            (*population)[j],
             &scores_);
         thread_pool.SubmitTask(thread_idx, FROM_HERE, task);
         thread_idx = (thread_idx + 1) % thread_pool.thread_count();
