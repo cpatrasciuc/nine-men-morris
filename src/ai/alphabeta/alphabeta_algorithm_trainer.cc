@@ -145,6 +145,7 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
   virtual void Process(Population* population) {
     std::cerr << std::endl;
     scores_.clear();
+    RemoveDuplicates(population);
     ThreadPoolForUnittests thread_pool(8);
     thread_pool.CreateThreads();
     thread_pool.StartThreads();
@@ -201,6 +202,13 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
       Randomize(weights);
     }
     pop->push_back(*weights);
+  }
+
+  void RemoveDuplicates(Population* population) {
+    Population new_population;
+    for (size_t i = 0; i < population->size(); ++i) {
+      AppendUnique(&(*population)[i], &new_population);
+    }
   }
 
   ScoreMap scores_;
