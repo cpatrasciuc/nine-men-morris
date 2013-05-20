@@ -29,7 +29,7 @@ namespace ai {
 namespace alphabeta {
 namespace {
 
-const int kBestWeights[] = { 1, 0, -2, -4, -9, -9 };
+const int kBestWeights[] = { 1, 7, -2, 0, -9, -9 };
 
 const game::BoardLocation kInvalidLocation(-1, -1);
 

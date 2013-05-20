@@ -292,7 +292,7 @@ int main(int argc, char** argv) {
   std::auto_ptr<GeneticAlgorithm<Weights>::Delegate> delegate;
   delegate.reset(new Trainer());
   GeneticAlgorithm<Weights> alg(delegate);
-  alg.set_max_generations(500);
+  alg.set_max_generations(300);
   alg.set_population_size(100);
   alg.set_propagation_rate(0.1);
   const int game_count = alg.max_generations() *
