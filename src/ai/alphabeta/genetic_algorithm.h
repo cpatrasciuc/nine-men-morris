@@ -185,7 +185,7 @@ class GeneticAlgorithm {
         new_population.push_back(Chromosome(mate1));
       }
     }
-    if (new_population.size() > population_.size()) {
+    while (new_population.size() > population_.size()) {
       new_population.pop_back();
     }
     for (int i = 1; i < population_size_; ++i) {
