@@ -105,7 +105,7 @@ void RunGame(const Weights& w1, const Weights& w2, ScoreMap* scores) {
       (*scores)[w2] += 1;
     }
   }
-  std::cout.put('.');
+  std::cerr.put('.');
 }
 
 class Trainer : public GeneticAlgorithm<Weights>::Delegate {
@@ -143,6 +143,7 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
   }
 
   virtual void Process(Population* population) {
+    std::cerr << std::endl;
     scores_.clear();
     ThreadPoolForUnittests thread_pool(8);
     thread_pool.CreateThreads();
@@ -178,7 +179,6 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
   // virtual const Chromosome& Selection(const Population& population);
 
   virtual void ReportProgress(int gen, double score, const Weights& best) {
-    std::cout << std::endl;
     std::cout << "Generation count: " << gen << std::endl;
     std::cout << "Best score: " << static_cast<int>(score) << std::endl;
     std::cout << "Best weights: ";
