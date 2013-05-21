@@ -29,9 +29,10 @@ namespace ai {
 namespace alphabeta {
 namespace {
 
-// NINE_MEN_MORRIS
-const int kBestWeights[] = { 0, 8, -1, 0, -9, -9 };
+// NINE_MEN_MORRIS: const int kBestWeights[] = { 0, 8, -1, 0, -9, -9 };
 // SIX_MEN_MORRIS: const int kBestWeights[] = { 1, 7, -2, 0, -9, -9 };
+// THREE_MEN_MORRIS:
+const int kBestWeights[] = { 4, -9, 4, 3, -4, -9 };
 
 const game::BoardLocation kInvalidLocation(-1, -1);
 
