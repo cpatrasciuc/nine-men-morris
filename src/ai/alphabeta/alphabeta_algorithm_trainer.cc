@@ -288,11 +288,11 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
 
 int main(int argc, char** argv) {
   base::debug::EnableStackTraceDumpOnCrash();
-  kGameOptions.set_game_type(game::SIX_MEN_MORRIS);
+  kGameOptions.set_game_type(game::NINE_MEN_MORRIS);
   std::auto_ptr<GeneticAlgorithm<Weights>::Delegate> delegate;
   delegate.reset(new Trainer());
   GeneticAlgorithm<Weights> alg(delegate);
-  alg.set_max_generations(300);
+  alg.set_max_generations(100);
   alg.set_population_size(100);
   alg.set_propagation_rate(0.1);
   const int game_count = alg.max_generations() *
