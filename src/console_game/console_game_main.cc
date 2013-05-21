@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "ai/ai_algorithm.h"
+#include "ai/alphabeta/alphabeta_algorithm.h"
 #include "ai/random/random_algorithm.h"
 #include "base/command_line.h"
 #include "base/debug/stacktrace.h"
@@ -33,10 +34,12 @@ void Usage() {
   std::cout << "\t" << kGameTypeSwitch << "=3|6|9" << std::endl;
   std::cout << "\t\t" << "Specifies the game type: three/six/nine men morris."
             << std::endl;
-  std::cout << "\t" << kWhitePlayerType << "=human|random" << std::endl;
+  std::cout << "\t" << kWhitePlayerType << "=human|random|alphabeta"
+            << std::endl;
   std::cout << "\t\t" << "Specifies the player type for the white color. "
             << "Default: human." << std::endl;
-  std::cout << "\t" << kBlackPlayerType << "=human|random" << std::endl;
+  std::cout << "\t" << kBlackPlayerType << "=human|random|alphabeta"
+            << std::endl;
   std::cout << "\t\t" << "Specifies the player type for the black color. "
             << "Default: random (i.e. AI with RandomAlgorithm)." << std::endl;
   std::cout << "\t" << kHelpSwitch << std::endl;
@@ -45,7 +48,8 @@ void Usage() {
 
 std::auto_ptr<Player> GetPlayerFromCmdLine(const base::CommandLine& cmd_line,
                                            const std::string& switch_name,
-                                           const std::string& default_type) {
+                                           const std::string& default_type,
+                                           const game::GameOptions& options) {
   std::string player_type = default_type;
   if (cmd_line.HasSwitch(switch_name)) {
     player_type = cmd_line.GetSwitchValue(switch_name);
@@ -58,6 +62,9 @@ std::auto_ptr<Player> GetPlayerFromCmdLine(const base::CommandLine& cmd_line,
   } else if (player_type == "random") {
     player = new AIPlayer("RandomAI",
         std::auto_ptr<ai::AIAlgorithm>(new ai::random::RandomAlgorithm()));
+  } else if (player_type == "alphabeta") {
+    player = new AIPlayer("AlphaBeta", std::auto_ptr<ai::AIAlgorithm>(
+        new ai::alphabeta::AlphaBetaAlgorithm(options)));
   }
   return std::auto_ptr<Player>(player);
 }
@@ -78,9 +85,9 @@ bool RunConsoleGame(const base::CommandLine& cmd_line) {
     }
   }
   std::auto_ptr<Player> white_player(
-      GetPlayerFromCmdLine(cmd_line, kWhitePlayerType, "human"));
+      GetPlayerFromCmdLine(cmd_line, kWhitePlayerType, "human", options));
   std::auto_ptr<Player> black_player(
-      GetPlayerFromCmdLine(cmd_line, kBlackPlayerType, "random"));
+      GetPlayerFromCmdLine(cmd_line, kBlackPlayerType, "alphabeta", options));
   if (!white_player.get() || !black_player.get()) {
     Usage();
     return false;
