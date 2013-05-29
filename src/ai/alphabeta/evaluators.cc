@@ -15,16 +15,16 @@ namespace alphabeta {
 int Mobility(const game::Board& board, game::PieceColor player) {
   int result = 0;
   const std::vector<game::BoardLocation>& locations = board.locations();
+  std::vector<game::BoardLocation> adjacent_locations;
+  adjacent_locations.reserve(20);
   for (size_t i = 0; i < locations.size(); ++i) {
-    const game::PieceColor color = board.GetPieceAt(locations[i]);
-    if (color != game::NO_COLOR) {
-      std::vector<game::BoardLocation> adjacent_locations;
+    if (board.GetPieceAt(locations[i]) == player) {
       board.GetAdjacentLocations(locations[i], &adjacent_locations);
-      for (size_t i = 0; i < adjacent_locations.size(); ++i) {
-        if (board.GetPieceAt(adjacent_locations[i])) {
-          result += int(board.GetPieceAt(locations[i]) == player);
-        }
-      }
+    }
+  }
+  for (size_t i = 0; i < adjacent_locations.size(); ++i) {
+    if (board.GetPieceAt(adjacent_locations[i]) == game::NO_COLOR) {
+      ++result;
     }
   }
   return result;
@@ -38,8 +38,8 @@ int Mills(const game::Board& board, game::PieceColor player) {
   int result = 0;
   const std::vector<game::BoardLocation>& locations = board.locations();
   for (size_t i = 0; i < locations.size(); ++i) {
-    if (board.IsPartOfMill(locations[i])) {
-      result += int(board.GetPieceAt(locations[i]) == player);
+    if (board.GetPieceAt(locations[i]) == player) {
+      result += int(board.IsPartOfMill(locations[i]));
     }
   }
   return result;
