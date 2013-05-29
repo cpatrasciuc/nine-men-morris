@@ -31,8 +31,8 @@ namespace {
 
 const int kLocationsOffset = 9;
 
-map<game::GameType, map<BoardLocation, int> > kIndicesCache;
-base::threading::Lock kIndicesCacheLock;
+map<game::GameType, map<BoardLocation, int> > g_indices_cache;
+base::threading::Lock g_indices_cache_lock;
 
 game::GameType GetGameTypeFromBoardSize(int board_size) {
   switch (board_size) {
@@ -50,9 +50,10 @@ game::GameType GetGameTypeFromBoardSize(int board_size) {
 }
 
 const map<BoardLocation, int>& GetLocationIndices(game::GameType type) {
-  base::threading::ScopedGuard _(&kIndicesCacheLock);
-  map<BoardLocation, int>& indices = kIndicesCache[type];
-  if (indices.empty()) {
+  map<game::GameType, map<BoardLocation, int> >::iterator it =
+      g_indices_cache.find(type);
+  if (it == g_indices_cache.end()) {
+    map<BoardLocation, int> indices;
     game::Board board(type);
     std::queue<BoardLocation> bfs_queue;
     const BoardLocation start(0, 0);
@@ -71,8 +72,15 @@ const map<BoardLocation, int>& GetLocationIndices(game::GameType type) {
         }
       }
     }
+    {
+      base::threading::ScopedGuard _(&g_indices_cache_lock);
+      it = g_indices_cache.find(type);
+      if (it == g_indices_cache.end()) {
+        it = g_indices_cache.insert(std::make_pair(type, indices)).first;
+      }
+    }
   }
-  return indices;
+  return it->second;
 }
 
 }  // anonymous namespace
