@@ -5,7 +5,6 @@
 #ifndef AI_ALPHABETA_ALPHABETA_ALGORITHM_H_
 #define AI_ALPHABETA_ALPHABETA_ALGORITHM_H_
 
-#include <map>
 #include <vector>
 
 #include "ai/ai_algorithm.h"
@@ -15,6 +14,7 @@
 #include "ai/game_state.h"
 #include "ai/game_state_generator.h"
 #include "base/basic_macros.h"
+#include "base/hash_map.h"
 #include "game/board_location.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
@@ -38,6 +38,13 @@ class AI_EXPORT AlphaBetaAlgorithm
   ~AlphaBetaAlgorithm();
 
  private:
+  class GameStateHasher {
+   public:
+    size_t operator()(const GameState& state) const {
+      return GameState::Hash(state);
+    }
+  };
+
   // AIAlgorithm interface
   virtual game::PlayerAction GetNextAction(const game::Game& game_model);
 
@@ -58,10 +65,12 @@ class AI_EXPORT AlphaBetaAlgorithm
 
   game::BoardLocation remove_location_;
 
-  typedef std::map<GameState, std::vector<GameState> > SuccessorCache;
+  typedef base::hash_map<GameState,
+                         std::vector<GameState>,
+                         GameStateHasher> SuccessorCache;
   SuccessorCache successors_cache_;
 
-  typedef std::map<GameState, int> ScoreCache;
+  typedef base::hash_map<GameState, int, GameStateHasher> ScoreCache;  // NOLINT
   ScoreCache score_cache_;
 
   game::PieceColor max_player_color_;
