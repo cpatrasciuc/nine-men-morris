@@ -70,22 +70,17 @@ void GameStateGenerator::GetPlaceSuccessors(const GameState& state,
   for (size_t i = 0; i < empty_loc.size(); ++i) {
     bool result = board.AddPiece(empty_loc[i], player);
     if (result) {
+      GameState successor(state);
+      successor.set_current_player(opponent);
+      successor.set_pieces_in_hand(player, state.pieces_in_hand(player) - 1);
+      successor.AddPiece(empty_loc[i], player);
       if (board.IsPartOfMill(empty_loc[i])) {
         for (size_t k = 0; k < opponent_loc.size(); ++k) {
-          board.RemovePiece(opponent_loc[k]);
-          GameState successor(state);
-          successor.set_current_player(opponent);
-          successor.set_pieces_in_hand(player,
-                                       state.pieces_in_hand(player) - 1);
-          successor.Encode(board);
-          successors->push_back(successor);
-          board.AddPiece(opponent_loc[k], opponent);
+          GameState remove_successor(successor);
+          remove_successor.RemovePiece(opponent_loc[k]);
+          successors->push_back(remove_successor);
         }
       } else {
-        GameState successor(state);
-        successor.set_current_player(opponent);
-        successor.set_pieces_in_hand(player, state.pieces_in_hand(player) - 1);
-        successor.Encode(board);
         successors->push_back(successor);
       }
     } else {
@@ -116,17 +111,16 @@ void GameStateGenerator::GetMoveSuccessors(const GameState& state,
       board.MovePiece(player_loc[i], empty_loc[j]);
       if (board.IsPartOfMill(empty_loc[j])) {
         for (size_t k = 0; k < opponent_loc.size(); ++k) {
-          board.RemovePiece(opponent_loc[k]);
-          GameState successor;
+          GameState successor(state);
           successor.set_current_player(opponent);
-          successor.Encode(board);
+          successor.MovePiece(player_loc[i], empty_loc[j]);
+          successor.RemovePiece(opponent_loc[k]);
           successors->push_back(successor);
-          board.AddPiece(opponent_loc[k], opponent);
         }
       } else {
-        GameState successor;
+        GameState successor(state);
         successor.set_current_player(opponent);
-        successor.Encode(board);
+        successor.MovePiece(player_loc[i], empty_loc[j]);
         successors->push_back(successor);
       }
       board.MovePiece(empty_loc[j], player_loc[i]);

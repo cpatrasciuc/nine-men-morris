@@ -44,6 +44,12 @@ class AI_EXPORT GameState {
   // This must be declared so one can use GameState objects as std::map keys.
   bool operator<(const GameState& other) const;
 
+  // Methods that make changes to the current board configuration.
+  void AddPiece(const game::BoardLocation& destination, game::PieceColor color);
+  void MovePiece(const game::BoardLocation& source,
+                 const game::BoardLocation& destination);
+  void RemovePiece(const game::BoardLocation& source);
+
   // Utility method that determines the actions that must be played in order to
   // reach the game state encoded by |to| from the game state encoded by |from|.
   // The first element of the result is the MOVE or PLACE action that the player

@@ -29,6 +29,8 @@ namespace ai {
 
 namespace {
 
+const int kLocationsOffset = 9;
+
 map<game::GameType, map<BoardLocation, int> > kIndicesCache;
 base::threading::Lock kIndicesCacheLock;
 
@@ -120,16 +122,11 @@ void GameState::set_pieces_in_hand(const game::PieceColor player_color,
 void GameState::Encode(const game::Board& board) {
   s_ &= 0x1ffULL;  // Clear existing pieces
   game_type_ = GetGameTypeFromBoardSize(board.size());
-  const map<BoardLocation, int>& indices = GetLocationIndices(game_type_);
-  map<BoardLocation, int>::const_iterator it;
-  for (it = indices.begin(); it != indices.end(); ++it) {
-    const game::PieceColor color = board.GetPieceAt(it->first);
+  const std::vector<game::BoardLocation>& locations = board.locations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    const game::PieceColor color = board.GetPieceAt(locations[i]);
     if (color != game::NO_COLOR) {
-      int pos = it->second + 9;
-      if (color == game::BLACK_COLOR) {
-        pos += indices.size();
-      }
-      s_.set(pos);
+      AddPiece(locations[i], color);
     }
   }
 }
@@ -141,7 +138,7 @@ void GameState::Decode(game::Board* board) const {
   map<BoardLocation, int>::const_iterator it;
   for (it = indices.begin(); it != indices.end(); ++it) {
     game::PieceColor color = game::NO_COLOR;
-    const int pos = it->second + 9;
+    const int pos = it->second + kLocationsOffset;
     if (s_.test(pos)) {
       color = game::WHITE_COLOR;
     }
@@ -170,6 +167,52 @@ bool GameState::operator<(const GameState& other) const {
   return s_.to_ulong() < other.s_.to_ulong();
 }
 
+void GameState::AddPiece(const game::BoardLocation& destination,
+                         game::PieceColor color) {
+  DCHECK(color != game::NO_COLOR);
+  const map<BoardLocation, int>& indices = GetLocationIndices(game_type_);
+  map<BoardLocation, int>::const_iterator it = indices.find(destination);
+  DCHECK(it != indices.end());
+  int pos = it->second + kLocationsOffset;
+  if (color == game::BLACK_COLOR) {
+    pos += indices.size();
+  }
+  s_.set(pos);
+}
+
+void GameState::MovePiece(const game::BoardLocation& source,
+                          const game::BoardLocation& destination) {
+  const map<BoardLocation, int>& indices = GetLocationIndices(game_type_);
+  map<BoardLocation, int>::const_iterator source_it = indices.find(source);
+  map<BoardLocation, int>::const_iterator dest_it = indices.find(destination);
+  int source_pos = source_it->second + kLocationsOffset;
+  int dest_pos = dest_it->second + kLocationsOffset;
+  DCHECK(!s_.test(dest_pos));
+  DCHECK(!s_.test(dest_pos + indices.size()));
+  if (s_.test(source_pos)) {
+    DCHECK(!s_.test(source_pos + indices.size()));
+    s_.reset(source_pos);
+    s_.set(dest_pos);
+    return;
+  }
+  source_pos += indices.size();
+  dest_pos += indices.size();
+  s_.reset(source_pos);
+  s_.set(dest_pos);
+}
+
+void GameState::RemovePiece(const game::BoardLocation& source) {
+  const map<BoardLocation, int>& indices = GetLocationIndices(game_type_);
+  map<BoardLocation, int>::const_iterator source_it = indices.find(source);
+  int pos = source_it->second + kLocationsOffset;
+  if (s_.test(pos)) {
+    DCHECK(!s_.test(pos + indices.size()));
+    s_.reset(pos);
+    return;
+  }
+  s_.reset(pos + indices.size());
+}
+
 // static
 std::vector<game::PlayerAction> GameState::GetTransition(
     const GameState& from, const GameState& to) {
@@ -179,8 +222,10 @@ std::vector<game::PlayerAction> GameState::GetTransition(
             to.pieces_in_hand(game::GetOpponent(player)));
   DCHECK_EQ(from.game_type_, to.game_type_);
   const map<BoardLocation, int>& indices = GetLocationIndices(from.game_type_);
-  const int offset = (player == game::WHITE_COLOR ? 9 : 9 + indices.size());
-  const int opp_offset = (player == game::WHITE_COLOR ? 9 + indices.size() : 9);
+  const int offset = (player == game::WHITE_COLOR ?
+      kLocationsOffset : kLocationsOffset + indices.size());
+  const int opp_offset = (player == game::WHITE_COLOR ?
+      kLocationsOffset + indices.size() : kLocationsOffset);
   game::BoardLocation source(-1, -1);
   game::BoardLocation destination(-1, -1);
   game::BoardLocation remove(-1, -1);
