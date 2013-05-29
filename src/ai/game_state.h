@@ -35,7 +35,7 @@ class AI_EXPORT GameState {
   void Decode(game::Board* board) const;
 
   GameState& operator=(const GameState& other);
-  bool operator==(const GameState& other);
+  bool operator==(const GameState& other) const;
 
   // This must be declared so one can use GameState objects as std::map keys.
   bool operator<(const GameState& other) const;
@@ -49,6 +49,9 @@ class AI_EXPORT GameState {
   // If |to| is not a direct successor of |from| the behavior is undefined.
   static std::vector<game::PlayerAction> GetTransition(const GameState& from,
       const GameState& to, game::GameType game_type);
+
+  // utility function used to store GameState instances in hash maps.
+  static size_t Hash(const GameState& state) { return state.s_.to_ulong(); }
 
  private:
   std::bitset<64> s_;

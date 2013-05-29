@@ -161,7 +161,7 @@ GameState& GameState::operator=(const GameState& other) {
   return *this;
 }
 
-bool GameState::operator==(const GameState& other) {
+bool GameState::operator==(const GameState& other) const {
   return s_ == other.s_;
 }
 
