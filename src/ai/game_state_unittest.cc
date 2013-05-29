@@ -81,7 +81,7 @@ TEST_P(GameStateTest, EncodeAndDecode) {
   const game::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
-  GameState state;
+  GameState state(game_type);
   state.Encode(board);
   game::Board decoded_board(game_type);
   GameState copied_state(state);
@@ -97,18 +97,18 @@ TEST_P(GameStateTest, GetPlayerActionsSimplePlace) {
   const game::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
-  GameState from;
+  GameState from(game_type);
   from.set_current_player(game::WHITE_COLOR);
   from.set_pieces_in_hand(game::WHITE_COLOR, 3);
   from.Encode(board);
   const game::BoardLocation destination(0, board.size() - 1);
   EXPECT_TRUE(board.AddPiece(destination, game::WHITE_COLOR));
-  GameState to;
+  GameState to(game_type);
   to.set_current_player(game::BLACK_COLOR);
   to.set_pieces_in_hand(game::WHITE_COLOR, 2);
   to.Encode(board);
   const std::vector<game::PlayerAction> actions =
-      GameState::GetTransition(from, to, game_type);
+      GameState::GetTransition(from, to);
   EXPECT_EQ(1U, actions.size());
   EXPECT_EQ(game::PlayerAction::PLACE_PIECE, actions[0].type());
   EXPECT_EQ(destination, actions[0].destination());
@@ -119,7 +119,7 @@ TEST_P(GameStateTest, GetPlayerActionsPlaceWithMill) {
   const game::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
-  GameState from;
+  GameState from(game_type);
   from.set_current_player(game::WHITE_COLOR);
   from.set_pieces_in_hand(game::WHITE_COLOR, 3);
   from.Encode(board);
@@ -127,12 +127,12 @@ TEST_P(GameStateTest, GetPlayerActionsPlaceWithMill) {
   const game::BoardLocation remove_loc(board.size() - 1, board.size() - 1);
   EXPECT_TRUE(board.AddPiece(destination, game::WHITE_COLOR));
   EXPECT_TRUE(board.RemovePiece(remove_loc));
-  GameState to;
+  GameState to(game_type);
   to.set_current_player(game::BLACK_COLOR);
   to.set_pieces_in_hand(game::WHITE_COLOR, 2);
   to.Encode(board);
   const std::vector<game::PlayerAction> actions =
-      GameState::GetTransition(from, to, game_type);
+      GameState::GetTransition(from, to);
   EXPECT_EQ(2U, actions.size());
   EXPECT_EQ(game::PlayerAction::PLACE_PIECE, actions[0].type());
   EXPECT_EQ(destination, actions[0].destination());
@@ -146,17 +146,17 @@ TEST_P(GameStateTest, GetPlayerActionsSimpleMove) {
   const game::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
-  GameState from;
+  GameState from(game_type);
   from.set_current_player(game::WHITE_COLOR);
   from.Encode(board);
   const game::BoardLocation source(0, 0);
   const game::BoardLocation destination(board.size() - 1, 0);
   board.MovePiece(source, destination);
-  GameState to;
+  GameState to(game_type);
   to.set_current_player(game::BLACK_COLOR);
   to.Encode(board);
   const std::vector<game::PlayerAction> actions =
-      GameState::GetTransition(from, to, game_type);
+      GameState::GetTransition(from, to);
   EXPECT_EQ(1U, actions.size());
   EXPECT_EQ(game::PlayerAction::MOVE_PIECE, actions[0].type());
   EXPECT_EQ(source, actions[0].source());
@@ -168,7 +168,7 @@ TEST_P(GameStateTest, GetPlayerActionsMoveWithMill) {
   const game::GameType game_type = GetParam();
   game::Board board(game_type);
   SetUpTestBoard(&board);
-  GameState from;
+  GameState from(game_type);
   from.set_current_player(game::WHITE_COLOR);
   from.Encode(board);
   const game::BoardLocation source(0, 0);
@@ -176,11 +176,11 @@ TEST_P(GameStateTest, GetPlayerActionsMoveWithMill) {
   const game::BoardLocation remove_loc(board.size() - 1, board.size() - 1);
   board.MovePiece(source, destination);
   board.RemovePiece(remove_loc);
-  GameState to;
+  GameState to(game_type);
   to.set_current_player(game::BLACK_COLOR);
   to.Encode(board);
   const std::vector<game::PlayerAction> actions =
-      GameState::GetTransition(from, to, game_type);
+      GameState::GetTransition(from, to);
   EXPECT_EQ(2U, actions.size());
   EXPECT_EQ(game::PlayerAction::MOVE_PIECE, actions[0].type());
   EXPECT_EQ(source, actions[0].source());

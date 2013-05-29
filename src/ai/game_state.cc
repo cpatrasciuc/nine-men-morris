@@ -75,9 +75,10 @@ const map<BoardLocation, int>& GetLocationIndices(game::GameType type) {
 
 }  // anonymous namespace
 
-GameState::GameState() : s_() {}
+GameState::GameState(game::GameType game_type) : game_type_(game_type), s_() {}
 
-GameState::GameState(const GameState& other) : s_(other.s_) {}
+GameState::GameState(const GameState& other)
+    : game_type_(other.game_type_), s_(other.s_) {}
 
 GameState::~GameState() {}
 
@@ -118,8 +119,8 @@ void GameState::set_pieces_in_hand(const game::PieceColor player_color,
 
 void GameState::Encode(const game::Board& board) {
   s_ &= 0x1ffULL;  // Clear existing pieces
-  const map<BoardLocation, int>& indices =
-      GetLocationIndices(GetGameTypeFromBoardSize(board.size()));
+  game_type_ = GetGameTypeFromBoardSize(board.size());
+  const map<BoardLocation, int>& indices = GetLocationIndices(game_type_);
   map<BoardLocation, int>::const_iterator it;
   for (it = indices.begin(); it != indices.end(); ++it) {
     const game::PieceColor color = board.GetPieceAt(it->first);
@@ -135,8 +136,8 @@ void GameState::Encode(const game::Board& board) {
 
 void GameState::Decode(game::Board* board) const {
   DCHECK(board);
-  const game::GameType type = GetGameTypeFromBoardSize(board->size());
-  const map<BoardLocation, int>& indices = GetLocationIndices(type);
+  DCHECK_EQ(game_type_, GetGameTypeFromBoardSize(board->size()));
+  const map<BoardLocation, int>& indices = GetLocationIndices(game_type_);
   map<BoardLocation, int>::const_iterator it;
   for (it = indices.begin(); it != indices.end(); ++it) {
     game::PieceColor color = game::NO_COLOR;
@@ -171,14 +172,13 @@ bool GameState::operator<(const GameState& other) const {
 
 // static
 std::vector<game::PlayerAction> GameState::GetTransition(
-    const GameState& from,
-    const GameState& to,
-    game::GameType game_type) {
+    const GameState& from, const GameState& to) {
   const game::PieceColor player = from.current_player();
   DCHECK_EQ(player, game::GetOpponent(to.current_player()));
   DCHECK_EQ(from.pieces_in_hand(game::GetOpponent(player)),
             to.pieces_in_hand(game::GetOpponent(player)));
-  const map<BoardLocation, int>& indices = GetLocationIndices(game_type);
+  DCHECK_EQ(from.game_type_, to.game_type_);
+  const map<BoardLocation, int>& indices = GetLocationIndices(from.game_type_);
   const int offset = (player == game::WHITE_COLOR ? 9 : 9 + indices.size());
   const int opp_offset = (player == game::WHITE_COLOR ? 9 + indices.size() : 9);
   game::BoardLocation source(-1, -1);

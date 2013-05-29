@@ -15,15 +15,19 @@
 
 namespace game {
 class Board;
+class BoardLocation;
 }
 
 namespace ai {
 
 class AI_EXPORT GameState {
  public:
-  GameState();
+  // TODO(game_state): Enhance the behavior of the default constructor.
+  explicit GameState(game::GameType game_type = game::NINE_MEN_MORRIS);
   GameState(const GameState& other);
   ~GameState();
+
+  game::GameType game_type() const { return game_type_; }
 
   game::PieceColor current_player() const;
   void set_current_player(const game::PieceColor player_color);
@@ -48,12 +52,13 @@ class AI_EXPORT GameState {
   // that must be performed in order to reach the state encoded by |to|.
   // If |to| is not a direct successor of |from| the behavior is undefined.
   static std::vector<game::PlayerAction> GetTransition(const GameState& from,
-      const GameState& to, game::GameType game_type);
+                                                       const GameState& to);
 
   // utility function used to store GameState instances in hash maps.
   static size_t Hash(const GameState& state) { return state.s_.to_ulong(); }
 
  private:
+  game::GameType game_type_;
   std::bitset<64> s_;
 };
 

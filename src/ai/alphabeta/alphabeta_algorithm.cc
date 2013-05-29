@@ -132,9 +132,7 @@ game::PlayerAction AlphaBetaAlgorithm::GetNextAction(
   origin.Encode(game_model.board());
   const GameState best_successor = alphabeta.GetBestSuccessor(origin, depth_);
   const std::vector<game::PlayerAction> actions =
-      GameState::GetTransition(origin,
-                               best_successor,
-                               game_model.options().game_type());
+      GameState::GetTransition(origin, best_successor);
   if (actions.size() > 1) {
     remove_location_ = actions[1].source();
   } else {
