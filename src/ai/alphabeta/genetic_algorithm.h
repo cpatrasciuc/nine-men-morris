@@ -169,7 +169,7 @@ class GeneticAlgorithm {
   void NextGeneration() {
     ++current_generation_;
     delegate_->Process(&population_);
-    DCHECK_EQ(population_size_, population_.size());
+    DCHECK_EQ(population_size_, int(population_.size()));
     std::sort(population_.begin(), population_.end(),
         Comparator(Get(delegate_)));
     Population new_population;
