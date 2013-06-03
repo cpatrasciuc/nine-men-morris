@@ -48,7 +48,7 @@ using base::threading::ThreadPoolForUnittests;
 const int kEvaluatorsCount = 6;
 const int kMaxWeight = 10;
 const int kMaxMoves = 500;
-const int kSearchDepth = 2;
+const int kSearchDepth = 25;
 
 game::GameOptions kGameOptions;
 base::threading::Lock kGlobalScoresLock;
@@ -98,14 +98,16 @@ void RunGame(const Weights& w1, const Weights& w2, ScoreMap* scores) {
     base::threading::ScopedGuard _(&kGlobalScoresLock);
     if (winner == game::WHITE_COLOR) {
       (*scores)[w1] += 3;
+      std::cerr.put('W');
     } else if (winner == game::BLACK_COLOR) {
       (*scores)[w2] += 3;
+      std::cerr.put('B');
     } else {
       (*scores)[w1] += 1;
       (*scores)[w2] += 1;
+      std::cerr.put('.');
     }
   }
-  std::cerr.put('.');
 }
 
 class Trainer : public GeneticAlgorithm<Weights>::Delegate {
@@ -292,9 +294,9 @@ int main(int argc, char** argv) {
   std::auto_ptr<GeneticAlgorithm<Weights>::Delegate> delegate;
   delegate.reset(new Trainer());
   GeneticAlgorithm<Weights> alg(delegate);
-  alg.set_max_generations(300);
-  alg.set_population_size(100);
-  alg.set_propagation_rate(0.1);
+  alg.set_max_generations(1);
+  alg.set_population_size(10);
+  alg.set_propagation_rate(0.2);
   const int game_count = alg.max_generations() *
       alg.population_size() * alg.population_size();
   std::cout << "Simulating " << alg.max_generations() << " generations of "

@@ -32,7 +32,7 @@ namespace {
 // NINE_MEN_MORRIS: const int kBestWeights[] = { 0, 8, -1, 0, -9, -9 };
 // SIX_MEN_MORRIS: const int kBestWeights[] = { 1, 7, -2, 0, -9, -9 };
 // THREE_MEN_MORRIS:
-const int kBestWeights[] = { 4, -9, 4, 3, -4, -9 };
+const int kBestWeights[] = { -4, 5, 3, -9, -8, 7 };
 
 const game::BoardLocation kInvalidLocation(-1, -1);
 
@@ -49,8 +49,8 @@ class ProxyPtr : public AlphaBeta<GameState>::Delegate {
     return alg_->IsTerminal(state);
   };
 
-  virtual int Evaluate(const GameState& state, bool max_player) {
-    return alg_->Evaluate(state, max_player);
+  virtual int Evaluate(const GameState& state) {
+    return alg_->Evaluate(state);
   };
 
   virtual void GetSuccessors(const GameState& state,
@@ -65,9 +65,13 @@ class ProxyPtr : public AlphaBeta<GameState>::Delegate {
 
 }  // anonymous namespace
 
+template <> size_t Hash<GameState>(const GameState& state) {
+  return GameState::Hash(state);
+}
+
 AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options)
     : options_(options),
-      depth_(6),
+      depth_(-1),
       generator_(options),
       remove_location_(kInvalidLocation),
       max_player_color_(game::NO_COLOR) {
@@ -123,6 +127,9 @@ game::PlayerAction AlphaBetaAlgorithm::GetNextAction(
   max_player_color_ = game_model.current_player();
   std::auto_ptr<AlphaBeta<GameState>::Delegate> delegate(new ProxyPtr(this));
   AlphaBeta<GameState> alphabeta(delegate);
+  if (depth_ > 0) {
+    alphabeta.set_max_search_depth(depth_);
+  }
   GameState origin;
   origin.set_current_player(game_model.current_player());
   origin.set_pieces_in_hand(
@@ -130,7 +137,7 @@ game::PlayerAction AlphaBetaAlgorithm::GetNextAction(
   origin.set_pieces_in_hand(
       game::BLACK_COLOR, game_model.GetPiecesInHand(game::BLACK_COLOR));
   origin.Encode(game_model.board());
-  const GameState best_successor = alphabeta.GetBestSuccessor(origin, depth_);
+  const GameState best_successor = alphabeta.GetBestSuccessor(origin);
   const std::vector<game::PlayerAction> actions =
       GameState::GetTransition(origin, best_successor);
   if (actions.size() > 1) {
@@ -147,9 +154,9 @@ bool AlphaBetaAlgorithm::IsTerminal(const GameState& state) {
   game::Board board(options_.game_type());
   state.Decode(&board);
   // TODO(alphabeta): Similar logic with game::Game:CheckIfGameIsOver()
-  const game::PieceColor opponent = game::GetOpponent(state.current_player());
-  const int remaining_pieces_on_board = board.GetPieceCountByColor(opponent);
-  const int remaining_pieces_in_hand = state.pieces_in_hand(opponent);
+  const game::PieceColor player = state.current_player();
+  const int remaining_pieces_on_board = board.GetPieceCountByColor(player);
+  const int remaining_pieces_in_hand = state.pieces_in_hand(player);
   const int total_remaining_pieces =
       remaining_pieces_on_board + remaining_pieces_in_hand;
   const int score = state.current_player() != max_player_color_ ?
@@ -175,7 +182,7 @@ bool AlphaBetaAlgorithm::IsTerminal(const GameState& state) {
   return successors.empty();
 }
 
-int AlphaBetaAlgorithm::Evaluate(const GameState& state, bool max_player) {
+int AlphaBetaAlgorithm::Evaluate(const GameState& state) {
   ScoreCache::const_iterator it = score_cache_.find(state);
   if (it != score_cache_.end()) {
     return it->second;
@@ -184,7 +191,7 @@ int AlphaBetaAlgorithm::Evaluate(const GameState& state, bool max_player) {
   state.Decode(&board);
   int score = 0;
   for (size_t i = 0; i < evaluators_.size(); ++i) {
-    score += weights_[i] * ((*evaluators_[i])(board, state.current_player()));
+    score += weights_[i] * ((*evaluators_[i])(board, max_player_color_));
   }
   score_cache_.insert(std::make_pair(state, score));
   return score;

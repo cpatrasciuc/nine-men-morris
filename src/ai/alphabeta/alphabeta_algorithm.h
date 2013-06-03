@@ -27,6 +27,9 @@ class GameOptions;
 namespace ai {
 namespace alphabeta {
 
+// Specialize the hashing function for GameState objects.
+template <> size_t Hash<GameState>(const GameState& state);
+
 class AI_EXPORT AlphaBetaAlgorithm
     : public AIAlgorithm, public AlphaBeta<GameState>::Delegate {
  public:
@@ -50,7 +53,7 @@ class AI_EXPORT AlphaBetaAlgorithm
 
   // AlphaBeta<GameState, double>::Delegate interface
   virtual bool IsTerminal(const GameState& state);
-  virtual int Evaluate(const GameState& state, bool max_player);
+  virtual int Evaluate(const GameState& state);
   virtual void GetSuccessors(const GameState& state,
                              std::vector<GameState>* successors);
 

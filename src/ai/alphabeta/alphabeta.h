@@ -5,17 +5,24 @@
 #ifndef AI_ALPHABETA_ALPHABETA_H_
 #define AI_ALPHABETA_ALPHABETA_H_
 
+#include <algorithm>
+#include <ctime>
 #include <limits>
-#include <map>
 #include <memory>
 #include <utility>
 #include <vector>
 
 #include "base/basic_macros.h"
+#include "base/hash_map.h"
+#include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 
 namespace ai {
 namespace alphabeta {
+
+// Placeholder for hashing function that must be specialized for each concrete
+// type that is used to encode a game state.
+template <class State> size_t Hash(const State& state);
 
 // This represents a generic implementation of the Alpha Beta Pruning algorithm.
 // The template is based on two external classes. The |State| class must be an
@@ -26,8 +33,8 @@ namespace alphabeta {
 // Requirements for template classes:
 //   - The State class must provide a default constructor, copy constructor,
 //     assignment operator and == operator.
-//   - The Score class must be copyable, assignable and must provide the < and
-//     == operators.
+//   - The Score class must be copyable, assignable and must implement the
+//     comparison operators <, == and <=.
 template <class State, class Score = int>
 class AlphaBeta {
  public:
@@ -43,10 +50,8 @@ class AlphaBeta {
     virtual bool IsTerminal(const State& state) = 0;
 
     // This method must return the score of the given |state|. The |state| is
-    // not mandatory to be a terminal one. The second argument specifies if the
-    // evaluation should be performed from the max_player point of view or not.
-    // NOTE: max_player is the player that seeks to maximize the score.
-    virtual Score Evaluate(const State& state, bool max_player) = 0;
+    // not mandatory to be a terminal one.
+    virtual Score Evaluate(const State& state) = 0;
 
     // This method must fill in the |successors| vector with the successors of
     // the state given as first argument.
@@ -63,66 +68,177 @@ class AlphaBeta {
   // The constructor receives as argument a Delegate instance that is used to
   // adapt the Alpha Beta Pruning algorithm to a specific game.
   explicit AlphaBeta(std::auto_ptr<Delegate> delegate)
-      : delegate_(delegate.release()), best_successor_() {}
+      : delegate_(delegate.release()),
+        max_search_time_(1),
+        max_search_depth_(std::numeric_limits<int>::max()) {}
 
-  // Starts a search in the partially constructed game tree that is rooted at
-  // the state given by the |origin| argument and goes down in the tree for at
-  // most |depth| levels. The method returns the best successor state that it
+  // Parameter used to limit the time (in seconds) required to perform a search.
+  // The limit is not a strict one. When the time expires the search will still
+  // continue until the current depth level is reached. By default the limit is
+  // set to one second.
+  // TODO(alphabeta): Allow limits that are specified in milliseconds.
+  std::time_t max_search_time() const { return max_search_time_; }
+  void set_max_search_time(std::time_t max_time) {
+    max_search_time_ = max_time;
+  }
+
+  // Parameter used to limit the depth of a search. By default there is no
+  // limit for this.
+  int max_search_depth() const { return max_search_depth_; }
+  void set_max_search_depth(int max_depth) { max_search_depth_ = max_depth; }
+
+  // Starts an iterative deepening search in the partially constructed game tree
+  // that is rooted at the state given by the |origin| argument. It continously
+  // increases the depth of the search until |max_search_depth_| is reached or
+  // the time required to reach the current depth level exceeded
+  // |max_search_time_|. The method returns the best successor state that it
   // found. It is the responsibility of the users of this method to determine
   // the actual move that gets them from |origin| to that specific state.
-  State GetBestSuccessor(const State& origin, int depth) {
-    best_successor_ = State();
+  State GetBestSuccessor(const State& origin) {
     const Score min_infinity = std::numeric_limits<Score>::min();
     const Score max_infinity = std::numeric_limits<Score>::max();
-    Search(origin, depth, min_infinity, max_infinity, true, true);
-    return best_successor_;
+    start_time_ = std::time(NULL);
+    for (int depth = 1; depth <= max_search_depth_; ++depth) {
+      Search(origin, depth, min_infinity, max_infinity, true);
+      if (TimedOut()) {
+        break;
+      }
+    }
+    typename TranspositionTable::const_iterator it = trans_table_.find(origin);
+    DCHECK(it != trans_table_.end());
+    DCHECK_GT(it->second.successors.size(), 0);
+    return it->second.successors[0];
   };
 
  private:
+  // Enum used to specify how the score of a state stored in the transposition
+  // table should be interpreted.
+  enum EvalType {
+    // The score was obtained by calling |Delegate::Evaluate| on that state.
+    EXACT,
+    // The exact score is less than or equal to the value from the table.
+    ALPHA,
+    // The exact score is greater that or equal to the value from the table.
+    BETA
+  };
+
+  struct TransTableEntry {
+    int depth;
+    Score score;
+    EvalType eval_type;
+    std::vector<State> successors;
+  };
+
+  struct Hasher {
+    size_t operator()(const State& state) const {
+      return Hash<State>(state);
+    }
+  };
+
+  typedef base::hash_map<State,  // NOLINT(build/include_what_you_use)
+                         TransTableEntry, Hasher> TranspositionTable;
+
+  bool TimedOut() {
+    return std::time(NULL) - start_time_ > max_search_time_;
+  }
+
+  // Check if the |state| was already evaluated and stored in the transposition
+  // table. The method return |true| if the state was fully evaluated or if it
+  // was partially evaluated and does not require further analysis given the
+  // current state of the search determined by the |alpha| and |beta| arguments.
+  // If the method returns |true| the current score of |state| is filled in the
+  // variable pointed by |score|.
+  // NOTE: The returned score is not necessarily an exact score.
+  bool GetFromTranspositionTable(const State& state, int depth,
+                                 Score alpha, Score beta, Score* score) {
+    typename TranspositionTable::const_iterator it = trans_table_.find(state);
+    if (it == trans_table_.end()) {
+      return false;
+    }
+    const TransTableEntry& entry = it->second;
+    if (entry.depth >= depth) {
+      if (entry.eval_type == EXACT) {
+        *score = entry.score;
+        return true;
+      }
+      if (entry.eval_type == ALPHA && entry.score <= alpha) {
+        *score = alpha;
+        return true;
+      }
+      if (entry.eval_type == BETA && entry.score >= beta) {
+        *score = beta;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Update the transposition table entry for |state|. If there is no entry for
+  // this state, a new one will be created.
+  void Update(const State& state, int depth, Score score, EvalType eval_type,
+      std::vector<State> successors = std::vector<State>()) {
+    TransTableEntry& entry = trans_table_[state];
+    entry.depth = depth;
+    entry.eval_type = eval_type;
+    entry.score = score;
+    entry.successors = successors;
+  }
+
   // The core of the Alpha Beta Pruning search algorithm. For more details read
   // http://en.wikipedia.org/wiki/Alpha-beta_pruning.
   Score Search(const State& state, int depth, Score alpha, Score beta,
-               bool max_player, bool store_best_successor = false) {
+               bool max_player) {
+    Score score;
+    bool found = GetFromTranspositionTable(state, depth, alpha, beta, &score);
+    if (found) {
+      return score;
+    }
     if (depth == 0 || delegate_->IsTerminal(state)) {
-      return delegate_->Evaluate(state, max_player);
+      Score score = delegate_->Evaluate(state);
+      Update(state, depth, score, EXACT);
+      return score;
     }
     std::vector<State> successors;
     delegate_->GetSuccessors(state, &successors);
     if (max_player) {
+      EvalType eval_type = ALPHA;
       for (size_t i = 0; i < successors.size(); ++i) {
         Score s = Search(successors[i], depth - 1, alpha, beta, !max_player);
         if (alpha < s) {
           alpha = s;
-          if (store_best_successor) {
-            best_successor_ = successors[i];
-          }
+          std::swap(successors[i], successors[0]);
+          eval_type = EXACT;
         }
         if (beta < alpha || beta == alpha) {
+          Update(state, depth, beta, BETA, successors);
           break;
         }
       }
+      Update(state, depth, beta, eval_type, successors);
       return alpha;
     }
+    EvalType eval_type = BETA;
     for (size_t i = 0; i < successors.size(); ++i) {
       Score s = Search(successors[i], depth - 1, alpha, beta, !max_player);
       if (s < beta) {
         beta = s;
-        if (store_best_successor) {
-          best_successor_ = successors[i];
-        }
+        std::swap(successors[i], successors[0]);
+        eval_type = EXACT;
       }
       if (beta < alpha || beta == alpha) {
+        Update(state, depth, alpha, ALPHA, successors);
         break;
       }
     }
+    Update(state, depth, beta, eval_type, successors);
     return beta;
   };
 
   base::ptr::scoped_ptr<Delegate> delegate_;
-
-  // This variable is used to store the temporary best successor during one
-  // search (i.e. during one call to |GetBestSuccessor()|).
-  State best_successor_;
+  std::time_t max_search_time_;
+  int max_search_depth_;
+  TranspositionTable trans_table_;
+  std::time_t start_time_;
 
   DISALLOW_COPY_AND_ASSIGN(AlphaBeta);
 };

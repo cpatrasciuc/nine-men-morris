@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <map>
 #include <memory>
 #include <set>
 
@@ -11,6 +12,10 @@
 
 namespace ai {
 namespace alphabeta {
+
+// Specialize the hashing function for int's.
+template <> size_t Hash<int>(const int& x) { return x; }
+
 namespace {
 
 // This test simulates an abstract game whose game tree expansion would be
@@ -83,10 +88,11 @@ class TestDelegate : public AlphaBeta<int, double>::Delegate {
     return scores_.count(state) > 0;
   };
 
-  virtual double Evaluate(const int& state, bool max_player) {
-    EXPECT_TRUE(max_player);
-    EXPECT_TRUE(IsTerminal(state));
-    return scores_[state];
+  virtual double Evaluate(const int& state) {
+    if (scores_.count(state)) {
+      return scores_[state];
+    }
+    return 0;
   }
 
   virtual void GetSuccessors(const int& state, std::vector<int>* successors) {
@@ -107,7 +113,7 @@ TEST(AlphaBeta, AbstractGame) {
   TestDelegate* delegate = new TestDelegate();
   AlphaBeta<int, double> alpha_beta(
       (std::auto_ptr<AlphaBeta<int, double>::Delegate>(delegate)));
-  EXPECT_EQ(2, alpha_beta.GetBestSuccessor(0, 1000));
+  EXPECT_EQ(2, alpha_beta.GetBestSuccessor(0));
   const std::set<int> expected_visited_states(v, v + arraysize(v));
   EXPECT_EQ(expected_visited_states, delegate->visited_states());
 }
