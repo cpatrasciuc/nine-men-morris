@@ -117,7 +117,13 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
   Trainer() {}
 
   virtual void GetInitialPopulation(int size, Population* population) {
-    for (int i = 0; i < size; ++i) {
+    if (size <= 0) {
+      return;
+    }
+    const int best_weights[] = { kMaxWeight, kMaxWeight, kMaxWeight,
+                                 -kMaxWeight, -kMaxWeight, -kMaxWeight };
+    population->push_back(Weights(best_weights, best_weights + 6));
+    for (int i = 1; i < size; ++i) {
       Weights w(kEvaluatorsCount, 0);
       AppendUnique(&w, population);
     }
