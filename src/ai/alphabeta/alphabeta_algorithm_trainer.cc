@@ -48,10 +48,10 @@ using base::threading::ThreadPoolForUnittests;
 const int kEvaluatorsCount = 6;
 const int kMaxWeight = 10;
 const int kMaxMoves = 500;
-const int kSearchDepth = 25;
+const int kMaxSearchDepth = 25;
 
-game::GameOptions kGameOptions;
-base::threading::Lock kGlobalScoresLock;
+game::GameOptions g_game_options;
+base::threading::Lock g_scores_lock;
 
 void GetEvaluators(std::vector<Evaluator*>* evaluators) {
   typedef int(OppEvalSig)(Evaluator*, const game::Board&, game::PieceColor);
@@ -75,12 +75,12 @@ std::auto_ptr<AlphaBetaAlgorithm> GetPlayer(const Weights& w) {
   std::vector<Evaluator*> evaluators;
   GetEvaluators(&evaluators);
   return std::auto_ptr<AlphaBetaAlgorithm>(
-      new AlphaBetaAlgorithm(kGameOptions, kSearchDepth, evaluators, w));
+      new AlphaBetaAlgorithm(g_game_options, kMaxSearchDepth, evaluators, w));
 }
 
 void RunGame(const Weights& w1, const Weights& w2, ScoreMap* scores) {
   game::PieceColor winner = game::NO_COLOR;
-  game::Game test_game(kGameOptions);
+  game::Game test_game(g_game_options);
   scoped_ptr<ai::AIAlgorithm> white(GetPlayer(w1).release());
   scoped_ptr<ai::AIAlgorithm> black(GetPlayer(w2).release());
   test_game.Initialize();
@@ -95,7 +95,7 @@ void RunGame(const Weights& w1, const Weights& w2, ScoreMap* scores) {
     }
   }
   {
-    base::threading::ScopedGuard _(&kGlobalScoresLock);
+    base::threading::ScopedGuard _(&g_scores_lock);
     if (winner == game::WHITE_COLOR) {
       (*scores)[w1] += 3;
       std::cerr.put('W');
@@ -296,15 +296,15 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
 
 int main(int argc, char** argv) {
   base::debug::EnableStackTraceDumpOnCrash();
-  kGameOptions.set_game_type(game::THREE_MEN_MORRIS);
+  g_game_options.set_game_type(game::NINE_MEN_MORRIS);
   std::auto_ptr<GeneticAlgorithm<Weights>::Delegate> delegate;
   delegate.reset(new Trainer());
   GeneticAlgorithm<Weights> alg(delegate);
   alg.set_max_generations(1);
-  alg.set_population_size(10);
+  alg.set_population_size(3);
   alg.set_propagation_rate(0.2);
   const int game_count = alg.max_generations() *
-      alg.population_size() * alg.population_size();
+      alg.population_size() * (alg.population_size() - 1);
   std::cout << "Simulating " << alg.max_generations() << " generations of "
             << alg.population_size() << " individuals, for a total of "
             << game_count << " games." << std::endl;
