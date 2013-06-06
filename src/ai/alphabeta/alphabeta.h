@@ -250,9 +250,9 @@ class AlphaBeta {
   DISALLOW_COPY_AND_ASSIGN(AlphaBeta);
 };
 
-// Template specializations that explicitly deny the use of float and double as
-// scoring types, since the values returned by std::numeric_limits::min() are
-// not ok from the algorithm's point of view.
+// Template specializations that explicitly deny the use of |float| and |double|
+// as scoring types, since the values returned by std::numeric_limits::min() are
+// not OK from the algorithm's point of view.
 // See std::numeric_limits::lowest() available in C++11.
 // http://en.cppreference.com/w/cpp/types/numeric_limits
 template <class State> class AlphaBeta<State, double> {};
