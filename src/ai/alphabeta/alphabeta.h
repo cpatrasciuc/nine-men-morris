@@ -142,20 +142,15 @@ class AlphaBeta {
     return std::time(NULL) - start_time_ > max_search_time_;
   }
 
-  // Check if the |state| was already evaluated and stored in the transposition
-  // table. The method return |true| if the state was fully evaluated or if it
+  // Checks if a state was already evaluated and stored in the transposition
+  // table. The method returns |true| if the state was fully evaluated or if it
   // was partially evaluated and does not require further analysis given the
   // current state of the search determined by the |alpha| and |beta| arguments.
   // If the method returns |true| the current score of |state| is filled in the
   // variable pointed by |score|.
   // NOTE: The returned score is not necessarily an exact score.
-  bool GetFromTranspositionTable(const State& state, int depth,
+  bool GetFromTranspositionTable(const TransTableEntry& entry, int depth,
                                  Score alpha, Score beta, Score* score) {
-    typename TranspositionTable::const_iterator it = trans_table_.find(state);
-    if (it == trans_table_.end()) {
-      return false;
-    }
-    const TransTableEntry& entry = it->second;
     if (entry.depth >= depth) {
       if (entry.eval_type == EXACT) {
         *score = entry.score;
@@ -188,10 +183,12 @@ class AlphaBeta {
   // http://en.wikipedia.org/wiki/Alpha-beta_pruning.
   Score Search(const State& state, int depth, Score alpha, Score beta,
                bool max_player) {
-    Score score;
-    bool found = GetFromTranspositionTable(state, depth, alpha, beta, &score);
-    if (found) {
-      return score;
+    typename TranspositionTable::const_iterator it = trans_table_.find(state);
+    if (it != trans_table_.end()) {
+      Score score;
+      if (GetFromTranspositionTable(it->second, depth, alpha, beta, &score)) {
+        return score;
+      }
     }
     if (depth == 0 || delegate_->IsTerminal(state)) {
       Score score = delegate_->Evaluate(state);
@@ -199,7 +196,11 @@ class AlphaBeta {
       return score;
     }
     std::vector<State> successors;
-    delegate_->GetSuccessors(state, &successors);
+    if (it != trans_table_.end() && !it->second.successors.empty()) {
+      successors = it->second.successors;
+    } else {
+      delegate_->GetSuccessors(state, &successors);
+    }
     if (max_player) {
       EvalType eval_type = ALPHA;
       for (size_t i = 0; i < successors.size(); ++i) {
@@ -209,12 +210,15 @@ class AlphaBeta {
           std::swap(successors[i], successors[0]);
           eval_type = EXACT;
         }
-        if (beta < alpha || beta == alpha) {
+        if (beta <= alpha) {
+          eval_type = BETA;
           Update(state, depth, beta, BETA, successors);
           break;
         }
       }
-      Update(state, depth, beta, eval_type, successors);
+      if (eval_type != BETA) {
+        Update(state, depth, alpha, eval_type, successors);
+      }
       return alpha;
     }
     EvalType eval_type = BETA;
@@ -226,11 +230,14 @@ class AlphaBeta {
         eval_type = EXACT;
       }
       if (beta < alpha || beta == alpha) {
+        eval_type = ALPHA;
         Update(state, depth, alpha, ALPHA, successors);
         break;
       }
     }
-    Update(state, depth, beta, eval_type, successors);
+    if (eval_type != ALPHA) {
+      Update(state, depth, beta, eval_type, successors);
+    }
     return beta;
   };
 
