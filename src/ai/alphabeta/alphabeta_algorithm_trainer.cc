@@ -47,7 +47,7 @@ using base::threading::ThreadPoolForUnittests;
 
 const int kEvaluatorsCount = 6;
 const int kMaxWeight = 10;
-const int kMaxMoves = 500;
+const int kMaxMoves = 250;
 const int kMaxSearchDepth = 25;
 
 game::GameOptions g_game_options;
@@ -296,12 +296,12 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
 
 int main(int argc, char** argv) {
   base::debug::EnableStackTraceDumpOnCrash();
-  g_game_options.set_game_type(game::NINE_MEN_MORRIS);
+  g_game_options.set_game_type(game::THREE_MEN_MORRIS);
   std::auto_ptr<GeneticAlgorithm<Weights>::Delegate> delegate;
   delegate.reset(new Trainer());
   GeneticAlgorithm<Weights> alg(delegate);
-  alg.set_max_generations(1);
-  alg.set_population_size(3);
+  alg.set_max_generations(100);
+  alg.set_population_size(10);
   alg.set_propagation_rate(0.2);
   const int game_count = alg.max_generations() *
       alg.population_size() * (alg.population_size() - 1);

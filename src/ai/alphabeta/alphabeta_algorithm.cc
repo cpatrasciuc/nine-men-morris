@@ -32,7 +32,7 @@ namespace {
 // NINE_MEN_MORRIS: const int kBestWeights[] = { 0, 8, -1, 0, -9, -9 };
 // SIX_MEN_MORRIS: const int kBestWeights[] = { 1, 7, -2, 0, -9, -9 };
 // THREE_MEN_MORRIS:
-const int kBestWeights[] = { -4, 5, 3, -9, -8, 7 };
+const int kBestWeights[] = { 6, 9, 5, -4, -4, -8 };
 
 const game::BoardLocation kInvalidLocation(-1, -1);
 
