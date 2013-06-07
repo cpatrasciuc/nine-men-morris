@@ -138,7 +138,7 @@ class AlphaBeta {
   typedef base::hash_map<State,  // NOLINT(build/include_what_you_use)
                          TransTableEntry, Hasher> TranspositionTable;
 
-  bool TimedOut() {
+  bool TimedOut() const {
     return std::time(NULL) - start_time_ > max_search_time_;
   }
 
@@ -150,7 +150,7 @@ class AlphaBeta {
   // variable pointed by |score|.
   // NOTE: The returned score is not necessarily an exact score.
   bool GetFromTranspositionTable(const TransTableEntry& entry, int depth,
-                                 Score alpha, Score beta, Score* score) {
+                                 Score alpha, Score beta, Score* score) const {
     if (entry.depth >= depth) {
       if (entry.eval_type == EXACT) {
         *score = entry.score;
