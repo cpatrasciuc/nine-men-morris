@@ -114,6 +114,7 @@ TEST(AlphaBeta, AbstractGame) {
   TestDelegate* delegate = new TestDelegate();
   AlphaBeta<int> alpha_beta(
       (std::auto_ptr<AlphaBeta<int>::Delegate>(delegate)));
+  alpha_beta.set_shuffling_enabled(false);
   EXPECT_EQ(2, alpha_beta.GetBestSuccessor(0));
   const std::set<int> expected_visited_states(v, v + arraysize(v));
   EXPECT_EQ(expected_visited_states, delegate->visited_states());

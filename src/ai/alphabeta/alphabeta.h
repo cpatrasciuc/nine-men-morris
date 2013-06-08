@@ -71,7 +71,8 @@ class AlphaBeta {
   explicit AlphaBeta(std::auto_ptr<Delegate> delegate)
       : delegate_(delegate.release()),
         max_search_time_(1000000000),  // One second
-        max_search_depth_(std::numeric_limits<int>::max()) {}
+        max_search_depth_(std::numeric_limits<int>::max()),
+        shuffle_(true) {}
 
   // Parameter used to limit the time (in nanoseconds) required to perform a
   // search. The value cannot be greater than 2 seconds.
@@ -88,6 +89,14 @@ class AlphaBeta {
   // limit for this.
   int max_search_depth() const { return max_search_depth_; }
   void set_max_search_depth(int max_depth) { max_search_depth_ = max_depth; }
+
+  // Specify whether the successors of a given state should be shuffled if a
+  // re-evaluation is required so that the AI algorithm is not favoring one
+  // state if multiple ones have equal evaluations. This introduces some
+  // variation between different games against an opponent that tries to do the
+  // same sequence of moves. By default, shuffling is enabled.
+  bool is_shuffling_enabled() const { return shuffle_; }
+  void set_shuffling_enabled(bool enable) { shuffle_ = enable; }
 
   // Starts an iterative deepening search in the partially constructed game tree
   // that is rooted at the state given by the |origin| argument. It continously
@@ -217,6 +226,10 @@ class AlphaBeta {
     } else {
       delegate_->GetSuccessors(state, &successors);
     }
+    if (shuffle_) {
+      DCHECK(!successors.empty());
+      std::random_shuffle(successors.begin() + 1, successors.end());
+    }
     if (max_player) {
       EvalType eval_type = ALPHA;
       for (size_t i = 0; i < successors.size(); ++i) {
@@ -260,6 +273,7 @@ class AlphaBeta {
   base::ptr::scoped_ptr<Delegate> delegate_;
   unsigned int max_search_time_;
   int max_search_depth_;
+  bool shuffle_;
   TranspositionTable trans_table_;
   timespec start_time_;
 
