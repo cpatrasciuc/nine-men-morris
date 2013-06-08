@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "ai/alphabeta/alphabeta_algorithm.h"
+#include "ai/alphabeta/morris_alphabeta.h"
 #include "ai/alphabeta/evaluators.h"
 #include "ai/random/random_algorithm.h"
 #include "base/function.h"
@@ -33,14 +33,14 @@ int TestEvaluator(const game::Board& board, game::PieceColor player) {
   return -100;
 }
 
-TEST(AlphaBetaAlgorithm, Evaluators) {
+TEST(MorrisAlphaBeta, Evaluators) {
   std::vector<Evaluator*> evaluators;
   evaluators.push_back(new base::Function<EvaluatorSignature>(&TestEvaluator));
   game::GameOptions options;
   options.set_game_type(game::THREE_MEN_MORRIS);
   game::Game test_game(options);
   test_game.Initialize();
-  AlphaBetaAlgorithm alg(options, evaluators);
+  MorrisAlphaBeta alg(options, evaluators);
   alg.set_max_search_depth(2);
   game::PlayerAction action =
       static_cast<AIAlgorithm*>(&alg)->GetNextAction(test_game);
@@ -50,14 +50,14 @@ TEST(AlphaBetaAlgorithm, Evaluators) {
   EXPECT_EQ(upper_corner, action.destination());
 }
 
-TEST(AlphaBetaAlgorithm, VsRandom) {
+TEST(MorrisAlphaBeta, VsRandom) {
   const int max_moves = 250;
   game::GameOptions options;
   options.set_game_type(game::THREE_MEN_MORRIS);
   options.set_jumps_allowed(false);
   game::Game test_game(options);
   base::ptr::scoped_ptr<AIAlgorithm> white(new random::RandomAlgorithm());
-  base::ptr::scoped_ptr<AIAlgorithm> black(new AlphaBetaAlgorithm(options));
+  base::ptr::scoped_ptr<AIAlgorithm> black(new MorrisAlphaBeta(options));
   test_game.Initialize();
   for (int i = 0; i < max_moves; ++i) {
     AIAlgorithm* next_player =

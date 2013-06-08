@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "ai/ai_algorithm.h"
-#include "ai/alphabeta/alphabeta_algorithm.h"
+#include "ai/alphabeta/morris_alphabeta.h"
 #include "ai/alphabeta/evaluators.h"
 #include "ai/alphabeta/genetic_algorithm.h"
 #include "base/bind.h"
@@ -38,7 +38,7 @@ namespace {
 typedef std::vector<int> Weights;
 typedef std::map<Weights, int> ScoreMap;
 
-using ai::alphabeta::AlphaBetaAlgorithm;
+using ai::alphabeta::MorrisAlphaBeta;
 using ai::alphabeta::Evaluator;
 using ai::alphabeta::EvaluatorSignature;
 using ai::alphabeta::GeneticAlgorithm;
@@ -71,11 +71,11 @@ void GetEvaluators(std::vector<Evaluator*>* evaluators) {
       std::auto_ptr<Evaluator>(new Function<EvaluatorSignature>(&Mills))));
 }
 
-std::auto_ptr<AlphaBetaAlgorithm> GetPlayer(const Weights& w) {
+std::auto_ptr<MorrisAlphaBeta> GetPlayer(const Weights& w) {
   std::vector<Evaluator*> evaluators;
   GetEvaluators(&evaluators);
-  std::auto_ptr<AlphaBetaAlgorithm> player(
-      new AlphaBetaAlgorithm(g_game_options, evaluators, w));
+  std::auto_ptr<MorrisAlphaBeta> player(
+      new MorrisAlphaBeta(g_game_options, evaluators, w));
   player->set_max_search_depth(kMaxSearchDepth);
   return player;
 }

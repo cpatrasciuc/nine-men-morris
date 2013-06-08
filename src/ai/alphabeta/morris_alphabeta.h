@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef AI_ALPHABETA_ALPHABETA_ALGORITHM_H_
-#define AI_ALPHABETA_ALPHABETA_ALGORITHM_H_
+#ifndef AI_ALPHABETA_MORRIS_ALPHABETA_H_
+#define AI_ALPHABETA_MORRIS_ALPHABETA_H_
 
 #include <vector>
 
@@ -30,14 +30,14 @@ namespace alphabeta {
 // Specialize the hashing function for GameState objects.
 template <> size_t Hash<GameState>(const GameState& state);
 
-class AI_EXPORT AlphaBetaAlgorithm
+class AI_EXPORT MorrisAlphaBeta
     : public AIAlgorithm, public AlphaBeta<GameState>::Delegate {
  public:
-  explicit AlphaBetaAlgorithm(const game::GameOptions& options);
-  AlphaBetaAlgorithm(const game::GameOptions& options,
+  explicit MorrisAlphaBeta(const game::GameOptions& options);
+  MorrisAlphaBeta(const game::GameOptions& options,
       const std::vector<Evaluator*>& evaluators,
       const std::vector<int>& weights = std::vector<int>());
-  ~AlphaBetaAlgorithm();
+  ~MorrisAlphaBeta();
 
   // See the similar methods from the generic AlphaBeta algorithm for details.
   int max_search_depth() const { return max_search_depth_; }
@@ -72,11 +72,11 @@ class AI_EXPORT AlphaBetaAlgorithm
 
   game::PieceColor max_player_color_;
 
-  DISALLOW_COPY_AND_ASSIGN(AlphaBetaAlgorithm);
+  DISALLOW_COPY_AND_ASSIGN(MorrisAlphaBeta);
 };
 
 }  // namespace alphabeta
 }  // namespace ai
 
-#endif  // AI_ALPHABETA_ALPHABETA_ALGORITHM_H_
+#endif  // AI_ALPHABETA_MORRIS_ALPHABETA_H_
 

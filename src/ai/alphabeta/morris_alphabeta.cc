@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "ai/alphabeta/alphabeta_algorithm.h"
+#include "ai/alphabeta/morris_alphabeta.h"
 
 #include <limits>
 #include <memory>
@@ -37,7 +37,7 @@ const int kBestWeights[] = { 6, 9, 5, -4, -4, -8 };
 const game::BoardLocation kInvalidLocation(-1, -1);
 
 // Since the AlphaBeta class takes ownership of the delegate, this is needed to
-// wrap a pointer to a AlphaBetaAlgorithm when it is passed to an AlphaBeta
+// wrap a pointer to a MorrisAlphaBeta when it is passed to an AlphaBeta
 // instance, so that it is not deleted when the algorithm completes.
 class ProxyPtr : public AlphaBeta<GameState>::Delegate {
  public:
@@ -69,7 +69,7 @@ template <> size_t Hash<GameState>(const GameState& state) {
   return GameState::Hash(state);
 }
 
-AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options)
+MorrisAlphaBeta::MorrisAlphaBeta(const game::GameOptions& options)
     : options_(options),
       max_search_depth_(-1),
       max_search_time_(-1),
@@ -91,7 +91,7 @@ AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options)
   weights_.assign(kBestWeights, kBestWeights + evaluators_.size());
 }
 
-AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options,
+MorrisAlphaBeta::MorrisAlphaBeta(const game::GameOptions& options,
     const std::vector<Evaluator*>& evaluators,
     const std::vector<int>& weights)
     : options_(options),
@@ -110,14 +110,14 @@ AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options,
   }
 }
 
-AlphaBetaAlgorithm::~AlphaBetaAlgorithm() {
+MorrisAlphaBeta::~MorrisAlphaBeta() {
   for (size_t i = 0; i < evaluators_.size(); ++i) {
     delete evaluators_[i];
     evaluators_[i] = NULL;
   }
 }
 
-game::PlayerAction AlphaBetaAlgorithm::GetNextAction(
+game::PlayerAction MorrisAlphaBeta::GetNextAction(
     const game::Game& game_model) {
   DCHECK_EQ(options_, game_model.options());
   if (game_model.next_action_type() == game::PlayerAction::REMOVE_PIECE) {
@@ -155,7 +155,7 @@ game::PlayerAction AlphaBetaAlgorithm::GetNextAction(
   return actions[0];
 }
 
-bool AlphaBetaAlgorithm::IsTerminal(const GameState& state) {
+bool MorrisAlphaBeta::IsTerminal(const GameState& state) {
   game::Board board(options_.game_type());
   state.Decode(&board);
   // TODO(alphabeta): Similar logic with game::Game:CheckIfGameIsOver()
@@ -187,7 +187,7 @@ bool AlphaBetaAlgorithm::IsTerminal(const GameState& state) {
   return successors.empty();
 }
 
-int AlphaBetaAlgorithm::Evaluate(const GameState& state) {
+int MorrisAlphaBeta::Evaluate(const GameState& state) {
   ScoreCache::const_iterator it = score_cache_.find(state);
   if (it != score_cache_.end()) {
     return it->second;
@@ -202,7 +202,7 @@ int AlphaBetaAlgorithm::Evaluate(const GameState& state) {
   return score;
 }
 
-void AlphaBetaAlgorithm::GetSuccessors(const GameState& state,
+void MorrisAlphaBeta::GetSuccessors(const GameState& state,
                                        std::vector<GameState>* successors) {
   tree_.GetSuccessors(state, successors);
 }

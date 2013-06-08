@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "ai/ai_algorithm.h"
-#include "ai/alphabeta/alphabeta_algorithm.h"
+#include "ai/alphabeta/morris_alphabeta.h"
 #include "ai/random/random_algorithm.h"
 #include "base/command_line.h"
 #include "base/debug/stacktrace.h"
@@ -64,7 +64,7 @@ std::auto_ptr<Player> GetPlayerFromCmdLine(const base::CommandLine& cmd_line,
         std::auto_ptr<ai::AIAlgorithm>(new ai::random::RandomAlgorithm()));
   } else if (player_type == "alphabeta") {
     player = new AIPlayer("AlphaBeta", std::auto_ptr<ai::AIAlgorithm>(
-        new ai::alphabeta::AlphaBetaAlgorithm(options)));
+        new ai::alphabeta::MorrisAlphaBeta(options)));
   }
   return std::auto_ptr<Player>(player);
 }
