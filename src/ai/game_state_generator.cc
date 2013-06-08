@@ -4,6 +4,7 @@
 
 #include "ai/game_state_generator.h"
 
+#include <utility>
 #include <vector>
 
 #include "ai/game_state.h"
@@ -46,15 +47,21 @@ void FilterBoardLocations(const game::Board& board,
 }  // anonymous namespace
 
 GameStateGenerator::GameStateGenerator(const game::GameOptions& game_options)
-    : game_options_(game_options) {}
+    : game_options_(game_options), cache_() {}
 
 void GameStateGenerator::GetSuccessors(const GameState& state,
                                        std::vector<GameState>* successors) {
-  if (state.pieces_in_hand(state.current_player()) > 0) {
-    GetPlaceSuccessors(state, successors);
-  } else {
-    GetMoveSuccessors(state, successors);
+  SuccessorCache::const_iterator it = cache_.find(state);
+  if (it == cache_.end()) {
+    std::vector<GameState> temp;
+    if (state.pieces_in_hand(state.current_player()) > 0) {
+      GetPlaceSuccessors(state, &temp);
+    } else {
+      GetMoveSuccessors(state, &temp);
+    }
+    it = cache_.insert(std::make_pair(state, temp)).first;
   }
+  successors->insert(successors->end(), it->second.begin(), it->second.end());
 }
 
 void GameStateGenerator::GetPlaceSuccessors(const GameState& state,
@@ -126,6 +133,11 @@ void GameStateGenerator::GetMoveSuccessors(const GameState& state,
       board.MovePiece(empty_loc[j], player_loc[i]);
     }
   }
+}
+
+size_t GameStateGenerator::GameStateHasher::operator()(
+    const GameState& state) const {
+  return GameState::Hash(state);
 }
 
 }  // namespace ai

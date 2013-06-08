@@ -41,6 +41,7 @@ class AI_EXPORT AlphaBetaAlgorithm
   ~AlphaBetaAlgorithm();
 
  private:
+  // TODO(game_state): Replace multiple occurrences of this class.
   class GameStateHasher {
    public:
     size_t operator()(const GameState& state) const {
@@ -67,11 +68,6 @@ class AI_EXPORT AlphaBetaAlgorithm
   GameStateGenerator generator_;
 
   game::BoardLocation remove_location_;
-
-  typedef base::hash_map<GameState,
-                         std::vector<GameState>,
-                         GameStateHasher> SuccessorCache;
-  SuccessorCache successors_cache_;
 
   typedef base::hash_map<GameState, int, GameStateHasher> ScoreCache;  // NOLINT
   ScoreCache score_cache_;

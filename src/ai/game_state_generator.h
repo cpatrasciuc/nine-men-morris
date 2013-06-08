@@ -8,12 +8,12 @@
 #include <vector>
 
 #include "ai/ai_export.h"
+#include "ai/game_state.h"
 #include "base/basic_macros.h"
+#include "base/hash_map.h"
 #include "game/game_options.h"
 
 namespace ai {
-
-class GameState;
 
 class AI_EXPORT GameStateGenerator {
  public:
@@ -22,10 +22,20 @@ class AI_EXPORT GameStateGenerator {
   void GetSuccessors(const GameState& state, std::vector<GameState>* succ);
 
  private:
+  class GameStateHasher {
+   public:
+    size_t operator()(const GameState& state) const;
+  };
+
+  typedef base::hash_map<GameState,  // NOLINT(build/include_what_you_use)
+                         std::vector<GameState>,
+                         GameStateHasher> SuccessorCache;
+
   void GetPlaceSuccessors(const GameState& state, std::vector<GameState>* succ);
   void GetMoveSuccessors(const GameState& state, std::vector<GameState>* succ);
 
   const game::GameOptions game_options_;
+  SuccessorCache cache_;
 
   DISALLOW_COPY_AND_ASSIGN(GameStateGenerator);
 };

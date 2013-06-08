@@ -199,15 +199,7 @@ int AlphaBetaAlgorithm::Evaluate(const GameState& state) {
 
 void AlphaBetaAlgorithm::GetSuccessors(const GameState& state,
                                        std::vector<GameState>* successors) {
-  SuccessorCache::const_iterator it = successors_cache_.find(state);
-  if (it != successors_cache_.end()) {
-    successors->insert(successors->end(), it->second.begin(), it->second.end());
-    return;
-  }
-  std::vector<GameState> temp;
-  generator_.GetSuccessors(state, &temp);
-  successors_cache_.insert(std::make_pair(state, temp));
-  successors->insert(successors->end(), temp.begin(), temp.end());
+  generator_.GetSuccessors(state, successors);
 }
 
 }  // namespace alphabeta
