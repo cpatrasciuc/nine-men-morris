@@ -50,7 +50,7 @@ GameStateTree::GameStateTree(const game::GameOptions& game_options)
     : game_options_(game_options), cache_() {}
 
 void GameStateTree::GetSuccessors(const GameState& state,
-                                       std::vector<GameState>* successors) {
+                                  std::vector<GameState>* successors) {
   SuccessorCache::const_iterator it = cache_.find(state);
   if (it == cache_.end()) {
     std::vector<GameState> temp;
@@ -65,7 +65,7 @@ void GameStateTree::GetSuccessors(const GameState& state,
 }
 
 void GameStateTree::GetPlaceSuccessors(const GameState& state,
-    std::vector<GameState>* successors) {
+                                       std::vector<GameState>* successors) {
   game::Board board(game_options_.game_type());
   state.Decode(&board);
   const game::PieceColor player = state.current_player();
@@ -99,7 +99,7 @@ void GameStateTree::GetPlaceSuccessors(const GameState& state,
 }
 
 void GameStateTree::GetMoveSuccessors(const GameState& state,
-                                           std::vector<GameState>* successors) {
+                                      std::vector<GameState>* successors) {
   game::Board board(game_options_.game_type());
   state.Decode(&board);
   std::vector<game::BoardLocation> player_loc;
