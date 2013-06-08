@@ -52,7 +52,7 @@ class AI_EXPORT AlphaBetaAlgorithm
 
   const game::GameOptions& options_;
 
-  int depth_;
+  int max_search_depth_;
 
   std::vector<Evaluator*> evaluators_;
   std::vector<int> weights_;
