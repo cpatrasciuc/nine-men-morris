@@ -60,12 +60,21 @@ class AI_EXPORT GameState {
   static std::vector<game::PlayerAction> GetTransition(const GameState& from,
                                                        const GameState& to);
 
-  // utility function used to store GameState instances in hash maps.
+  // Utility function used to store GameState instances in hash maps.
   static size_t Hash(const GameState& state) { return state.s_.to_ulong(); }
 
  private:
   game::GameType game_type_;
   std::bitset<64> s_;
+};
+
+// Convenience class used to declare hash maps that are able to store GameState
+// instances as keys.
+class GameStateHasher {
+ public:
+  size_t operator()(const GameState& state) const {
+    return GameState::Hash(state);
+  };
 };
 
 }  // namespace ai

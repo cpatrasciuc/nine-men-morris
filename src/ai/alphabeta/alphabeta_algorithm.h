@@ -41,14 +41,6 @@ class AI_EXPORT AlphaBetaAlgorithm
   ~AlphaBetaAlgorithm();
 
  private:
-  // TODO(game_state): Replace multiple occurrences of this class.
-  class GameStateHasher {
-   public:
-    size_t operator()(const GameState& state) const {
-      return GameState::Hash(state);
-    }
-  };
-
   // AIAlgorithm interface
   virtual game::PlayerAction GetNextAction(const game::Game& game_model);
 

@@ -135,9 +135,4 @@ void GameStateTree::GetMoveSuccessors(const GameState& state,
   }
 }
 
-size_t GameStateTree::GameStateHasher::operator()(
-    const GameState& state) const {
-  return GameState::Hash(state);
-}
-
 }  // namespace ai

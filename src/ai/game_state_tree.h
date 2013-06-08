@@ -22,11 +22,6 @@ class AI_EXPORT GameStateTree {
   void GetSuccessors(const GameState& state, std::vector<GameState>* succ);
 
  private:
-  class GameStateHasher {
-   public:
-    size_t operator()(const GameState& state) const;
-  };
-
   typedef base::hash_map<GameState,  // NOLINT(build/include_what_you_use)
                          std::vector<GameState>,
                          GameStateHasher> SuccessorCache;
