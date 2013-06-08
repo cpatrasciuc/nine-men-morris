@@ -13,7 +13,7 @@
 #include "ai/alphabeta/alphabeta.h"
 #include "ai/alphabeta/evaluators.h"
 #include "ai/game_state.h"
-#include "ai/game_state_generator.h"
+#include "ai/game_state_tree.h"
 #include "base/basic_macros.h"
 #include "base/bind.h"
 #include "base/function.h"
@@ -72,7 +72,7 @@ template <> size_t Hash<GameState>(const GameState& state) {
 AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options)
     : options_(options),
       depth_(-1),
-      generator_(options),
+      tree_(options),
       remove_location_(kInvalidLocation),
       max_player_color_(game::NO_COLOR) {
   typedef int(OppEvalSig)(Evaluator*, const game::Board&, game::PieceColor);
@@ -97,7 +97,7 @@ AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options,
       depth_(search_depth),
       evaluators_(evaluators),
       weights_(weights),
-      generator_(options),
+      tree_(options),
       remove_location_(kInvalidLocation),
       max_player_color_(game::NO_COLOR) {
   DCHECK(!evaluators.empty());
@@ -199,7 +199,7 @@ int AlphaBetaAlgorithm::Evaluate(const GameState& state) {
 
 void AlphaBetaAlgorithm::GetSuccessors(const GameState& state,
                                        std::vector<GameState>* successors) {
-  generator_.GetSuccessors(state, successors);
+  tree_.GetSuccessors(state, successors);
 }
 
 }  // namespace alphabeta

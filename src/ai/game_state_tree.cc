@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "ai/game_state_generator.h"
+#include "ai/game_state_tree.h"
 
 #include <utility>
 #include <vector>
@@ -46,10 +46,10 @@ void FilterBoardLocations(const game::Board& board,
 
 }  // anonymous namespace
 
-GameStateGenerator::GameStateGenerator(const game::GameOptions& game_options)
+GameStateTree::GameStateTree(const game::GameOptions& game_options)
     : game_options_(game_options), cache_() {}
 
-void GameStateGenerator::GetSuccessors(const GameState& state,
+void GameStateTree::GetSuccessors(const GameState& state,
                                        std::vector<GameState>* successors) {
   SuccessorCache::const_iterator it = cache_.find(state);
   if (it == cache_.end()) {
@@ -64,7 +64,7 @@ void GameStateGenerator::GetSuccessors(const GameState& state,
   successors->insert(successors->end(), it->second.begin(), it->second.end());
 }
 
-void GameStateGenerator::GetPlaceSuccessors(const GameState& state,
+void GameStateTree::GetPlaceSuccessors(const GameState& state,
     std::vector<GameState>* successors) {
   game::Board board(game_options_.game_type());
   state.Decode(&board);
@@ -98,7 +98,7 @@ void GameStateGenerator::GetPlaceSuccessors(const GameState& state,
   }
 }
 
-void GameStateGenerator::GetMoveSuccessors(const GameState& state,
+void GameStateTree::GetMoveSuccessors(const GameState& state,
                                            std::vector<GameState>* successors) {
   game::Board board(game_options_.game_type());
   state.Decode(&board);
@@ -135,7 +135,7 @@ void GameStateGenerator::GetMoveSuccessors(const GameState& state,
   }
 }
 
-size_t GameStateGenerator::GameStateHasher::operator()(
+size_t GameStateTree::GameStateHasher::operator()(
     const GameState& state) const {
   return GameState::Hash(state);
 }

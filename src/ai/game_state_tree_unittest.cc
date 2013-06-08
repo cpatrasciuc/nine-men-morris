@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "ai/game_state.h"
-#include "ai/game_state_generator.h"
+#include "ai/game_state_tree.h"
 #include "base/basic_macros.h"
 #include "game/board.h"
 #include "game/board_location.h"
@@ -16,20 +16,20 @@
 namespace ai {
 namespace {
 
-class GameStateGeneratorTest
+class GameStateTreeTest
     : public ::testing::TestWithParam<game::GameOptions> {
  public:
-  GameStateGeneratorTest()
+  GameStateTreeTest()
       : options_(GetParam()),
         board_(options_.game_type()),
-        generator_(options_) {}
+        game_state_tree_(options_) {}
 
  protected:
   const game::GameOptions& game_options() const { return options_; }
 
   game::Board& board() { return board_; }
 
-  GameStateGenerator& generator() { return generator_; }
+  GameStateTree& game_state_tree() { return game_state_tree_; }
 
   unsigned int GetTotalBoardLocationCount() {
     return board_.locations().size();
@@ -38,17 +38,17 @@ class GameStateGeneratorTest
  private:
   game::GameOptions options_;
   game::Board board_;
-  GameStateGenerator generator_;
+  GameStateTree game_state_tree_;
 };
 
-TEST_P(GameStateGeneratorTest, Place) {
+TEST_P(GameStateTreeTest, Place) {
   GameState start;
   start.set_pieces_in_hand(game::WHITE_COLOR, 9);
   start.set_pieces_in_hand(game::BLACK_COLOR, 9);
   start.set_current_player(game::WHITE_COLOR);
   start.Encode(board());
   std::vector<GameState> successors;
-  generator().GetSuccessors(start, &successors);
+  game_state_tree().GetSuccessors(start, &successors);
   unsigned int valid_locations_count = GetTotalBoardLocationCount();
   EXPECT_EQ(valid_locations_count, successors.size());
   GameState second(successors[0]);
@@ -56,11 +56,11 @@ TEST_P(GameStateGeneratorTest, Place) {
   EXPECT_EQ(8, second.pieces_in_hand(game::WHITE_COLOR));
   EXPECT_EQ(9, second.pieces_in_hand(game::BLACK_COLOR));
   successors.clear();
-  generator().GetSuccessors(second, &successors);
+  game_state_tree().GetSuccessors(second, &successors);
   EXPECT_EQ(valid_locations_count - 1, successors.size());
 }
 
-TEST_P(GameStateGeneratorTest, PlaceAndRemoveFreePiece) {
+TEST_P(GameStateTreeTest, PlaceAndRemoveFreePiece) {
   GameState start;
   start.set_pieces_in_hand(game::WHITE_COLOR, 9);
   start.set_pieces_in_hand(game::BLACK_COLOR, 9);
@@ -86,7 +86,7 @@ TEST_P(GameStateGeneratorTest, PlaceAndRemoveFreePiece) {
   EXPECT_TRUE(board().RemovePiece(white_locations[0]));
   start.Encode(board());
   std::vector<GameState> successors;
-  generator().GetSuccessors(start, &successors);
+  game_state_tree().GetSuccessors(start, &successors);
   int expected_state_count = GetTotalBoardLocationCount() -
                              arraysize(white_locations) -
                              arraysize(black_locations);
@@ -107,7 +107,7 @@ TEST_P(GameStateGeneratorTest, PlaceAndRemoveFreePiece) {
   }
 }
 
-TEST_P(GameStateGeneratorTest, PlaceAndRemoveNoFreePiece) {
+TEST_P(GameStateTreeTest, PlaceAndRemoveNoFreePiece) {
   GameState start;
   start.set_pieces_in_hand(game::WHITE_COLOR, 9);
   start.set_pieces_in_hand(game::BLACK_COLOR, 9);
@@ -131,7 +131,7 @@ TEST_P(GameStateGeneratorTest, PlaceAndRemoveNoFreePiece) {
   EXPECT_TRUE(board().RemovePiece(white_locations[0]));
   start.Encode(board());
   std::vector<GameState> successors;
-  generator().GetSuccessors(start, &successors);
+  game_state_tree().GetSuccessors(start, &successors);
   int expected_state_count = GetTotalBoardLocationCount() -
                              arraysize(white_locations) -
                              arraysize(black_locations) + 3;
@@ -151,14 +151,14 @@ TEST_P(GameStateGeneratorTest, PlaceAndRemoveNoFreePiece) {
   }
 }
 
-TEST_P(GameStateGeneratorTest, Moves) {
+TEST_P(GameStateTreeTest, Moves) {
   GameState start;
   start.set_current_player(game::WHITE_COLOR);
   game::BoardLocation piece_location(0, 0);
   board().AddPiece(piece_location, game::WHITE_COLOR);
   start.Encode(board());
   std::vector<GameState> successors;
-  generator().GetSuccessors(start, &successors);
+  game_state_tree().GetSuccessors(start, &successors);
   if (game_options().jumps_allowed()) {
     EXPECT_EQ(GetTotalBoardLocationCount() - 1, successors.size());
   } else {
@@ -168,7 +168,7 @@ TEST_P(GameStateGeneratorTest, Moves) {
   }
 }
 
-TEST_P(GameStateGeneratorTest, MovesWithMill) {
+TEST_P(GameStateTreeTest, MovesWithMill) {
   GameState state;
   state.set_current_player(game::WHITE_COLOR);
   const game::BoardLocation white_locations[] = {
@@ -194,7 +194,7 @@ TEST_P(GameStateGeneratorTest, MovesWithMill) {
   }
   state.Encode(board());
   std::vector<GameState> successors;
-  generator().GetSuccessors(state, &successors);
+  game_state_tree().GetSuccessors(state, &successors);
   int expected_state_count = black_pieces + 1;
   if (game_options().jumps_allowed()) {
     const int empty_locations = GetTotalBoardLocationCount() -
@@ -231,7 +231,7 @@ game::GameOptions test_scenarios[] = {
 };
 
 INSTANTIATE_TEST_CASE_P(GameStateGeneratorTestInstance,
-                        GameStateGeneratorTest,
+                        GameStateTreeTest,
                         ::testing::ValuesIn(test_scenarios));
 
 }  // anonymous namespace

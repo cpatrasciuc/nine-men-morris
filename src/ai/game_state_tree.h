@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef AI_GAME_STATE_GENERATOR_H_
-#define AI_GAME_STATE_GENERATOR_H_
+#ifndef AI_GAME_STATE_TREE_H_
+#define AI_GAME_STATE_TREE_H_
 
 #include <vector>
 
@@ -15,9 +15,9 @@
 
 namespace ai {
 
-class AI_EXPORT GameStateGenerator {
+class AI_EXPORT GameStateTree {
  public:
-  explicit GameStateGenerator(const game::GameOptions& game_options);
+  explicit GameStateTree(const game::GameOptions& game_options);
 
   void GetSuccessors(const GameState& state, std::vector<GameState>* succ);
 
@@ -37,10 +37,10 @@ class AI_EXPORT GameStateGenerator {
   const game::GameOptions game_options_;
   SuccessorCache cache_;
 
-  DISALLOW_COPY_AND_ASSIGN(GameStateGenerator);
+  DISALLOW_COPY_AND_ASSIGN(GameStateTree);
 };
 
 }  // namespace ai
 
-#endif  // AI_GAME_STATE_GENERATOR_H_
+#endif  // AI_GAME_STATE_TREE_H_
 

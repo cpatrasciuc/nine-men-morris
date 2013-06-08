@@ -9,8 +9,8 @@ set(AI_SOURCE_FILES
   alphabeta/evaluators.h
   game_state.cc
   game_state.h
-  game_state_generator.cc
-  game_state_generator.h
+  game_state_tree.cc
+  game_state_tree.h
   random/random_algorithm.cc
   random/random_algorithm.h
 )
@@ -20,7 +20,7 @@ set(AI_UNITTESTS_SOURCE_FILES
   alphabeta/alphabeta_algorithm_unittest.cc
   alphabeta/genetic_algorithm.h
   alphabeta/genetic_algorithm_unittest.cc
-  game_state_generator_unittest.cc
+  game_state_tree_unittest.cc
   game_state_unittest.cc
   random/random_algorithm_unittest.cc
 )

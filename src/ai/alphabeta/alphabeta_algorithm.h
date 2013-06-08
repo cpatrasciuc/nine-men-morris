@@ -12,7 +12,7 @@
 #include "ai/alphabeta/alphabeta.h"
 #include "ai/alphabeta/evaluators.h"
 #include "ai/game_state.h"
-#include "ai/game_state_generator.h"
+#include "ai/game_state_tree.h"
 #include "base/basic_macros.h"
 #include "base/hash_map.h"
 #include "game/board_location.h"
@@ -65,7 +65,7 @@ class AI_EXPORT AlphaBetaAlgorithm
   std::vector<Evaluator*> evaluators_;
   std::vector<int> weights_;
 
-  GameStateGenerator generator_;
+  GameStateTree tree_;
 
   game::BoardLocation remove_location_;
 
