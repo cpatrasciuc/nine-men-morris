@@ -29,10 +29,8 @@ namespace ai {
 namespace alphabeta {
 namespace {
 
-// NINE_MEN_MORRIS: const int kBestWeights[] = { 0, 8, -1, 0, -9, -9 };
-// SIX_MEN_MORRIS: const int kBestWeights[] = { 1, 7, -2, 0, -9, -9 };
-// THREE_MEN_MORRIS:
-const int kBestWeights[] = { 6, 9, 5, -4, -4, -8 };
+// TODO(alphabeta): Find the optimal values of these weights using the trainer.
+const int kBestWeights[] = { 10, 10, 10, -10, -10, -10 };
 
 const game::BoardLocation kInvalidLocation(-1, -1);
 
