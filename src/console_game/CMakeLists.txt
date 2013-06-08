@@ -1,4 +1,6 @@
 set(CONSOLE_GAME_SOURCE_FILES
+  ai_player.cc
+  ai_player.h
   board_renderer.cc
   board_renderer.h
   command_handler.cc
@@ -34,10 +36,12 @@ include_directories(
 add_definitions("-DCONSOLE_GAME_IMPLEMENTATION")
 
 add_library(console_game ${CONSOLE_GAME_SOURCE_FILES})
-target_link_libraries(console_game base game)
+target_link_libraries(console_game base game ai)
 
-add_executable(console_game_unittests ${CONSOLE_GAME_UNITTESTS_SOURCE_FILES} ../base/test_runner.cc)
+add_executable(console_game_unittests
+    ${CONSOLE_GAME_UNITTESTS_SOURCE_FILES} ../base/test_runner.cc)
 target_link_libraries(console_game_unittests gtest console_game)
 
-add_executable(console_game.exe console_game_main.cc)
-target_link_libraries(console_game.exe console_game)
+add_executable(console_game_exe console_game_main.cc)
+target_link_libraries(console_game_exe console_game)
+set_target_properties(console_game_exe PROPERTIES OUTPUT_NAME console_game)

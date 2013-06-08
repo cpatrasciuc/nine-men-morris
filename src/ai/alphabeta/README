@@ -1,0 +1,16 @@
+Articles used when implementing the alpha beta search:
+
+- http://en.wikipedia.org/wiki/Alpha-beta_pruning
+- http://web.archive.org/web/20070822204120/www.seanet.com/~brucemo/topics/hashing.htm
+- http://web.archive.org/web/20070822110544/http://www.seanet.com/~brucemo/topics/iterative.htm
+- http://web.archive.org/web/20070824091200/http://www.seanet.com/~brucemo/topics/pv.htm
+- "Solving Nine Men's Morris", Ralph Gasser
+- "Automatic Feature Extraction for Autonomous General Game Playing Agents", David M. Kaiser
+
+Articles used when implementing the trainer based on a genetic algorithm:
+
+- http://code.activestate.com/recipes/199121-a-simple-genetic-algorithm/
+- "An Efficient Method for Generating Discrete Random Variables with General Distributions", Alastair J. Walker
+- "Evolving Intelligent Game-playing Agents", Nelis Franken, Adries P. Engelbrecht
+- "Evolving Players that Use Selective Game-Tree Search with Genetic Programming", Amit Benbassat, Moshe Sipper
+

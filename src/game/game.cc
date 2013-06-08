@@ -58,21 +58,16 @@ bool Game::CheckIfGameIsOver() const {
     return false;
   }
   // TODO(board): Optimize this search if needed
-  for (int i = 0; i < board_.size(); ++i) {
-    for (int j = 0; j < board_.size(); ++j) {
-      const BoardLocation location(i, j);
-      if (!board_.IsValidLocation(location)) {
-        continue;
-      }
-      if (board_.GetPieceAt(location) != opponent) {
-        continue;
-      }
-      std::vector<BoardLocation> adjacent_locations;
-      board_.GetAdjacentLocations(location, &adjacent_locations);
-      for (size_t k = 0; k < adjacent_locations.size(); ++k) {
-        if (board_.GetPieceAt(adjacent_locations[k]) == NO_COLOR) {
-          return false;
-        }
+  const std::vector<BoardLocation>& locations = board_.locations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    if (board_.GetPieceAt(locations[i]) != opponent) {
+      continue;
+    }
+    std::vector<BoardLocation> adjacent_locations;
+    board_.GetAdjacentLocations(locations[i], &adjacent_locations);
+    for (size_t k = 0; k < adjacent_locations.size(); ++k) {
+      if (board_.GetPieceAt(adjacent_locations[k]) == NO_COLOR) {
+        return false;
       }
     }
   }
