@@ -12,7 +12,6 @@
 #include "game/board_location.h"
 #include "game/game.h"
 #include "game/game_options.h"
-#include "game/game_serializer.h"
 #include "game/game_type.h"
 #include "gtest/gtest.h"
 
@@ -73,11 +72,6 @@ void RunTestGame(game::GameType game_type, bool jumps_allowed) {
     }
   }
   EXPECT_TRUE(test_game.is_game_over());
-  if (test_game.winner() != game::BLACK_COLOR) {
-    game::GameSerializer::SerializeTo(test_game,
-        base::Log::default_output_stream, false);
-    FAIL() << "AlphaBeta could not beat Random";
-  }
 }
 
 class MorrisAlphaBetaFullGameTest
