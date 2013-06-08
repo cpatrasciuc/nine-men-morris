@@ -74,8 +74,10 @@ void GetEvaluators(std::vector<Evaluator*>* evaluators) {
 std::auto_ptr<AlphaBetaAlgorithm> GetPlayer(const Weights& w) {
   std::vector<Evaluator*> evaluators;
   GetEvaluators(&evaluators);
-  return std::auto_ptr<AlphaBetaAlgorithm>(
-      new AlphaBetaAlgorithm(g_game_options, kMaxSearchDepth, evaluators, w));
+  std::auto_ptr<AlphaBetaAlgorithm> player(
+      new AlphaBetaAlgorithm(g_game_options, evaluators, w));
+  player->set_max_search_depth(kMaxSearchDepth);
+  return player;
 }
 
 void RunGame(const Weights& w1, const Weights& w2, ScoreMap* scores) {
@@ -296,12 +298,12 @@ class Trainer : public GeneticAlgorithm<Weights>::Delegate {
 
 int main(int argc, char** argv) {
   base::debug::EnableStackTraceDumpOnCrash();
-  g_game_options.set_game_type(game::THREE_MEN_MORRIS);
+  g_game_options.set_game_type(game::NINE_MEN_MORRIS);
   std::auto_ptr<GeneticAlgorithm<Weights>::Delegate> delegate;
   delegate.reset(new Trainer());
   GeneticAlgorithm<Weights> alg(delegate);
-  alg.set_max_generations(100);
-  alg.set_population_size(10);
+  alg.set_max_generations(1);
+  alg.set_population_size(50);
   alg.set_propagation_rate(0.2);
   const int game_count = alg.max_generations() *
       alg.population_size() * (alg.population_size() - 1);

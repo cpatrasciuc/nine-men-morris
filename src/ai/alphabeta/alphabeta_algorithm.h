@@ -35,10 +35,14 @@ class AI_EXPORT AlphaBetaAlgorithm
  public:
   explicit AlphaBetaAlgorithm(const game::GameOptions& options);
   AlphaBetaAlgorithm(const game::GameOptions& options,
-      int search_depth,
       const std::vector<Evaluator*>& evaluators,
       const std::vector<int>& weights = std::vector<int>());
   ~AlphaBetaAlgorithm();
+
+  // Parameter used to limit the depth of a search. By default there is no
+  // limit for this.
+  int max_search_depth() const { return max_search_depth_; }
+  void set_max_search_depth(int max_depth) { max_search_depth_ = max_depth; }
 
  private:
   // AIAlgorithm interface

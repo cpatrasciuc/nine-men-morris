@@ -91,10 +91,10 @@ AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options)
 }
 
 AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options,
-    int search_depth, const std::vector<Evaluator*>& evaluators,
+    const std::vector<Evaluator*>& evaluators,
     const std::vector<int>& weights)
     : options_(options),
-      max_search_depth_(search_depth),
+      max_search_depth_(-1),
       evaluators_(evaluators),
       weights_(weights),
       tree_(options),

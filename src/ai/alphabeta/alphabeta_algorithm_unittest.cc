@@ -40,7 +40,8 @@ TEST(AlphaBetaAlgorithm, Evaluators) {
   options.set_game_type(game::THREE_MEN_MORRIS);
   game::Game test_game(options);
   test_game.Initialize();
-  AlphaBetaAlgorithm alg(options, 2, evaluators);
+  AlphaBetaAlgorithm alg(options, evaluators);
+  alg.set_max_search_depth(2);
   game::PlayerAction action =
       static_cast<AIAlgorithm*>(&alg)->GetNextAction(test_game);
   const int board_size = test_game.board().size();
