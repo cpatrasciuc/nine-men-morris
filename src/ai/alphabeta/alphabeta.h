@@ -5,8 +5,9 @@
 #ifndef AI_ALPHABETA_ALPHABETA_H_
 #define AI_ALPHABETA_ALPHABETA_H_
 
+#include <time.h>
+
 #include <algorithm>
-#include <ctime>
 #include <limits>
 #include <memory>
 #include <utility>
@@ -69,16 +70,17 @@ class AlphaBeta {
   // adapt the Alpha Beta Pruning algorithm to a specific game.
   explicit AlphaBeta(std::auto_ptr<Delegate> delegate)
       : delegate_(delegate.release()),
-        max_search_time_(1),
+        max_search_time_(1000000000),  // One second
         max_search_depth_(std::numeric_limits<int>::max()) {}
 
-  // Parameter used to limit the time (in seconds) required to perform a search.
+  // Parameter used to limit the time (in nanoseconds) required to perform a
+  // search. The value cannot be greater than 2 seconds.
   // The limit is not a strict one. When the time expires the search will still
   // continue until the current depth level is reached. By default the limit is
   // set to one second.
-  // TODO(alphabeta): Allow limits that are specified in milliseconds.
-  std::time_t max_search_time() const { return max_search_time_; }
-  void set_max_search_time(std::time_t max_time) {
+  unsigned int max_search_time() const { return max_search_time_; }
+  void set_max_search_time(unsigned int max_time) {
+    DCHECK_LT(max_time, 2000000000);  // No more than 2 seconds per search.
     max_search_time_ = max_time;
   }
 
@@ -97,7 +99,7 @@ class AlphaBeta {
   State GetBestSuccessor(const State& origin) {
     const Score min_infinity = std::numeric_limits<Score>::min();
     const Score max_infinity = std::numeric_limits<Score>::max();
-    start_time_ = std::time(NULL);
+    clock_gettime(CLOCK_MONOTONIC, &start_time_);
     for (int depth = 1; depth <= max_search_depth_; ++depth) {
       Search(origin, depth, min_infinity, max_infinity, true);
       if (TimedOut()) {
@@ -139,7 +141,21 @@ class AlphaBeta {
                          TransTableEntry, Hasher> TranspositionTable;
 
   bool TimedOut() const {
-    return std::time(NULL) - start_time_ > max_search_time_;
+    const int sec_to_nano = 1000000000;
+    timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    timespec diff;
+    if (now.tv_nsec < start_time_.tv_nsec) {
+      diff.tv_sec = now.tv_sec - start_time_.tv_sec - 1;
+      diff.tv_nsec = sec_to_nano + now.tv_nsec - start_time_.tv_nsec;
+    } else {
+      diff.tv_sec = now.tv_sec - start_time_.tv_sec;
+      diff.tv_nsec = now.tv_nsec - start_time_.tv_nsec;
+    }
+    if (diff.tv_nsec > max_search_time_) {
+      return true;
+    }
+    return (max_search_time_ - diff.tv_nsec) / float(sec_to_nano) < diff.tv_sec;
   }
 
   // Checks if a state was already evaluated and stored in the transposition
@@ -242,10 +258,10 @@ class AlphaBeta {
   };
 
   base::ptr::scoped_ptr<Delegate> delegate_;
-  std::time_t max_search_time_;
+  unsigned int max_search_time_;
   int max_search_depth_;
   TranspositionTable trans_table_;
-  std::time_t start_time_;
+  timespec start_time_;
 
   DISALLOW_COPY_AND_ASSIGN(AlphaBeta);
 };
