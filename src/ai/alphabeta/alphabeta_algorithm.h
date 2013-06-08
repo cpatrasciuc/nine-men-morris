@@ -39,10 +39,11 @@ class AI_EXPORT AlphaBetaAlgorithm
       const std::vector<int>& weights = std::vector<int>());
   ~AlphaBetaAlgorithm();
 
-  // Parameter used to limit the depth of a search. By default there is no
-  // limit for this.
+  // See the similar methods from the generic AlphaBeta algorithm for details.
   int max_search_depth() const { return max_search_depth_; }
   void set_max_search_depth(int max_depth) { max_search_depth_ = max_depth; }
+  int max_search_time() const { return max_search_time_; }
+  void set_max_search_time(int max_time) { max_search_time_ = max_time; }
 
  private:
   // AIAlgorithm interface
@@ -57,6 +58,7 @@ class AI_EXPORT AlphaBetaAlgorithm
   const game::GameOptions& options_;
 
   int max_search_depth_;
+  int max_search_time_;
 
   std::vector<Evaluator*> evaluators_;
   std::vector<int> weights_;

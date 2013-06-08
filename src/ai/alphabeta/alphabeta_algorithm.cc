@@ -72,6 +72,7 @@ template <> size_t Hash<GameState>(const GameState& state) {
 AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options)
     : options_(options),
       max_search_depth_(-1),
+      max_search_time_(-1),
       tree_(options),
       remove_location_(kInvalidLocation),
       max_player_color_(game::NO_COLOR) {
@@ -95,6 +96,7 @@ AlphaBetaAlgorithm::AlphaBetaAlgorithm(const game::GameOptions& options,
     const std::vector<int>& weights)
     : options_(options),
       max_search_depth_(-1),
+      max_search_time_(-1),
       evaluators_(evaluators),
       weights_(weights),
       tree_(options),
@@ -129,6 +131,9 @@ game::PlayerAction AlphaBetaAlgorithm::GetNextAction(
   AlphaBeta<GameState> alphabeta(delegate);
   if (max_search_depth_ > 0) {
     alphabeta.set_max_search_depth(max_search_depth_);
+  }
+  if (max_search_time_ > 0) {
+    alphabeta.set_max_search_time(max_search_time_);
   }
   GameState origin;
   origin.set_current_player(game_model.current_player());
