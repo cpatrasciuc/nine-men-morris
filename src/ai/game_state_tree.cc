@@ -47,19 +47,19 @@ void FilterBoardLocations(const game::Board& board,
 }  // anonymous namespace
 
 GameStateTree::GameStateTree(const game::GameOptions& game_options)
-    : game_options_(game_options), cache_() {}
+    : game_options_(game_options), tree_() {}
 
 void GameStateTree::GetSuccessors(const GameState& state,
                                   std::vector<GameState>* successors) {
-  SuccessorCache::const_iterator it = cache_.find(state);
-  if (it == cache_.end()) {
+  SuccessorMap::const_iterator it = tree_.find(state);
+  if (it == tree_.end()) {
     std::vector<GameState> temp;
     if (state.pieces_in_hand(state.current_player()) > 0) {
       GetPlaceSuccessors(state, &temp);
     } else {
       GetMoveSuccessors(state, &temp);
     }
-    it = cache_.insert(std::make_pair(state, temp)).first;
+    it = tree_.insert(std::make_pair(state, temp)).first;
   }
   successors->insert(successors->end(), it->second.begin(), it->second.end());
 }

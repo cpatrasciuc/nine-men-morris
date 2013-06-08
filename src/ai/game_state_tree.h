@@ -24,13 +24,13 @@ class AI_EXPORT GameStateTree {
  private:
   typedef base::hash_map<GameState,  // NOLINT(build/include_what_you_use)
                          std::vector<GameState>,
-                         GameStateHasher> SuccessorCache;
+                         GameStateHasher> SuccessorMap;
 
   void GetPlaceSuccessors(const GameState& state, std::vector<GameState>* succ);
   void GetMoveSuccessors(const GameState& state, std::vector<GameState>* succ);
 
   const game::GameOptions game_options_;
-  SuccessorCache cache_;
+  SuccessorMap tree_;
 
   DISALLOW_COPY_AND_ASSIGN(GameStateTree);
 };
