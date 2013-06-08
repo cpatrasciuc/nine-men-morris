@@ -11,7 +11,10 @@
 #include "ai/game_state.h"
 #include "base/basic_macros.h"
 #include "base/hash_map.h"
-#include "game/game_options.h"
+
+namespace game {
+class GameOptions;
+}
 
 namespace ai {
 
@@ -48,7 +51,7 @@ class AI_EXPORT GameStateTree {
   // MOVE_PIECE + REMOVE_PIECE combinations are appended to |succ|.
   void GetMoveSuccessors(const GameState& state, std::vector<GameState>* succ);
 
-  const game::GameOptions game_options_;
+  const game::GameOptions& game_options_;
   SuccessorMap tree_;
 
   DISALLOW_COPY_AND_ASSIGN(GameStateTree);
