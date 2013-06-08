@@ -92,15 +92,11 @@ TEST_P(MorrisAlphaBetaFullGameTest, JumpsAllowed) {
   RunTestGame(GetParam(), true);
 }
 
-const game::GameType test_game_types[] = {
-    game::THREE_MEN_MORRIS,
-    game::SIX_MEN_MORRIS,
-    game::NINE_MEN_MORRIS
-};
-
 INSTANTIATE_TEST_CASE_P(MorrisAlphaBetaFullGameTest,
                         MorrisAlphaBetaFullGameTest,
-                        ::testing::ValuesIn(test_game_types));
+                        ::testing::Values(game::THREE_MEN_MORRIS,
+                                          game::SIX_MEN_MORRIS,
+                                          game::NINE_MEN_MORRIS));
 
 }  // anonymous namespace
 }  // namespace alphabeta
