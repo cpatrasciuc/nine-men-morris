@@ -8,6 +8,7 @@
 
 #include "game/board.h"
 #include "game/board_location.h"
+#include "game/piece_color.h"
 
 namespace ai {
 namespace alphabeta {
