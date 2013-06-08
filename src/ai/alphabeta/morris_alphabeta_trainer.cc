@@ -77,6 +77,7 @@ std::auto_ptr<MorrisAlphaBeta> GetPlayer(const Weights& w) {
   std::auto_ptr<MorrisAlphaBeta> player(
       new MorrisAlphaBeta(g_game_options, evaluators, w));
   player->set_max_search_depth(kMaxSearchDepth);
+  player->set_max_search_time(100000000);
   return player;
 }
 
@@ -303,7 +304,7 @@ int main(int argc, char** argv) {
   delegate.reset(new Trainer());
   GeneticAlgorithm<Weights> alg(delegate);
   alg.set_max_generations(1);
-  alg.set_population_size(50);
+  alg.set_population_size(100);
   alg.set_propagation_rate(0.2);
   const int game_count = alg.max_generations() *
       alg.population_size() * (alg.population_size() - 1);
