@@ -50,14 +50,17 @@ TEST(MorrisAlphaBeta, Evaluators) {
   EXPECT_EQ(upper_corner, action.destination());
 }
 
-TEST(MorrisAlphaBeta, VsRandom) {
+void RunTestGame(game::GameType game_type, bool jumps_allowed) {
   const int max_moves = 250;
   game::GameOptions options;
-  options.set_game_type(game::THREE_MEN_MORRIS);
-  options.set_jumps_allowed(false);
+  options.set_game_type(game_type);
+  options.set_jumps_allowed(jumps_allowed);
   game::Game test_game(options);
   base::ptr::scoped_ptr<AIAlgorithm> white(new random::RandomAlgorithm());
-  base::ptr::scoped_ptr<AIAlgorithm> black(new MorrisAlphaBeta(options));
+  MorrisAlphaBeta* morris_alphabeta = new MorrisAlphaBeta(options);
+  morris_alphabeta->set_max_search_depth(10);
+  morris_alphabeta->set_max_search_time(500000000);
+  base::ptr::scoped_ptr<AIAlgorithm> black(morris_alphabeta);
   test_game.Initialize();
   for (int i = 0; i < max_moves; ++i) {
     AIAlgorithm* next_player =
@@ -76,6 +79,28 @@ TEST(MorrisAlphaBeta, VsRandom) {
     FAIL() << "AlphaBeta could not beat Random";
   }
 }
+
+class MorrisAlphaBetaFullGameTest
+    : public ::testing::TestWithParam<game::GameType> {
+};
+
+TEST_P(MorrisAlphaBetaFullGameTest, NoJumpsAllowed) {
+  RunTestGame(GetParam(), false);
+}
+
+TEST_P(MorrisAlphaBetaFullGameTest, JumpsAllowed) {
+  RunTestGame(GetParam(), true);
+}
+
+const game::GameType test_game_types[] = {
+    game::THREE_MEN_MORRIS,
+    game::SIX_MEN_MORRIS,
+    game::NINE_MEN_MORRIS
+};
+
+INSTANTIATE_TEST_CASE_P(MorrisAlphaBetaFullGameTest,
+                        MorrisAlphaBetaFullGameTest,
+                        ::testing::ValuesIn(test_game_types));
 
 }  // anonymous namespace
 }  // namespace alphabeta
