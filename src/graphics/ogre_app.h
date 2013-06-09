@@ -21,7 +21,7 @@
 
 namespace Ogre {
 class Camera;
-class FrameEvent;
+struct FrameEvent;
 class RenderWindow;
 class Root;
 class SceneManager;
