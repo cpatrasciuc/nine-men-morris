@@ -22,5 +22,5 @@ branches:
   only:
     - master
 
-script: cd src && cmake -DRELEASE=$(RELEASE) -DBUILD_SHARED_LIBS=$(BUILD_SHARED_LIBS) . && make && find ${SRC_DIR} -name "*tests" -type f -perm -o+x -exec '{}' \;
+script: cd src && cmake -DRELEASE=$(RELEASE) -DBUILD_SHARED_LIBS=$(BUILD_SHARED_LIBS) . && make && find . -name "*tests" -type f -perm -o+x -exec '{}' \;
 
