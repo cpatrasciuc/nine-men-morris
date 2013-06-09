@@ -53,6 +53,7 @@ bool PlayingState::mousePressed(const OIS::MouseEvent& event,
   camera_controller_.mousePressed(event, id);
   return true;
 }
+
 bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
                                  OIS::MouseButtonID id) {
   camera_controller_.mouseReleased(event, id);
