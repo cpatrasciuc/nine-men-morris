@@ -38,7 +38,7 @@ add_definitions("-DAI_IMPLEMENTATION")
 
 # The main target of this directory
 add_library(ai ${AI_SOURCE_FILES})
-target_link_libraries(ai base game)
+target_link_libraries(ai base game rt)
 
 # The unittests for this directory
 add_executable(ai_unittests ${AI_UNITTESTS_SOURCE_FILES} ../base/test_runner.cc)
