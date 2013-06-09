@@ -22,6 +22,6 @@ branches:
   only:
     - master
 
-# TODO(ci): Run all tests and aggregate results, instead on stopping on the first failure.
+# TODO(ci): Run all tests and aggregate results, instead of stopping on the first failure.
 script: cd src && cmake -DRELEASE=$(RELEASE) -DBUILD_SHARED_LIBS=$(BUILD_SHARED_LIBS) . && make && find . -name "*tests" -type f -perm -o+x | while read TEST_EXE ; do ./${TEST_EXE} ; if [ $? -ne 0 ] ; then exit 1 ; fi done
 
