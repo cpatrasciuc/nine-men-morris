@@ -1,0 +1,27 @@
+# Copyright (c) 2013 Cristian Patrasciuc. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+language: cpp
+
+compiler:
+  - clang
+  # TODO(ci): Enable gcc build on Travis
+  # - gcc
+
+before_script:
+  - svn checkout http://googletest.googlecode.com/svn/trunk/ src/gtest
+
+env:
+  - RELEASE=1 BUILD_SHARED_LIBS=1
+  - RELEASE=1 BUILD_SHARED_LIBS=0
+  - RELEASE=0 BUILD_SHARED_LIBS=1
+  - RELEASE=0 BUILD_SHARED_LIBS=0
+
+branches:
+  only:
+    - master
+
+# TODO(ci): Run all tests and aggregate results, instead of stopping on the first failure.
+script: cd src && cmake -DRELEASE=${RELEASE} -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS} . && make && find . -name "*tests" -type f -perm -o+x | while read TEST_EXE ; do ./${TEST_EXE} ; if [ $? -ne 0 ] ; then exit 1 ; fi done
+

@@ -12,6 +12,7 @@
 #include "game/board.h"
 #include "game/game_export.h"
 #include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
 
@@ -33,6 +34,10 @@ class GAME_EXPORT Game {
     return next_action_type_;
   }
 
+  // Utility method that returns the number of pieces that still have to be
+  // placed on the board by the given player.
+  int GetPiecesInHand(const PieceColor player_color) const;
+
   // Returns the color of the winning player. It should only be called after the
   // game is over.
   PieceColor winner() const;
@@ -50,6 +55,12 @@ class GAME_EXPORT Game {
   // Execute the given |action| and update the game state based on its result.
   void ExecutePlayerAction(const PlayerAction& action);
 
+  // Returns |true| if the current player is allowed to perform a jump. This
+  // happens when the current player has less then four pieces left on the
+  // board, no pieces are to be placed, |game_options.jumps_allowed() is set
+  // to |true| and the next type of action is |PlayerAction::MOVE_PIECE|.
+  bool CanJump() const;
+
   // Undo the last executed action and update the game state accordingly.
   void UndoLastAction();
 
@@ -60,7 +71,7 @@ class GAME_EXPORT Game {
 
   // Utility method that returns the number of pieces that a player starts with
   // based on the game type.
-  static int GetInitialPieceCountByGameType(GameOptions::GameType type);
+  static int GetInitialPieceCountByGameType(GameType type);
 
  private:
   // Update the next player to move and the expected action type, based on the
@@ -70,10 +81,6 @@ class GAME_EXPORT Game {
 
   // Checks if the game reached its end. It is called after each action.
   bool CheckIfGameIsOver() const;
-
-  // Utility method that returns the number of pieces that still have to be
-  // placed on the board by the given player.
-  int GetPiecesInHand(const PieceColor player_color) const;
 
   // The options for this game instance.
   GameOptions game_options_;

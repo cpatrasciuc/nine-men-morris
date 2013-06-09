@@ -38,7 +38,8 @@ mkdir ${COVERAGE_DIR}
 find ${SRC_DIR} -name "*gcda" -exec mv '{}' ${COVERAGE_DIR} \;
 find ${SRC_DIR} -name "*gcno" -exec mv '{}' ${COVERAGE_DIR} \;
 lcov -t "Code coverage report" -o ${LCOV_INFO_FILE} -c -d ${COVERAGE_DIR}
-lcov -e ${LCOV_INFO_FILE} -o ${LCOV_INFO_FILE} "*src/base/*" "*src/game/*" "*src/console_game/*" 
+lcov -e ${LCOV_INFO_FILE} -o ${LCOV_INFO_FILE} "*src/base/*" "*src/game/*" \
+    "*src/console_game/*" "*src/ai/*" 
 lcov -r ${LCOV_INFO_FILE} -o ${LCOV_INFO_FILE} "*test.cc"
 
 HTML_REPORT_DIR=${COVERAGE_DIR}/html_report

@@ -9,6 +9,7 @@
 
 #include "base/log.h"
 #include "game/game_options.h"
+#include "game/game_type.h"
 
 namespace game {
 
@@ -57,21 +58,16 @@ bool Game::CheckIfGameIsOver() const {
     return false;
   }
   // TODO(board): Optimize this search if needed
-  for (int i = 0; i < board_.size(); ++i) {
-    for (int j = 0; j < board_.size(); ++j) {
-      const BoardLocation location(i, j);
-      if (!board_.IsValidLocation(location)) {
-        continue;
-      }
-      if (board_.GetPieceAt(location) != opponent) {
-        continue;
-      }
-      std::vector<BoardLocation> adjacent_locations;
-      board_.GetAdjacentLocations(location, &adjacent_locations);
-      for (size_t k = 0; k < adjacent_locations.size(); ++k) {
-        if (board_.GetPieceAt(adjacent_locations[k]) == NO_COLOR) {
-          return false;
-        }
+  const std::vector<BoardLocation>& locations = board_.locations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    if (board_.GetPieceAt(locations[i]) != opponent) {
+      continue;
+    }
+    std::vector<BoardLocation> adjacent_locations;
+    board_.GetAdjacentLocations(locations[i], &adjacent_locations);
+    for (size_t k = 0; k < adjacent_locations.size(); ++k) {
+      if (board_.GetPieceAt(adjacent_locations[k]) == NO_COLOR) {
+        return false;
       }
     }
   }
@@ -116,6 +112,20 @@ void Game::ExecutePlayerAction(const PlayerAction& action) {
     --pieces_in_hand_[current_player_];
   }
   UpdateGameState();
+}
+
+bool Game::CanJump() const {
+  DCHECK(current_player_ != game::NO_COLOR);
+  if (!game_options_.jumps_allowed()) {
+    return false;
+  }
+  if (next_action_type_ != PlayerAction::MOVE_PIECE) {
+    return false;
+  }
+  if (board_.GetPieceCountByColor(current_player_) > 3) {
+    return false;
+  }
+  return true;
 }
 
 void Game::UndoLastAction() {
@@ -168,13 +178,13 @@ int Game::GetPiecesInHand(const PieceColor player_color) const {
 }
 
 // static
-int Game::GetInitialPieceCountByGameType(GameOptions::GameType type) {
+int Game::GetInitialPieceCountByGameType(GameType type) {
   switch (type) {
-    case GameOptions::NINE_MEN_MORRIS:
+    case NINE_MEN_MORRIS:
       return 9;
-    case GameOptions::SIX_MEN_MORRIS:
+    case SIX_MEN_MORRIS:
       return 6;
-    case GameOptions::THREE_MEN_MORRIS:
+    case THREE_MEN_MORRIS:
       return 3;
   }
   NOTREACHED();

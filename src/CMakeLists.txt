@@ -37,11 +37,14 @@ if(RELEASE)
 else()
   add_definitions("-DDEBUG_MODE")
   add_definitions("-DENABLE_LOGGING")
+  add_definitions("-DENABLE_DCHECK")
 endif()
 
 add_subdirectory(base)
 
 add_subdirectory(game)
+
+add_subdirectory(ai)
 
 add_subdirectory(console_game)
 

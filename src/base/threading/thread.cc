@@ -20,7 +20,8 @@ Thread::Thread(std::string name)
       quit_when_idle_(false),
       was_joined_(false),
       public_queue_(),
-      public_queue_lock_(),
+      // TODO(threading): Check if spin lock is indeed better than mutex
+      public_queue_lock_(new base::threading::SpinLockImpl()),
       internal_queue_() {
 }
 

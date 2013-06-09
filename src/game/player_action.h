@@ -65,6 +65,15 @@ class GAME_EXPORT PlayerAction {
   // Undo the action that was previously executed on the given board instance.
   void Undo(Board* board) const;
 
+  // The method tells if this player action is a jump action. A jump is a
+  // special type of MOVE_PIECE action, when the source and destination are not
+  // adjacent, given the |board|. It is allowed during the end phase of the game
+  // when the player has less than four pieces left on the board. The method
+  // does not verify if the move can actually be executed on the board. For that
+  // please use |CanExecuteOn()|.
+  // Also see |GameOptions::jumps_allowed()|.
+  bool IsJumpOn(const Board& board) const;
+
  private:
   PieceColor player_color_;
   ActionType action_type_;

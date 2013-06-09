@@ -16,6 +16,7 @@
 #include "game/board_location.h"
 #include "game/game.h"
 #include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/game_serializer.h"
 #include "gtest/gtest.h"
 
@@ -29,7 +30,7 @@ class GameSerializerTest : public ::testing::Test {
 
   virtual void SetUp() {
     GameOptions options;
-    options.set_game_type(GameOptions::THREE_MEN_MORRIS);
+    options.set_game_type(THREE_MEN_MORRIS);
     Reset(game_, new Game(options));
     game()->Initialize();
     std::vector<BoardLocation> white_locations;

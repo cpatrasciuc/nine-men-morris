@@ -6,24 +6,26 @@
 #define GAME_BOARD_H_
 
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "base/basic_macros.h"
 #include "game/board_location.h"
 #include "game/game_export.h"
-#include "game/game_options.h"
+#include "game/game_type.h"
 #include "game/piece_color.h"
 
 namespace game {
 
 class GAME_EXPORT Board {
  public:
-  explicit Board(GameOptions::GameType type = GameOptions::NINE_MEN_MORRIS);
+  explicit Board(GameType type = NINE_MEN_MORRIS);
+  ~Board();
 
-  int size() const { return size_; }
+  int size() const;
 
   // Returns the number of pieces that are currently placed on the board
-  int piece_count() const { return pieces_.size(); }
+  int piece_count() const;
 
   // Returns the number of pieces placed on the board that have the given color.
   // |color| cannot be NO_COLOR.
@@ -32,6 +34,10 @@ class GAME_EXPORT Board {
   // This method is used to verify if a given location is valid, i.e. it can be
   // used to place a piece on it or move a piece to it.
   bool IsValidLocation(const BoardLocation& location) const;
+
+  // Return a reference to the list of all valid board locations.
+  // TODO(game): write unittests for this.
+  const std::vector<BoardLocation>& locations() const;
 
   // This function returns |true| if the two BoardLocations are adjacent. Both
   // locations must be valid.
@@ -70,13 +76,12 @@ class GAME_EXPORT Board {
   bool IsPartOfMill(const BoardLocation& location) const;
 
  private:
-  // Utility method that returns the distance between valid locations on the
-  // line or column specified by |index|.
-  int GetStep(int index) const;
+  // Forward declaration of the internal class used to store the data related
+  // to each board location.
+  class BoardImpl;
 
-  int size_;
-
-  std::map<BoardLocation, PieceColor> pieces_;
+  // TODO(smart_ptr): Make our base::ptr::scoped_ptr work with incomplete types
+  std::auto_ptr<BoardImpl> impl_;
 
   DISALLOW_COPY_AND_ASSIGN(Board);
 };
