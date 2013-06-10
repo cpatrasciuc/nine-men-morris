@@ -4,14 +4,18 @@
 
 #include "game/game.h"
 
+#include <deque>
 #include <map>
 #include <vector>
 
 #include "base/log.h"
+#include "game/game_listener.h"
 #include "game/game_options.h"
 #include "game/game_type.h"
 
 namespace game {
+
+typedef std::deque<GameListener*>::iterator ListenerIter;
 
 Game::Game(const GameOptions& game_options)
     : game_options_(game_options),
@@ -21,7 +25,8 @@ Game::Game(const GameOptions& game_options)
       current_player_(NO_COLOR),
       next_action_type_(PlayerAction::PLACE_PIECE),
       is_game_over_(false),
-      winner_(NO_COLOR) {
+      winner_(NO_COLOR),
+      listeners_() {
 }
 
 PieceColor Game::winner() const {
@@ -35,6 +40,7 @@ void Game::Initialize() {
   pieces_in_hand_.insert(std::make_pair(WHITE_COLOR, piece_count));
   pieces_in_hand_.insert(std::make_pair(BLACK_COLOR, piece_count));
   UpdateGameState();
+  FireOnGameInitialized();
 }
 
 bool Game::CheckIfGameIsOver() const {
@@ -112,6 +118,7 @@ void Game::ExecutePlayerAction(const PlayerAction& action) {
     --pieces_in_hand_[current_player_];
   }
   UpdateGameState();
+  FireOnPlayerAction(action);
 }
 
 bool Game::CanJump() const {
@@ -139,6 +146,7 @@ void Game::UndoLastAction() {
     ++pieces_in_hand_[last_action.player_color()];
   }
   UpdateGameState();
+  FireOnUndoAction(last_action);
 }
 
 void Game::UpdateGameState() {
@@ -159,6 +167,7 @@ void Game::UpdateGameState() {
     } else if (CheckIfGameIsOver()) {
         is_game_over_ = true;
         winner_ = current_player_;
+        FireOnGameOver(winner_);
     } else {
       current_player_ = GetOpponent(action.player_color());
       next_action_type_ = pieces_in_hand_[current_player_] > 0 ?
@@ -175,6 +184,43 @@ void Game::DumpActionList(std::vector<PlayerAction>* actions) const {
 int Game::GetPiecesInHand(const PieceColor player_color) const {
   DCHECK(player_color != NO_COLOR);
   return (*pieces_in_hand_.find(player_color)).second;
+}
+
+void Game::AddListener(GameListener* listener) {
+  listeners_.push_back(listener);
+}
+
+void Game::RemoveListener(GameListener* listener) {
+  for (ListenerIter it = listeners_.begin(); it != listeners_.end(); ++it) {
+    if (*it == listener) {
+      listeners_.erase(it);
+      break;
+    }
+  }
+}
+
+void Game::FireOnGameInitialized() {
+  for (ListenerIter it = listeners_.begin(); it != listeners_.end(); ++it) {
+    (*it)->OnGameInitialized();
+  }
+}
+
+void Game::FireOnPlayerAction(const PlayerAction& action) {
+  for (ListenerIter it = listeners_.begin(); it != listeners_.end(); ++it) {
+    (*it)->OnPlayerAction(action);
+  }
+}
+
+void Game::FireOnUndoAction(const PlayerAction& action) {
+  for (ListenerIter it = listeners_.begin(); it != listeners_.end(); ++it) {
+    (*it)->OnUndoPlayerAction(action);
+  }
+}
+
+void Game::FireOnGameOver(PieceColor winner) {
+  for (ListenerIter it = listeners_.begin(); it != listeners_.end(); ++it) {
+    (*it)->OnGameOver(winner);
+  }
 }
 
 // static

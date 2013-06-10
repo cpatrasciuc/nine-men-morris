@@ -5,6 +5,7 @@
 #ifndef GAME_GAME_H_
 #define GAME_GAME_H_
 
+#include <deque>
 #include <map>
 #include <vector>
 
@@ -17,6 +18,8 @@
 #include "game/player_action.h"
 
 namespace game {
+
+class GameListener;
 
 class GAME_EXPORT Game {
  public:
@@ -69,6 +72,11 @@ class GAME_EXPORT Game {
   // they were executed. |actions| is not cleared before appending to it.
   void DumpActionList(std::vector<PlayerAction>* actions) const;
 
+  // These methods allow the clients to (un)register game listeners that will be
+  // notified about various events that take place during the course of a game.
+  void AddListener(GameListener* listener);
+  void RemoveListener(GameListener* listener);
+
   // Utility method that returns the number of pieces that a player starts with
   // based on the game type.
   static int GetInitialPieceCountByGameType(GameType type);
@@ -81,6 +89,12 @@ class GAME_EXPORT Game {
 
   // Checks if the game reached its end. It is called after each action.
   bool CheckIfGameIsOver() const;
+
+  // Convenience methods used to notify game listeners.
+  void FireOnGameInitialized();
+  void FireOnPlayerAction(const PlayerAction& action);
+  void FireOnUndoAction(const PlayerAction& action);
+  void FireOnGameOver(PieceColor winner);
 
   // The options for this game instance.
   GameOptions game_options_;
@@ -110,6 +124,9 @@ class GAME_EXPORT Game {
 
   // Once the game is over, stores the winning color.
   PieceColor winner_;
+
+  // Registered game listeners.
+  std::deque<GameListener*> listeners_;
 
   DISALLOW_COPY_AND_ASSIGN(Game);
 };
