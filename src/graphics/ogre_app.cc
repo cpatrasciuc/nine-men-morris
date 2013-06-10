@@ -7,10 +7,13 @@
 #include <stack>
 #include <string>
 
+#include "base/file_path.h"
+
 #include "OGRE/OgreCamera.h"
 #include "OGRE/OgreColourValue.h"
 #include "OGRE/OgrePrerequisites.h"
 #include "OGRE/OgreRenderWindow.h"
+#include "OGRE/OgreResourceGroupManager.h"
 #include "OGRE/OgreRoot.h"
 #include "OGRE/OgreSceneManager.h"
 #include "OGRE/OgreVector3.h"
@@ -44,6 +47,13 @@ bool OgreApp::Init() {
   if (!(root_->restoreConfig() || root_->showConfigDialog())) {
     return false;
   }
+
+  base::FilePath meshes_dir = base::FilePath::CurrentDir()
+      .Append(FILE_PATH_LITERAL("resources"))
+      .Append(FILE_PATH_LITERAL("meshes"));
+  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+      meshes_dir.value(), "FileSystem",
+      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
   render_window_ = root_->initialise(true, name_);
   scene_manager_ = root_->createSceneManager("DefaultSceneManager");
