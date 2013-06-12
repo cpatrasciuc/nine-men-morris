@@ -52,19 +52,6 @@ const char kRttCameraName[] = "RttCamera";
 
 const int kBoardTextureSize = 3;
 
-// TODO(board): Move this inside the board class?
-void GetValidBoardLocations(const game::Board& board,
-                            std::vector<game::BoardLocation>* locations) {
-  for (int line = 0; line < board.size(); ++line) {
-    for (int col = 0; col < board.size(); ++col) {
-      const game::BoardLocation loc(line, col);
-      if (board.IsValidLocation(loc)) {
-        locations->push_back(loc);
-      }
-    }
-  }
-}
-
 }  // anonymous namespace
 
 BoardRenderer::BoardRenderer(OgreApp* app, const game::Board& board)
@@ -118,8 +105,7 @@ void BoardRenderer::Initialize() {
   board_entity->setMaterial(board_material);
   board_entity->setCastShadows(false);
 
-  std::vector<game::BoardLocation> locations;
-  GetValidBoardLocations(board_, &locations);
+  const std::vector<game::BoardLocation>& locations = board_.locations();
   Ogre::MaterialPtr sphere_material =
       Ogre::MaterialManager::getSingleton().create(kLocationMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -224,8 +210,7 @@ void BoardRenderer::GenerateBoardTexture() {
   render_texture->getViewport(0)->setBackgroundColour(Ogre::ColourValue::Black);
   render_texture->getViewport(0)->setOverlaysEnabled(false);
 
-  std::vector<game::BoardLocation> locations;
-  GetValidBoardLocations(board_, &locations);
+  const std::vector<game::BoardLocation>& locations = board_.locations();
   Ogre::SceneNode* const scene_contents =
       scene_manager->getRootSceneNode()->createChildSceneNode();
   const double scale = board_.size() / 2;
