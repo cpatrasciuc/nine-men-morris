@@ -12,6 +12,7 @@
 
 #include "game/board.h"
 #include "game/board_location.h"
+#include "game/game.h"
 
 #include "graphics/board_utils.h"
 #include "graphics/ogre_app.h"
@@ -54,9 +55,9 @@ const int kBoardTextureSize = 3;
 
 }  // anonymous namespace
 
-BoardRenderer::BoardRenderer(OgreApp* app, const game::Board& board)
+BoardRenderer::BoardRenderer(OgreApp* app, const game::Game& game_model)
     : app_(app),
-      board_(board),
+      game_(game_model),
       selected_location_(NULL),
       location_selection_enabled_(false) {}
 
@@ -105,7 +106,7 @@ void BoardRenderer::Initialize() {
   board_entity->setMaterial(board_material);
   board_entity->setCastShadows(false);
 
-  const std::vector<game::BoardLocation>& locations = board_.locations();
+  const std::vector<game::BoardLocation>& locations = game_.board().locations();
   Ogre::MaterialPtr sphere_material =
       Ogre::MaterialManager::getSingleton().create(kLocationMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -119,13 +120,13 @@ void BoardRenderer::Initialize() {
         scene_manager->createEntity(name, Ogre::SceneManager::PT_SPHERE);
     Ogre::SceneNode* sphere_node = root->createChildSceneNode();
     sphere_node->attachObject(sphere_entity);
-    Ogre::Vector3 pos = BoardLocationTo3DCoord(locations[i], board_);
+    Ogre::Vector3 pos = BoardLocationTo3DCoord(locations[i], game_.board());
     pos.z = pos.y;
     pos.y = 0;
     sphere_node->setPosition(pos * multiplier);
     sphere_entity->setMaterial(sphere_material);
     sphere_entity->setCastShadows(false);
-    const double scale = 0.005f / board_.size() * multiplier * 5;
+    const double scale = 0.005f / game_.board().size() * multiplier * 5;
     sphere_node->setScale(scale, 0.001, scale);
     sphere_entity->setVisible(false);
     loc_map_.insert(std::make_pair(sphere_entity, locations[i]));
@@ -210,30 +211,31 @@ void BoardRenderer::GenerateBoardTexture() {
   render_texture->getViewport(0)->setBackgroundColour(Ogre::ColourValue::Black);
   render_texture->getViewport(0)->setOverlaysEnabled(false);
 
-  const std::vector<game::BoardLocation>& locations = board_.locations();
+  const game::Board& board = game_.board();
+  const std::vector<game::BoardLocation>& locations = board.locations();
   Ogre::SceneNode* const scene_contents =
       scene_manager->getRootSceneNode()->createChildSceneNode();
-  const double scale = board_.size() / 2;
+  const double scale = board.size() / 2;
   for (size_t i = 0; i < locations.size(); ++i) {
     const std::string name = "Sphere" + base::ToString(i);
     Ogre::Entity* sphere_entity =
         scene_manager->createEntity(name, Ogre::SceneManager::PT_SPHERE);
     Ogre::SceneNode* sphere_node = scene_contents->createChildSceneNode();
     sphere_node->attachObject(sphere_entity);
-    sphere_node->setPosition(BoardLocationTo3DCoord(locations[i], board_));
+    sphere_node->setPosition(BoardLocationTo3DCoord(locations[i], board));
     const double radius = 0.005f / scale;
     sphere_node->setScale(radius, radius, radius);
 
-    const Ogre::Vector3 v1 = BoardLocationTo3DCoord(locations[i], board_);
+    const Ogre::Vector3 v1 = BoardLocationTo3DCoord(locations[i], board);
     std::vector<game::BoardLocation> adjacent;
-    board_.GetAdjacentLocations(locations[i], &adjacent);
+    board.GetAdjacentLocations(locations[i], &adjacent);
     for (size_t j = 0; j < adjacent.size(); ++j) {
       const std::string name = "Line" + base::ToString(i) + base::ToString(j);
       Ogre::Entity* line_entity =
           scene_manager->createEntity(name, Ogre::SceneManager::PT_PLANE);
       Ogre::SceneNode* line_node = scene_contents->createChildSceneNode();
       line_node->attachObject(line_entity);
-      const Ogre::Vector3 v2 = BoardLocationTo3DCoord(adjacent[j], board_);
+      const Ogre::Vector3 v2 = BoardLocationTo3DCoord(adjacent[j], board);
       line_node->setPosition(v1.midPoint(v2));
       const double width = 0.0005 / scale;
       const double depth = 0.0001;

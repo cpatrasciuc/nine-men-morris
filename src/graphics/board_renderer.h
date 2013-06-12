@@ -15,8 +15,8 @@
 #include "OIS/OISMouse.h"
 
 namespace game {
-class Board;
 class BoardLocation;
+class Game;
 }
 
 namespace Ogre {
@@ -31,7 +31,7 @@ class OgreApp;
 
 class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
  public:
-  BoardRenderer(OgreApp* app, const game::Board& board);
+  BoardRenderer(OgreApp* app, const game::Game& game_model);
   ~BoardRenderer();
 
   void Initialize();
@@ -50,7 +50,7 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
   void GenerateBoardTexture();
 
   OgreApp* app_;
-  const game::Board& board_;
+  const game::Game& game_;
   std::map<Ogre::Entity*, game::BoardLocation> loc_map_;
   Ogre::MovableObject* selected_location_;
   bool location_selection_enabled_;

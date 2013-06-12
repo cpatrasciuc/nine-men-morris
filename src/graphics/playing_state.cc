@@ -17,7 +17,7 @@ namespace graphics {
 PlayingState::PlayingState(OgreApp* app, game::GameOptions game_options)
     : GameState(app),
       game_(game_options),
-      board_renderer_(new BoardRenderer(app, game_.board())),
+      board_renderer_(new BoardRenderer(app, game_)),
       camera_controller_() {}
 
 bool PlayingState::Initialize() {
