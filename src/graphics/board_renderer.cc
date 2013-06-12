@@ -48,8 +48,12 @@ const char kBoardMaterialName[] = "BoardMaterial";
 const char kBoardPlaneName[] = "BoardPlane";
 const char kBoardTextureName[] = "BoardTexture";
 const char kLocationMaterialName[] = "LocationMaterial";
+const char kAllPiecesNodeName[] = "AllPieces";
 const char kMainLightName[] = "MainLight";
 const char kRttCameraName[] = "RttCamera";
+
+const char kWhitePieceMaterialName[] = "WhitePieceMaterial";
+const char kBlackPieceMaterialName[] = "BlackPieceMaterial";
 
 const int kBoardTextureSize = 3;
 
@@ -64,6 +68,8 @@ BoardRenderer::BoardRenderer(OgreApp* app, const game::Game& game_model)
 BoardRenderer::~BoardRenderer() {
   Ogre::MaterialManager::getSingleton().remove(kBoardMaterialName);
   Ogre::MaterialManager::getSingleton().remove(kLocationMaterialName);
+  Ogre::MaterialManager::getSingleton().remove(kWhitePieceMaterialName);
+  Ogre::MaterialManager::getSingleton().remove(kBlackPieceMaterialName);
   Ogre::MeshManager::getSingleton().remove(kBoardPlaneName);
   Ogre::TextureManager::getSingleton().remove(kBoardTextureName);
 }
@@ -131,6 +137,8 @@ void BoardRenderer::Initialize() {
     sphere_entity->setVisible(false);
     loc_map_.insert(std::make_pair(sphere_entity, locations[i]));
   }
+
+  InitializePieces();
 }
 
 void BoardRenderer::EnableLocationSelection() {
@@ -255,6 +263,41 @@ void BoardRenderer::GenerateBoardTexture() {
   render_texture->writeContentsToFile("board_texture.png");
 #endif
   app_->ogre_root()->destroySceneManager(scene_manager);
+}
+
+void BoardRenderer::InitializePieces() {
+  Ogre::MaterialPtr white_material =
+      Ogre::MaterialManager::getSingleton().create(kWhitePieceMaterialName,
+      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  white_material->setDiffuse(0.8, 0.8, 0.8, 1);
+  white_material->setSpecular(0.8, 0.8, 0.8, 1);
+  Ogre::MaterialPtr black_material =
+      Ogre::MaterialManager::getSingleton().create(kBlackPieceMaterialName,
+      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  black_material->setDiffuse(1, 0.2, 0.2, 1);
+
+  const std::string mesh_name("piece.mesh");
+  Ogre::SceneManager* const scene_mgr = app_->scene_manager();
+  Ogre::SceneNode* const all_pieces =
+      scene_mgr->getRootSceneNode()->createChildSceneNode(kAllPiecesNodeName);
+  const int piece_count =
+      game_.GetInitialPieceCountByGameType(game_.options().game_type());
+
+  for (int i = 0; i < piece_count; ++i) {
+    const std::string index_str(base::ToString(i));
+    Ogre::Entity* entity = scene_mgr->createEntity(
+        "WhitePiece" + index_str, mesh_name);
+    entity->setMaterial(white_material);
+    entity->setVisible(false);
+    Ogre::SceneNode* piece_node = all_pieces->createChildSceneNode();
+    piece_node->attachObject(entity);
+
+    entity = scene_mgr->createEntity("BlackPiece" + index_str, mesh_name);
+    entity->setMaterial(black_material);
+    entity->setVisible(false);
+    piece_node = all_pieces->createChildSceneNode();
+    piece_node->attachObject(entity);
+  }
 }
 
 }  // namespace graphics

@@ -48,6 +48,7 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
 
  private:
   void GenerateBoardTexture();
+  void InitializePieces();
 
   OgreApp* app_;
   const game::Game& game_;
