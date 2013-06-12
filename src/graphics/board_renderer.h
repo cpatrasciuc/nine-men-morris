@@ -31,13 +31,22 @@ class OgreApp;
 
 class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
  public:
+  enum SelectionType {
+    NONE = 0,
+    EMPTY_LOCATION = 1,
+    ANY_WHITE_PIECE = (1 << 1),
+    ANY_BLACK_PIECE = (1 << 2),
+    REMOVABLE_WHITE_PIECE = (1 << 3),
+    REMOVABLE_BLACK_PIECE = (1 << 4)
+  };
+
+
   BoardRenderer(OgreApp* app, const game::Game& game_model);
   ~BoardRenderer();
 
   void Initialize();
 
-  void EnableLocationSelection();
-  void DisableLocationSelection();
+  void SetSelectionType(const SelectionType& selection_type);
 
   // MouseListener interface
   virtual bool mouseMoved(const OIS::MouseEvent& event);
@@ -54,7 +63,7 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
   const game::Game& game_;
   std::map<Ogre::Entity*, game::BoardLocation> loc_map_;
   Ogre::MovableObject* selected_location_;
-  bool location_selection_enabled_;
+  SelectionType selection_type_;
 
   DISALLOW_COPY_AND_ASSIGN(BoardRenderer);
 };

@@ -63,7 +63,7 @@ BoardRenderer::BoardRenderer(OgreApp* app, const game::Game& game_model)
     : app_(app),
       game_(game_model),
       selected_location_(NULL),
-      location_selection_enabled_(false) {}
+      selection_type_(NONE) {}
 
 BoardRenderer::~BoardRenderer() {
   Ogre::MaterialManager::getSingleton().remove(kBoardMaterialName);
@@ -141,20 +141,18 @@ void BoardRenderer::Initialize() {
   InitializePieces();
 }
 
-void BoardRenderer::EnableLocationSelection() {
-  location_selection_enabled_ = true;
-}
-
-void BoardRenderer::DisableLocationSelection() {
-  if (selected_location_) {
+void BoardRenderer::SetSelectionType(const SelectionType& selection_type) {
+  selection_type_ = selection_type;
+  if (selection_type_ == NONE) {
     selected_location_->setVisible(false);
     selected_location_ = NULL;
   }
-  location_selection_enabled_ = false;
+  // TODO(board_renderer): For REMOVABLE_* determine the selectable items.
+  // TODO(board_renderer): Trigger a ray cast; don't wait for mouse movement.
 }
 
 bool BoardRenderer::mouseMoved(const OIS::MouseEvent& event) {
-  if (!location_selection_enabled_) {
+  if (selection_type_ == NONE) {
     return true;
   }
   if (selected_location_) {
