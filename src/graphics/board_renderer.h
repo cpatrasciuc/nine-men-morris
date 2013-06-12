@@ -36,7 +36,7 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
    public:
     virtual ~SelectionListener();
 
-    virtual void OnLocationSelected(const game::BoardLocation location) = 0;
+    virtual void OnLocationSelected(const game::BoardLocation& location) = 0;
     virtual void OnSelectionCleared() = 0;
 
    protected:
@@ -76,11 +76,15 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
   void GenerateBoardTexture();
   void InitializePieces();
 
+  void FireOnLocationSelected(const game::BoardLocation& location);
+  void FireOnSelectionCleared();
+
   OgreApp* app_;
   const game::Game& game_;
-  std::map<Ogre::Entity*, game::BoardLocation> loc_map_;
-  Ogre::MovableObject* selected_location_;
+  std::map<Ogre::MovableObject*, game::BoardLocation> loc_map_;
 
+  Ogre::MovableObject* temp_selected_location_;
+  Ogre::MovableObject* selected_location_;
   SelectionType selection_type_;
   std::deque<SelectionListener*> listeners_;
 

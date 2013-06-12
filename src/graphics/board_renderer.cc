@@ -67,6 +67,7 @@ BoardRenderer::SelectionListener::~SelectionListener() {}
 BoardRenderer::BoardRenderer(OgreApp* app, const game::Game& game_model)
     : app_(app),
       game_(game_model),
+      temp_selected_location_(NULL),
       selected_location_(NULL),
       selection_type_(NONE),
       listeners_() {}
@@ -150,8 +151,8 @@ void BoardRenderer::Initialize() {
 void BoardRenderer::SetSelectionType(const SelectionType& selection_type) {
   selection_type_ = selection_type;
   if (selection_type_ == NONE) {
-    selected_location_->setVisible(false);
-    selected_location_ = NULL;
+    temp_selected_location_->setVisible(false);
+    temp_selected_location_ = NULL;
   }
   // TODO(board_renderer): For REMOVABLE_* determine the selectable items.
   // TODO(board_renderer): Trigger a ray cast; don't wait for mouse movement.
@@ -173,8 +174,8 @@ bool BoardRenderer::mouseMoved(const OIS::MouseEvent& event) {
   if (selection_type_ == NONE) {
     return true;
   }
-  if (selected_location_) {
-    selected_location_->setVisible(false);
+  if (temp_selected_location_) {
+    temp_selected_location_->setVisible(false);
   }
   Ogre::SceneManager* const scene_manager = app_->scene_manager();
   Ogre::Camera* const camera = app_->camera();
@@ -193,8 +194,8 @@ bool BoardRenderer::mouseMoved(const OIS::MouseEvent& event) {
     if (query_result[i].movable->getName().substr(0, 8) != "Location") {
       continue;
     }
-    selected_location_ = query_result[i].movable;
-    selected_location_->setVisible(true);
+    temp_selected_location_ = query_result[i].movable;
+    temp_selected_location_->setVisible(true);
     break;
   }
   scene_manager->destroyQuery(ray_scene_query);
@@ -208,6 +209,16 @@ bool BoardRenderer::mousePressed(const OIS::MouseEvent& event,
 
 bool BoardRenderer::mouseReleased(const OIS::MouseEvent& event,
                                   OIS::MouseButtonID id) {
+  if (selected_location_) {
+    selected_location_ = NULL;
+    FireOnSelectionCleared();
+  }
+  if (temp_selected_location_) {
+    selected_location_ = temp_selected_location_;
+    std::map<Ogre::MovableObject*, game::BoardLocation>::iterator it =
+        loc_map_.find(selected_location_);
+    FireOnLocationSelected(it->second);
+  }
   return true;
 }
 
@@ -313,6 +324,20 @@ void BoardRenderer::InitializePieces() {
     entity->setVisible(false);
     piece_node = all_pieces->createChildSceneNode();
     piece_node->attachObject(entity);
+  }
+}
+
+void BoardRenderer::FireOnLocationSelected(const game::BoardLocation& loc) {
+  for (std::deque<SelectionListener*>::iterator it = listeners_.begin();
+       it != listeners_.end(); ++it) {
+    (*it)->OnLocationSelected(loc);
+  }
+}
+
+void BoardRenderer::FireOnSelectionCleared() {
+  for (std::deque<SelectionListener*>::iterator it = listeners_.begin();
+       it != listeners_.end(); ++it) {
+    (*it)->OnSelectionCleared();
   }
 }
 
