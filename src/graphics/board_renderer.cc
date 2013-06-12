@@ -151,8 +151,7 @@ void BoardRenderer::Initialize() {
 void BoardRenderer::SetSelectionType(const SelectionType& selection_type) {
   selection_type_ = selection_type;
   if (selection_type_ == NONE) {
-    temp_selected_location_->setVisible(false);
-    temp_selected_location_ = NULL;
+    ClearSelection();
   }
   // TODO(board_renderer): For REMOVABLE_* determine the selectable items.
   // TODO(board_renderer): Trigger a ray cast; don't wait for mouse movement.
@@ -176,6 +175,7 @@ bool BoardRenderer::mouseMoved(const OIS::MouseEvent& event) {
   }
   if (temp_selected_location_) {
     temp_selected_location_->setVisible(false);
+    temp_selected_location_ = NULL;
   }
   Ogre::SceneManager* const scene_manager = app_->scene_manager();
   Ogre::Camera* const camera = app_->camera();
@@ -209,10 +209,7 @@ bool BoardRenderer::mousePressed(const OIS::MouseEvent& event,
 
 bool BoardRenderer::mouseReleased(const OIS::MouseEvent& event,
                                   OIS::MouseButtonID id) {
-  if (selected_location_) {
-    selected_location_ = NULL;
-    FireOnSelectionCleared();
-  }
+  ClearSelection();
   if (temp_selected_location_) {
     selected_location_ = temp_selected_location_;
     std::map<Ogre::MovableObject*, game::BoardLocation>::iterator it =
@@ -338,6 +335,14 @@ void BoardRenderer::FireOnSelectionCleared() {
   for (std::deque<SelectionListener*>::iterator it = listeners_.begin();
        it != listeners_.end(); ++it) {
     (*it)->OnSelectionCleared();
+  }
+}
+
+void BoardRenderer::ClearSelection() {
+  if (selected_location_) {
+    selected_location_->setVisible(false);
+    selected_location_ = NULL;
+    FireOnSelectionCleared();
   }
 }
 

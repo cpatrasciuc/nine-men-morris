@@ -78,6 +78,7 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
 
   void FireOnLocationSelected(const game::BoardLocation& location);
   void FireOnSelectionCleared();
+  void ClearSelection();
 
   OgreApp* app_;
   const game::Game& game_;
