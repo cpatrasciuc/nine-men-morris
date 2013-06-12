@@ -5,6 +5,7 @@
 #include "graphics/board_renderer.h"
 
 #include <algorithm>
+#include <deque>
 #include <string>
 #include <vector>
 
@@ -59,11 +60,16 @@ const int kBoardTextureSize = 3;
 
 }  // anonymous namespace
 
+BoardRenderer::SelectionListener::SelectionListener() {}
+
+BoardRenderer::SelectionListener::~SelectionListener() {}
+
 BoardRenderer::BoardRenderer(OgreApp* app, const game::Game& game_model)
     : app_(app),
       game_(game_model),
       selected_location_(NULL),
-      selection_type_(NONE) {}
+      selection_type_(NONE),
+      listeners_() {}
 
 BoardRenderer::~BoardRenderer() {
   Ogre::MaterialManager::getSingleton().remove(kBoardMaterialName);
@@ -149,6 +155,18 @@ void BoardRenderer::SetSelectionType(const SelectionType& selection_type) {
   }
   // TODO(board_renderer): For REMOVABLE_* determine the selectable items.
   // TODO(board_renderer): Trigger a ray cast; don't wait for mouse movement.
+}
+
+void BoardRenderer::AddSelectionListener(SelectionListener* listener) {
+  listeners_.push_back(listener);
+}
+
+void BoardRenderer::RemoveSelectionListener(SelectionListener* listener) {
+  std::deque<SelectionListener*>::iterator it =
+      std::find(listeners_.begin(), listeners_.end(), listener);
+  if (it != listeners_.end()) {
+    listeners_.erase(it);
+  }
 }
 
 bool BoardRenderer::mouseMoved(const OIS::MouseEvent& event) {

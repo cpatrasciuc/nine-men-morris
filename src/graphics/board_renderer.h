@@ -5,6 +5,7 @@
 #ifndef GRAPHICS_BOARD_RENDERER_H_
 #define GRAPHICS_BOARD_RENDERER_H_
 
+#include <deque>
 #include <map>
 
 #include "base/basic_macros.h"
@@ -31,6 +32,20 @@ class OgreApp;
 
 class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
  public:
+  class SelectionListener {
+   public:
+    virtual ~SelectionListener();
+
+    virtual void OnLocationSelected(const game::BoardLocation location) = 0;
+    virtual void OnSelectionCleared() = 0;
+
+   protected:
+    SelectionListener();
+
+   private:
+    DISALLOW_COPY_AND_ASSIGN(SelectionListener);
+  };
+
   enum SelectionType {
     NONE = 0,
     EMPTY_LOCATION = 1,
@@ -40,13 +55,15 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
     REMOVABLE_BLACK_PIECE = (1 << 4)
   };
 
-
   BoardRenderer(OgreApp* app, const game::Game& game_model);
   ~BoardRenderer();
 
   void Initialize();
 
   void SetSelectionType(const SelectionType& selection_type);
+
+  void AddSelectionListener(SelectionListener* listener);
+  void RemoveSelectionListener(SelectionListener* listener);
 
   // MouseListener interface
   virtual bool mouseMoved(const OIS::MouseEvent& event);
@@ -63,7 +80,9 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
   const game::Game& game_;
   std::map<Ogre::Entity*, game::BoardLocation> loc_map_;
   Ogre::MovableObject* selected_location_;
+
   SelectionType selection_type_;
+  std::deque<SelectionListener*> listeners_;
 
   DISALLOW_COPY_AND_ASSIGN(BoardRenderer);
 };
