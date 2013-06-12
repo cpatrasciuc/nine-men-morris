@@ -70,7 +70,8 @@ void GetValidBoardLocations(const game::Board& board,
 BoardRenderer::BoardRenderer(OgreApp* app, const game::Board& board)
     : app_(app),
       board_(board),
-      selected_location_(NULL) {}
+      selected_location_(NULL),
+      location_selection_enabled_(false) {}
 
 BoardRenderer::~BoardRenderer() {
   Ogre::MaterialManager::getSingleton().remove(kBoardMaterialName);
@@ -145,7 +146,22 @@ void BoardRenderer::Initialize() {
   }
 }
 
+void BoardRenderer::EnableLocationSelection() {
+  location_selection_enabled_ = true;
+}
+
+void BoardRenderer::DisableLocationSelection() {
+  if (selected_location_) {
+    selected_location_->setVisible(false);
+    selected_location_ = NULL;
+  }
+  location_selection_enabled_ = false;
+}
+
 bool BoardRenderer::mouseMoved(const OIS::MouseEvent& event) {
+  if (!location_selection_enabled_) {
+    return true;
+  }
   if (selected_location_) {
     selected_location_->setVisible(false);
   }

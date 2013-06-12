@@ -22,6 +22,7 @@ class BoardLocation;
 namespace Ogre {
 class Entity;
 class MovableObject;
+class SceneNode;
 }
 
 namespace graphics {
@@ -34,6 +35,9 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
   ~BoardRenderer();
 
   void Initialize();
+
+  void EnableLocationSelection();
+  void DisableLocationSelection();
 
   // MouseListener interface
   virtual bool mouseMoved(const OIS::MouseEvent& event);
@@ -49,6 +53,7 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
   const game::Board& board_;
   std::map<Ogre::Entity*, game::BoardLocation> loc_map_;
   Ogre::MovableObject* selected_location_;
+  bool location_selection_enabled_;
 
   DISALLOW_COPY_AND_ASSIGN(BoardRenderer);
 };
