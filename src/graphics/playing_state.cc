@@ -5,6 +5,7 @@
 #include "graphics/playing_state.h"
 
 #include "base/ptr/scoped_ptr.h"
+#include "game/game.h"
 #include "graphics/board_renderer.h"
 #include "graphics/ogre_app.h"
 
@@ -24,6 +25,7 @@ bool PlayingState::Initialize() {
   camera_controller_.set_min_distance(50);
   camera_controller_.set_max_distance(200);
   camera_controller_.set_camera(app()->camera());
+  game_.Initialize();
   return true;
 }
 
