@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "base/string_util.h"
+#include "base/supports_listener.h"
 
 #include "game/board.h"
 #include "game/board_location.h"
@@ -60,17 +61,19 @@ const int kBoardTextureSize = 3;
 
 }  // anonymous namespace
 
-BoardRenderer::SelectionListener::SelectionListener() {}
+typedef base::SupportsListener<SelectionListener>::ListenerList::const_iterator
+    ListenerIter;
 
-BoardRenderer::SelectionListener::~SelectionListener() {}
+SelectionListener::SelectionListener() {}
+
+SelectionListener::~SelectionListener() {}
 
 BoardRenderer::BoardRenderer(OgreApp* app, const game::Game& game_model)
     : app_(app),
       game_(game_model),
       temp_selected_location_(NULL),
       selected_location_(NULL),
-      selection_type_(NONE),
-      listeners_() {}
+      selection_type_(NONE) {}
 
 BoardRenderer::~BoardRenderer() {
   Ogre::MaterialManager::getSingleton().remove(kBoardMaterialName);
@@ -155,18 +158,6 @@ void BoardRenderer::SetSelectionType(const SelectionType& selection_type) {
   }
   // TODO(board_renderer): For REMOVABLE_* determine the selectable items.
   // TODO(board_renderer): Trigger a ray cast; don't wait for mouse movement.
-}
-
-void BoardRenderer::AddSelectionListener(SelectionListener* listener) {
-  listeners_.push_back(listener);
-}
-
-void BoardRenderer::RemoveSelectionListener(SelectionListener* listener) {
-  std::deque<SelectionListener*>::iterator it =
-      std::find(listeners_.begin(), listeners_.end(), listener);
-  if (it != listeners_.end()) {
-    listeners_.erase(it);
-  }
 }
 
 bool BoardRenderer::mouseMoved(const OIS::MouseEvent& event) {
@@ -325,15 +316,13 @@ void BoardRenderer::InitializePieces() {
 }
 
 void BoardRenderer::FireOnLocationSelected(const game::BoardLocation& loc) {
-  for (std::deque<SelectionListener*>::iterator it = listeners_.begin();
-       it != listeners_.end(); ++it) {
+  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
     (*it)->OnLocationSelected(loc);
   }
 }
 
 void BoardRenderer::FireOnSelectionCleared() {
-  for (std::deque<SelectionListener*>::iterator it = listeners_.begin();
-       it != listeners_.end(); ++it) {
+  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
     (*it)->OnSelectionCleared();
   }
 }

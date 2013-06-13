@@ -9,6 +9,7 @@
 #include <map>
 
 #include "base/basic_macros.h"
+#include "base/supports_listener.h"
 #include "graphics/graphics_export.h"
 
 #include "OGRE/OgreTexture.h"
@@ -30,22 +31,23 @@ namespace graphics {
 
 class OgreApp;
 
-class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
+class SelectionListener {
  public:
-  class SelectionListener {
-   public:
-    virtual ~SelectionListener();
+  virtual ~SelectionListener();
 
-    virtual void OnLocationSelected(const game::BoardLocation& location) = 0;
-    virtual void OnSelectionCleared() = 0;
+  virtual void OnLocationSelected(const game::BoardLocation& location) = 0;
+  virtual void OnSelectionCleared() = 0;
 
-   protected:
-    SelectionListener();
+ protected:
+  SelectionListener();
 
-   private:
-    DISALLOW_COPY_AND_ASSIGN(SelectionListener);
-  };
+ private:
+  DISALLOW_COPY_AND_ASSIGN(SelectionListener);
+};
 
+class GRAPHICS_EXPORT BoardRenderer
+    : public OIS::MouseListener, base::SupportsListener<SelectionListener> {
+ public:
   enum SelectionType {
     NONE = 0,
     EMPTY_LOCATION = 1,
@@ -61,9 +63,6 @@ class GRAPHICS_EXPORT BoardRenderer : public OIS::MouseListener {
   void Initialize();
 
   void SetSelectionType(const SelectionType& selection_type);
-
-  void AddSelectionListener(SelectionListener* listener);
-  void RemoveSelectionListener(SelectionListener* listener);
 
   // MouseListener interface
   virtual bool mouseMoved(const OIS::MouseEvent& event);
