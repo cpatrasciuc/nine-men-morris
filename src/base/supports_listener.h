@@ -21,6 +21,7 @@ template <class ListenerType>
 class SupportsListener {
  public:
   typedef std::deque<ListenerType*> ListenerList;
+  typedef typename ListenerList::const_iterator ListenerIter;
 
   ~SupportsListener() {}
 

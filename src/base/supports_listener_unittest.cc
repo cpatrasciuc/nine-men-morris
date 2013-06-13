@@ -27,14 +27,11 @@ class Listener {
 
 class Observable : public SupportsListener<Listener> {
  public:
-  typedef SupportsListener<Listener>::ListenerList ListenerList;
-  typedef ListenerList::const_iterator ListenerIter;
-
   Observable() {}
 
   void FireTestEvent() {
-    const ListenerList& list = listeners();
-    for (ListenerIter it = list.begin(); it != list.end(); ++it) {
+    typedef SupportsListener<Listener>::ListenerIter ListenerIter;
+    for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
       (*it)->OnTestEvent();
     }
   }
