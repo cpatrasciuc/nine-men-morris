@@ -61,9 +61,6 @@ const int kBoardTextureSize = 3;
 
 }  // anonymous namespace
 
-typedef base::SupportsListener<SelectionListener>::ListenerList::const_iterator
-    ListenerIter;
-
 SelectionListener::SelectionListener() {}
 
 SelectionListener::~SelectionListener() {}
@@ -316,12 +313,14 @@ void BoardRenderer::InitializePieces() {
 }
 
 void BoardRenderer::FireOnLocationSelected(const game::BoardLocation& loc) {
+  typedef base::SupportsListener<SelectionListener>::ListenerIter ListenerIter;
   for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
     (*it)->OnLocationSelected(loc);
   }
 }
 
 void BoardRenderer::FireOnSelectionCleared() {
+  typedef base::SupportsListener<SelectionListener>::ListenerIter ListenerIter;
   for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
     (*it)->OnSelectionCleared();
   }
