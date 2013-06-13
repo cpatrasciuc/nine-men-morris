@@ -15,8 +15,7 @@
 
 namespace game {
 
-typedef base::SupportsListener<GameListener>::ListenerList::const_iterator
-    ListenerIter;
+typedef base::SupportsListener<GameListener>::ListenerIter ListenerIter;
 
 Game::Game(const GameOptions& game_options)
     : game_options_(game_options),
