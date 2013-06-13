@@ -8,7 +8,7 @@
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
 #include "game/game_options.h"
-#include "graphics/board_renderer.h"
+#include "graphics/board_view.h"
 #include "graphics/camera_controller.h"
 #include "graphics/game_state.h"
 #include "graphics/graphics_export.h"
@@ -40,7 +40,7 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
   void RequestPlayerAction();
 
   game::Game game_;
-  base::ptr::scoped_ptr<BoardRenderer> board_renderer_;
+  base::ptr::scoped_ptr<BoardView> board_view_;
   CameraController camera_controller_;
   PlayerDelegate* white_player_;
   PlayerDelegate* black_player_;

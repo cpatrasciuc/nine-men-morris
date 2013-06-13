@@ -21,7 +21,7 @@ void HumanPlayer::RequestAction(const game::Game& game_model,
   DCHECK(view_);
   view_->AddListener(this);
   // TODO(human_player): Temporary implementation for test.
-  view_->SetSelectionType(BoardRenderer::EMPTY_LOCATION);
+  view_->SetSelectionType(BoardView::EMPTY_LOCATION);
   Reset(action_,
       new game::PlayerAction(color(), game_model.next_action_type()));
 }

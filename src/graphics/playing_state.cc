@@ -7,7 +7,7 @@
 #include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
-#include "graphics/board_renderer.h"
+#include "graphics/board_view.h"
 #include "graphics/human_player.h"
 #include "graphics/ogre_app.h"
 #include "graphics/player_delegate.h"
@@ -20,13 +20,13 @@ namespace graphics {
 PlayingState::PlayingState(OgreApp* app, game::GameOptions game_options)
     : GameState(app),
       game_(game_options),
-      board_renderer_(new BoardRenderer(app, game_)),
+      board_view_(new BoardView(app, game_)),
       camera_controller_(),
       white_player_(NULL),
       black_player_(NULL) {}
 
 bool PlayingState::Initialize() {
-  board_renderer_->Initialize();
+  board_view_->Initialize();
   camera_controller_.set_min_distance(50);
   camera_controller_.set_max_distance(200);
   camera_controller_.set_camera(app()->camera());
@@ -38,7 +38,7 @@ bool PlayingState::Initialize() {
 
 void PlayingState::Exit() {
   camera_controller_.set_camera(NULL);
-  Reset(board_renderer_);
+  Reset(board_view_);
   Ogre::SceneManager* const scene_manager = app()->scene_manager();
   Ogre::SceneNode* const root = scene_manager->getRootSceneNode();
   root->removeAllChildren();
@@ -53,7 +53,7 @@ bool PlayingState::keyPressed(const OIS::KeyEvent& event) {
 
 bool PlayingState::mouseMoved(const OIS::MouseEvent& event) {
   camera_controller_.mouseMoved(event);
-  board_renderer_->mouseMoved(event);
+  board_view_->mouseMoved(event);
   return true;
 }
 
@@ -71,11 +71,11 @@ bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
 
 void PlayingState::InitializePlayers() {
   HumanPlayer* human_player = new HumanPlayer(game::WHITE_COLOR);
-  human_player->set_board_view(Get(board_renderer_));
+  human_player->set_board_view(Get(board_view_));
   white_player_ = human_player;
 
   human_player = new HumanPlayer(game::WHITE_COLOR);
-  human_player->set_board_view(Get(board_renderer_));
+  human_player->set_board_view(Get(board_view_));
   black_player_ = human_player;
 }
 

@@ -11,10 +11,10 @@ if(NOT OIS_FOUND)
 endif()
 
 set(GRAPHICS_SOURCE_FILES
-  board_renderer.cc
-  board_renderer.h
   board_utils.cc
   board_utils.h
+  board_view.cc
+  board_view.h
   camera_controller.cc
   camera_controller.h
   game_state.cc

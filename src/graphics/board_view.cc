@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "graphics/board_renderer.h"
+#include "graphics/board_view.h"
 
 #include <algorithm>
 #include <deque>
@@ -65,14 +65,14 @@ SelectionListener::SelectionListener() {}
 
 SelectionListener::~SelectionListener() {}
 
-BoardRenderer::BoardRenderer(OgreApp* app, const game::Game& game_model)
+BoardView::BoardView(OgreApp* app, const game::Game& game_model)
     : app_(app),
       game_(game_model),
       temp_selected_location_(NULL),
       selected_location_(NULL),
       selection_type_(NONE) {}
 
-BoardRenderer::~BoardRenderer() {
+BoardView::~BoardView() {
   Ogre::MaterialManager::getSingleton().remove(kBoardMaterialName);
   Ogre::MaterialManager::getSingleton().remove(kLocationMaterialName);
   Ogre::MaterialManager::getSingleton().remove(kWhitePieceMaterialName);
@@ -81,7 +81,7 @@ BoardRenderer::~BoardRenderer() {
   Ogre::TextureManager::getSingleton().remove(kBoardTextureName);
 }
 
-void BoardRenderer::Initialize() {
+void BoardView::Initialize() {
   GenerateBoardTexture();
 
   Ogre::SceneManager* const scene_manager = app_->scene_manager();
@@ -148,7 +148,7 @@ void BoardRenderer::Initialize() {
   InitializePieces();
 }
 
-void BoardRenderer::SetSelectionType(const SelectionType& selection_type) {
+void BoardView::SetSelectionType(const SelectionType& selection_type) {
   selection_type_ = selection_type;
   if (selection_type_ == NONE) {
     ClearSelection();
@@ -157,7 +157,7 @@ void BoardRenderer::SetSelectionType(const SelectionType& selection_type) {
   // TODO(board_renderer): Trigger a ray cast; don't wait for mouse movement.
 }
 
-bool BoardRenderer::mouseMoved(const OIS::MouseEvent& event) {
+bool BoardView::mouseMoved(const OIS::MouseEvent& event) {
   if (selection_type_ == NONE) {
     return true;
   }
@@ -190,12 +190,12 @@ bool BoardRenderer::mouseMoved(const OIS::MouseEvent& event) {
   return true;
 }
 
-bool BoardRenderer::mousePressed(const OIS::MouseEvent& event,
+bool BoardView::mousePressed(const OIS::MouseEvent& event,
                                  OIS::MouseButtonID id) {
   return true;
 }
 
-bool BoardRenderer::mouseReleased(const OIS::MouseEvent& event,
+bool BoardView::mouseReleased(const OIS::MouseEvent& event,
                                   OIS::MouseButtonID id) {
   ClearSelection();
   if (temp_selected_location_) {
@@ -207,7 +207,7 @@ bool BoardRenderer::mouseReleased(const OIS::MouseEvent& event,
   return true;
 }
 
-void BoardRenderer::GenerateBoardTexture() {
+void BoardView::GenerateBoardTexture() {
   Ogre::TexturePtr rtt_tex = Ogre::TextureManager::getSingleton().createManual(
       kBoardTextureName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
@@ -277,7 +277,7 @@ void BoardRenderer::GenerateBoardTexture() {
   app_->ogre_root()->destroySceneManager(scene_manager);
 }
 
-void BoardRenderer::InitializePieces() {
+void BoardView::InitializePieces() {
   Ogre::MaterialPtr white_material =
       Ogre::MaterialManager::getSingleton().create(kWhitePieceMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -312,21 +312,21 @@ void BoardRenderer::InitializePieces() {
   }
 }
 
-void BoardRenderer::FireOnLocationSelected(const game::BoardLocation& loc) {
+void BoardView::FireOnLocationSelected(const game::BoardLocation& loc) {
   typedef base::SupportsListener<SelectionListener>::ListenerIter ListenerIter;
   for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
     (*it)->OnLocationSelected(loc);
   }
 }
 
-void BoardRenderer::FireOnSelectionCleared() {
+void BoardView::FireOnSelectionCleared() {
   typedef base::SupportsListener<SelectionListener>::ListenerIter ListenerIter;
   for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
     (*it)->OnSelectionCleared();
   }
 }
 
-void BoardRenderer::ClearSelection() {
+void BoardView::ClearSelection() {
   if (selected_location_) {
     selected_location_->setVisible(false);
     selected_location_ = NULL;

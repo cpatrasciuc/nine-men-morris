@@ -11,7 +11,7 @@
 #include "game/player_action.h"
 #include "graphics/graphics_export.h"
 #include "graphics/player_delegate.h"
-#include "graphics/board_renderer.h"
+#include "graphics/board_view.h"
 
 namespace graphics {
 
@@ -20,7 +20,7 @@ class GRAPHICS_EXPORT HumanPlayer
  public:
   explicit HumanPlayer(game::PieceColor color);
 
-  void set_board_view(BoardRenderer* view) { view_ = view; }
+  void set_board_view(BoardView* view) { view_ = view; }
 
  private:
   // PlayerDelegate interface
@@ -31,7 +31,7 @@ class GRAPHICS_EXPORT HumanPlayer
   virtual void OnLocationSelected(const game::BoardLocation& location);
   virtual void OnSelectionCleared();
 
-  BoardRenderer* view_;
+  BoardView* view_;
 
   base::ptr::scoped_ptr<game::PlayerAction> action_;
 

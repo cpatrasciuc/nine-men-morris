@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef GRAPHICS_BOARD_RENDERER_H_
-#define GRAPHICS_BOARD_RENDERER_H_
+#ifndef GRAPHICS_BOARD_VIEW_H_
+#define GRAPHICS_BOARD_VIEW_H_
 
 #include <deque>
 #include <map>
@@ -45,7 +45,7 @@ class SelectionListener {
   DISALLOW_COPY_AND_ASSIGN(SelectionListener);
 };
 
-class GRAPHICS_EXPORT BoardRenderer
+class GRAPHICS_EXPORT BoardView
     : public OIS::MouseListener,
       public base::SupportsListener<SelectionListener> {
  public:
@@ -58,8 +58,8 @@ class GRAPHICS_EXPORT BoardRenderer
     REMOVABLE_BLACK_PIECE = (1 << 4)
   };
 
-  BoardRenderer(OgreApp* app, const game::Game& game_model);
-  ~BoardRenderer();
+  BoardView(OgreApp* app, const game::Game& game_model);
+  ~BoardView();
 
   void Initialize();
 
@@ -89,10 +89,10 @@ class GRAPHICS_EXPORT BoardRenderer
   SelectionType selection_type_;
   std::deque<SelectionListener*> listeners_;
 
-  DISALLOW_COPY_AND_ASSIGN(BoardRenderer);
+  DISALLOW_COPY_AND_ASSIGN(BoardView);
 };
 
 }  // namespace graphics
 
-#endif  // GRAPHICS_BOARD_RENDERER_H_
+#endif  // GRAPHICS_BOARD_VIEW_H_
 
