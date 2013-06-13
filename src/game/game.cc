@@ -15,7 +15,8 @@
 
 namespace game {
 
-typedef std::deque<GameListener*>::iterator ListenerIter;
+typedef base::SupportsListener<GameListener>::ListenerList::const_iterator
+    ListenerIter;
 
 Game::Game(const GameOptions& game_options)
     : game_options_(game_options),
@@ -25,8 +26,7 @@ Game::Game(const GameOptions& game_options)
       current_player_(NO_COLOR),
       next_action_type_(PlayerAction::PLACE_PIECE),
       is_game_over_(false),
-      winner_(NO_COLOR),
-      listeners_() {
+      winner_(NO_COLOR) {
 }
 
 PieceColor Game::winner() const {
@@ -186,39 +186,26 @@ int Game::GetPiecesInHand(const PieceColor player_color) const {
   return (*pieces_in_hand_.find(player_color)).second;
 }
 
-void Game::AddListener(GameListener* listener) {
-  listeners_.push_back(listener);
-}
-
-void Game::RemoveListener(GameListener* listener) {
-  for (ListenerIter it = listeners_.begin(); it != listeners_.end(); ++it) {
-    if (*it == listener) {
-      listeners_.erase(it);
-      break;
-    }
-  }
-}
-
 void Game::FireOnGameInitialized() {
-  for (ListenerIter it = listeners_.begin(); it != listeners_.end(); ++it) {
+  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
     (*it)->OnGameInitialized();
   }
 }
 
 void Game::FireOnPlayerAction(const PlayerAction& action) {
-  for (ListenerIter it = listeners_.begin(); it != listeners_.end(); ++it) {
+  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
     (*it)->OnPlayerAction(action);
   }
 }
 
 void Game::FireOnUndoAction(const PlayerAction& action) {
-  for (ListenerIter it = listeners_.begin(); it != listeners_.end(); ++it) {
+  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
     (*it)->OnUndoPlayerAction(action);
   }
 }
 
 void Game::FireOnGameOver(PieceColor winner) {
-  for (ListenerIter it = listeners_.begin(); it != listeners_.end(); ++it) {
+  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
     (*it)->OnGameOver(winner);
   }
 }

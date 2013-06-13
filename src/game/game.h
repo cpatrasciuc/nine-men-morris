@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "base/basic_macros.h"
+#include "base/supports_listener.h"
 #include "game/board.h"
 #include "game/game_export.h"
 #include "game/game_options.h"
@@ -21,7 +22,7 @@ namespace game {
 
 class GameListener;
 
-class GAME_EXPORT Game {
+class GAME_EXPORT Game : public base::SupportsListener<GameListener> {
  public:
   explicit Game(const GameOptions& game_options);
 
@@ -72,11 +73,6 @@ class GAME_EXPORT Game {
   // they were executed. |actions| is not cleared before appending to it.
   void DumpActionList(std::vector<PlayerAction>* actions) const;
 
-  // These methods allow the clients to (un)register game listeners that will be
-  // notified about various events that take place during the course of a game.
-  void AddListener(GameListener* listener);
-  void RemoveListener(GameListener* listener);
-
   // Utility method that returns the number of pieces that a player starts with
   // based on the game type.
   static int GetInitialPieceCountByGameType(GameType type);
@@ -124,9 +120,6 @@ class GAME_EXPORT Game {
 
   // Once the game is over, stores the winning color.
   PieceColor winner_;
-
-  // Registered game listeners.
-  std::deque<GameListener*> listeners_;
 
   DISALLOW_COPY_AND_ASSIGN(Game);
 };
