@@ -6,6 +6,7 @@
 #define GRAPHICS_PLAYER_DELEGATE_H_
 
 #include "base/basic_macros.h"
+#include "base/callable.h"
 #include "game/player_action.h"
 #include "graphics/graphics_export.h"
 
@@ -15,15 +16,19 @@ class Game;
 
 namespace graphics {
 
+typedef base::Callable<void(const game::PlayerAction&)> PlayerActionCallback;
+
 class GRAPHICS_EXPORT PlayerDelegate {
  public:
   virtual ~PlayerDelegate();
 
-  virtual game::PlayerAction PlayerActionRequested(
-      const game::Game& game_model) = 0;
+  virtual void RequestAction(const game::Game& game_model,
+                             PlayerActionCallback* callback) = 0;
 
  protected:
   explicit PlayerDelegate(game::PieceColor color);
+
+  game::PieceColor color() const { return color_; }
 
  private:
   game::PieceColor color_;

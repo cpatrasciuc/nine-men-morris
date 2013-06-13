@@ -15,6 +15,8 @@
 
 namespace graphics {
 
+class PlayerDelegate;
+
 class GRAPHICS_EXPORT PlayingState : public GameState {
  public:
   explicit PlayingState(OgreApp* app,
@@ -34,9 +36,14 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
   virtual bool mouseReleased(const OIS::MouseEvent& event,
                              OIS::MouseButtonID id);
 
+  void InitializePlayers();
+  void RequestPlayerAction();
+
   game::Game game_;
   base::ptr::scoped_ptr<BoardRenderer> board_renderer_;
   CameraController camera_controller_;
+  PlayerDelegate* white_player_;
+  PlayerDelegate* black_player_;
 };
 
 }  // namespace graphics

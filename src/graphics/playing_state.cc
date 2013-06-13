@@ -4,10 +4,13 @@
 
 #include "graphics/playing_state.h"
 
+#include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
 #include "graphics/board_renderer.h"
+#include "graphics/human_player.h"
 #include "graphics/ogre_app.h"
+#include "graphics/player_delegate.h"
 
 #include "OGRE/OgreSceneManager.h"
 #include "OGRE/OgreSceneNode.h"
@@ -18,7 +21,9 @@ PlayingState::PlayingState(OgreApp* app, game::GameOptions game_options)
     : GameState(app),
       game_(game_options),
       board_renderer_(new BoardRenderer(app, game_)),
-      camera_controller_() {}
+      camera_controller_(),
+      white_player_(NULL),
+      black_player_(NULL) {}
 
 bool PlayingState::Initialize() {
   board_renderer_->Initialize();
@@ -26,6 +31,8 @@ bool PlayingState::Initialize() {
   camera_controller_.set_max_distance(200);
   camera_controller_.set_camera(app()->camera());
   game_.Initialize();
+  InitializePlayers();
+  RequestPlayerAction();
   return true;
 }
 
@@ -60,6 +67,22 @@ bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
                                  OIS::MouseButtonID id) {
   camera_controller_.mouseReleased(event, id);
   return true;
+}
+
+void PlayingState::InitializePlayers() {
+  HumanPlayer* human_player = new HumanPlayer(game::WHITE_COLOR);
+  human_player->set_board_view(Get(board_renderer_));
+  white_player_ = human_player;
+
+  human_player = new HumanPlayer(game::WHITE_COLOR);
+  human_player->set_board_view(Get(board_renderer_));
+  black_player_ = human_player;
+}
+
+void PlayingState::RequestPlayerAction() {
+  PlayerDelegate* player = game_.current_player() == game::WHITE_COLOR ?
+      white_player_ : black_player_;
+  player->RequestAction(game_, NULL);
 }
 
 }  // namespace graphics

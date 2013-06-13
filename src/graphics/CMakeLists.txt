@@ -20,10 +20,14 @@ set(GRAPHICS_SOURCE_FILES
   game_state.cc
   game_state.h
   graphics_export.h
+  human_player.cc
+  human_player.h
   ogre_app.cc
   ogre_app.h
   playing_state.cc
   playing_state.h
+  player_delegate.cc
+  player_delegate.h
 )
 
 set(GRAPHICS_UNITTESTS_SOURCE_FILES
