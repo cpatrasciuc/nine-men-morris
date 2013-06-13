@@ -25,7 +25,7 @@ class GRAPHICS_EXPORT HumanPlayer
  private:
   // PlayerDelegate interface
   virtual void RequestAction(const game::Game& game_model,
-                               PlayerActionCallback* callback);
+                             PlayerActionCallback* callback);
 
   // BoardRenderer::SelectionListener interface
   virtual void OnLocationSelected(const game::BoardLocation& location);
