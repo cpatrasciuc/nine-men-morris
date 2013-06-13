@@ -46,7 +46,8 @@ class SelectionListener {
 };
 
 class GRAPHICS_EXPORT BoardRenderer
-    : public OIS::MouseListener, base::SupportsListener<SelectionListener> {
+    : public OIS::MouseListener,
+      public base::SupportsListener<SelectionListener> {
  public:
   enum SelectionType {
     NONE = 0,
