@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
   graphics::OgreApp app("Temp test for OgreApp");
   app.Init();
   game::GameOptions options;
-  options.set_game_type(game::SIX_MEN_MORRIS);
+  options.set_game_type(game::NINE_MEN_MORRIS);
   // EmptyGameState game_state(&app);
   graphics::PlayingState game_state(&app, options);
   app.PushState(&game_state);
