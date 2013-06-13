@@ -39,6 +39,7 @@ set(BASE_SOURCE_FILES
   random.h
   string_util.cc
   string_util.h
+  supports_listener.h
   threading/atomic.h
   threading/condition_variable.cc
   threading/condition_variable.h
@@ -72,6 +73,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
   ptr/weak_ptr_unittest.cc
   random_unittest.cc
   string_util_unittest.cc
+  supports_listener_unittest.cc
   threading/atomic_unittest.cc
   threading/condition_variable_unittest.cc
   threading/task_unittest.cc
