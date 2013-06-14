@@ -310,15 +310,19 @@ void BoardView::InitializePieces() {
 }
 
 void BoardView::FireOnLocationSelected(const game::BoardLocation& loc) {
+  typedef base::SupportsListener<SelectionListener>::ListenerList ListenerList;
   typedef base::SupportsListener<SelectionListener>::ListenerIter ListenerIter;
-  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
+  const ListenerList list(listeners());
+  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
     (*it)->OnLocationSelected(loc);
   }
 }
 
 void BoardView::FireOnSelectionCleared() {
+  typedef base::SupportsListener<SelectionListener>::ListenerList ListenerList;
   typedef base::SupportsListener<SelectionListener>::ListenerIter ListenerIter;
-  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
+  const ListenerList list(listeners());
+  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
     (*it)->OnSelectionCleared();
   }
 }
