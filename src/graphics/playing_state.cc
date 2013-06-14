@@ -7,6 +7,7 @@
 #include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
+#include "game/player_action.h"
 #include "graphics/board_view.h"
 #include "graphics/human_player.h"
 #include "graphics/ogre_app.h"
@@ -85,6 +86,10 @@ void PlayingState::RequestPlayerAction() {
   PlayerDelegate* player = game_.current_player() == game::WHITE_COLOR ?
       white_player_ : black_player_;
   player->RequestAction(game_, NULL);
+}
+
+void PlayingState::ExecuteAction(const game::PlayerAction& action) {
+  game_.ExecutePlayerAction(action);
 }
 
 }  // namespace graphics

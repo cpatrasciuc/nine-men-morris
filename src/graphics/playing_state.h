@@ -13,6 +13,10 @@
 #include "graphics/game_state.h"
 #include "graphics/graphics_export.h"
 
+namespace game {
+class PlayerAction;
+}
+
 namespace graphics {
 
 class PlayerDelegate;
@@ -38,6 +42,8 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
 
   void InitializePlayers();
   void RequestPlayerAction();
+
+  void ExecuteAction(const game::PlayerAction& action);
 
   game::Game game_;
   base::ptr::scoped_ptr<BoardView> board_view_;
