@@ -4,7 +4,9 @@
 
 #include "graphics/playing_state.h"
 
+#include "base/bind.h"
 #include "base/log.h"
+#include "base/method.h"
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
 #include "game/player_action.h"
@@ -83,9 +85,12 @@ void PlayingState::InitializePlayers() {
 }
 
 void PlayingState::RequestPlayerAction() {
+  typedef void(PlayingState::*ExecuteActionSig)(const game::PlayerAction&);
+  PlayerActionCallback* callback = base::Bind(
+      new base::Method<ExecuteActionSig>(&PlayingState::ExecuteAction), this);
   PlayerDelegate* player = game_.current_player() == game::WHITE_COLOR ?
       white_player_ : black_player_;
-  player->RequestAction(game_, NULL);
+  player->RequestAction(game_, std::auto_ptr<PlayerActionCallback>(callback));
 }
 
 void PlayingState::ExecuteAction(const game::PlayerAction& action) {

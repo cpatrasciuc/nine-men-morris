@@ -5,6 +5,8 @@
 #ifndef GRAPHICS_PLAYER_DELEGATE_H_
 #define GRAPHICS_PLAYER_DELEGATE_H_
 
+#include <memory>
+
 #include "base/basic_macros.h"
 #include "base/callable.h"
 #include "game/player_action.h"
@@ -23,7 +25,7 @@ class GRAPHICS_EXPORT PlayerDelegate {
   virtual ~PlayerDelegate();
 
   virtual void RequestAction(const game::Game& game_model,
-                             PlayerActionCallback* callback) = 0;
+                             std::auto_ptr<PlayerActionCallback> callback) = 0;
 
  protected:
   explicit PlayerDelegate(game::PieceColor color);

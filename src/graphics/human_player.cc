@@ -4,6 +4,8 @@
 
 #include "graphics/human_player.h"
 
+#include <memory>
+
 #include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
@@ -16,11 +18,12 @@
 namespace graphics {
 
 HumanPlayer::HumanPlayer(game::PieceColor color)
-    : PlayerDelegate(color), view_(NULL), action_(NULL) {}
+    : PlayerDelegate(color), view_(NULL), action_(NULL), callback_(NULL) {}
 
 void HumanPlayer::RequestAction(const game::Game& game_model,
-                                PlayerActionCallback* callback) {
+                                std::auto_ptr<PlayerActionCallback> callback) {
   DCHECK(view_);
+  callback_ = callback;
   view_->AddListener(this);
   // TODO(human_player): Temporary implementation for test.
   view_->SetSelectionType(BoardView::EMPTY_LOCATION);
@@ -30,10 +33,28 @@ void HumanPlayer::RequestAction(const game::Game& game_model,
 
 void HumanPlayer::OnLocationSelected(const game::BoardLocation& location) {
   DCHECK(Get(action_));
-  action_->set_destination(location);
-  LOG(INFO) << location;
+  switch (action_->type()) {
+    case game::PlayerAction::PLACE_PIECE:
+      action_->set_destination(location);
+      ExecuteAction();
+      break;
+    case game::PlayerAction::MOVE_PIECE:
+    case game::PlayerAction::REMOVE_PIECE:
+      NOTREACHED();
+      break;
+  }
 }
 
 void HumanPlayer::OnSelectionCleared() {}
+
+void HumanPlayer::ExecuteAction() {
+  DCHECK(callback_.get());
+  DCHECK(Get(action_));
+  view_->RemoveListener(this);
+  view_->SetSelectionType(BoardView::NONE);
+  (*callback_)(*Get(action_));
+  Reset(action_);
+  callback_.reset();
+}
 
 }  // namespace graphics

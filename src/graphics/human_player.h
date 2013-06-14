@@ -5,6 +5,8 @@
 #ifndef GRAPHICS_HUMAN_PLAYER_H_
 #define GRAPHICS_HUMAN_PLAYER_H_
 
+#include <memory>
+
 #include "base/basic_macros.h"
 #include "base/ptr/scoped_ptr.h"
 #include "game/piece_color.h"
@@ -27,15 +29,18 @@ class GRAPHICS_EXPORT HumanPlayer
  private:
   // PlayerDelegate interface
   virtual void RequestAction(const game::Game& game_model,
-                             PlayerActionCallback* callback);
+                             std::auto_ptr<PlayerActionCallback> callback);
 
   // BoardRenderer::SelectionListener interface
   virtual void OnLocationSelected(const game::BoardLocation& location);
   virtual void OnSelectionCleared();
 
+  void ExecuteAction();
+
   BoardView* view_;
 
   base::ptr::scoped_ptr<game::PlayerAction> action_;
+  std::auto_ptr<PlayerActionCallback> callback_;
 
   DISALLOW_COPY_AND_ASSIGN(HumanPlayer);
 };
