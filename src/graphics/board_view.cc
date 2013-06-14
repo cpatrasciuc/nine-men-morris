@@ -148,9 +148,7 @@ void BoardView::Initialize() {
 
 void BoardView::SetSelectionType(unsigned int selection_type) {
   selection_type_ = selection_type;
-  if (selection_type_ == NONE) {
-    ClearSelection();
-  }
+  ClearSelection();
   // TODO(board_renderer): For REMOVABLE_* determine the selectable items.
   // TODO(board_renderer): Trigger a ray cast; don't wait for mouse movement.
 }
