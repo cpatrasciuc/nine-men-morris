@@ -14,7 +14,6 @@
 #include "graphics/graphics_export.h"
 
 #include "OGRE/OgreTexture.h"
-#include "OGRE/OgreVector3.h"
 
 #include "OIS/OISMouse.h"
 
@@ -27,6 +26,7 @@ class PlayerAction;
 namespace Ogre {
 class MovableObject;
 class SceneNode;
+class Vector3;
 }
 
 namespace graphics {
@@ -78,7 +78,7 @@ class GRAPHICS_EXPORT BoardView
 
   std::map<Ogre::MovableObject*, game::BoardLocation> loc_map_;
   std::map<game::BoardLocation, Ogre::SceneNode*> pieces_;
-  std::map<game::BoardLocation, const Ogre::Vector3> positions_;
+  std::map<game::BoardLocation, const Ogre::Vector3*> positions_;
 
   std::map<game::BoardLocation, int> white_pieces_;
   std::map<game::BoardLocation, int> black_pieces_;

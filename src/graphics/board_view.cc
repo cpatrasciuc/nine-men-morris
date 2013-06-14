@@ -149,7 +149,8 @@ void BoardView::Initialize() {
     sphere_node->setScale(scale, 0.001, scale);
     sphere_entity->setVisible(false);
     loc_map_.insert(std::make_pair(sphere_entity, locations[i]));
-    positions_.insert(std::make_pair(locations[i], sphere_node->getPosition()));
+    positions_.insert(std::make_pair(locations[i],
+                                     &sphere_node->getPosition()));
   }
 
   InitializePieces();
@@ -347,7 +348,7 @@ void BoardView::ClearSelection() {
 }
 
 void BoardView::OnPlayerAction(const game::PlayerAction& action) {
-  std::map<game::BoardLocation, const Ogre::Vector3>::iterator it;
+  std::map<game::BoardLocation, const Ogre::Vector3*>::iterator it;
   const game::PieceColor player = action.player_color();
   Ogre::SceneNode* piece = NULL;
   Ogre::SceneNode* parent = NULL;
@@ -361,7 +362,7 @@ void BoardView::OnPlayerAction(const game::PlayerAction& action) {
       piece = static_cast<Ogre::SceneNode*>(parent->getChild(*piece_index));
       it = positions_.find(action.destination());
       DCHECK(it != positions_.end());
-      piece->setPosition(it->second);
+      piece->setPosition(*(it->second));
       piece->setVisible(true, true);
       white_pieces_[action.destination()] = *piece_index;
       ++(*piece_index);
