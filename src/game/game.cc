@@ -15,6 +15,7 @@
 
 namespace game {
 
+typedef base::SupportsListener<GameListener>::ListenerList ListenerList;
 typedef base::SupportsListener<GameListener>::ListenerIter ListenerIter;
 
 Game::Game(const GameOptions& game_options)
@@ -186,25 +187,29 @@ int Game::GetPiecesInHand(const PieceColor player_color) const {
 }
 
 void Game::FireOnGameInitialized() {
-  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
+  const ListenerList list(listeners());
+  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
     (*it)->OnGameInitialized();
   }
 }
 
 void Game::FireOnPlayerAction(const PlayerAction& action) {
-  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
+  const ListenerList list(listeners());
+  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
     (*it)->OnPlayerAction(action);
   }
 }
 
 void Game::FireOnUndoAction(const PlayerAction& action) {
-  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
+  const ListenerList list(listeners());
+  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
     (*it)->OnUndoPlayerAction(action);
   }
 }
 
 void Game::FireOnGameOver(PieceColor winner) {
-  for (ListenerIter it = listeners().begin(); it != listeners().end(); ++it) {
+  const ListenerList list(listeners());
+  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
     (*it)->OnGameOver(winner);
   }
 }
