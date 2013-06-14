@@ -10,19 +10,21 @@
 
 #include "base/basic_macros.h"
 #include "base/supports_listener.h"
+#include "game/game_listener.h"
 #include "graphics/graphics_export.h"
 
 #include "OGRE/OgreTexture.h"
+#include "OGRE/OgreVector3.h"
 
 #include "OIS/OISMouse.h"
 
 namespace game {
 class BoardLocation;
 class Game;
+class PlayerAction;
 }
 
 namespace Ogre {
-class Entity;
 class MovableObject;
 class SceneNode;
 }
@@ -34,6 +36,7 @@ class SelectionListener;
 
 class GRAPHICS_EXPORT BoardView
     : public OIS::MouseListener,
+      public game::GameListener,
       public base::SupportsListener<SelectionListener> {
  public:
   enum SelectionType {
@@ -67,9 +70,24 @@ class GRAPHICS_EXPORT BoardView
   void FireOnSelectionCleared();
   void ClearSelection();
 
+  // game::GameListener overrides
+  virtual void OnPlayerAction(const game::PlayerAction& action);
+
   OgreApp* app_;
   const game::Game& game_;
+
   std::map<Ogre::MovableObject*, game::BoardLocation> loc_map_;
+  std::map<game::BoardLocation, Ogre::SceneNode*> pieces_;
+  std::map<game::BoardLocation, const Ogre::Vector3> positions_;
+
+  std::map<game::BoardLocation, int> white_pieces_;
+  std::map<game::BoardLocation, int> black_pieces_;
+
+  int white_place_index_;
+  int black_place_index_;
+
+  Ogre::SceneNode* white_node_;
+  Ogre::SceneNode* black_node_;
 
   Ogre::MovableObject* temp_selected_location_;
   Ogre::MovableObject* selected_location_;

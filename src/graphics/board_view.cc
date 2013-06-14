@@ -9,12 +9,15 @@
 #include <string>
 #include <vector>
 
+#include "base/log.h"
 #include "base/string_util.h"
 #include "base/supports_listener.h"
 
 #include "game/board.h"
 #include "game/board_location.h"
 #include "game/game.h"
+#include "game/piece_color.h"
+#include "game/player_action.h"
 
 #include "graphics/board_utils.h"
 #include "graphics/ogre_app.h"
@@ -65,6 +68,10 @@ const int kBoardTextureSize = 3;
 BoardView::BoardView(OgreApp* app, const game::Game& game_model)
     : app_(app),
       game_(game_model),
+      white_place_index_(0),
+      black_place_index_(0),
+      white_node_(NULL),
+      black_node_(NULL),
       temp_selected_location_(NULL),
       selected_location_(NULL),
       selection_type_(NONE) {}
@@ -125,6 +132,7 @@ void BoardView::Initialize() {
   sphere_material->setDepthWriteEnabled(false);
 
   for (size_t i = 0; i < locations.size(); ++i) {
+    // TODO(board_view): Don't add these directly under the scene root node.
     const std::string name = "Location" + base::ToString(i);
     Ogre::Entity* sphere_entity =
         scene_manager->createEntity(name, Ogre::SceneManager::PT_SPHERE);
@@ -141,6 +149,7 @@ void BoardView::Initialize() {
     sphere_node->setScale(scale, 0.001, scale);
     sphere_entity->setVisible(false);
     loc_map_.insert(std::make_pair(sphere_entity, locations[i]));
+    positions_.insert(std::make_pair(locations[i], sphere_node->getPosition()));
   }
 
   InitializePieces();
@@ -289,6 +298,8 @@ void BoardView::InitializePieces() {
   Ogre::SceneManager* const scene_mgr = app_->scene_manager();
   Ogre::SceneNode* const all_pieces =
       scene_mgr->getRootSceneNode()->createChildSceneNode(kAllPiecesNodeName);
+  white_node_ = all_pieces->createChildSceneNode("AllWhitePieces");
+  black_node_ = all_pieces->createChildSceneNode("AllBlackPieces");
   const int piece_count =
       game_.GetInitialPieceCountByGameType(game_.options().game_type());
 
@@ -298,13 +309,13 @@ void BoardView::InitializePieces() {
         "WhitePiece" + index_str, mesh_name);
     entity->setMaterial(white_material);
     entity->setVisible(false);
-    Ogre::SceneNode* piece_node = all_pieces->createChildSceneNode();
+    Ogre::SceneNode* piece_node = white_node_->createChildSceneNode();
     piece_node->attachObject(entity);
 
     entity = scene_mgr->createEntity("BlackPiece" + index_str, mesh_name);
     entity->setMaterial(black_material);
     entity->setVisible(false);
-    piece_node = all_pieces->createChildSceneNode();
+    piece_node = black_node_->createChildSceneNode();
     piece_node->attachObject(entity);
   }
 }
@@ -332,6 +343,32 @@ void BoardView::ClearSelection() {
     selected_location_->setVisible(false);
     selected_location_ = NULL;
     FireOnSelectionCleared();
+  }
+}
+
+void BoardView::OnPlayerAction(const game::PlayerAction& action) {
+  std::map<game::BoardLocation, const Ogre::Vector3>::iterator it;
+  const game::PieceColor player = action.player_color();
+  Ogre::SceneNode* piece = NULL;
+  Ogre::SceneNode* parent = NULL;
+  int* piece_index = NULL;
+
+  switch (action.type()) {
+    case game::PlayerAction::PLACE_PIECE:
+      piece_index = (player == game::WHITE_COLOR ?
+          &white_place_index_ : &black_place_index_);
+      parent = player == game::WHITE_COLOR ? white_node_ : black_node_;
+      piece = static_cast<Ogre::SceneNode*>(parent->getChild(*piece_index));
+      it = positions_.find(action.destination());
+      DCHECK(it != positions_.end());
+      piece->setPosition(it->second);
+      piece->setVisible(true, true);
+      white_pieces_[action.destination()] = *piece_index;
+      ++(*piece_index);
+      break;
+    case game::PlayerAction::MOVE_PIECE:
+    case game::PlayerAction::REMOVE_PIECE:
+      NOTREACHED();
   }
 }
 

@@ -33,6 +33,7 @@ bool PlayingState::Initialize() {
   camera_controller_.set_min_distance(50);
   camera_controller_.set_max_distance(200);
   camera_controller_.set_camera(app()->camera());
+  game_.AddListener(Get(board_view_));
   game_.Initialize();
   InitializePlayers();
   RequestPlayerAction();
