@@ -39,7 +39,12 @@ class SupportsListener {
  protected:
   SupportsListener() : listeners_() {}
 
-  const ListenerList& listeners() const { return listeners_; }
+  // This returns a copy of the listener list so that external users cannot
+  // modify it directly. When a listener is notified, it can remove itself from
+  // the listener list using RemoveListener(). If there would be external users
+  // of this class iterating through the listener list when the removal occurs,
+  // the application would crash.
+  const ListenerList listeners() const { return listeners_; }
 
  private:
   ListenerList listeners_;
