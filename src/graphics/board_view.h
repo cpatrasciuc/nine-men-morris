@@ -63,7 +63,7 @@ class GRAPHICS_EXPORT BoardView
 
   void Initialize();
 
-  void SetSelectionType(const SelectionType& selection_type);
+  void SetSelectionType(unsigned int selection_type);
 
   // MouseListener interface
   virtual bool mouseMoved(const OIS::MouseEvent& event);
@@ -86,7 +86,7 @@ class GRAPHICS_EXPORT BoardView
 
   Ogre::MovableObject* temp_selected_location_;
   Ogre::MovableObject* selected_location_;
-  SelectionType selection_type_;
+  unsigned int selection_type_;
   std::deque<SelectionListener*> listeners_;
 
   DISALLOW_COPY_AND_ASSIGN(BoardView);

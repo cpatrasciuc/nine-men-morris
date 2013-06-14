@@ -139,6 +139,7 @@ void BoardView::Initialize() {
     sphere_node->setPosition(pos * multiplier);
     sphere_entity->setMaterial(sphere_material);
     sphere_entity->setCastShadows(false);
+    sphere_entity->setQueryFlags(EMPTY_LOCATION);
     const double scale = 0.005f / game_.board().size() * multiplier * 5;
     sphere_node->setScale(scale, 0.001, scale);
     sphere_entity->setVisible(false);
@@ -148,7 +149,7 @@ void BoardView::Initialize() {
   InitializePieces();
 }
 
-void BoardView::SetSelectionType(const SelectionType& selection_type) {
+void BoardView::SetSelectionType(unsigned int selection_type) {
   selection_type_ = selection_type;
   if (selection_type_ == NONE) {
     ClearSelection();
@@ -173,6 +174,7 @@ bool BoardView::mouseMoved(const OIS::MouseEvent& event) {
       mouse_state.Y.abs / double(mouse_state.height));
   Ogre::RaySceneQuery* ray_scene_query = scene_manager->createRayQuery(ray);
   ray_scene_query->setSortByDistance(true);
+  ray_scene_query->setQueryMask(selection_type_);
   const Ogre::RaySceneQueryResult query_result = ray_scene_query->execute();
   for (size_t i = 0; i < query_result.size(); ++i) {
     if (!query_result[i].movable) {
