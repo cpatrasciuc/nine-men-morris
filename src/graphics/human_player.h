@@ -11,9 +11,11 @@
 #include "game/player_action.h"
 #include "graphics/graphics_export.h"
 #include "graphics/player_delegate.h"
-#include "graphics/board_view.h"
+#include "graphics/selection_listener.h"
 
 namespace graphics {
+
+class BoardView;
 
 class GRAPHICS_EXPORT HumanPlayer
     : public PlayerDelegate, public SelectionListener {

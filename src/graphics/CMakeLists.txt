@@ -28,6 +28,8 @@ set(GRAPHICS_SOURCE_FILES
   playing_state.h
   player_delegate.cc
   player_delegate.h
+  selection_listener.cc
+  selection_listener.h
 )
 
 set(GRAPHICS_UNITTESTS_SOURCE_FILES

@@ -18,6 +18,7 @@
 
 #include "graphics/board_utils.h"
 #include "graphics/ogre_app.h"
+#include "graphics/selection_listener.h"
 
 #include "OGRE/OgreCamera.h"
 #include "OGRE/OgreColourValue.h"
@@ -60,10 +61,6 @@ const char kBlackPieceMaterialName[] = "BlackPieceMaterial";
 const int kBoardTextureSize = 3;
 
 }  // anonymous namespace
-
-SelectionListener::SelectionListener() {}
-
-SelectionListener::~SelectionListener() {}
 
 BoardView::BoardView(OgreApp* app, const game::Game& game_model)
     : app_(app),

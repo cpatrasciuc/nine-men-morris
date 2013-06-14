@@ -30,20 +30,7 @@ class SceneNode;
 namespace graphics {
 
 class OgreApp;
-
-class SelectionListener {
- public:
-  virtual ~SelectionListener();
-
-  virtual void OnLocationSelected(const game::BoardLocation& location) = 0;
-  virtual void OnSelectionCleared() = 0;
-
- protected:
-  SelectionListener();
-
- private:
-  DISALLOW_COPY_AND_ASSIGN(SelectionListener);
-};
+class SelectionListener;
 
 class GRAPHICS_EXPORT BoardView
     : public OIS::MouseListener,
@@ -87,7 +74,6 @@ class GRAPHICS_EXPORT BoardView
   Ogre::MovableObject* temp_selected_location_;
   Ogre::MovableObject* selected_location_;
   unsigned int selection_type_;
-  std::deque<SelectionListener*> listeners_;
 
   DISALLOW_COPY_AND_ASSIGN(BoardView);
 };

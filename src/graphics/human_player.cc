@@ -9,7 +9,9 @@
 #include "game/game.h"
 #include "game/piece_color.h"
 #include "game/player_action.h"
+#include "graphics/board_view.h"
 #include "graphics/player_delegate.h"
+#include "graphics/selection_listener.h"
 
 namespace graphics {
 
