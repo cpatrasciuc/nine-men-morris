@@ -69,7 +69,7 @@ class GRAPHICS_EXPORT BoardView
   typedef std::map<game::BoardLocation, int> IndexMap;
 
   void GenerateBoardTexture();
-  void InitializePieces();
+  void InitializePieces(Ogre::SceneNode* board_view_root);
 
   void FireOnLocationSelected(const game::BoardLocation& location);
   void FireOnSelectionCleared();

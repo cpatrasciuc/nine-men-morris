@@ -52,6 +52,7 @@ const char kBoardEntityName[] = "BoardEntity";
 const char kBoardMaterialName[] = "BoardMaterial";
 const char kBoardPlaneName[] = "BoardPlane";
 const char kBoardTextureName[] = "BoardTexture";
+const char kBoardViewRootNodeName[] = "BoardViewRoot";
 const char kLocationMaterialName[] = "LocationMaterial";
 const char kAllPiecesNodeName[] = "AllPieces";
 const char kMainLightName[] = "MainLight";
@@ -91,6 +92,8 @@ BoardView::~BoardView() {
   Ogre::MaterialManager::getSingleton().remove(kBlackPieceMaterialName);
   Ogre::MeshManager::getSingleton().remove(kBoardPlaneName);
   Ogre::TextureManager::getSingleton().remove(kBoardTextureName);
+  app_->scene_manager()->getRootSceneNode()
+      ->removeAndDestroyChild(kBoardViewRootNodeName);
 }
 
 void BoardView::Initialize() {
@@ -122,7 +125,8 @@ void BoardView::Initialize() {
   Ogre::Entity* const board_entity =
       scene_manager->createEntity(kBoardEntityName, kBoardPlaneName);
   board_entity->setQueryFlags(0);
-  Ogre::SceneNode* const root = scene_manager->getRootSceneNode();
+  Ogre::SceneNode* root = scene_manager->getRootSceneNode();
+  root = root->createChildSceneNode(kBoardViewRootNodeName);
   root->createChildSceneNode()->attachObject(board_entity);
 
   Ogre::MaterialPtr board_material =
@@ -141,12 +145,12 @@ void BoardView::Initialize() {
   sphere_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
   sphere_material->setDepthWriteEnabled(false);
 
+  Ogre::SceneNode* locations_node = root->createChildSceneNode("Locations");
   for (size_t i = 0; i < locations.size(); ++i) {
-    // TODO(board_view): Don't add these directly under the scene root node.
     const std::string name = "Location" + base::ToString(i);
     Ogre::Entity* sphere_entity =
         scene_manager->createEntity(name, Ogre::SceneManager::PT_SPHERE);
-    Ogre::SceneNode* sphere_node = root->createChildSceneNode();
+    Ogre::SceneNode* sphere_node = locations_node->createChildSceneNode();
     sphere_node->attachObject(sphere_entity);
     Ogre::Vector3 pos = BoardLocationTo3DCoord(locations[i], game_.board());
     pos.z = pos.y;
@@ -164,7 +168,7 @@ void BoardView::Initialize() {
                                      &sphere_node->getPosition()));
   }
 
-  InitializePieces();
+  InitializePieces(root);
 
   std::vector<game::PlayerAction> actions;
   game_.DumpActionList(&actions);
@@ -278,7 +282,7 @@ void BoardView::GenerateBoardTexture() {
   app_->ogre_root()->destroySceneManager(scene_manager);
 }
 
-void BoardView::InitializePieces() {
+void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
   Ogre::MaterialPtr white_material =
       Ogre::MaterialManager::getSingleton().create(kWhitePieceMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -292,7 +296,7 @@ void BoardView::InitializePieces() {
   const std::string mesh_name("piece.mesh");
   Ogre::SceneManager* const scene_mgr = app_->scene_manager();
   Ogre::SceneNode* const all_pieces =
-      scene_mgr->getRootSceneNode()->createChildSceneNode(kAllPiecesNodeName);
+      board_view_root->createChildSceneNode(kAllPiecesNodeName);
   white_pieces_ = all_pieces->createChildSceneNode("AllWhitePieces");
   black_pieces_ = all_pieces->createChildSceneNode("AllBlackPieces");
   const int piece_count =
