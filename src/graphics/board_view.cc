@@ -182,39 +182,6 @@ bool BoardView::mouseMoved(const OIS::MouseEvent& event) {
   return true;
 }
 
-void BoardView::UpdateSelection() {
-  if (selection_type_ == NONE) {
-    return;
-  }
-  if (temp_selected_location_) {
-    temp_selected_location_->setVisible(false);
-    temp_selected_location_ = NULL;
-  }
-  Ogre::SceneManager* const scene_manager = app_->scene_manager();
-  Ogre::Camera* const camera = app_->camera();
-  const OIS::MouseState& mouse_state = app_->mouse().getMouseState();
-  const Ogre::Ray ray = camera->getCameraToViewportRay(
-      mouse_state.X.abs / double(mouse_state.width),
-      mouse_state.Y.abs / double(mouse_state.height));
-  Ogre::RaySceneQuery* ray_scene_query = scene_manager->createRayQuery(ray);
-  ray_scene_query->setSortByDistance(true);
-  ray_scene_query->setQueryMask(selection_type_);
-  const Ogre::RaySceneQueryResult query_result = ray_scene_query->execute();
-  for (size_t i = 0; i < query_result.size(); ++i) {
-    if (!query_result[i].movable) {
-      continue;
-    }
-    // TODO(selection): Replace this test with query mask bits
-    if (query_result[i].movable->getName().substr(0, 8) != "Location") {
-      continue;
-    }
-    temp_selected_location_ = query_result[i].movable;
-    temp_selected_location_->setVisible(true);
-    break;
-  }
-  scene_manager->destroyQuery(ray_scene_query);
-}
-
 bool BoardView::mousePressed(const OIS::MouseEvent& event,
                                  OIS::MouseButtonID id) {
   return true;
@@ -492,6 +459,39 @@ void BoardView::RemovePiece(const game::BoardLocation& from,
   piece_node->setVisible(false, true);
   IndexMap* index_map = GetIndexMapByColor(color);
   index_map->erase(from);
+}
+
+void BoardView::UpdateSelection() {
+  if (selection_type_ == NONE) {
+    return;
+  }
+  if (temp_selected_location_) {
+    temp_selected_location_->setVisible(false);
+    temp_selected_location_ = NULL;
+  }
+  Ogre::SceneManager* const scene_manager = app_->scene_manager();
+  Ogre::Camera* const camera = app_->camera();
+  const OIS::MouseState& mouse_state = app_->mouse().getMouseState();
+  const Ogre::Ray ray = camera->getCameraToViewportRay(
+      mouse_state.X.abs / double(mouse_state.width),
+      mouse_state.Y.abs / double(mouse_state.height));
+  Ogre::RaySceneQuery* ray_scene_query = scene_manager->createRayQuery(ray);
+  ray_scene_query->setSortByDistance(true);
+  ray_scene_query->setQueryMask(selection_type_);
+  const Ogre::RaySceneQueryResult query_result = ray_scene_query->execute();
+  for (size_t i = 0; i < query_result.size(); ++i) {
+    if (!query_result[i].movable) {
+      continue;
+    }
+    // TODO(selection): Replace this test with query mask bits
+    if (query_result[i].movable->getName().substr(0, 8) != "Location") {
+      continue;
+    }
+    temp_selected_location_ = query_result[i].movable;
+    temp_selected_location_->setVisible(true);
+    break;
+  }
+  scene_manager->destroyQuery(ray_scene_query);
 }
 
 }  // namespace graphics
