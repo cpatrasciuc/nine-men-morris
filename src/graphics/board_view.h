@@ -80,7 +80,7 @@ class GRAPHICS_EXPORT BoardView
   const game::Game& game_;
 
   std::map<Ogre::MovableObject*, game::BoardLocation> loc_map_;
-  std::map<game::BoardLocation, Ogre::MovableObject*> reverse_loc_map;
+  std::map<game::BoardLocation, Ogre::MovableObject*> reverse_loc_map_;
   std::map<game::BoardLocation, Ogre::SceneNode*> pieces_;
   std::map<game::BoardLocation, const Ogre::Vector3*> positions_;
 

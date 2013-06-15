@@ -149,7 +149,7 @@ void BoardView::Initialize() {
     sphere_node->setScale(scale, 0.001, scale);
     sphere_entity->setVisible(false);
     loc_map_.insert(std::make_pair(sphere_entity, locations[i]));
-    reverse_loc_map.insert(std::make_pair(locations[i], sphere_entity));
+    reverse_loc_map_.insert(std::make_pair(locations[i], sphere_entity));
     positions_.insert(std::make_pair(locations[i],
                                      &sphere_node->getPosition()));
   }
@@ -377,7 +377,7 @@ void BoardView::UpdateRemovablePieces(game::PieceColor color) {
 
   for (size_t i = 0; i < locations.size(); ++i) {
     if (game_.board().GetPieceAt(locations[i]) == color) {
-      Ogre::MovableObject* location = reverse_loc_map[locations[i]];
+      Ogre::MovableObject* location = reverse_loc_map_[locations[i]];
       if (game_.board().IsPartOfMill(locations[i]) && !can_remove_from_mill) {
         location->setQueryFlags(unremovable_piece);
       } else {
@@ -410,13 +410,13 @@ void BoardView::OnPlayerAction(const game::PlayerAction& action) {
           player == game::WHITE_COLOR ? &white_pieces_ : &black_pieces_;
       (*pieces_map)[action.destination()] = *piece_index;
       ++(*piece_index);
-      location = reverse_loc_map[action.destination()];
+      location = reverse_loc_map_[action.destination()];
       location->setQueryFlags(
           player == game::WHITE_COLOR ? ANY_WHITE_PIECE : ANY_BLACK_PIECE);
       break;
 
     case game::PlayerAction::REMOVE_PIECE:
-      location = reverse_loc_map[action.source()];
+      location = reverse_loc_map_[action.source()];
       location->setQueryFlags(EMPTY_LOCATION);
       parent = player == game::WHITE_COLOR ? black_node_ : white_node_;
       pieces_map =
