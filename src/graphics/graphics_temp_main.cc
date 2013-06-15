@@ -34,6 +34,7 @@ int main(int argc, char** argv) {
   game::GameOptions options;
   options.set_game_type(game::THREE_MEN_MORRIS);
   std::auto_ptr<game::Game> game_model(new game::Game(options));
+  game_model->Initialize();
   // EmptyGameState game_state(&app);
   graphics::PlayingState game_state(&app, game_model);
   app.PushState(&game_state);
