@@ -378,20 +378,20 @@ void BoardView::OnPlayerAction(const game::PlayerAction& action) {
 
   switch (action.type()) {
     case game::PlayerAction::PLACE_PIECE:
-      AddPiece(action.destination(), action.player_color());
+      AddPiece(action.destination(), player);
       location = reverse_loc_map_[action.destination()];
       location->setQueryFlags(
           player == game::WHITE_COLOR ? ANY_WHITE_PIECE : ANY_BLACK_PIECE);
       break;
 
     case game::PlayerAction::REMOVE_PIECE:
-      RemovePiece(action.source(), action.player_color());
+      RemovePiece(action.source(), player);
       location = reverse_loc_map_[action.source()];
       location->setQueryFlags(EMPTY_LOCATION);
       break;
 
     case game::PlayerAction::MOVE_PIECE:
-      MovePiece(action.source(), action.destination());
+      MovePiece(action.source(), action.destination(), player);
       location = reverse_loc_map_[action.source()];
       location->setQueryFlags(EMPTY_LOCATION);
       location = reverse_loc_map_[action.destination()];
@@ -439,10 +439,11 @@ BoardView::IndexMap* BoardView::GetIndexMapByColor(game::PieceColor color) {
 }
 
 void BoardView::MovePiece(const game::BoardLocation& from,
-                          const game::BoardLocation& to) {
+                          const game::BoardLocation& to,
+                          game::PieceColor color) {
   Ogre::SceneNode* const piece_node = GetPieceByLocation(from);
   piece_node->setPosition(Get3DPosition(to));
-  IndexMap& index_map = *GetIndexMapByColor(game_.board().GetPieceAt(to));
+  IndexMap& index_map = *GetIndexMapByColor(color);
   index_map[to] = index_map[from];
   index_map.erase(from);
 }
@@ -463,7 +464,7 @@ void BoardView::RemovePiece(const game::BoardLocation& from,
                             game::PieceColor color) {
   Ogre::SceneNode* const piece_node = GetPieceByLocation(from);
   piece_node->setVisible(false, true);
-  IndexMap* index_map = GetIndexMapByColor(color);
+  IndexMap* index_map = GetIndexMapByColor(game::GetOpponent(color));
   index_map->erase(from);
 }
 

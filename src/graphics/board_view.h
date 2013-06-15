@@ -90,7 +90,8 @@ class GRAPHICS_EXPORT BoardView
   IndexMap* GetIndexMapByColor(game::PieceColor color);
 
   void MovePiece(const game::BoardLocation& from,
-                 const game::BoardLocation& to);
+                 const game::BoardLocation& to,
+                 game::PieceColor color);
   void AddPiece(const game::BoardLocation& to, game::PieceColor color);
   void RemovePiece(const game::BoardLocation& from, game::PieceColor color);
 
