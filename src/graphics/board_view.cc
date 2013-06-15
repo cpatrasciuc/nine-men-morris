@@ -426,8 +426,24 @@ void BoardView::OnPlayerAction(const game::PlayerAction& action) {
       piece->setVisible(false, true);
       pieces_map->erase(action.source());
       break;
+
     case game::PlayerAction::MOVE_PIECE:
-      NOTREACHED();
+      parent = player == game::WHITE_COLOR ? white_node_ : black_node_;
+      pieces_map =
+          player == game::WHITE_COLOR ? &white_pieces_ : &black_pieces_;
+      piece = static_cast<Ogre::SceneNode*>(
+          parent->getChild((*pieces_map)[action.source()]));
+      it = positions_.find(action.destination());
+      DCHECK(it != positions_.end());
+      piece->setPosition(*(it->second));
+      (*pieces_map)[action.destination()] = (*pieces_map)[action.source()];
+      pieces_map->erase(action.source());
+      location = reverse_loc_map_[action.source()];
+      location->setQueryFlags(EMPTY_LOCATION);
+      location = reverse_loc_map_[action.destination()];
+      location->setQueryFlags(
+          player == game::WHITE_COLOR ? ANY_WHITE_PIECE : ANY_BLACK_PIECE);
+      break;
   }
 }
 

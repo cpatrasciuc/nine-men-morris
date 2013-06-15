@@ -52,6 +52,8 @@ class GRAPHICS_EXPORT BoardView
   BoardView(OgreApp* app, const game::Game& game_model);
   ~BoardView();
 
+  const game::Game& game_model() const { return game_; }
+
   void Initialize();
 
   void SetSelectionType(unsigned int selection_type);

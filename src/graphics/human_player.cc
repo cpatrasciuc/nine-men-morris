@@ -40,7 +40,11 @@ void HumanPlayer::RequestAction(const game::Game& game_model,
       }
       break;
     case game::PlayerAction::MOVE_PIECE:
-      NOTREACHED();
+      if (color() == game::WHITE_COLOR) {
+        view_->SetSelectionType(BoardView::ANY_WHITE_PIECE);
+      } else {
+        view_->SetSelectionType(BoardView::ANY_BLACK_PIECE);
+      }
       break;
   }
 }
@@ -57,7 +61,20 @@ void HumanPlayer::OnLocationSelected(const game::BoardLocation& location) {
       ExecuteAction();
       break;
     case game::PlayerAction::MOVE_PIECE:
-      NOTREACHED();
+      if (view_->game_model().board().GetPieceAt(location) == color()) {
+        action_->set_source(location);
+        const BoardView::SelectionType own_pieces =
+            color() == game::WHITE_COLOR ?
+            BoardView::ANY_WHITE_PIECE :
+            BoardView::ANY_BLACK_PIECE;
+        view_->SetSelectionType(
+            BoardView::EMPTY_LOCATION | own_pieces);
+      } else {
+        action_->set_destination(location);
+        if (view_->game_model().CanExecutePlayerAction(*Get(action_))) {
+          ExecuteAction();
+        }
+      }
       break;
   }
 }
