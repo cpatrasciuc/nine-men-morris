@@ -149,6 +149,7 @@ void BoardView::Initialize() {
     sphere_node->setScale(scale, 0.001, scale);
     sphere_entity->setVisible(false);
     loc_map_.insert(std::make_pair(sphere_entity, locations[i]));
+    reverse_loc_map.insert(std::make_pair(locations[i], sphere_entity));
     positions_.insert(std::make_pair(locations[i],
                                      &sphere_node->getPosition()));
   }
@@ -352,6 +353,7 @@ void BoardView::OnPlayerAction(const game::PlayerAction& action) {
   const game::PieceColor player = action.player_color();
   Ogre::SceneNode* piece = NULL;
   Ogre::SceneNode* parent = NULL;
+  Ogre::MovableObject* location = NULL;
   int* piece_index = NULL;
 
   switch (action.type()) {
@@ -366,6 +368,8 @@ void BoardView::OnPlayerAction(const game::PlayerAction& action) {
       piece->setVisible(true, true);
       white_pieces_[action.destination()] = *piece_index;
       ++(*piece_index);
+      location = reverse_loc_map[action.destination()];
+      location->setQueryFlags(ANY_WHITE_PIECE);
       break;
     case game::PlayerAction::MOVE_PIECE:
     case game::PlayerAction::REMOVE_PIECE:
