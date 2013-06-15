@@ -25,7 +25,6 @@ void HumanPlayer::RequestAction(const game::Game& game_model,
   DCHECK(view_);
   callback_ = callback;
   view_->AddListener(this);
-  // TODO(human_player): Temporary implementation for test.
   Reset(action_,
       new game::PlayerAction(color(), game_model.next_action_type()));
   switch (action_->type()) {
@@ -71,7 +70,7 @@ void HumanPlayer::OnLocationSelected(const game::BoardLocation& location) {
             BoardView::EMPTY_LOCATION | own_pieces);
       } else {
         action_->set_destination(location);
-        if (view_->game_model().CanExecutePlayerAction(*Get(action_))) {
+        if (view_->game_model().CanExecutePlayerAction(*action_)) {
           ExecuteAction();
         }
       }
@@ -86,7 +85,7 @@ void HumanPlayer::ExecuteAction() {
   DCHECK(Get(action_));
   view_->RemoveListener(this);
   view_->SetSelectionType(BoardView::NONE);
-  (*callback_)(*Get(action_));
+  (*callback_)(*action_);
 }
 
 }  // namespace graphics
