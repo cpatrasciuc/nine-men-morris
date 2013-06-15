@@ -11,8 +11,6 @@ if(NOT OIS_FOUND)
 endif()
 
 set(GRAPHICS_SOURCE_FILES
-  board_utils.cc
-  board_utils.h
   board_view.cc
   board_view.h
   camera_controller.cc

@@ -19,7 +19,6 @@
 #include "game/piece_color.h"
 #include "game/player_action.h"
 
-#include "graphics/board_utils.h"
 #include "graphics/ogre_app.h"
 #include "graphics/selection_listener.h"
 
@@ -62,6 +61,15 @@ const char kWhitePieceMaterialName[] = "WhitePieceMaterial";
 const char kBlackPieceMaterialName[] = "BlackPieceMaterial";
 
 const int kBoardTextureSize = 3;
+
+Ogre::Vector3 BoardLocationTo3DCoord(const game::BoardLocation& location,
+                                     const game::Board& board) {
+  const int delta = board.size() / 2;
+  const double scale = board.size() / 2;
+  return Ogre::Vector3((location.line() - delta) / scale,
+                       (location.column() - delta) / scale,
+                       0.0f);
+}
 
 }  // anonymous namespace
 
