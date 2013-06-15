@@ -112,6 +112,7 @@ void BoardView::Initialize() {
   main_light->setSpecularColour(Ogre::ColourValue::White);
   main_light->setCastShadows(true);
   main_light->setDirection(board_size, -board_size, -board_size);
+  main_light->setQueryFlags(0);
 
   const Ogre::Plane board_plane(Ogre::Vector3::UNIT_Y, 0);
   Ogre::MeshManager::getSingleton().createPlane(kBoardPlaneName,
@@ -120,6 +121,7 @@ void BoardView::Initialize() {
       true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
   Ogre::Entity* const board_entity =
       scene_manager->createEntity(kBoardEntityName, kBoardPlaneName);
+  board_entity->setQueryFlags(0);
   Ogre::SceneNode* const root = scene_manager->getRootSceneNode();
   root->createChildSceneNode()->attachObject(board_entity);
 
@@ -302,12 +304,14 @@ void BoardView::InitializePieces() {
         "WhitePiece" + index_str, mesh_name);
     entity->setMaterial(white_material);
     entity->setVisible(false);
+    entity->setQueryFlags(0);
     Ogre::SceneNode* piece_node = white_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
 
     entity = scene_mgr->createEntity("BlackPiece" + index_str, mesh_name);
     entity->setMaterial(black_material);
     entity->setVisible(false);
+    entity->setQueryFlags(0);
     piece_node = black_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
   }
@@ -488,10 +492,6 @@ void BoardView::UpdateSelection() {
   const Ogre::RaySceneQueryResult query_result = ray_scene_query->execute();
   for (size_t i = 0; i < query_result.size(); ++i) {
     if (!query_result[i].movable) {
-      continue;
-    }
-    // TODO(selection): Replace this test with query mask bits
-    if (query_result[i].movable->getName().substr(0, 8) != "Location") {
       continue;
     }
     temp_selected_location_ = query_result[i].movable;
