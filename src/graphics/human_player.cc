@@ -53,8 +53,6 @@ void HumanPlayer::ExecuteAction() {
   view_->RemoveListener(this);
   view_->SetSelectionType(BoardView::NONE);
   (*callback_)(*Get(action_));
-  Reset(action_);
-  callback_.reset();
 }
 
 }  // namespace graphics

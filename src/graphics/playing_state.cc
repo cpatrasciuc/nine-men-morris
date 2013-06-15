@@ -82,7 +82,7 @@ void PlayingState::InitializePlayers() {
   human_player->set_board_view(Get(board_view_));
   Reset(white_player_, human_player);
 
-  human_player = new HumanPlayer(game::WHITE_COLOR);
+  human_player = new HumanPlayer(game::BLACK_COLOR);
   human_player->set_board_view(Get(board_view_));
   Reset(black_player_, human_player);
 }
@@ -98,6 +98,9 @@ void PlayingState::RequestPlayerAction() {
 
 void PlayingState::ExecuteAction(const game::PlayerAction& action) {
   game_.ExecutePlayerAction(action);
+  if (!game_.is_game_over()) {
+    RequestPlayerAction();
+  }
 }
 
 }  // namespace graphics
