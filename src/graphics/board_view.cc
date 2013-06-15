@@ -163,6 +163,12 @@ void BoardView::Initialize() {
   }
 
   InitializePieces();
+
+  std::vector<game::PlayerAction> actions;
+  game_.DumpActionList(&actions);
+  for (size_t i = 0; i < actions.size(); ++i) {
+    OnPlayerAction(actions[i]);
+  }
 }
 
 void BoardView::SetSelectionType(unsigned int selection_type) {
