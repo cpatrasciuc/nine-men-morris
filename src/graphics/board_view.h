@@ -66,6 +66,8 @@ class GRAPHICS_EXPORT BoardView
                              OIS::MouseButtonID id);
 
  private:
+  typedef std::map<game::BoardLocation, int> IndexMap;
+
   void GenerateBoardTexture();
   void InitializePieces();
 
@@ -78,22 +80,35 @@ class GRAPHICS_EXPORT BoardView
   // game::GameListener overrides
   virtual void OnPlayerAction(const game::PlayerAction& action);
 
+  Ogre::SceneNode* GetPieceByColorAndIndex(game::PieceColor color,
+                                               int index);
+  Ogre::SceneNode* GetPieceByLocation(const game::BoardLocation& location);
+
+  Ogre::MovableObject* GetLocationSelector(const game::BoardLocation& loc);
+  const Ogre::Vector3& Get3DPosition(const game::BoardLocation& location) const;
+
+  IndexMap* GetIndexMapByColor(game::PieceColor color);
+
+  void MovePiece(const game::BoardLocation& from,
+                 const game::BoardLocation& to);
+  void AddPiece(const game::BoardLocation& to, game::PieceColor color);
+  void RemovePiece(const game::BoardLocation& from, game::PieceColor color);
+
   OgreApp* app_;
   const game::Game& game_;
 
-  std::map<Ogre::MovableObject*, game::BoardLocation> loc_map_;
+  std::map<Ogre::MovableObject*, game::BoardLocation> locations_;
   std::map<game::BoardLocation, Ogre::MovableObject*> reverse_loc_map_;
-  std::map<game::BoardLocation, Ogre::SceneNode*> pieces_;
   std::map<game::BoardLocation, const Ogre::Vector3*> positions_;
 
-  std::map<game::BoardLocation, int> white_pieces_;
-  std::map<game::BoardLocation, int> black_pieces_;
+  IndexMap white_index_map_;
+  IndexMap black_index_map_;
 
   int white_place_index_;
   int black_place_index_;
 
-  Ogre::SceneNode* white_node_;
-  Ogre::SceneNode* black_node_;
+  Ogre::SceneNode* white_pieces_;
+  Ogre::SceneNode* black_pieces_;
 
   Ogre::MovableObject* temp_selected_location_;
   Ogre::MovableObject* selected_location_;

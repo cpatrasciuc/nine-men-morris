@@ -70,8 +70,8 @@ BoardView::BoardView(OgreApp* app, const game::Game& game_model)
       game_(game_model),
       white_place_index_(0),
       black_place_index_(0),
-      white_node_(NULL),
-      black_node_(NULL),
+      white_pieces_(NULL),
+      black_pieces_(NULL),
       temp_selected_location_(NULL),
       selected_location_(NULL),
       selection_type_(NONE) {}
@@ -148,7 +148,7 @@ void BoardView::Initialize() {
     const double scale = 0.005f / game_.board().size() * multiplier * 5;
     sphere_node->setScale(scale, 0.001, scale);
     sphere_entity->setVisible(false);
-    loc_map_.insert(std::make_pair(sphere_entity, locations[i]));
+    locations_.insert(std::make_pair(sphere_entity, locations[i]));
     reverse_loc_map_.insert(std::make_pair(locations[i], sphere_entity));
     positions_.insert(std::make_pair(locations[i],
                                      &sphere_node->getPosition()));
@@ -215,7 +215,8 @@ bool BoardView::mouseReleased(const OIS::MouseEvent& event,
   if (temp_selected_location_) {
     selected_location_ = temp_selected_location_;
     std::map<Ogre::MovableObject*, game::BoardLocation>::iterator it =
-        loc_map_.find(selected_location_);
+        locations_.find(selected_location_);
+    DCHECK(it != locations_.end());
     FireOnLocationSelected(it->second);
   }
   return true;
@@ -306,8 +307,8 @@ void BoardView::InitializePieces() {
   Ogre::SceneManager* const scene_mgr = app_->scene_manager();
   Ogre::SceneNode* const all_pieces =
       scene_mgr->getRootSceneNode()->createChildSceneNode(kAllPiecesNodeName);
-  white_node_ = all_pieces->createChildSceneNode("AllWhitePieces");
-  black_node_ = all_pieces->createChildSceneNode("AllBlackPieces");
+  white_pieces_ = all_pieces->createChildSceneNode("AllWhitePieces");
+  black_pieces_ = all_pieces->createChildSceneNode("AllBlackPieces");
   const int piece_count =
       game_.GetInitialPieceCountByGameType(game_.options().game_type());
 
@@ -317,13 +318,13 @@ void BoardView::InitializePieces() {
         "WhitePiece" + index_str, mesh_name);
     entity->setMaterial(white_material);
     entity->setVisible(false);
-    Ogre::SceneNode* piece_node = white_node_->createChildSceneNode();
+    Ogre::SceneNode* piece_node = white_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
 
     entity = scene_mgr->createEntity("BlackPiece" + index_str, mesh_name);
     entity->setMaterial(black_material);
     entity->setVisible(false);
-    piece_node = black_node_->createChildSceneNode();
+    piece_node = black_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
   }
 }
@@ -388,56 +389,25 @@ void BoardView::UpdateRemovablePieces(game::PieceColor color) {
 }
 
 void BoardView::OnPlayerAction(const game::PlayerAction& action) {
-  std::map<game::BoardLocation, const Ogre::Vector3*>::iterator it;
-  std::map<game::BoardLocation, int>* pieces_map = NULL;
   const game::PieceColor player = action.player_color();
-  Ogre::SceneNode* piece = NULL;
-  Ogre::SceneNode* parent = NULL;
   Ogre::MovableObject* location = NULL;
-  int* piece_index = NULL;
 
   switch (action.type()) {
     case game::PlayerAction::PLACE_PIECE:
-      piece_index = (player == game::WHITE_COLOR ?
-          &white_place_index_ : &black_place_index_);
-      parent = player == game::WHITE_COLOR ? white_node_ : black_node_;
-      piece = static_cast<Ogre::SceneNode*>(parent->getChild(*piece_index));
-      it = positions_.find(action.destination());
-      DCHECK(it != positions_.end());
-      piece->setPosition(*(it->second));
-      piece->setVisible(true, true);
-      pieces_map =
-          player == game::WHITE_COLOR ? &white_pieces_ : &black_pieces_;
-      (*pieces_map)[action.destination()] = *piece_index;
-      ++(*piece_index);
+      AddPiece(action.destination(), action.player_color());
       location = reverse_loc_map_[action.destination()];
       location->setQueryFlags(
           player == game::WHITE_COLOR ? ANY_WHITE_PIECE : ANY_BLACK_PIECE);
       break;
 
     case game::PlayerAction::REMOVE_PIECE:
+      RemovePiece(action.source(), action.player_color());
       location = reverse_loc_map_[action.source()];
       location->setQueryFlags(EMPTY_LOCATION);
-      parent = player == game::WHITE_COLOR ? black_node_ : white_node_;
-      pieces_map =
-          player == game::WHITE_COLOR ? &black_pieces_ : &white_pieces_;
-      piece = static_cast<Ogre::SceneNode*>(
-          parent->getChild((*pieces_map)[action.source()]));
-      piece->setVisible(false, true);
-      pieces_map->erase(action.source());
       break;
 
     case game::PlayerAction::MOVE_PIECE:
-      parent = player == game::WHITE_COLOR ? white_node_ : black_node_;
-      pieces_map =
-          player == game::WHITE_COLOR ? &white_pieces_ : &black_pieces_;
-      piece = static_cast<Ogre::SceneNode*>(
-          parent->getChild((*pieces_map)[action.source()]));
-      it = positions_.find(action.destination());
-      DCHECK(it != positions_.end());
-      piece->setPosition(*(it->second));
-      (*pieces_map)[action.destination()] = (*pieces_map)[action.source()];
-      pieces_map->erase(action.source());
+      MovePiece(action.source(), action.destination());
       location = reverse_loc_map_[action.source()];
       location->setQueryFlags(EMPTY_LOCATION);
       location = reverse_loc_map_[action.destination()];
@@ -445,6 +415,72 @@ void BoardView::OnPlayerAction(const game::PlayerAction& action) {
           player == game::WHITE_COLOR ? ANY_WHITE_PIECE : ANY_BLACK_PIECE);
       break;
   }
+}
+
+Ogre::SceneNode* BoardView::GetPieceByColorAndIndex(game::PieceColor color,
+                                                    int index) {
+  const Ogre::SceneNode* const parent_node =
+          color == game::WHITE_COLOR ? white_pieces_ : black_pieces_;
+  return static_cast<Ogre::SceneNode*>(parent_node->getChild(index));
+}
+
+Ogre::SceneNode* BoardView::GetPieceByLocation(const game::BoardLocation& loc) {
+  std::map<game::BoardLocation, int>::iterator it = white_index_map_.find(loc);
+  if (it != white_index_map_.end()) {
+    DCHECK(!black_index_map_.count(loc));
+    return GetPieceByColorAndIndex(game::WHITE_COLOR, it->second);
+  }
+  it = black_index_map_.find(loc);
+  DCHECK(it != black_index_map_.end());
+  return GetPieceByColorAndIndex(game::BLACK_COLOR, it->second);
+}
+
+Ogre::MovableObject* BoardView::GetLocationSelector(
+    const game::BoardLocation& loc) {
+  DCHECK(reverse_loc_map_.count(loc));
+  return reverse_loc_map_[loc];
+}
+
+const Ogre::Vector3& BoardView::Get3DPosition(
+    const game::BoardLocation& location) const {
+  const std::map<game::BoardLocation, const Ogre::Vector3*>::const_iterator it =
+      positions_.find(location);
+  DCHECK(it != positions_.end());
+  return *(it->second);
+}
+
+BoardView::IndexMap* BoardView::GetIndexMapByColor(game::PieceColor color) {
+  DCHECK(color != game::NO_COLOR);
+  return color == game::WHITE_COLOR ? &white_index_map_ : &black_index_map_;
+}
+
+void BoardView::MovePiece(const game::BoardLocation& from,
+                          const game::BoardLocation& to) {
+  Ogre::SceneNode* const piece_node = GetPieceByLocation(from);
+  piece_node->setPosition(Get3DPosition(to));
+  IndexMap& index_map = *GetIndexMapByColor(game_.board().GetPieceAt(to));
+  index_map[to] = index_map[from];
+  index_map.erase(from);
+}
+
+void BoardView::AddPiece(const game::BoardLocation& to,
+                         game::PieceColor color) {
+  int* const index = color == game::WHITE_COLOR ?
+      &white_place_index_ : &black_place_index_;
+  Ogre::SceneNode* const piece_node = GetPieceByColorAndIndex(color, *index);
+  piece_node->setPosition(Get3DPosition(to));
+  piece_node->setVisible(true, true);
+  IndexMap& index_map = *GetIndexMapByColor(color);
+  index_map[to] = *index;
+  ++(*index);
+}
+
+void BoardView::RemovePiece(const game::BoardLocation& from,
+                            game::PieceColor color) {
+  Ogre::SceneNode* const piece_node = GetPieceByLocation(from);
+  piece_node->setVisible(false, true);
+  IndexMap* index_map = GetIndexMapByColor(color);
+  index_map->erase(from);
 }
 
 }  // namespace graphics
