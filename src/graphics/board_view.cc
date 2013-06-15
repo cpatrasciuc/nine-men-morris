@@ -304,12 +304,12 @@ void BoardView::InitializePieces() {
   Ogre::MaterialPtr white_material =
       Ogre::MaterialManager::getSingleton().create(kWhitePieceMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  white_material->setDiffuse(0.8, 0.8, 0.8, 1);
-  white_material->setSpecular(0.8, 0.8, 0.8, 1);
+  white_material->setDiffuse(0.4, 0.4, 0.4, 1);
+  white_material->setSpecular(0.2, 0.2, 0.2, 1);
   Ogre::MaterialPtr black_material =
       Ogre::MaterialManager::getSingleton().create(kBlackPieceMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  black_material->setDiffuse(1, 0.2, 0.2, 1);
+  black_material->setDiffuse(0.8, 0.2, 0.2, 1);
 
   const std::string mesh_name("piece.mesh");
   Ogre::SceneManager* const scene_mgr = app_->scene_manager();
