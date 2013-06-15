@@ -174,13 +174,17 @@ void BoardView::SetSelectionType(unsigned int selection_type) {
   if (selection_type & REMOVABLE_WHITE_PIECE) {
     UpdateRemovablePieces(game::WHITE_COLOR);
   }
-  // TODO(board_renderer): For REMOVABLE_* determine the selectable items.
-  // TODO(board_renderer): Trigger a ray cast; don't wait for mouse movement.
+  UpdateSelection();
 }
 
 bool BoardView::mouseMoved(const OIS::MouseEvent& event) {
+  UpdateSelection();
+  return true;
+}
+
+void BoardView::UpdateSelection() {
   if (selection_type_ == NONE) {
-    return true;
+    return;
   }
   if (temp_selected_location_) {
     temp_selected_location_->setVisible(false);
@@ -209,7 +213,6 @@ bool BoardView::mouseMoved(const OIS::MouseEvent& event) {
     break;
   }
   scene_manager->destroyQuery(ray_scene_query);
-  return true;
 }
 
 bool BoardView::mousePressed(const OIS::MouseEvent& event,

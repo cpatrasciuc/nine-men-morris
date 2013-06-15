@@ -94,6 +94,8 @@ class GRAPHICS_EXPORT BoardView
   void AddPiece(const game::BoardLocation& to, game::PieceColor color);
   void RemovePiece(const game::BoardLocation& from, game::PieceColor color);
 
+  void UpdateSelection();
+
   OgreApp* app_;
   const game::Game& game_;
 
