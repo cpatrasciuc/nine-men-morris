@@ -11,6 +11,7 @@
 #include "base/basic_macros.h"
 #include "base/supports_listener.h"
 #include "game/game_listener.h"
+#include "game/piece_color.h"
 #include "graphics/graphics_export.h"
 
 #include "OGRE/OgreTexture.h"
@@ -68,7 +69,9 @@ class GRAPHICS_EXPORT BoardView
 
   void FireOnLocationSelected(const game::BoardLocation& location);
   void FireOnSelectionCleared();
+
   void ClearSelection();
+  void UpdateRemovablePieces(game::PieceColor color);
 
   // game::GameListener overrides
   virtual void OnPlayerAction(const game::PlayerAction& action);

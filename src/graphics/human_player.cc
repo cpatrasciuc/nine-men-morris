@@ -26,9 +26,23 @@ void HumanPlayer::RequestAction(const game::Game& game_model,
   callback_ = callback;
   view_->AddListener(this);
   // TODO(human_player): Temporary implementation for test.
-  view_->SetSelectionType(BoardView::EMPTY_LOCATION);
   Reset(action_,
       new game::PlayerAction(color(), game_model.next_action_type()));
+  switch (action_->type()) {
+    case game::PlayerAction::PLACE_PIECE:
+      view_->SetSelectionType(BoardView::EMPTY_LOCATION);
+      break;
+    case game::PlayerAction::REMOVE_PIECE:
+      if (color() == game::WHITE_COLOR) {
+        view_->SetSelectionType(BoardView::REMOVABLE_BLACK_PIECE);
+      } else {
+        view_->SetSelectionType(BoardView::REMOVABLE_WHITE_PIECE);
+      }
+      break;
+    case game::PlayerAction::MOVE_PIECE:
+      NOTREACHED();
+      break;
+  }
 }
 
 void HumanPlayer::OnLocationSelected(const game::BoardLocation& location) {
@@ -38,8 +52,11 @@ void HumanPlayer::OnLocationSelected(const game::BoardLocation& location) {
       action_->set_destination(location);
       ExecuteAction();
       break;
-    case game::PlayerAction::MOVE_PIECE:
     case game::PlayerAction::REMOVE_PIECE:
+      action_->set_source(location);
+      ExecuteAction();
+      break;
+    case game::PlayerAction::MOVE_PIECE:
       NOTREACHED();
       break;
   }

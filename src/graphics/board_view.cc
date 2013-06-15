@@ -160,6 +160,12 @@ void BoardView::Initialize() {
 void BoardView::SetSelectionType(unsigned int selection_type) {
   selection_type_ = selection_type;
   ClearSelection();
+  if (selection_type & REMOVABLE_BLACK_PIECE) {
+    UpdateRemovablePieces(game::BLACK_COLOR);
+  }
+  if (selection_type & REMOVABLE_WHITE_PIECE) {
+    UpdateRemovablePieces(game::WHITE_COLOR);
+  }
   // TODO(board_renderer): For REMOVABLE_* determine the selectable items.
   // TODO(board_renderer): Trigger a ray cast; don't wait for mouse movement.
 }
@@ -348,8 +354,42 @@ void BoardView::ClearSelection() {
   }
 }
 
+void BoardView::UpdateRemovablePieces(game::PieceColor color) {
+  DCHECK(color != game::NO_COLOR);
+  bool can_remove_from_mill = true;
+  const std::vector<game::BoardLocation>& locations = game_.board().locations();
+
+  for (size_t i = 0; i < locations.size(); ++i) {
+    if (game_.board().GetPieceAt(locations[i]) == color) {
+      if (!game_.board().IsPartOfMill(locations[i])) {
+        can_remove_from_mill = false;
+        break;
+      }
+    }
+  }
+
+  const unsigned int removable_piece =
+      color == game::WHITE_COLOR ?
+      (REMOVABLE_WHITE_PIECE | ANY_WHITE_PIECE) :
+      (REMOVABLE_BLACK_PIECE | ANY_BLACK_PIECE);
+  const unsigned int unremovable_piece =
+      color == game::WHITE_COLOR ? ANY_WHITE_PIECE : ANY_BLACK_PIECE;
+
+  for (size_t i = 0; i < locations.size(); ++i) {
+    if (game_.board().GetPieceAt(locations[i]) == color) {
+      Ogre::MovableObject* location = reverse_loc_map[locations[i]];
+      if (game_.board().IsPartOfMill(locations[i]) && !can_remove_from_mill) {
+        location->setQueryFlags(unremovable_piece);
+      } else {
+        location->setQueryFlags(removable_piece);
+      }
+    }
+  }
+}
+
 void BoardView::OnPlayerAction(const game::PlayerAction& action) {
   std::map<game::BoardLocation, const Ogre::Vector3*>::iterator it;
+  std::map<game::BoardLocation, int>* pieces_map = NULL;
   const game::PieceColor player = action.player_color();
   Ogre::SceneNode* piece = NULL;
   Ogre::SceneNode* parent = NULL;
@@ -366,13 +406,27 @@ void BoardView::OnPlayerAction(const game::PlayerAction& action) {
       DCHECK(it != positions_.end());
       piece->setPosition(*(it->second));
       piece->setVisible(true, true);
-      white_pieces_[action.destination()] = *piece_index;
+      pieces_map =
+          player == game::WHITE_COLOR ? &white_pieces_ : &black_pieces_;
+      (*pieces_map)[action.destination()] = *piece_index;
       ++(*piece_index);
       location = reverse_loc_map[action.destination()];
-      location->setQueryFlags(ANY_WHITE_PIECE);
+      location->setQueryFlags(
+          player == game::WHITE_COLOR ? ANY_WHITE_PIECE : ANY_BLACK_PIECE);
+      break;
+
+    case game::PlayerAction::REMOVE_PIECE:
+      location = reverse_loc_map[action.source()];
+      location->setQueryFlags(EMPTY_LOCATION);
+      parent = player == game::WHITE_COLOR ? black_node_ : white_node_;
+      pieces_map =
+          player == game::WHITE_COLOR ? &black_pieces_ : &white_pieces_;
+      piece = static_cast<Ogre::SceneNode*>(
+          parent->getChild((*pieces_map)[action.source()]));
+      piece->setVisible(false, true);
+      pieces_map->erase(action.source());
       break;
     case game::PlayerAction::MOVE_PIECE:
-    case game::PlayerAction::REMOVE_PIECE:
       NOTREACHED();
   }
 }
