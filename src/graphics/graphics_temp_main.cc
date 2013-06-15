@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "game/game.h"
 #include "game/game_options.h"
 #include "game/game_type.h"
 
@@ -31,9 +32,10 @@ int main(int argc, char** argv) {
   graphics::OgreApp app("Temp test for OgreApp");
   app.Init();
   game::GameOptions options;
-  options.set_game_type(game::NINE_MEN_MORRIS);
+  options.set_game_type(game::THREE_MEN_MORRIS);
+  std::auto_ptr<game::Game> game_model(new game::Game(options));
   // EmptyGameState game_state(&app);
-  graphics::PlayingState game_state(&app, options);
+  graphics::PlayingState game_state(&app, game_model);
   app.PushState(&game_state);
   app.RunMainLoop();
   return 0;

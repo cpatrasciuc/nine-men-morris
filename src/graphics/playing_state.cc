@@ -4,6 +4,8 @@
 
 #include "graphics/playing_state.h"
 
+#include <memory>
+
 #include "base/bind.h"
 #include "base/log.h"
 #include "base/method.h"
@@ -20,10 +22,10 @@
 
 namespace graphics {
 
-PlayingState::PlayingState(OgreApp* app, game::GameOptions game_options)
+PlayingState::PlayingState(OgreApp* app, std::auto_ptr<game::Game> game_model)
     : GameState(app),
-      game_(game_options),
-      board_view_(new BoardView(app, game_)),
+      game_(game_model.release()),
+      board_view_(new BoardView(app, *game_)),
       camera_controller_(),
       white_player_(NULL),
       black_player_(NULL) {}
@@ -33,8 +35,8 @@ bool PlayingState::Initialize() {
   camera_controller_.set_min_distance(50);
   camera_controller_.set_max_distance(200);
   camera_controller_.set_camera(app()->camera());
-  game_.AddListener(Get(board_view_));
-  game_.Initialize();
+  game_->AddListener(Get(board_view_));
+  game_->Initialize();
   InitializePlayers();
   RequestPlayerAction();
   return true;
@@ -91,14 +93,14 @@ void PlayingState::RequestPlayerAction() {
   typedef void(PlayingState::*ExecuteActionSig)(const game::PlayerAction&);
   PlayerActionCallback* callback = base::Bind(
       new base::Method<ExecuteActionSig>(&PlayingState::ExecuteAction), this);
-  PlayerDelegate* player = game_.current_player() == game::WHITE_COLOR ?
+  PlayerDelegate* player = game_->current_player() == game::WHITE_COLOR ?
       Get(white_player_) : Get(black_player_);
-  player->RequestAction(game_, std::auto_ptr<PlayerActionCallback>(callback));
+  player->RequestAction(*game_, std::auto_ptr<PlayerActionCallback>(callback));
 }
 
 void PlayingState::ExecuteAction(const game::PlayerAction& action) {
-  game_.ExecutePlayerAction(action);
-  if (!game_.is_game_over()) {
+  game_->ExecutePlayerAction(action);
+  if (!game_->is_game_over()) {
     RequestPlayerAction();
   }
 }

@@ -5,6 +5,8 @@
 #ifndef GRAPHICS_PLAYING_STATE_H_
 #define GRAPHICS_PLAYING_STATE_H_
 
+#include <memory>
+
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
 #include "game/game_options.h"
@@ -23,7 +25,7 @@ namespace graphics {
 class GRAPHICS_EXPORT PlayingState : public GameState {
  public:
   explicit PlayingState(OgreApp* app,
-                        game::GameOptions game_options = game::GameOptions());
+                        std::auto_ptr<game::Game> game_model);
 
   virtual bool Initialize();
   virtual void Exit();
@@ -44,7 +46,7 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
 
   void ExecuteAction(const game::PlayerAction& action);
 
-  game::Game game_;
+  base::ptr::scoped_ptr<game::Game> game_;
   base::ptr::scoped_ptr<BoardView> board_view_;
   CameraController camera_controller_;
   base::ptr::scoped_ptr<PlayerDelegate> white_player_;
