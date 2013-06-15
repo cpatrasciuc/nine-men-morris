@@ -12,14 +12,13 @@
 #include "graphics/camera_controller.h"
 #include "graphics/game_state.h"
 #include "graphics/graphics_export.h"
+#include "graphics/player_delegate.h"
 
 namespace game {
 class PlayerAction;
 }
 
 namespace graphics {
-
-class PlayerDelegate;
 
 class GRAPHICS_EXPORT PlayingState : public GameState {
  public:
@@ -48,8 +47,8 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
   game::Game game_;
   base::ptr::scoped_ptr<BoardView> board_view_;
   CameraController camera_controller_;
-  PlayerDelegate* white_player_;
-  PlayerDelegate* black_player_;
+  base::ptr::scoped_ptr<PlayerDelegate> white_player_;
+  base::ptr::scoped_ptr<PlayerDelegate> black_player_;
 };
 
 }  // namespace graphics

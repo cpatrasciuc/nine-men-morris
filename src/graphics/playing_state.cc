@@ -43,6 +43,8 @@ bool PlayingState::Initialize() {
 void PlayingState::Exit() {
   camera_controller_.set_camera(NULL);
   Reset(board_view_);
+  Reset(white_player_);
+  Reset(black_player_);
   Ogre::SceneManager* const scene_manager = app()->scene_manager();
   Ogre::SceneNode* const root = scene_manager->getRootSceneNode();
   root->removeAllChildren();
@@ -78,11 +80,11 @@ bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
 void PlayingState::InitializePlayers() {
   HumanPlayer* human_player = new HumanPlayer(game::WHITE_COLOR);
   human_player->set_board_view(Get(board_view_));
-  white_player_ = human_player;
+  Reset(white_player_, human_player);
 
   human_player = new HumanPlayer(game::WHITE_COLOR);
   human_player->set_board_view(Get(board_view_));
-  black_player_ = human_player;
+  Reset(black_player_, human_player);
 }
 
 void PlayingState::RequestPlayerAction() {
@@ -90,7 +92,7 @@ void PlayingState::RequestPlayerAction() {
   PlayerActionCallback* callback = base::Bind(
       new base::Method<ExecuteActionSig>(&PlayingState::ExecuteAction), this);
   PlayerDelegate* player = game_.current_player() == game::WHITE_COLOR ?
-      white_player_ : black_player_;
+      Get(white_player_) : Get(black_player_);
   player->RequestAction(game_, std::auto_ptr<PlayerActionCallback>(callback));
 }
 
