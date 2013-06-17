@@ -217,6 +217,9 @@ bool BoardView::mousePressed(const OIS::MouseEvent& event,
 
 bool BoardView::mouseReleased(const OIS::MouseEvent& event,
                                   OIS::MouseButtonID id) {
+  if (id != OIS::MB_Left) {
+    return true;
+  }
   ClearSelection();
   if (temp_selected_location_) {
     selected_location_ = temp_selected_location_;
