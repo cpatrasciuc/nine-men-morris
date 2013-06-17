@@ -15,6 +15,10 @@
 #include "graphics/player_delegate.h"
 #include "graphics/selection_listener.h"
 
+namespace game {
+class Game;
+}
+
 namespace graphics {
 
 class BoardView;
