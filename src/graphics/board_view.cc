@@ -412,7 +412,7 @@ void BoardView::OnPlayerAction(const game::PlayerAction& action) {
 Ogre::SceneNode* BoardView::GetPieceByColorAndIndex(game::PieceColor color,
                                                     int index) {
   const Ogre::SceneNode* const parent_node =
-          color == game::WHITE_COLOR ? white_pieces_ : black_pieces_;
+      color == game::WHITE_COLOR ? white_pieces_ : black_pieces_;
   return static_cast<Ogre::SceneNode*>(parent_node->getChild(index));
 }
 
