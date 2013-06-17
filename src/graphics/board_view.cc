@@ -59,7 +59,9 @@ const char kMainLightName[] = "MainLight";
 const char kRttCameraName[] = "RttCamera";
 
 const char kWhitePieceMaterialName[] = "WhitePieceMaterial";
+const char kSelectedWhitePieceMaterialName[] = "SelectedWhitePieceMaterial";
 const char kBlackPieceMaterialName[] = "BlackPieceMaterial";
+const char kSelectedBlackPieceMaterialName[] = "SelectedBlackPieceMaterial";
 
 const int kBoardTextureSize = 3;
 
@@ -179,7 +181,6 @@ void BoardView::Initialize() {
 
 void BoardView::SetSelectionType(unsigned int selection_type) {
   selection_type_ = selection_type;
-  ClearSelection();
   if (selection_type & REMOVABLE_BLACK_PIECE) {
     UpdateRemovablePieces(game::BLACK_COLOR);
   }
@@ -222,6 +223,13 @@ bool BoardView::mouseReleased(const OIS::MouseEvent& event,
     std::map<Ogre::MovableObject*, game::BoardLocation>::iterator it =
         locations_.find(selected_location_);
     DCHECK(it != locations_.end());
+    const game::PieceColor color = game_.board().GetPieceAt(it->second);
+    if (color != game::NO_COLOR) {
+      Ogre::Entity* const entity = static_cast<Ogre::Entity*>(
+          GetPieceByLocation(it->second)->getAttachedObject(0));
+      entity->setMaterialName(color == game::WHITE_COLOR ?
+          kSelectedWhitePieceMaterialName : kSelectedBlackPieceMaterialName);
+    }
     FireOnLocationSelected(it->second);
   }
   return true;
@@ -298,13 +306,30 @@ void BoardView::GenerateBoardTexture() {
 }
 
 void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
+  // TODO(board_view): Improve material setup.
   Ogre::MaterialPtr white_material =
-      Ogre::MaterialManager::getSingleton().create(kWhitePieceMaterialName,
+      Ogre::MaterialManager::getSingleton().create(
+          kSelectedWhitePieceMaterialName,
+          Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  white_material->setDiffuse(0.4, 0.4, 0.4, 0.5);
+  white_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+  white_material->setDepthWriteEnabled(false);
+
+  white_material = Ogre::MaterialManager::getSingleton().create(
+      kWhitePieceMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   white_material->setDiffuse(0.4, 0.4, 0.4, 1);
-  white_material->setSpecular(0.2, 0.2, 0.2, 1);
+
   Ogre::MaterialPtr black_material =
-      Ogre::MaterialManager::getSingleton().create(kBlackPieceMaterialName,
+      Ogre::MaterialManager::getSingleton().create(
+          kSelectedBlackPieceMaterialName,
+          Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  black_material->setDiffuse(0.8, 0.2, 0.2, 0.5);
+  black_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+  black_material->setDepthWriteEnabled(false);
+
+  black_material = Ogre::MaterialManager::getSingleton().create(
+      kBlackPieceMaterialName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   black_material->setDiffuse(0.8, 0.2, 0.2, 1);
 
@@ -354,6 +379,16 @@ void BoardView::FireOnSelectionCleared() {
 
 void BoardView::ClearSelection() {
   if (selected_location_) {
+    std::map<Ogre::MovableObject*, game::BoardLocation>::iterator it =
+        locations_.find(selected_location_);
+    DCHECK(it != locations_.end());
+    const game::PieceColor color = game_.board().GetPieceAt(it->second);
+    if (color != game::NO_COLOR) {
+      Ogre::Entity* const entity = static_cast<Ogre::Entity*>(
+          GetPieceByLocation(it->second)->getAttachedObject(0));
+      entity->setMaterialName(color == game::WHITE_COLOR ?
+          kWhitePieceMaterialName : kBlackPieceMaterialName);
+    }
     selected_location_->setVisible(false);
     selected_location_ = NULL;
     FireOnSelectionCleared();
