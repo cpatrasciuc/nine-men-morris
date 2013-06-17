@@ -109,13 +109,14 @@ void BoardView::Initialize() {
   camera->setPosition(board_size, board_size, board_size);
   camera->lookAt(Ogre::Vector3::ZERO);
 
+  Ogre::MovableObject::setDefaultQueryFlags(0);
+
   Ogre::Light* const main_light = scene_manager->createLight(kMainLightName);
   main_light->setType(Ogre::Light::LT_DIRECTIONAL);
   main_light->setDiffuseColour(Ogre::ColourValue::White);
   main_light->setSpecularColour(Ogre::ColourValue::White);
   main_light->setCastShadows(true);
   main_light->setDirection(board_size, -board_size, -board_size);
-  main_light->setQueryFlags(0);
 
   const Ogre::Plane board_plane(Ogre::Vector3::UNIT_Y, 0);
   Ogre::MeshManager::getSingleton().createPlane(kBoardPlaneName,
@@ -124,7 +125,6 @@ void BoardView::Initialize() {
       true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
   Ogre::Entity* const board_entity =
       scene_manager->createEntity(kBoardEntityName, kBoardPlaneName);
-  board_entity->setQueryFlags(0);
   Ogre::SceneNode* root = scene_manager->getRootSceneNode();
   root = root->createChildSceneNode(kBoardViewRootNodeName);
   root->createChildSceneNode()->attachObject(board_entity);
@@ -195,12 +195,11 @@ void BoardView::SetCustomSelectableLocations(
   for (size_t i = 0; i < locations.size(); ++i) {
     DCHECK(reverse_loc_map_.count(locations[i]));
     Ogre::MovableObject* const entity = reverse_loc_map_[locations[i]];
-    const unsigned int mask = entity->getQueryFlags();
     if (std::find(selectable.begin(), selectable.end(), locations[i]) !=
         selectable.end()) {
-      entity->setQueryFlags(mask | CUSTOM);
+      entity->addQueryFlags(CUSTOM);
     } else {
-      entity->setQueryFlags(mask & (~CUSTOM));
+      entity->removeQueryFlags(CUSTOM);
     }
   }
 }
@@ -324,14 +323,12 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
         "WhitePiece" + index_str, mesh_name);
     entity->setMaterial(white_material);
     entity->setVisible(false);
-    entity->setQueryFlags(0);
     Ogre::SceneNode* piece_node = white_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
 
     entity = scene_mgr->createEntity("BlackPiece" + index_str, mesh_name);
     entity->setMaterial(black_material);
     entity->setVisible(false);
-    entity->setQueryFlags(0);
     piece_node = black_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
   }
