@@ -5,6 +5,7 @@
 #include "graphics/human_player.h"
 
 #include <memory>
+#include <vector>
 
 #include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
@@ -66,8 +67,14 @@ void HumanPlayer::OnLocationSelected(const game::BoardLocation& location) {
             color() == game::WHITE_COLOR ?
             BoardView::ANY_WHITE_PIECE :
             BoardView::ANY_BLACK_PIECE;
-        view_->SetSelectionType(
-            BoardView::EMPTY_LOCATION | own_pieces);
+        if (view_->game_model().CanJump()) {
+          view_->SetSelectionType(BoardView::EMPTY_LOCATION | own_pieces);
+        } else {
+          std::vector<game::BoardLocation> adjacent;
+          view_->game_model().board().GetAdjacentLocations(location, &adjacent);
+          view_->SetCustomSelectableLocations(adjacent);
+          view_->SetSelectionType(BoardView::CUSTOM | own_pieces);
+        }
       } else {
         action_->set_destination(location);
         if (view_->game_model().CanExecutePlayerAction(*action_)) {
