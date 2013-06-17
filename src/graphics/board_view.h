@@ -7,6 +7,7 @@
 
 #include <deque>
 #include <map>
+#include <vector>
 
 #include "base/basic_macros.h"
 #include "base/supports_listener.h"
@@ -46,7 +47,8 @@ class GRAPHICS_EXPORT BoardView
     ANY_WHITE_PIECE = (1 << 1),
     ANY_BLACK_PIECE = (1 << 2),
     REMOVABLE_WHITE_PIECE = (1 << 3),
-    REMOVABLE_BLACK_PIECE = (1 << 4)
+    REMOVABLE_BLACK_PIECE = (1 << 4),
+    CUSTOM = (1 << 5)
   };
 
   BoardView(OgreApp* app, const game::Game& game_model);
@@ -57,6 +59,8 @@ class GRAPHICS_EXPORT BoardView
   void Initialize();
 
   void SetSelectionType(unsigned int selection_type);
+  void SetCustomSelectableLocations(
+      const std::vector<game::BoardLocation>& selectable);
 
   // MouseListener interface
   virtual bool mouseMoved(const OIS::MouseEvent& event);

@@ -189,6 +189,22 @@ void BoardView::SetSelectionType(unsigned int selection_type) {
   UpdateSelection();
 }
 
+void BoardView::SetCustomSelectableLocations(
+    const std::vector<game::BoardLocation>& selectable) {
+  const std::vector<game::BoardLocation>& locations = game_.board().locations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    DCHECK(reverse_loc_map_.count(locations[i]));
+    Ogre::MovableObject* const entity = reverse_loc_map_[locations[i]];
+    const unsigned int mask = entity->getQueryFlags();
+    if (std::find(selectable.begin(), selectable.end(), locations[i]) !=
+        selectable.end()) {
+      entity->setQueryFlags(mask | CUSTOM);
+    } else {
+      entity->setQueryFlags(mask & (~CUSTOM));
+    }
+  }
+}
+
 bool BoardView::mouseMoved(const OIS::MouseEvent& event) {
   UpdateSelection();
   return true;
