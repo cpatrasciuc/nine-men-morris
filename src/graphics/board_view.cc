@@ -525,12 +525,12 @@ void BoardView::RemovePiece(const game::BoardLocation& from,
 }
 
 void BoardView::UpdateSelection() {
-  if (selection_type_ == NONE) {
-    return;
-  }
   if (temp_selected_location_) {
     temp_selected_location_->setVisible(false);
     temp_selected_location_ = NULL;
+  }
+  if (selection_type_ == NONE) {
+    return;
   }
   Ogre::SceneManager* const scene_manager = app_->scene_manager();
   Ogre::Camera* const camera = app_->camera();
