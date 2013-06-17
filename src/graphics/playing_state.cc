@@ -12,6 +12,7 @@
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
 #include "game/player_action.h"
+#include "graphics/ai_player.h"
 #include "graphics/board_view.h"
 #include "graphics/human_player.h"
 #include "graphics/ogre_app.h"
@@ -82,10 +83,7 @@ void PlayingState::InitializePlayers() {
   HumanPlayer* human_player = new HumanPlayer(game::WHITE_COLOR);
   human_player->set_board_view(Get(board_view_));
   Reset(white_player_, human_player);
-
-  human_player = new HumanPlayer(game::BLACK_COLOR);
-  human_player->set_board_view(Get(board_view_));
-  Reset(black_player_, human_player);
+  Reset(black_player_, new AIPlayer(game::BLACK_COLOR));
 }
 
 void PlayingState::RequestPlayerAction() {
