@@ -11,6 +11,8 @@ if(NOT OIS_FOUND)
 endif()
 
 set(GRAPHICS_SOURCE_FILES
+  ai_player.cc
+  ai_player.h
   board_view.cc
   board_view.h
   camera_controller.cc
@@ -48,7 +50,7 @@ add_definitions("-DGRAPHICS_IMPLEMENTATION")
 
 # The main target of this directory
 add_library(graphics ${GRAPHICS_SOURCE_FILES})
-target_link_libraries(graphics base game ${OGRE_LIBRARIES} ${OIS_LIBRARIES})
+target_link_libraries(graphics base game ai ${OGRE_LIBRARIES} ${OIS_LIBRARIES})
 
 add_executable(graphics_exe graphics_temp_main.cc)
 target_link_libraries(graphics_exe graphics)
