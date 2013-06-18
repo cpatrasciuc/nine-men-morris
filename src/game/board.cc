@@ -27,7 +27,6 @@ namespace game {
 
 namespace {
 
-
 const int kMaxBoardSize = 7;
 
 int GetBoardSizeFromGameType(GameType type) {
