@@ -24,8 +24,7 @@ namespace graphics {
 
 class GRAPHICS_EXPORT PlayingState : public GameState {
  public:
-  explicit PlayingState(OgreApp* app,
-                        std::auto_ptr<game::Game> game_model);
+  PlayingState(OgreApp* app, std::auto_ptr<game::Game> game_model);
 
   virtual bool Initialize();
   virtual void Exit();
