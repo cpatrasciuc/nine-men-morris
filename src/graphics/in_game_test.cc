@@ -4,7 +4,7 @@
 
 #include "graphics/in_game_test.h"
 
-#include "base/log.h"
+#include "base/basic_macros.h"
 #include "graphics/ogre_app.h"
 #include "graphics/game_state.h"
 #include "gtest/gtest.h"
@@ -31,6 +31,8 @@ class RunTestMethodGameState : public GameState {
 
  private:
   InGameTestBase* const in_game_test_;
+
+  DISALLOW_COPY_AND_ASSIGN(RunTestMethodGameState);
 };
 
 }  // anonymous namespace
