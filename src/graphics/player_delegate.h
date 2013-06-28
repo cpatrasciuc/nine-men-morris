@@ -18,11 +18,15 @@ class Game;
 
 namespace graphics {
 
+class PlayingState;
+
 typedef base::Callable<void(const game::PlayerAction&)> PlayerActionCallback;
 
 class GRAPHICS_EXPORT PlayerDelegate {
  public:
   virtual ~PlayerDelegate();
+
+  virtual void Initialize(PlayingState* state);
 
   virtual void RequestAction(const game::Game& game_model,
                              std::auto_ptr<PlayerActionCallback> callback) = 0;

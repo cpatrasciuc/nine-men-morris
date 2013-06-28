@@ -26,6 +26,8 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
  public:
   PlayingState(OgreApp* app, std::auto_ptr<game::Game> game_model);
 
+  BoardView* board_view() { return Get(board_view_); }
+
   virtual bool Initialize();
   virtual void Exit();
 

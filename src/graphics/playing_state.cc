@@ -81,7 +81,7 @@ bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
 
 void PlayingState::InitializePlayers() {
   HumanPlayer* human_player = new HumanPlayer(game::WHITE_COLOR);
-  human_player->set_board_view(Get(board_view_));
+  human_player->Initialize(this);
   Reset(white_player_, human_player);
   Reset(black_player_, new AIPlayer(game::BLACK_COLOR));
 }

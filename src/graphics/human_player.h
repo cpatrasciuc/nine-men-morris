@@ -22,13 +22,14 @@ class Game;
 namespace graphics {
 
 class BoardView;
+class PlayingState;
 
 class GRAPHICS_EXPORT HumanPlayer
     : public PlayerDelegate, public SelectionListener {
  public:
   explicit HumanPlayer(game::PieceColor color);
 
-  void set_board_view(BoardView* view) { view_ = view; }
+  virtual void Initialize(PlayingState* state);
 
  private:
   // PlayerDelegate interface

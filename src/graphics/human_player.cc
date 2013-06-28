@@ -14,12 +14,17 @@
 #include "game/player_action.h"
 #include "graphics/board_view.h"
 #include "graphics/player_delegate.h"
+#include "graphics/playing_state.h"
 #include "graphics/selection_listener.h"
 
 namespace graphics {
 
 HumanPlayer::HumanPlayer(game::PieceColor color)
     : PlayerDelegate(color), view_(NULL), action_(NULL), callback_(NULL) {}
+
+void HumanPlayer::Initialize(PlayingState* state) {
+  view_ = state->board_view();
+}
 
 void HumanPlayer::RequestAction(const game::Game& game_model,
                                 std::auto_ptr<PlayerActionCallback> callback) {
