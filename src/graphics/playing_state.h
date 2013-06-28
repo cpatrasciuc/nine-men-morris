@@ -24,7 +24,10 @@ namespace graphics {
 
 class GRAPHICS_EXPORT PlayingState : public GameState {
  public:
-  PlayingState(OgreApp* app, std::auto_ptr<game::Game> game_model);
+  PlayingState(OgreApp* app,
+               std::auto_ptr<game::Game> game_model,
+               std::auto_ptr<PlayerDelegate> white_player,
+               std::auto_ptr<PlayerDelegate> black_player);
 
   BoardView* board_view() { return Get(board_view_); }
 

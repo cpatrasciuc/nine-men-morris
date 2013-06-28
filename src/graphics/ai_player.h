@@ -10,7 +10,6 @@
 #include "ai/ai_algorithm.h"
 #include "base/basic_macros.h"
 #include "base/ptr/scoped_ptr.h"
-#include "game/piece_color.h"
 #include "graphics/graphics_export.h"
 #include "graphics/player_delegate.h"
 
@@ -27,7 +26,7 @@ class GRAPHICS_EXPORT AIPlayer
       public Ogre::WorkQueue::RequestHandler,
       public Ogre::WorkQueue::ResponseHandler {
  public:
-  explicit AIPlayer(game::PieceColor color);
+  AIPlayer();
 
  private:
   // PlayerDelegate interface

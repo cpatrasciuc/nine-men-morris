@@ -19,8 +19,7 @@
 
 namespace graphics {
 
-HumanPlayer::HumanPlayer(game::PieceColor color)
-    : PlayerDelegate(color), view_(NULL), action_(NULL), callback_(NULL) {}
+HumanPlayer::HumanPlayer() : view_(NULL), action_(NULL), callback_(NULL) {}
 
 void HumanPlayer::Initialize(PlayingState* state) {
   view_ = state->board_view();
@@ -29,6 +28,7 @@ void HumanPlayer::Initialize(PlayingState* state) {
 void HumanPlayer::RequestAction(const game::Game& game_model,
                                 std::auto_ptr<PlayerActionCallback> callback) {
   DCHECK(view_);
+  DCHECK(color() != game::NO_COLOR);
   callback_ = callback;
   view_->AddListener(this);
   Reset(action_,

@@ -8,7 +8,7 @@
 
 namespace graphics {
 
-PlayerDelegate::PlayerDelegate(game::PieceColor color) : color_(color) {}
+PlayerDelegate::PlayerDelegate() : color_(game::NO_COLOR) {}
 
 PlayerDelegate::~PlayerDelegate() {}
 

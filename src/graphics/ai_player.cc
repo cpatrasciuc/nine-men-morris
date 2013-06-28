@@ -18,14 +18,14 @@
 
 namespace graphics {
 
-AIPlayer::AIPlayer(game::PieceColor color)
-    : PlayerDelegate(color),
-      callback_(NULL),
+AIPlayer::AIPlayer()
+    : callback_(NULL),
       algorithm_(NULL),
       channel_(Ogre::Root::getSingleton().getWorkQueue()->getChannel("AI")) {}
 
 void AIPlayer::RequestAction(const game::Game& game_model,
                              std::auto_ptr<PlayerActionCallback> callback) {
+  DCHECK(color() != game::NO_COLOR);
   callback_ = callback;
   Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
   work_queue->addRequestHandler(channel_, this);

@@ -23,13 +23,16 @@
 
 namespace graphics {
 
-PlayingState::PlayingState(OgreApp* app, std::auto_ptr<game::Game> game_model)
+PlayingState::PlayingState(OgreApp* app,
+                           std::auto_ptr<game::Game> game_model,
+                           std::auto_ptr<PlayerDelegate> white_player,
+                           std::auto_ptr<PlayerDelegate> black_player)
     : GameState(app),
       game_(game_model.release()),
       board_view_(new BoardView(app, *game_)),
       camera_controller_(),
-      white_player_(NULL),
-      black_player_(NULL) {}
+      white_player_(white_player.release()),
+      black_player_(black_player.release()) {}
 
 bool PlayingState::Initialize() {
   board_view_->Initialize();
@@ -80,10 +83,10 @@ bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
 }
 
 void PlayingState::InitializePlayers() {
-  HumanPlayer* human_player = new HumanPlayer(game::WHITE_COLOR);
-  human_player->Initialize(this);
-  Reset(white_player_, human_player);
-  Reset(black_player_, new AIPlayer(game::BLACK_COLOR));
+  white_player_->set_color(game::WHITE_COLOR);
+  white_player_->Initialize(this);
+  black_player_->set_color(game::BLACK_COLOR);
+  black_player_->Initialize(this);
 }
 
 void PlayingState::RequestPlayerAction() {

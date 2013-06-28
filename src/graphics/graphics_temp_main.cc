@@ -6,8 +6,10 @@
 #include "game/game_options.h"
 #include "game/game_type.h"
 
+#include "graphics/ai_player.h"
 #include "graphics/ogre_app.h"
 #include "graphics/game_state.h"
+#include "graphics/human_player.h"
 #include "graphics/playing_state.h"
 
 #include "OIS/OISKeyboard.h"
@@ -36,7 +38,11 @@ int main(int argc, char** argv) {
   std::auto_ptr<game::Game> game_model(new game::Game(options));
   game_model->Initialize();
   // EmptyGameState game_state(&app);
-  graphics::PlayingState game_state(&app, game_model);
+  graphics::PlayingState game_state(
+      &app,
+      game_model,
+      std::auto_ptr<graphics::PlayerDelegate>(new graphics::HumanPlayer()),
+      std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));
   app.PushState(&game_state);
   app.RunMainLoop();
   return 0;

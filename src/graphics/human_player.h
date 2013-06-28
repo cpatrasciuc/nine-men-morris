@@ -9,7 +9,6 @@
 
 #include "base/basic_macros.h"
 #include "base/ptr/scoped_ptr.h"
-#include "game/piece_color.h"
 #include "game/player_action.h"
 #include "graphics/graphics_export.h"
 #include "graphics/player_delegate.h"
@@ -27,7 +26,7 @@ class PlayingState;
 class GRAPHICS_EXPORT HumanPlayer
     : public PlayerDelegate, public SelectionListener {
  public:
-  explicit HumanPlayer(game::PieceColor color);
+  HumanPlayer();
 
   virtual void Initialize(PlayingState* state);
 

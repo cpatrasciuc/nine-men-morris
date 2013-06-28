@@ -31,10 +31,11 @@ class GRAPHICS_EXPORT PlayerDelegate {
   virtual void RequestAction(const game::Game& game_model,
                              std::auto_ptr<PlayerActionCallback> callback) = 0;
 
- protected:
-  explicit PlayerDelegate(game::PieceColor color);
-
   game::PieceColor color() const { return color_; }
+  void set_color(game::PieceColor color) { color_ = color; }
+
+ protected:
+  PlayerDelegate();
 
  private:
   game::PieceColor color_;
