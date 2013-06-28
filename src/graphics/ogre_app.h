@@ -57,7 +57,7 @@ class GRAPHICS_EXPORT OgreApp
   bool Init();
 
   void PushState(GameState* state);
-  void PopState();
+  GameState* PopState();
 
   void RunMainLoop();
 

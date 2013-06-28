@@ -100,15 +100,17 @@ void OgreApp::PushState(GameState* state) {
   states_.top()->Initialize();
 }
 
-void OgreApp::PopState() {
+GameState* OgreApp::PopState() {
   DCHECK(!states_.empty());
-  states_.top()->Exit();
+  GameState* const state = states_.top();
+  state->Exit();
   states_.pop();
   if (!states_.empty()) {
     states_.top()->Resume();
   } else {
     root_->queueEndRendering();
   }
+  return state;
 }
 
 void OgreApp::RunMainLoop() {
