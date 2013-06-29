@@ -21,12 +21,22 @@ namespace graphics {
 AIPlayer::AIPlayer()
     : callback_(NULL),
       algorithm_(NULL),
-      channel_(Ogre::Root::getSingleton().getWorkQueue()->getChannel("AI")) {}
+      channel_(Ogre::Root::getSingleton().getWorkQueue()->getChannel("AI")),
+      waiting_for_response_(false) {}
+
+AIPlayer::~AIPlayer() {
+  Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
+  while (waiting_for_response_) {
+    work_queue->processResponses();
+  }
+}
 
 void AIPlayer::RequestAction(const game::Game& game_model,
                              std::auto_ptr<PlayerActionCallback> callback) {
   DCHECK(color() != game::NO_COLOR);
+  DCHECK(!waiting_for_response_);
   callback_ = callback;
+  waiting_for_response_ = true;
   Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
   work_queue->addRequestHandler(channel_, this);
   work_queue->addResponseHandler(channel_, this);
@@ -50,12 +60,14 @@ void AIPlayer::handleResponse(const Ogre::WorkQueue::Response* response,
                               const Ogre::WorkQueue* source_queue) {
   DCHECK(response->succeeded());
   DCHECK(callback_.get());
+  DCHECK(waiting_for_response_);
   base::ptr::scoped_ptr<const game::PlayerAction> action(
       response->getData().get<const game::PlayerAction*>());
   Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
   work_queue->removeRequestHandler(channel_, this);
   work_queue->removeResponseHandler(channel_, this);
   (*callback_)(*action);
+  waiting_for_response_ = false;
 }
 
 }  // namespace graphics

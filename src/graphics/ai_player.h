@@ -27,6 +27,7 @@ class GRAPHICS_EXPORT AIPlayer
       public Ogre::WorkQueue::ResponseHandler {
  public:
   AIPlayer();
+  virtual ~AIPlayer();
 
  private:
   // PlayerDelegate interface
@@ -45,6 +46,7 @@ class GRAPHICS_EXPORT AIPlayer
   std::auto_ptr<PlayerActionCallback> callback_;
   base::ptr::scoped_ptr<ai::AIAlgorithm> algorithm_;
   const Ogre::uint16 channel_;
+  bool waiting_for_response_;
 
   DISALLOW_COPY_AND_ASSIGN(AIPlayer);
 };
