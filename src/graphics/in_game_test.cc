@@ -4,6 +4,7 @@
 
 #include "graphics/in_game_test.h"
 
+#include "base/log.h"
 #include "base/bind.h"
 #include "base/basic_macros.h"
 #include "base/callable.h"
@@ -57,15 +58,22 @@ void InGameTestBase::SetUp() {
   work_queue->addResponseHandler(channel_, this);
   Reset(first_state_, new RunTestMethodGameState(this));
   app_.PushState(Get(first_state_));
+  testing::UnitTest::GetInstance()->listeners().Append(this);
 }
 
 void InGameTestBase::TearDown() {
+  testing::UnitTest::GetInstance()->listeners().Release(this);
   Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
   work_queue->removeRequestHandler(channel_, this);
   work_queue->removeResponseHandler(channel_, this);
 }
 
 void InGameTestBase::PostDoneTaskOnGameLoop() {
+  static bool already_called = false;
+  if (already_called) {
+    return;
+  }
+  already_called = true;
   typedef void(InGameTestBase::*DoneSig)(void);
   base::Closure* done_task = base::Bind(
       new base::Method<DoneSig>(&InGameTestBase::Done), this);
@@ -81,6 +89,12 @@ void InGameTestBase::Done() {
 void InGameTestBase::PostTaskOnGameLoop(base::Closure* task) {
   Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
   work_queue->addRequest(channel_, 0, Ogre::Any(task));
+}
+
+void InGameTestBase::OnTestPartResult(const testing::TestPartResult& result) {
+  if (result.fatally_failed() || result.passed()) {
+    PostDoneTaskOnGameLoop();
+  }
 }
 
 Ogre::WorkQueue::Response* InGameTestBase::handleRequest(

@@ -18,6 +18,7 @@ namespace graphics {
 
 class InGameTestBase
     : public testing::Test,
+      public testing::EmptyTestEventListener,
       public Ogre::WorkQueue::RequestHandler,
       public Ogre::WorkQueue::ResponseHandler {
  public:
@@ -31,7 +32,8 @@ class InGameTestBase
   InGameTestBase();
   virtual ~InGameTestBase();
 
-  // Initializes |app_| and pushes |this| on the game states stack.
+  // Initializes |app_| and pushes the first game state on the game states
+  // stack. This state will call |TestMethod()| on the main game loop.
   virtual void SetUp();
 
   virtual void TearDown();
@@ -49,6 +51,11 @@ class InGameTestBase
   void PostTaskOnGameLoop(base::Closure* task);
 
  private:
+  // testing::EmptyTestEventListener overrides
+  // Listener for partial results. If a fatal failure or SUCCEED() occurred, it
+  // calls PostDoneTaskOnGameLoop() to end the test.
+  virtual void OnTestPartResult(const testing::TestPartResult& result);
+
   // Ogre::RequestHandler interface
   virtual Ogre::WorkQueue::Response* handleRequest(
       const Ogre::WorkQueue::Request* request,

@@ -38,16 +38,13 @@ class AIPlayerInGameTest : public InGameTestBase, public game::GameListener {
   virtual void OnPlayerAction(const game::PlayerAction& action) {
     ++actions_count_;
     if (actions_count_ > 10) {
-      PostDoneTaskOnGameLoop();
+      SUCCEED();
     }
   }
 
   virtual void OnGameOver(game::PieceColor winner) {
-    // TODO(in_game_test): Add a parallel task that verifies if there are fatal
-    // failures and quits the game loop.
-    EXPECT_TRUE(false) << "AI vs. AI should be a draw. "
-                       << "It should not end in less than 10 moves.";
-    PostDoneTaskOnGameLoop();
+    FAIL() << "AI vs. AI should be a draw. "
+           << "It should not end in less than 10 moves.";
   }
 
   virtual void Done() {
