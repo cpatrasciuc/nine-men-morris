@@ -15,6 +15,7 @@
 #include "OGRE/OgreAny.h"
 #include "OGRE/OgreRoot.h"
 #include "OGRE/OgreWorkQueue.h"
+#include "OGRE/Threading/OgreThreadDefinesBoost.h"
 
 namespace graphics {
 
@@ -27,6 +28,7 @@ AIPlayer::AIPlayer()
 AIPlayer::~AIPlayer() {
   Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
   while (waiting_for_response_) {
+    OGRE_THREAD_SLEEP(0);
     work_queue->processResponses();
   }
 }
