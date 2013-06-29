@@ -4,9 +4,6 @@
 
 #include <memory>
 
-#include "base/bind.h"
-#include "base/callable.h"
-#include "base/method.h"
 #include "game/game.h"
 #include "game/game_listener.h"
 #include "game/game_options.h"
@@ -24,7 +21,7 @@ namespace {
 // Run a three men morris game with two AI players for 10 moves, then quit.
 class AIPlayerInGameTest : public InGameTestBase, public game::GameListener {
  public:
-  void TestMethod() {
+  virtual void TestMethod() {
     actions_count_ = 0;
     std::auto_ptr<PlayerDelegate> white_player(new AIPlayer());
     std::auto_ptr<PlayerDelegate> black_player(new AIPlayer());
@@ -41,7 +38,7 @@ class AIPlayerInGameTest : public InGameTestBase, public game::GameListener {
   virtual void OnPlayerAction(const game::PlayerAction& action) {
     ++actions_count_;
     if (actions_count_ > 10) {
-      PostEndGameTaskOnGameLoop();
+      PostDoneTaskOnGameLoop();
     }
   }
 
@@ -50,25 +47,16 @@ class AIPlayerInGameTest : public InGameTestBase, public game::GameListener {
     // failures and quits the game loop.
     EXPECT_TRUE(false) << "AI vs. AI should be a draw. "
                        << "It should not end in less than 10 moves.";
-    PostEndGameTaskOnGameLoop();
+    PostDoneTaskOnGameLoop();
+  }
+
+  virtual void Done() {
+    ASSERT_EQ(Get(playing_state_), app()->PopState());
+    Reset(playing_state_);
+    InGameTestBase::Done();
   }
 
  private:
-  // TODO(in_game_test): Add a method in InGameTestBase that post the Done()
-  // task to the main loop and make Done() a virtual method.
-  void PostEndGameTaskOnGameLoop() {
-    typedef void(AIPlayerInGameTest::*EndGameSig)(void);
-    base::Closure* end_game_task = base::Bind(
-        new base::Method<EndGameSig>(&AIPlayerInGameTest::EndGame), this);
-    PostTaskOnGameLoop(end_game_task);
-  }
-
-  void EndGame() {
-    ASSERT_EQ(Get(playing_state_), app()->PopState());
-    Reset(playing_state_);
-    Done();
-  }
-
   base::ptr::scoped_ptr<GameState> playing_state_;
   int actions_count_;
 };

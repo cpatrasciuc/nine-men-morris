@@ -4,7 +4,10 @@
 
 #include "graphics/in_game_test.h"
 
+#include "base/bind.h"
 #include "base/basic_macros.h"
+#include "base/callable.h"
+#include "base/method.h"
 #include "base/ptr/scoped_ptr.h"
 #include "graphics/ogre_app.h"
 #include "graphics/game_state.h"
@@ -60,6 +63,13 @@ void InGameTestBase::TearDown() {
   Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
   work_queue->removeRequestHandler(channel_, this);
   work_queue->removeResponseHandler(channel_, this);
+}
+
+void InGameTestBase::PostDoneTaskOnGameLoop() {
+  typedef void(InGameTestBase::*DoneSig)(void);
+  base::Closure* done_task = base::Bind(
+      new base::Method<DoneSig>(&InGameTestBase::Done), this);
+  PostTaskOnGameLoop(done_task);
 }
 
 void InGameTestBase::Done() {
