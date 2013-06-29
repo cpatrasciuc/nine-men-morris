@@ -32,7 +32,8 @@ PlayingState::PlayingState(OgreApp* app,
       board_view_(new BoardView(app, *game_)),
       camera_controller_(),
       white_player_(white_player.release()),
-      black_player_(black_player.release()) {}
+      black_player_(black_player.release()),
+      paused_(false) {}
 
 bool PlayingState::Initialize() {
   board_view_->Initialize();
@@ -46,12 +47,14 @@ bool PlayingState::Initialize() {
 }
 
 void PlayingState::Exit() {
-  camera_controller_.set_camera(NULL);
-  Reset(board_view_);
+  paused_ = true;
   Reset(white_player_);
   Reset(black_player_);
+  Reset(board_view_);
+  camera_controller_.set_camera(NULL);
   Ogre::SceneManager* const scene_manager = app()->scene_manager();
   Ogre::SceneNode* const root = scene_manager->getRootSceneNode();
+  // TODO(board_view): BoardView should cleanup in its destructor (?)
   root->removeAllChildren();
 }
 
@@ -100,7 +103,7 @@ void PlayingState::RequestPlayerAction() {
 
 void PlayingState::ExecuteAction(const game::PlayerAction& action) {
   game_->ExecutePlayerAction(action);
-  if (!game_->is_game_over()) {
+  if (!game_->is_game_over() && !paused_) {
     RequestPlayerAction();
   }
 }
