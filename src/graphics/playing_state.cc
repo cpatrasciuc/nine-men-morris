@@ -18,9 +18,6 @@
 #include "graphics/ogre_app.h"
 #include "graphics/player_delegate.h"
 
-#include "OGRE/OgreSceneManager.h"
-#include "OGRE/OgreSceneNode.h"
-
 namespace graphics {
 
 PlayingState::PlayingState(OgreApp* app,
@@ -52,10 +49,6 @@ void PlayingState::Exit() {
   Reset(black_player_);
   Reset(board_view_);
   camera_controller_.set_camera(NULL);
-  Ogre::SceneManager* const scene_manager = app()->scene_manager();
-  Ogre::SceneNode* const root = scene_manager->getRootSceneNode();
-  // TODO(board_view): BoardView should cleanup in its destructor (?)
-  root->removeAllChildren();
 }
 
 bool PlayingState::keyPressed(const OIS::KeyEvent& event) {
