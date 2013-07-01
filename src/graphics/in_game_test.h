@@ -80,7 +80,6 @@ class InGameTestBase
 
 #define IN_GAME_TEST(test_class, test_name) \
   TEST_F(test_class, test_name) { \
-    ASSERT_TRUE(app()); \
     app()->RunMainLoop(); \
   }
 
