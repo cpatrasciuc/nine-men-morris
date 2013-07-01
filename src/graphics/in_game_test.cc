@@ -52,8 +52,8 @@ InGameTestBase::~InGameTestBase() {}
 void InGameTestBase::SetUp() {
   // TODO(game_test): Provide an ogre config file for test.
   ASSERT_TRUE(app_.Init());
-  Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
-  channel_ = Ogre::Root::getSingleton().getWorkQueue()->getChannel("GameTest");
+  Ogre::WorkQueue* const work_queue = app_.ogre_root()->getWorkQueue();
+  channel_ = work_queue->getChannel("GameTest");
   work_queue->addRequestHandler(channel_, this);
   work_queue->addResponseHandler(channel_, this);
   Reset(first_state_, new RunTestMethodGameState(this));
@@ -63,7 +63,7 @@ void InGameTestBase::SetUp() {
 
 void InGameTestBase::TearDown() {
   testing::UnitTest::GetInstance()->listeners().Release(this);
-  Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
+  Ogre::WorkQueue* const work_queue = app_.ogre_root()->getWorkQueue();
   work_queue->removeRequestHandler(channel_, this);
   work_queue->removeResponseHandler(channel_, this);
 }
@@ -87,7 +87,7 @@ void InGameTestBase::Done() {
 }
 
 void InGameTestBase::PostTaskOnGameLoop(base::Closure* task) {
-  Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
+  Ogre::WorkQueue* const work_queue = app_.ogre_root()->getWorkQueue();
   work_queue->addRequest(channel_, 0, Ogre::Any(task));
 }
 
