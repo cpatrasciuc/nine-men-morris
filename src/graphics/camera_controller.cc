@@ -13,7 +13,12 @@
 namespace graphics {
 
 CameraController::CameraController()
-    : camera_(NULL), min_distance_(0), max_distance_(1e9), orbiting_(false) {}
+    : camera_(NULL),
+      min_distance_(0),
+      max_distance_(1e9),
+      zoom_speed_(1.0),
+      orbit_speed_(1.0),
+      orbiting_(false) {}
 
 void CameraController::mouseMoved(const OIS::MouseEvent& event) {
   if (!camera_) {
@@ -21,7 +26,7 @@ void CameraController::mouseMoved(const OIS::MouseEvent& event) {
   }
   if (event.state.Z.rel != 0) {
     const Ogre::Vector3 camera_position = camera_->getPosition();
-    Ogre::Vector3 delta(0, 0, event.state.Z.rel * 0.05f);
+    Ogre::Vector3 delta(0, 0, event.state.Z.rel * zoom_speed_);
     const Ogre::Vector3 new_position = camera_position + delta;
     if (event.state.Z.rel > 0 && new_position.length() > max_distance_) {
       camera_->setPosition(Ogre::Vector3::ZERO);
@@ -44,7 +49,7 @@ void CameraController::mouseMoved(const OIS::MouseEvent& event) {
     }
     camera_->setPosition(Ogre::Vector3::ZERO);
     camera_->pitch(pitch_delta);
-    camera_->yaw(Ogre::Degree(-event.state.X.rel * 0.25f));
+    camera_->yaw(Ogre::Degree(-event.state.X.rel * orbit_speed_));
     camera_->moveRelative(Ogre::Vector3(0, 0, target_distance));
     const double pitch = camera_->getOrientation().getPitch().valueDegrees();
     if ((pitch > -10 && pitch < 10) || (pitch > 80) || (pitch < -80)) {

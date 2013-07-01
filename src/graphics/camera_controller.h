@@ -45,6 +45,16 @@ class GRAPHICS_EXPORT CameraController {
   double max_distance() const { return max_distance_; }
   void set_max_distance(double max_distance) { max_distance_ = max_distance; }
 
+  // Can be used to control the speed at which zooming is performed based on
+  // mouse scrolling speed. Default value: 1.0.
+  double zoom_speed() const { return zoom_speed_; }
+  void set_zoom_speed(double zoom_speed) { zoom_speed_ = zoom_speed; }
+
+  // Can be used to control the speed at which orbiting is performed based on
+  // mouse movement speed. Default value: 1.0.
+  double orbit_speed() const { return orbit_speed_; }
+  void set_orbit_speed(double orbit_speed) { orbit_speed_ = orbit_speed; }
+
   void mouseMoved(const OIS::MouseEvent& event);
   void mousePressed(const OIS::MouseEvent& event, OIS::MouseButtonID id);
   void mouseReleased(const OIS::MouseEvent& event, OIS::MouseButtonID id);
@@ -53,6 +63,8 @@ class GRAPHICS_EXPORT CameraController {
   Ogre::Camera* camera_;
   double min_distance_;
   double max_distance_;
+  double zoom_speed_;
+  double orbit_speed_;
   bool orbiting_;
 
   DISALLOW_COPY_AND_ASSIGN(CameraController);
