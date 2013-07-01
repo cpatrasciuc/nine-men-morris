@@ -34,6 +34,7 @@ set(GRAPHICS_SOURCE_FILES
 
 set(IN_GAME_TESTS_SOURCE_FILES
   ai_player_in_game_test.cc
+  camera_controller_test.cc
   in_game_test.cc
   in_game_test.h
 )
