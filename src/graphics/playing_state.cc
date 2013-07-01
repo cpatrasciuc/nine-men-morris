@@ -36,6 +36,8 @@ bool PlayingState::Initialize() {
   board_view_->Initialize();
   camera_controller_.set_min_distance(50);
   camera_controller_.set_max_distance(200);
+  camera_controller_.set_zoom_speed(0.05);
+  camera_controller_.set_orbit_speed(0.25);
   camera_controller_.set_camera(app()->camera());
   game_->AddListener(Get(board_view_));
   InitializePlayers();
