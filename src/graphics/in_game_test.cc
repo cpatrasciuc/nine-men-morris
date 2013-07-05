@@ -42,16 +42,23 @@ class RunTestMethodGameState : public GameState {
 
 }  // anonymous namespace
 
-InGameTestBase::InGameTestBase()
-    : app_("Game Tests"), first_state_(NULL) {}
+// TODO(in_game_tests): Remvome this once OgreApp is a singleton.
+OgreApp* g_ogre_app = NULL;
+
+InGameTestBase::InGameTestBase() : first_state_(NULL) {}
 
 InGameTestBase::~InGameTestBase() {}
 
+OgreApp* InGameTestBase::app() { return g_ogre_app; }
+
 void InGameTestBase::SetUp() {
   // TODO(game_test): Provide an ogre config file for test.
-  ASSERT_TRUE(app_.Init());
+  if (!g_ogre_app) {
+    g_ogre_app = new OgreApp("Game Tests");
+    ASSERT_TRUE(g_ogre_app->Init());
+  }
   Reset(first_state_, new RunTestMethodGameState(this));
-  app_.PushState(Get(first_state_));
+  app()->PushState(Get(first_state_));
   testing::UnitTest::GetInstance()->listeners().Append(this);
 }
 
@@ -73,7 +80,7 @@ void InGameTestBase::PostDoneTaskOnGameLoop() {
 
 void InGameTestBase::Done() {
   ASSERT_TRUE(Get(first_state_));
-  ASSERT_EQ(Get(first_state_), app_.PopState());
+  ASSERT_EQ(Get(first_state_), app()->PopState());
   Reset(first_state_);
 }
 

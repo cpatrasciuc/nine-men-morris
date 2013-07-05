@@ -21,7 +21,7 @@ class InGameTestBase
   // the game loop after the first frame is queued for rendering.
   virtual void TestMethod() = 0;
 
-  OgreApp* app() { return &app_; }
+  OgreApp* app();
 
  protected:
   InGameTestBase();
@@ -47,8 +47,6 @@ class InGameTestBase
   // Listener for partial results. If a fatal failure or SUCCEED() occurred, it
   // calls PostDoneTaskOnGameLoop() to end the test.
   virtual void OnTestPartResult(const testing::TestPartResult& result);
-
-  OgreApp app_;
 
   // The first game state that is pushed on the stack when the test is run. A
   // pointer to it is stored to ensure that when the Done() method is called and
