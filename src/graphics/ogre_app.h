@@ -8,6 +8,11 @@
 #include <stack>
 #include <string>
 
+#include "base/basic_macros.h"
+#include "base/callable.h"
+#include "base/ptr/scoped_ptr.h"
+#include "graphics/graphics_export.h"
+
 #include "OGRE/OgreFrameListener.h"
 #include "OGRE/OgreWindowEventUtilities.h"
 #include "OGRE/OgreWorkQueue.h"
@@ -15,12 +20,6 @@
 #include "OIS/OISEvents.h"
 #include "OIS/OISKeyboard.h"
 #include "OIS/OISMouse.h"
-
-// TODO(OgreApp): Move these includes at the top of the file
-#include "base/basic_macros.h"
-#include "base/callable.h"
-#include "base/ptr/scoped_ptr.h"
-#include "graphics/graphics_export.h"
 
 namespace Ogre {
 class Camera;
