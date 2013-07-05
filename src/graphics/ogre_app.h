@@ -10,12 +10,15 @@
 
 #include "OGRE/OgreFrameListener.h"
 #include "OGRE/OgreWindowEventUtilities.h"
+#include "OGRE/OgreWorkQueue.h"
 
 #include "OIS/OISEvents.h"
 #include "OIS/OISKeyboard.h"
 #include "OIS/OISMouse.h"
 
+// TODO(OgreApp): Move these includes at the top of the file
 #include "base/basic_macros.h"
+#include "base/callable.h"
 #include "base/ptr/scoped_ptr.h"
 #include "graphics/graphics_export.h"
 
@@ -35,11 +38,13 @@ namespace graphics {
 
 class GameState;
 
-class GRAPHICS_EXPORT OgreApp
-    : public Ogre::FrameListener,
-      public Ogre::WindowEventListener,
-      public OIS::KeyListener,
-      public OIS::MouseListener {
+// TODO(OgreApp): Make this a singleton
+class GRAPHICS_EXPORT OgreApp : public Ogre::FrameListener,
+                                public Ogre::WindowEventListener,
+                                public Ogre::WorkQueue::RequestHandler,
+                                public Ogre::WorkQueue::ResponseHandler,
+                                public OIS::KeyListener,
+                                public OIS::MouseListener {
  public:
   explicit OgreApp(const std::string& name);
   ~OgreApp();
@@ -61,6 +66,8 @@ class GRAPHICS_EXPORT OgreApp
 
   void RunMainLoop();
 
+  void PostTaskOnGameLoop(base::Closure* task);
+
  private:
   // FrameListener overrides
   virtual bool frameStarted(const Ogre::FrameEvent& event);
@@ -70,6 +77,15 @@ class GRAPHICS_EXPORT OgreApp
   // WindowEventListener overrides
   virtual void windowResized(Ogre::RenderWindow* render_window);
   virtual void windowClosed(Ogre::RenderWindow* render_window);
+
+  // Ogre::RequestHandler interface
+  virtual Ogre::WorkQueue::Response* handleRequest(
+      const Ogre::WorkQueue::Request* request,
+      const Ogre::WorkQueue* source_queue);
+
+  // Ogre::ResponseHandler interface
+  virtual void handleResponse(const Ogre::WorkQueue::Response* response,
+                              const Ogre::WorkQueue* source_queue);
 
   // KeyListener interface
   virtual bool keyPressed(const OIS::KeyEvent& event);
@@ -93,6 +109,9 @@ class GRAPHICS_EXPORT OgreApp
   OIS::Mouse* mouse_;
 
   std::stack<GameState*> states_;
+
+  // Ogre work queue channel used to bounce back tasks on the UI thread.
+  Ogre::uint16 channel_;
 
   DISALLOW_COPY_AND_ASSIGN(OgreApp);
 };

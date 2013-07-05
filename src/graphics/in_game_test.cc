@@ -4,7 +4,6 @@
 
 #include "graphics/in_game_test.h"
 
-#include "base/log.h"
 #include "base/bind.h"
 #include "base/basic_macros.h"
 #include "base/callable.h"
@@ -14,10 +13,8 @@
 #include "graphics/game_state.h"
 #include "gtest/gtest.h"
 
-#include "OGRE/OgreAny.h"
 #include "OGRE/OgreFrameListener.h"
 #include "OGRE/OgreRoot.h"
-#include "OGRE/OgreWorkQueue.h"
 
 namespace graphics {
 namespace {
@@ -45,17 +42,13 @@ class RunTestMethodGameState : public GameState {
 }  // anonymous namespace
 
 InGameTestBase::InGameTestBase()
-    : app_("Game Tests"), first_state_(NULL), channel_(-1) {}
+    : app_("Game Tests"), first_state_(NULL) {}
 
 InGameTestBase::~InGameTestBase() {}
 
 void InGameTestBase::SetUp() {
   // TODO(game_test): Provide an ogre config file for test.
   ASSERT_TRUE(app_.Init());
-  Ogre::WorkQueue* const work_queue = app_.ogre_root()->getWorkQueue();
-  channel_ = work_queue->getChannel("GameTest");
-  work_queue->addRequestHandler(channel_, this);
-  work_queue->addResponseHandler(channel_, this);
   Reset(first_state_, new RunTestMethodGameState(this));
   app_.PushState(Get(first_state_));
   testing::UnitTest::GetInstance()->listeners().Append(this);
@@ -63,9 +56,6 @@ void InGameTestBase::SetUp() {
 
 void InGameTestBase::TearDown() {
   testing::UnitTest::GetInstance()->listeners().Release(this);
-  Ogre::WorkQueue* const work_queue = app_.ogre_root()->getWorkQueue();
-  work_queue->removeRequestHandler(channel_, this);
-  work_queue->removeResponseHandler(channel_, this);
 }
 
 void InGameTestBase::PostDoneTaskOnGameLoop() {
@@ -77,7 +67,7 @@ void InGameTestBase::PostDoneTaskOnGameLoop() {
   typedef void(InGameTestBase::*DoneSig)(void);
   base::Closure* done_task = base::Bind(
       new base::Method<DoneSig>(&InGameTestBase::Done), this);
-  PostTaskOnGameLoop(done_task);
+  app()->PostTaskOnGameLoop(done_task);
 }
 
 void InGameTestBase::Done() {
@@ -86,28 +76,10 @@ void InGameTestBase::Done() {
   Reset(first_state_);
 }
 
-void InGameTestBase::PostTaskOnGameLoop(base::Closure* task) {
-  Ogre::WorkQueue* const work_queue = app_.ogre_root()->getWorkQueue();
-  work_queue->addRequest(channel_, 0, Ogre::Any(task));
-}
-
 void InGameTestBase::OnTestPartResult(const testing::TestPartResult& result) {
   if (result.fatally_failed() || result.passed()) {
     PostDoneTaskOnGameLoop();
   }
-}
-
-Ogre::WorkQueue::Response* InGameTestBase::handleRequest(
-    const Ogre::WorkQueue::Request* request,
-    const Ogre::WorkQueue* source_queue) {
-  return OGRE_NEW Ogre::WorkQueue::Response(request, true, Ogre::Any());
-}
-
-void InGameTestBase::handleResponse(const Ogre::WorkQueue::Response* response,
-                                    const Ogre::WorkQueue* source_queue) {
-  base::ptr::scoped_ptr<base::Closure> task(
-      response->getRequest()->getData().get<base::Closure*>());
-  (*task)();
 }
 
 }  // namespace graphics

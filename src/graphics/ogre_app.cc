@@ -7,8 +7,14 @@
 #include <stack>
 #include <string>
 
+#include "base/callable.h"
 #include "base/file_path.h"
+#include "base/log.h"
+#include "base/ptr/scoped_ptr.h"
+#include "base/string_util.h"
+#include "graphics/game_state.h"
 
+#include "OGRE/OgreAny.h"
 #include "OGRE/OgreCamera.h"
 #include "OGRE/OgreColourValue.h"
 #include "OGRE/OgrePrerequisites.h"
@@ -19,19 +25,16 @@
 #include "OGRE/OgreVector3.h"
 #include "OGRE/OgreViewport.h"
 #include "OGRE/OgreWindowEventUtilities.h"
+#include "OGRE/OgreWorkQueue.h"
 
 #include "OIS/OISEvents.h"
 #include "OIS/OISInputManager.h"
 #include "OIS/OISKeyboard.h"
 #include "OIS/OISMouse.h"
 
-#include "base/log.h"
-#include "base/string_util.h"
-#include "graphics/game_state.h"
-
 namespace graphics {
 
-OgreApp::OgreApp(const std::string& name) : name_(name) {}
+OgreApp::OgreApp(const std::string& name) : name_(name), channel_(-1) {}
 
 OgreApp::~OgreApp() {
   DCHECK(!input_manager_);
@@ -88,6 +91,11 @@ bool OgreApp::Init() {
   windowResized(render_window_);
   Ogre::WindowEventUtilities::addWindowEventListener(render_window_, this);
 
+  Ogre::WorkQueue* const work_queue = root_->getWorkQueue();
+  channel_ = work_queue->getChannel("Trampoline");
+  work_queue->addRequestHandler(channel_, this);
+  work_queue->addResponseHandler(channel_, this);
+
   return true;
 }
 
@@ -123,8 +131,18 @@ void OgreApp::RunMainLoop() {
   while (!states_.empty()) {
     PopState();
   }
+  // TODO(OgreApp): What should we do with unprocessed requests?
+  Ogre::WorkQueue* const work_queue = root_->getWorkQueue();
+  work_queue->removeRequestHandler(channel_, this);
+  work_queue->removeResponseHandler(channel_, this);
+
   Ogre::WindowEventUtilities::removeWindowEventListener(render_window_, this);
   windowClosed(render_window_);
+}
+
+void OgreApp::PostTaskOnGameLoop(base::Closure* task) {
+  Ogre::WorkQueue* const work_queue = root_->getWorkQueue();
+  work_queue->addRequest(channel_, 0, Ogre::Any(task));
 }
 
 void OgreApp::windowResized(Ogre::RenderWindow* render_window) {
@@ -182,6 +200,19 @@ bool OgreApp::frameEnded(const Ogre::FrameEvent& event) {
     return false;
   }
   return states_.top()->frameEnded(event);
+}
+
+Ogre::WorkQueue::Response* OgreApp::handleRequest(
+    const Ogre::WorkQueue::Request* request,
+    const Ogre::WorkQueue* source_queue) {
+  return OGRE_NEW Ogre::WorkQueue::Response(request, true, Ogre::Any());
+}
+
+void OgreApp::handleResponse(const Ogre::WorkQueue::Response* response,
+                             const Ogre::WorkQueue* source_queue) {
+  base::ptr::scoped_ptr<base::Closure> task(
+      response->getRequest()->getData().get<base::Closure*>());
+  (*task)();
 }
 
 bool OgreApp::keyPressed(const OIS::KeyEvent& event) {
