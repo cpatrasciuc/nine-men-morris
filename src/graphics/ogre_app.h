@@ -21,6 +21,10 @@
 #include "OIS/OISKeyboard.h"
 #include "OIS/OISMouse.h"
 
+namespace base {
+class Location;
+}
+
 namespace Ogre {
 class Camera;
 struct FrameEvent;
@@ -65,7 +69,7 @@ class GRAPHICS_EXPORT OgreApp : public Ogre::FrameListener,
 
   void RunMainLoop();
 
-  void PostTaskOnGameLoop(base::Closure* task);
+  void PostTaskOnGameLoop(const base::Location& from, base::Closure* task);
 
  private:
   // FrameListener overrides

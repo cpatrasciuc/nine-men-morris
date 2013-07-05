@@ -7,6 +7,7 @@
 #include "base/bind.h"
 #include "base/basic_macros.h"
 #include "base/callable.h"
+#include "base/location.h"
 #include "base/method.h"
 #include "base/ptr/scoped_ptr.h"
 #include "graphics/ogre_app.h"
@@ -67,7 +68,7 @@ void InGameTestBase::PostDoneTaskOnGameLoop() {
   typedef void(InGameTestBase::*DoneSig)(void);
   base::Closure* done_task = base::Bind(
       new base::Method<DoneSig>(&InGameTestBase::Done), this);
-  app()->PostTaskOnGameLoop(done_task);
+  app()->PostTaskOnGameLoop(FROM_HERE, done_task);
 }
 
 void InGameTestBase::Done() {

@@ -9,9 +9,11 @@
 
 #include "base/callable.h"
 #include "base/file_path.h"
+#include "base/location.h"
 #include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 #include "base/string_util.h"
+#include "base/threading/task.h"
 #include "graphics/game_state.h"
 
 #include "OGRE/OgreAny.h"
@@ -140,9 +142,11 @@ void OgreApp::RunMainLoop() {
   windowClosed(render_window_);
 }
 
-void OgreApp::PostTaskOnGameLoop(base::Closure* task) {
+void OgreApp::PostTaskOnGameLoop(const base::Location& from,
+                                 base::Closure* task) {
   Ogre::WorkQueue* const work_queue = root_->getWorkQueue();
-  work_queue->addRequest(channel_, 0, Ogre::Any(task));
+  work_queue->addRequest(channel_, 0,
+      Ogre::Any(new base::threading::Task(from, task)));
 }
 
 void OgreApp::windowResized(Ogre::RenderWindow* render_window) {
@@ -210,9 +214,9 @@ Ogre::WorkQueue::Response* OgreApp::handleRequest(
 
 void OgreApp::handleResponse(const Ogre::WorkQueue::Response* response,
                              const Ogre::WorkQueue* source_queue) {
-  base::ptr::scoped_ptr<base::Closure> task(
-      response->getRequest()->getData().get<base::Closure*>());
-  (*task)();
+  base::ptr::scoped_ptr<base::threading::Task> task(
+      response->getRequest()->getData().get<base::threading::Task*>());
+  task->Run();
 }
 
 bool OgreApp::keyPressed(const OIS::KeyEvent& event) {
