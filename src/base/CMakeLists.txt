@@ -37,6 +37,7 @@ set(BASE_SOURCE_FILES
   ptr/weak_ptr.h
   random.cc
   random.h
+  singleton.h
   string_util.cc
   string_util.h
   supports_listener.h
@@ -72,6 +73,7 @@ set(BASE_UNITTESTS_SOURCE_FILES
   ptr/smart_ptr_unittest.cc
   ptr/weak_ptr_unittest.cc
   random_unittest.cc
+  singleton_unittest.cc
   string_util_unittest.cc
   supports_listener_unittest.cc
   threading/atomic_unittest.cc
