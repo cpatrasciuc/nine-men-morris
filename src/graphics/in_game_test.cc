@@ -54,7 +54,7 @@ OgreApp* InGameTestBase::app() { return g_ogre_app; }
 void InGameTestBase::SetUp() {
   // TODO(game_test): Provide an ogre config file for test.
   if (!g_ogre_app) {
-    g_ogre_app = new OgreApp("Game Tests");
+    g_ogre_app = &OgreApp::Instance();
     ASSERT_TRUE(g_ogre_app->Init());
   }
   Reset(first_state_, new RunTestMethodGameState(this));

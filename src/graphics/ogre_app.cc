@@ -36,7 +36,7 @@
 
 namespace graphics {
 
-OgreApp::OgreApp(const std::string& name) : name_(name), channel_(-1) {}
+OgreApp::OgreApp() : name_("Ogre App"), channel_(-1) {}
 
 OgreApp::~OgreApp() {
   DCHECK(!input_manager_);
@@ -99,6 +99,10 @@ bool OgreApp::Init() {
   work_queue->addResponseHandler(channel_, this);
 
   return true;
+}
+
+void OgreApp::ShutDown() {
+  Reset(root_);
 }
 
 void OgreApp::PushState(GameState* state) {

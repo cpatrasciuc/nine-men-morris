@@ -11,6 +11,7 @@
 #include "base/basic_macros.h"
 #include "base/callable.h"
 #include "base/ptr/scoped_ptr.h"
+#include "base/singleton.h"
 #include "graphics/graphics_export.h"
 
 #include "OGRE/OgreFrameListener.h"
@@ -41,17 +42,14 @@ namespace graphics {
 
 class GameState;
 
-// TODO(OgreApp): Make this a singleton
-class GRAPHICS_EXPORT OgreApp : public Ogre::FrameListener,
+class GRAPHICS_EXPORT OgreApp : public base::Singleton<OgreApp, false>,
+                                public Ogre::FrameListener,
                                 public Ogre::WindowEventListener,
                                 public Ogre::WorkQueue::RequestHandler,
                                 public Ogre::WorkQueue::ResponseHandler,
                                 public OIS::KeyListener,
                                 public OIS::MouseListener {
  public:
-  explicit OgreApp(const std::string& name);
-  ~OgreApp();
-
   const std::string& name() const { return name_; }
 
   Ogre::SceneManager* scene_manager() { return scene_manager_; }
@@ -63,6 +61,7 @@ class GRAPHICS_EXPORT OgreApp : public Ogre::FrameListener,
   const OIS::Mouse& mouse() const { return *mouse_; }
 
   bool Init();
+  void ShutDown();
 
   void PushState(GameState* state);
   GameState* PopState();
@@ -70,6 +69,10 @@ class GRAPHICS_EXPORT OgreApp : public Ogre::FrameListener,
   void RunMainLoop();
 
   void PostTaskOnGameLoop(const base::Location& from, base::Closure* task);
+
+ protected:
+  OgreApp();
+  ~OgreApp();
 
  private:
   // FrameListener overrides
@@ -116,6 +119,7 @@ class GRAPHICS_EXPORT OgreApp : public Ogre::FrameListener,
   // Ogre work queue channel used to bounce back tasks on the UI thread.
   Ogre::uint16 channel_;
 
+  friend class base::DefaultCreationPolicy<OgreApp>;
   DISALLOW_COPY_AND_ASSIGN(OgreApp);
 };
 
