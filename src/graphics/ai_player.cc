@@ -63,13 +63,13 @@ void AIPlayer::handleResponse(const Ogre::WorkQueue::Response* response,
   DCHECK(response->succeeded());
   DCHECK(callback_.get());
   DCHECK(waiting_for_response_);
+  waiting_for_response_ = false;
   base::ptr::scoped_ptr<const game::PlayerAction> action(
       response->getData().get<const game::PlayerAction*>());
   Ogre::WorkQueue* const work_queue = Ogre::Root::getSingleton().getWorkQueue();
   work_queue->removeRequestHandler(channel_, this);
   work_queue->removeResponseHandler(channel_, this);
   (*callback_)(*action);
-  waiting_for_response_ = false;
 }
 
 }  // namespace graphics
