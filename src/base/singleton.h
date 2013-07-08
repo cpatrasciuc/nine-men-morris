@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// This implementation is inspired from the "Implementing Singletons" chapter
+// in "Modern C++ Design: Generic Programming and Design Patterns Applied" by
+// Andrei Alexandrescu.
+
 #ifndef BASE_SINGLETON_H_
 #define BASE_SINGLETON_H_
 
