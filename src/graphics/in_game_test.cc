@@ -63,6 +63,7 @@ void InGameTestBase::SetUp() {
 }
 
 void InGameTestBase::TearDown() {
+  app()->ShutDown();
   testing::UnitTest::GetInstance()->listeners().Release(this);
 }
 
