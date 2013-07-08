@@ -37,6 +37,8 @@ set(IN_GAME_TESTS_SOURCE_FILES
   camera_controller_test.cc
   in_game_test.cc
   in_game_test.h
+  out_of_process_test.cc
+  out_of_process_test.h
 )
 
 include_directories(
@@ -59,6 +61,6 @@ target_link_libraries(graphics base game ai ${OGRE_LIBRARIES} ${OIS_LIBRARIES})
 add_executable(graphics_exe graphics_temp_main.cc)
 target_link_libraries(graphics_exe graphics)
 
-add_executable(in_game_tests ${IN_GAME_TESTS_SOURCE_FILES} ../base/test_runner.cc)
+add_executable(in_game_tests ${IN_GAME_TESTS_SOURCE_FILES} in_game_tests_main.cc)
 target_link_libraries(in_game_tests graphics gtest)
 

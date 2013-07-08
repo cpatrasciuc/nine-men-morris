@@ -9,6 +9,7 @@
 #include "base/ptr/scoped_ptr.h"
 #include "graphics/game_state.h"
 #include "graphics/ogre_app.h"
+#include "graphics/out_of_process_test.h"
 #include "gtest/gtest.h"
 
 namespace graphics {
@@ -59,7 +60,8 @@ class InGameTestBase
 #define IN_GAME_TEST(test_class, test_name) \
   TEST_F(test_class, test_name) { \
     app()->RunMainLoop(); \
-  }
+  } \
+  OOP_TEST_F(test_class, test_name);
 
 }  // namespace graphics
 
