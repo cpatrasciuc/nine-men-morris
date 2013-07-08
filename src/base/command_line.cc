@@ -112,6 +112,7 @@ std::string CommandLine::GetAsString() const {
   return StripString(result.str());
 }
 
+// TODO(command_line): Use singleton here?
 // static
 CommandLine* CommandLine::ForCurrentProcess() {
   if (!current_process_command_line_) {
