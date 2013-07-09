@@ -40,7 +40,7 @@ void CameraController::mouseMoved(const OIS::MouseEvent& event) {
   }
   if (orbiting_) {
     const double target_distance = camera_->getPosition().length();
-    Ogre::Degree pitch_delta(-event.state.Y.rel * 0.25f);
+    Ogre::Degree pitch_delta(-event.state.Y.rel * orbit_speed_);
     if (pitch_delta.valueDegrees() > 5) {
       pitch_delta = 5;
     }
