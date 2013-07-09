@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <unistd.h>
+
+#include <cstdio>
+#include <string>
+
 #include "base/command_line.h"
 #include "graphics/out_of_process_test.h"
 #include "gtest/gtest.h"
