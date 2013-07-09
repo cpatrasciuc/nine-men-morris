@@ -32,14 +32,13 @@ class CameraControllerTest : public InGameTestBase {
 
   void ResetCamera() {
     Ogre::Camera* const camera = app()->camera();
-    camera->setPosition(500, 500, 500);
+    camera->setPosition(default_camera_position_);
     camera->lookAt(0, 0, 0);
     camera->setPolygonMode(Ogre::PM_WIREFRAME);
   }
 
   void TestMethod() {
     SetupScene();
-    ResetCamera();
     camera_controller_.set_camera(app()->camera());
     RunZoomTests();
     RunOrbitTests();
@@ -49,6 +48,9 @@ class CameraControllerTest : public InGameTestBase {
  private:
   void RunZoomTests() {
     Ogre::Camera* const camera = camera_controller_.camera();
+    default_camera_position_ = Ogre::Vector3(500, 500, 500);
+
+    ResetCamera();
     Ogre::Vector3 initial = camera->getPosition();
     SimulateMouseScroll(-10);
     EXPECT_GT(initial.length(), camera->getPosition().length());
@@ -86,17 +88,82 @@ class CameraControllerTest : public InGameTestBase {
   }
 
   void RunOrbitTests() {
-    // TODO(camera_controller): Implement orbiting tests.
+    Ogre::Camera* const camera = camera_controller_.camera();
+    default_camera_position_ = Ogre::Vector3(0, 500, 500);
+
+    ResetCamera();
+    Ogre::Vector3 initial = camera->getPosition();
+    SimulateMouseDrag(10, 0);
+    EXPECT_GT(initial.x, camera->getPosition().x);
+    EXPECT_NEAR(initial.y, camera->getPosition().y, 0.001);
+    EXPECT_GT(initial.z, camera->getPosition().z);
+
+    ResetCamera();
+    initial = camera->getPosition();
+    SimulateMouseDrag(-10, 0);
+    EXPECT_LT(initial.x, camera->getPosition().x);
+    EXPECT_NEAR(initial.y, camera->getPosition().y, 0.001);
+    EXPECT_GT(initial.z, camera->getPosition().z);
+
+    ResetCamera();
+    initial = camera->getPosition();
+    SimulateMouseDrag(0, 10);
+    EXPECT_NEAR(initial.x, camera->getPosition().x, 0.001);
+    EXPECT_LT(initial.y, camera->getPosition().y);
+    EXPECT_GT(initial.z, camera->getPosition().z);
+
+    ResetCamera();
+    initial = camera->getPosition();
+    SimulateMouseDrag(0, -10);
+    EXPECT_NEAR(initial.x, camera->getPosition().x, 0.001);
+    EXPECT_GT(initial.y, camera->getPosition().y);
+    EXPECT_LT(initial.z, camera->getPosition().z);
+
+    ResetCamera();
+    initial = camera->getPosition();
+    const double old_speed = camera_controller_.orbit_speed();
+    SimulateMouseDrag(5, 5);
+    const Ogre::Vector3 low_speed_position = camera->getPosition();
+    ResetCamera();
+    camera_controller_.set_orbit_speed(2 * old_speed);
+    SimulateMouseDrag(5, 5);
+    const Ogre::Vector3 high_speed_position = camera->getPosition();
+    EXPECT_LT((low_speed_position - initial).length(),
+              (high_speed_position - initial).length());
+
+    ResetCamera();
+    initial = camera->getPosition();
+    SimulateMouseDrag(10, -10, OIS::MB_Left);
+    EXPECT_TRUE(camera->getPosition().positionEquals(initial, 0.001));
+
+    camera_controller_.set_camera(NULL);
+    SimulateMouseDrag(10, -10);
+    camera_controller_.set_camera(camera);
   }
 
   void SimulateMouseScroll(int scroll_amount) {
     OIS::MouseState state;
     state.Z.rel = scroll_amount;
-    OIS::MouseEvent event(NULL, state);
+    const OIS::MouseEvent event(NULL, state);
     camera_controller_.mouseMoved(event);
   }
 
+  void SimulateMouseDrag(int dx, int dy,
+                         OIS::MouseButtonID button_id = OIS::MB_Right) {
+    OIS::MouseState state;
+    const OIS::MouseEvent button_pressed_event(NULL, state);
+    camera_controller_.mousePressed(button_pressed_event, button_id);
+    state.X.rel = dx;
+    state.Y.rel = dy;
+    const OIS::MouseEvent moused_moved_event(NULL, state);
+    camera_controller_.mouseMoved(moused_moved_event);
+    state.clear();
+    const OIS::MouseEvent button_released_event(NULL, state);
+    camera_controller_.mouseReleased(button_released_event, button_id);
+  }
+
   CameraController camera_controller_;
+  Ogre::Vector3 default_camera_position_;
 };
 
 IN_GAME_TEST(CameraControllerTest, Test);
