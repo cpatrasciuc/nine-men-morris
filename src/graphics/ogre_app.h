@@ -75,6 +75,8 @@ class GRAPHICS_EXPORT OgreApp : public base::Singleton<OgreApp, false>,
   ~OgreApp();
 
  private:
+  void InitializeResourcePaths();
+
   // FrameListener overrides
   virtual bool frameStarted(const Ogre::FrameEvent& event);
   virtual bool frameRenderingQueued(const Ogre::FrameEvent& event);

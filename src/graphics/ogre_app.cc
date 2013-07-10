@@ -7,6 +7,7 @@
 #include <stack>
 #include <string>
 
+#include "base/basic_macros.h"
 #include "base/callable.h"
 #include "base/file_path.h"
 #include "base/location.h"
@@ -53,17 +54,10 @@ bool OgreApp::Init() {
     return false;
   }
 
-  base::FilePath meshes_dir = base::FilePath::CurrentDir()
-      .Append(FILE_PATH_LITERAL("resources"))
-      .Append(FILE_PATH_LITERAL("meshes"));
-  Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-      meshes_dir.value(), "FileSystem",
-      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-
   render_window_ = root_->initialise(true, name_);
   scene_manager_ = root_->createSceneManager("DefaultSceneManager");
 
-  Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+  InitializeResourcePaths();
 
   camera_ = scene_manager_->createCamera("DefaultCamera");
   camera_->setPosition(Ogre::Vector3(0, 0, 80));
@@ -153,6 +147,24 @@ void OgreApp::PostTaskOnGameLoop(const base::Location& from,
   Ogre::WorkQueue* const work_queue = root_->getWorkQueue();
   work_queue->addRequest(channel_, 0,
       Ogre::Any(new base::threading::Task(from, task)));
+}
+
+void OgreApp::InitializeResourcePaths() {
+  const base::FilePath resource_dir =
+      base::FilePath::CurrentDir().Append(FILE_PATH_LITERAL("resources"));
+  const base::FilePath::CharType* const sub_dirs[] = {
+      FILE_PATH_LITERAL("meshes"),
+      FILE_PATH_LITERAL("overlays"),
+      FILE_PATH_LITERAL("materials")
+  };
+
+  for (size_t i = 0; i < arraysize(sub_dirs); ++i) {
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+        resource_dir.Append(sub_dirs[i]).value(), "FileSystem",
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+  }
+
+  Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
 
 void OgreApp::windowResized(Ogre::RenderWindow* render_window) {
