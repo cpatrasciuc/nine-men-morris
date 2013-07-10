@@ -63,6 +63,8 @@ bool OgreApp::Init() {
   render_window_ = root_->initialise(true, name_);
   scene_manager_ = root_->createSceneManager("DefaultSceneManager");
 
+  Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+
   camera_ = scene_manager_->createCamera("DefaultCamera");
   camera_->setPosition(Ogre::Vector3(0, 0, 80));
   camera_->lookAt(Ogre::Vector3(0, 0, -300));
