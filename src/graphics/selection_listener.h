@@ -6,6 +6,7 @@
 #define GRAPHICS_SELECTION_LISTENER_H_
 
 #include "base/basic_macros.h"
+#include "graphics/graphics_export.h"
 
 namespace game {
 class BoardLocation;
@@ -13,7 +14,7 @@ class BoardLocation;
 
 namespace graphics {
 
-class SelectionListener {
+class GRAPHICS_EXPORT SelectionListener {
  public:
   virtual ~SelectionListener();
 
