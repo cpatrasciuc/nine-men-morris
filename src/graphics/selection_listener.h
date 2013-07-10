@@ -18,7 +18,6 @@ class SelectionListener {
   virtual ~SelectionListener();
 
   virtual void OnLocationSelected(const game::BoardLocation& location) = 0;
-  virtual void OnSelectionCleared() = 0;
 
  protected:
   SelectionListener();

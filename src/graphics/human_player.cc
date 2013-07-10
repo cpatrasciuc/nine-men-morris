@@ -98,8 +98,6 @@ void HumanPlayer::OnLocationSelected(const game::BoardLocation& location) {
   }
 }
 
-void HumanPlayer::OnSelectionCleared() {}
-
 void HumanPlayer::ExecuteAction() {
   DCHECK(callback_.get());
   DCHECK(Get(action_));

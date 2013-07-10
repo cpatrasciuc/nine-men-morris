@@ -371,15 +371,6 @@ void BoardView::FireOnLocationSelected(const game::BoardLocation& loc) {
   }
 }
 
-void BoardView::FireOnSelectionCleared() {
-  typedef base::SupportsListener<SelectionListener>::ListenerList ListenerList;
-  typedef base::SupportsListener<SelectionListener>::ListenerIter ListenerIter;
-  const ListenerList list(listeners());
-  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
-    (*it)->OnSelectionCleared();
-  }
-}
-
 void BoardView::ClearSelection() {
   if (selected_location_) {
     std::map<Ogre::MovableObject*, game::BoardLocation>::iterator it =
@@ -394,7 +385,6 @@ void BoardView::ClearSelection() {
     }
     selected_location_->setVisible(false);
     selected_location_ = NULL;
-    FireOnSelectionCleared();
   }
 }
 

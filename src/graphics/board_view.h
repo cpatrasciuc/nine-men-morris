@@ -76,7 +76,6 @@ class GRAPHICS_EXPORT BoardView
   void InitializePieces(Ogre::SceneNode* board_view_root);
 
   void FireOnLocationSelected(const game::BoardLocation& location);
-  void FireOnSelectionCleared();
 
   void ClearSelection();
   void UpdateRemovablePieces(game::PieceColor color);
