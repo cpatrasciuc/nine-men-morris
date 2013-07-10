@@ -1,0 +1,56 @@
+// Copyright (c) 2013 Cristian Patrasciuc. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+template container Panel(MenuButtonTemplate)
+{
+  left 0.3
+  top 0.0
+  width 0.4
+  height 0.1
+  material MenuButton
+}
+
+template element TextArea(MenuButtonTextTemplate)
+{
+  // TODO(menu): Get a free bitmap font.
+  //font_name Ogre
+  char_height 0.08
+  colour_top 1 1 0
+  colour_bottom 1 0.2 0.2
+  left 0.03
+  top 0.02
+  width 0.12
+  height 0.09
+}
+
+TestMenu
+{
+  zorder 490
+  container Panel(BackPanel)
+  {
+    left 0
+    top 0.25
+    width 1
+    height 0.52
+    material MenuBackground
+
+    container Panel(MenuButton1) : MenuButtonTemplate
+    {
+      top 0.15
+      caption MenuButtonTextTemplate OPTION1
+    }
+
+    container Panel(MenuButton2) : MenuButtonTemplate
+    {
+      top 0.27
+      caption MenuButtonTextTemplate OPTION2
+    }
+
+    container Panel(MenuButton3) : MenuButtonTemplate
+    {
+      top 0.39
+      caption MenuButtonTextTemplate OPTION3
+    }
+  }
+}
