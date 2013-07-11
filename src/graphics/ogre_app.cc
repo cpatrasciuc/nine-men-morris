@@ -155,7 +155,8 @@ void OgreApp::InitializeResourcePaths() {
   const base::FilePath::CharType* const sub_dirs[] = {
       FILE_PATH_LITERAL("meshes"),
       FILE_PATH_LITERAL("overlays"),
-      FILE_PATH_LITERAL("materials")
+      FILE_PATH_LITERAL("materials"),
+      FILE_PATH_LITERAL("fonts"),
   };
 
   for (size_t i = 0; i < arraysize(sub_dirs); ++i) {
