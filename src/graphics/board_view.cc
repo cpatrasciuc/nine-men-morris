@@ -187,7 +187,7 @@ void BoardView::SetSelectionType(unsigned int selection_type) {
   if (selection_type & REMOVABLE_WHITE_PIECE) {
     UpdateRemovablePieces(game::WHITE_COLOR);
   }
-  UpdateSelection();
+  UpdateSelection(app_->mouse().getMouseState());
 }
 
 void BoardView::SetCustomSelectableLocations(
@@ -206,7 +206,7 @@ void BoardView::SetCustomSelectableLocations(
 }
 
 bool BoardView::mouseMoved(const OIS::MouseEvent& event) {
-  UpdateSelection();
+  UpdateSelection(event.state);
   return true;
 }
 
@@ -371,15 +371,6 @@ void BoardView::FireOnLocationSelected(const game::BoardLocation& loc) {
   }
 }
 
-void BoardView::FireOnSelectionCleared() {
-  typedef base::SupportsListener<SelectionListener>::ListenerList ListenerList;
-  typedef base::SupportsListener<SelectionListener>::ListenerIter ListenerIter;
-  const ListenerList list(listeners());
-  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
-    (*it)->OnSelectionCleared();
-  }
-}
-
 void BoardView::ClearSelection() {
   if (selected_location_) {
     std::map<Ogre::MovableObject*, game::BoardLocation>::iterator it =
@@ -394,7 +385,6 @@ void BoardView::ClearSelection() {
     }
     selected_location_->setVisible(false);
     selected_location_ = NULL;
-    FireOnSelectionCleared();
   }
 }
 
@@ -527,7 +517,7 @@ void BoardView::RemovePiece(const game::BoardLocation& from,
   index_map->erase(from);
 }
 
-void BoardView::UpdateSelection() {
+void BoardView::UpdateSelection(const OIS::MouseState& mouse_state) {
   if (temp_selected_location_) {
     temp_selected_location_->setVisible(false);
     temp_selected_location_ = NULL;
@@ -537,7 +527,6 @@ void BoardView::UpdateSelection() {
   }
   Ogre::SceneManager* const scene_manager = app_->scene_manager();
   Ogre::Camera* const camera = app_->camera();
-  const OIS::MouseState& mouse_state = app_->mouse().getMouseState();
   const Ogre::Ray ray = camera->getCameraToViewportRay(
       mouse_state.X.abs / double(mouse_state.width),
       mouse_state.Y.abs / double(mouse_state.height));

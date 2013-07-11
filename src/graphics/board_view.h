@@ -76,7 +76,6 @@ class GRAPHICS_EXPORT BoardView
   void InitializePieces(Ogre::SceneNode* board_view_root);
 
   void FireOnLocationSelected(const game::BoardLocation& location);
-  void FireOnSelectionCleared();
 
   void ClearSelection();
   void UpdateRemovablePieces(game::PieceColor color);
@@ -99,7 +98,7 @@ class GRAPHICS_EXPORT BoardView
   void AddPiece(const game::BoardLocation& to, game::PieceColor color);
   void RemovePiece(const game::BoardLocation& from, game::PieceColor color);
 
-  void UpdateSelection();
+  void UpdateSelection(const OIS::MouseState& state);
 
   OgreApp* app_;
   const game::Game& game_;
@@ -121,6 +120,7 @@ class GRAPHICS_EXPORT BoardView
   Ogre::MovableObject* selected_location_;
   unsigned int selection_type_;
 
+  friend void ClickOnLocation(BoardView*, const game::BoardLocation&);
   DISALLOW_COPY_AND_ASSIGN(BoardView);
 };
 

@@ -37,7 +37,6 @@ class GRAPHICS_EXPORT HumanPlayer
 
   // BoardRenderer::SelectionListener interface
   virtual void OnLocationSelected(const game::BoardLocation& location);
-  virtual void OnSelectionCleared();
 
   void ExecuteAction();
 
