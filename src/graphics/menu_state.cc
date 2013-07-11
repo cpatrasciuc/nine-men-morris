@@ -48,7 +48,6 @@ MenuState::MenuState(const std::string& menu_name,
       reload_captions_(false) {}
 
 bool MenuState::Initialize() {
-  // TODO(menu_state): Check if the overlay should be destroyed.
   menu_overlay_ = Ogre::OverlayManager::getSingleton().getByName(menu_name_);
   DCHECK(menu_overlay_);
   menu_overlay_->show();
