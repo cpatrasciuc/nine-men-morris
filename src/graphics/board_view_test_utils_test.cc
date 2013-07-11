@@ -59,7 +59,7 @@ class BoardViewTestUtilsTest : public InGameTestBase,
   void InitializeBoardView() {
     // TODO(game): Add default argument for game::Game constructor.
     const game::GameOptions options;
-    game::Game* const game_model = new game::Game(options);
+    const game::Game* const game_model = new game::Game(options);
     Reset(view_, new BoardView(&OgreApp::Instance(), *game_model));
     view_->Initialize();
   }
