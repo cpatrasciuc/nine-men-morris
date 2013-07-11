@@ -47,8 +47,8 @@ class GRAPHICS_EXPORT MenuState : public GameState {
   };
 
   // Instantiates a new menu screen by providing a |menu_name| and a |delegate|.
-  // The |menu_name| must be the name of an OGRE overlay available in the
-  // resource paths. The |delegate| is responsible for handling user events.
+  // The |menu_name| must be the name of an OGRE overlay available in a script
+  // in resource paths. The |delegate| is responsible for handling user events.
   MenuState(const std::string& menu_name, std::auto_ptr<Delegate> delegate);
 
   // GameState overrides
