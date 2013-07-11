@@ -14,6 +14,7 @@
 #include "OGRE/OgreOverlayElement.h"
 #include "OGRE/OgreOverlayManager.h"
 
+#include "OIS/OISKeyboard.h"
 #include "OIS/OISMouse.h"
 
 namespace graphics {
@@ -68,6 +69,13 @@ void MenuState::Pause() {
 void MenuState::Resume() {
   DCHECK(menu_overlay_);
   menu_overlay_->show();
+}
+
+bool MenuState::keyReleased(const OIS::KeyEvent& event) {
+  if (event.key == OIS::KC_ESCAPE && !escape_option_.empty()) {
+    delegate_->OnMenuOptionSelected(escape_option_);
+  }
+  return true;
 }
 
 bool MenuState::mouseReleased(const OIS::MouseEvent& event,

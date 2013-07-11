@@ -14,6 +14,7 @@
 
 #include "OGRE/OgreFrameListener.h"
 
+#include "OIS/OISKeyboard.h"
 #include "OIS/OISMouse.h"
 
 namespace Ogre {
@@ -51,6 +52,15 @@ class GRAPHICS_EXPORT MenuState : public GameState {
   // in resource paths. The |delegate| is responsible for handling user events.
   MenuState(const std::string& menu_name, std::auto_ptr<Delegate> delegate);
 
+  // The menu option that is selected if the user presses the ESC key. If the
+  // delegate does not need to be notified in such a situation, set it to the
+  // empty string. The implementation does not verify if |option| is really a
+  // valid menu option, so clients can use this to detect the user pressing ESC
+  // and handle this event without a depending on an existing menu option.
+  // Default value: empty string.
+  void set_escape_option(const std::string& option) { escape_option_ = option; }
+  const std::string& escape_option() const { return escape_option_; }
+
   // GameState overrides
   virtual bool Initialize();
   virtual void Exit();
@@ -58,6 +68,8 @@ class GRAPHICS_EXPORT MenuState : public GameState {
   virtual void Resume();
 
  private:
+  // KeyListener interface
+  virtual bool keyReleased(const OIS::KeyEvent& event);
   // MouseListener overrides
   virtual bool mouseReleased(const OIS::MouseEvent& event,
                              OIS::MouseButtonID id);
@@ -67,6 +79,7 @@ class GRAPHICS_EXPORT MenuState : public GameState {
   std::string menu_name_;
   std::auto_ptr<Delegate> delegate_;
   Ogre::Overlay* menu_overlay_;
+  std::string escape_option_;
   bool reload_captions_;
 };
 
