@@ -5,6 +5,7 @@
 #ifndef GRAPHICS_MENU_STATE_H_
 #define GRAPHICS_MENU_STATE_H_
 
+#include <memory>
 #include <string>
 
 #include "base/basic_macros.h"
@@ -48,7 +49,7 @@ class GRAPHICS_EXPORT MenuState : public GameState {
   // Instantiates a new menu screen by providing a |menu_name| and a |delegate|.
   // The |menu_name| must be the name of an OGRE overlay available in the
   // resource paths. The |delegate| is responsible for handling user events.
-  MenuState(const std::string& menu_name, Delegate* delegate);
+  MenuState(const std::string& menu_name, std::auto_ptr<Delegate> delegate);
 
   // GameState overrides
   virtual bool Initialize();
@@ -64,7 +65,7 @@ class GRAPHICS_EXPORT MenuState : public GameState {
   virtual bool frameRenderingQueued(const Ogre::FrameEvent& event);
 
   std::string menu_name_;
-  Delegate* delegate_;
+  std::auto_ptr<Delegate> delegate_;
   Ogre::Overlay* menu_overlay_;
   bool reload_captions_;
 };

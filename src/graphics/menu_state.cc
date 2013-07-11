@@ -4,6 +4,7 @@
 
 #include "graphics/menu_state.h"
 
+#include <memory>
 #include <string>
 
 #include "base/log.h"
@@ -37,7 +38,8 @@ MenuState::Delegate::Delegate() {}
 
 MenuState::Delegate::~Delegate() {}
 
-MenuState::MenuState(const std::string& menu_name, Delegate* delegate)
+MenuState::MenuState(const std::string& menu_name,
+                     std::auto_ptr<Delegate> delegate)
     : GameState(&OgreApp::Instance()),
       menu_name_(menu_name),
       delegate_(delegate),
