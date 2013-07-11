@@ -10,16 +10,25 @@
 #include "graphics/game_state.h"
 #include "graphics/graphics_export.h"
 
+namespace Ogre {
+class Overlay;
+}
+
 namespace graphics {
 
 class GRAPHICS_EXPORT MenuState : public GameState {
  public:
   explicit MenuState(const std::string& menu_name);
 
+  // GameState overrides
   virtual bool Initialize();
+  virtual void Exit();
+  virtual void Pause();
+  virtual void Resume();
 
  private:
   std::string menu_name_;
+  Ogre::Overlay* menu_overlay_;
 };
 
 }  // namespace graphics
