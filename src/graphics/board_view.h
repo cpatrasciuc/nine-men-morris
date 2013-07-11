@@ -120,6 +120,7 @@ class GRAPHICS_EXPORT BoardView
   Ogre::MovableObject* selected_location_;
   unsigned int selection_type_;
 
+  friend void ClickOnLocation(BoardView*, const game::BoardLocation&);
   DISALLOW_COPY_AND_ASSIGN(BoardView);
 };
 
