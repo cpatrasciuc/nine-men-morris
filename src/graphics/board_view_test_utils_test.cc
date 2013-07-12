@@ -66,6 +66,7 @@ class BoardViewTestUtilsTest : public InGameTestBase,
 
   void DelayedTestMethod() {
     view_->AddListener(this);
+
     view_->SetSelectionType(BoardView::EMPTY_LOCATION);
     const std::vector<game::BoardLocation>& locations
         = view_->game_model().board().locations();
@@ -75,6 +76,18 @@ class BoardViewTestUtilsTest : public InGameTestBase,
       ClickOnLocation(Get(view_), expected_location_);
       EXPECT_TRUE(event_was_fired_);
     }
+
+    std::vector<game::BoardLocation> selectable;
+    selectable.push_back(game::BoardLocation(0, 0));
+    view_->SetCustomSelectableLocations(selectable);
+    view_->SetSelectionType(BoardView::CUSTOM);
+    for (size_t i = 0; i < locations.size(); ++i) {
+      event_was_fired_ = false;
+      expected_location_ = locations[i];
+      ClickOnLocation(Get(view_), expected_location_);
+      EXPECT_EQ(expected_location_ == selectable[0], event_was_fired_);
+    }
+
     view_->RemoveListener(this);
   }
 
