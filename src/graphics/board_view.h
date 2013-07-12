@@ -51,7 +51,7 @@ class GRAPHICS_EXPORT BoardView
     CUSTOM = (1 << 5)
   };
 
-  BoardView(OgreApp* app, const game::Game& game_model);
+  explicit BoardView(const game::Game& game_model);
   ~BoardView();
 
   const game::Game& game_model() const { return game_; }
@@ -100,7 +100,7 @@ class GRAPHICS_EXPORT BoardView
 
   void UpdateSelection(const OIS::MouseState& state);
 
-  OgreApp* app_;
+  OgreApp* const app_;
   const game::Game& game_;
 
   std::map<Ogre::MovableObject*, game::BoardLocation> locations_;

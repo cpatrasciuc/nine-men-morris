@@ -31,7 +31,7 @@ class AIPlayerInGameTest : public InGameTestBase, public game::GameListener {
     game_model->Initialize();
     game_model->AddListener(this);
     Reset(playing_state_,
-          new PlayingState(app(), game_model, white_player, black_player));
+          new PlayingState(game_model, white_player, black_player));
     app()->PushState(Get(playing_state_));
   }
 

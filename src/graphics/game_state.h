@@ -27,10 +27,10 @@ class GRAPHICS_EXPORT GameState
       public OIS::KeyListener,
       public OIS::MouseListener {
  public:
-  explicit GameState(OgreApp* app);
+  GameState();
   virtual ~GameState();
 
-  OgreApp* app() const { return app_; }
+  OgreApp* app() const;
 
   virtual bool Initialize();
   virtual void Exit();
@@ -49,8 +49,6 @@ class GRAPHICS_EXPORT GameState
                             OIS::MouseButtonID id);
   virtual bool mouseReleased(const OIS::MouseEvent& event,
                              OIS::MouseButtonID id);
-
-  OgreApp* const app_;
 
   DISALLOW_COPY_AND_ASSIGN(GameState);
 };

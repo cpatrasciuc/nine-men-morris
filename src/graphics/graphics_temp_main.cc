@@ -20,8 +20,6 @@ namespace {
 
 class EmptyGameState : public graphics::GameState {
  public:
-  explicit EmptyGameState(graphics::OgreApp* app) : GameState(app) {}
-
   bool keyPressed(const OIS::KeyEvent& event) {
     if (event.key == OIS::KC_ESCAPE) {
       app()->PopState();
@@ -43,7 +41,6 @@ int main(int argc, char** argv) {
   game_model->Initialize();
   // EmptyGameState game_state(&app);
   graphics::PlayingState game_state(
-      &app,
       game_model,
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::HumanPlayer()),
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));

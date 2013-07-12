@@ -8,9 +8,11 @@
 
 namespace graphics {
 
-GameState::GameState(OgreApp* app) : app_(app) {}
+GameState::GameState() {}
 
 GameState::~GameState() {}
+
+OgreApp* GameState::app() const { return &OgreApp::Instance(); }
 
 bool GameState::Initialize() { return true; }
 
