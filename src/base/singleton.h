@@ -10,7 +10,6 @@
 #define BASE_SINGLETON_H_
 
 #include "base/basic_macros.h"
-#include "base/log.h"
 #include "base/threading/lock.h"
 
 namespace base {
@@ -94,7 +93,8 @@ class Singleton {
   virtual ~Singleton() = 0;
 
  private:
-  static typename ThreadingModel<T, multi_threaded>::VolatileType* instance_;
+  typedef typename ThreadingModel<T, multi_threaded>::VolatileType InstanceType;
+  ALWAYS_EXPORT static InstanceType* instance_;
 
   DISALLOW_COPY_AND_ASSIGN(Singleton);
 };

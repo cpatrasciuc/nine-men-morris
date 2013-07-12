@@ -5,6 +5,7 @@
 #include "base/function.h"
 #include "base/location.h"
 #include "base/singleton.h"
+#include "base/singleton_unittest_helper.h"
 #include "base/threading/thread_pool_for_unittests.h"
 #include "gtest/gtest.h"
 
@@ -77,6 +78,14 @@ TEST(Singleton, MultiThreaded) {
   thread_pool.StartThreads();
   thread_pool.StopAndJoinThreads();
   BasicTest<MultiThreadedSingleton>();
+}
+
+TEST(Singleton, DifferentDynamicSharedObjects) {
+  const int* const other_dso_instance = GetSingletonFromOtherDSO();
+  const int* const this_dso_instance = &Singleton<int>::Instance();
+  EXPECT_EQ(this_dso_instance, other_dso_instance);
+  Singleton<int>::Instance() = 10;
+  EXPECT_EQ(10, *GetSingletonFromOtherDSO());
 }
 
 TEST(Singleton, CustomCreator) {

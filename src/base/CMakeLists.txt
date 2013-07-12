@@ -99,6 +99,7 @@ add_definitions("-DBASE_IMPLEMENTATION")
 # The main target of this directory
 add_library(base ${BASE_SOURCE_FILES})
 
+# TODO(base_unittests): Consider merging the helper shared libraries.
 # This is always a shared library because it's used by the stacktrace test
 # and we want to have all the symbols available.
 add_library(stacktrace_test_helper SHARED
@@ -107,6 +108,13 @@ add_library(stacktrace_test_helper SHARED
 )
 target_link_libraries(stacktrace_test_helper base)
 
+add_library(singleton_unittest_helper SHARED
+  singleton_unittest_helper.cc
+  singleton_unittest_helper.h
+)
+target_link_libraries(singleton_unittest_helper base)
+
 # The unittests for this directory
 add_executable(base_unittests ${BASE_UNITTESTS_SOURCE_FILES} test_runner.cc)
-target_link_libraries(base_unittests gtest base stacktrace_test_helper)
+target_link_libraries(base_unittests gtest base stacktrace_test_helper
+                      singleton_unittest_helper)
