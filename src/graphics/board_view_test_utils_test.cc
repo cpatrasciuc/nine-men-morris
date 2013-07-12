@@ -88,6 +88,12 @@ class BoardViewTestUtilsTest : public InGameTestBase,
       EXPECT_EQ(expected_location_ == selectable[0], event_was_fired_);
     }
 
+    // Click on an empty place. It shouldn't trigger any selection event.
+    event_was_fired_ = false;
+    expected_location_ = game::BoardLocation(-1, -1);
+    ClickAtScreenCoords(Get(view_), 0.001, 0.001);
+    EXPECT_FALSE(event_was_fired_);
+
     view_->RemoveListener(this);
   }
 

@@ -17,6 +17,11 @@ class BoardView;
 // a user click on the center of the board |location| given as argument.
 void ClickOnLocation(BoardView* view, const game::BoardLocation& location);
 
+// Sends a series of mouse events to the |view| instance, in order to simulate
+// a user click at screen coordinates (x, y). |x| and |y| must be between 0.0
+// and 1.0.
+void ClickAtScreenCoords(BoardView* view, double screen_x, double screen_y);
+
 }  // namespace graphics
 
 #endif  // GRAPHICS_BOARD_VIEW_TEST_UTILS_H_
