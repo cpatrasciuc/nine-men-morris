@@ -45,9 +45,9 @@ bool CustomPredicate(const game::Board& board, const game::BoardLocation& loc) {
   return loc.line() == 0 && loc.column() == 0;
 }
 
-class BoardViewTest : public InGameTestBase, public SelectionListener {
+class BoardViewSelectionTest : public InGameTestBase, public SelectionListener {
  public:
-  BoardViewTest()
+  BoardViewSelectionTest()
       : event_was_fired_(false), expected_location_(-1, -1) {}
 
   virtual void TestMethod() {
@@ -62,9 +62,9 @@ class BoardViewTest : public InGameTestBase, public SelectionListener {
       ++frame_counter;
       // Repost TestMethod() on the game loop so it will be called during the
       // next frame.
-      typedef void(BoardViewTest::*TestMethodSig)(void);
+      typedef void(BoardViewSelectionTest::*TestMethodSig)(void);
       OgreApp::Instance().PostTaskOnGameLoop(FROM_HERE, base::Bind(
-          new base::Method<TestMethodSig>(&BoardViewTest::TestMethod),
+          new base::Method<TestMethodSig>(&BoardViewSelectionTest::TestMethod),
           this));
     } else {
       DelayedTestMethod();
@@ -141,7 +141,7 @@ class BoardViewTest : public InGameTestBase, public SelectionListener {
   game::BoardLocation expected_location_;
 };
 
-IN_GAME_TEST(BoardViewTest, ClickOnLocation);
+IN_GAME_TEST(BoardViewSelectionTest, Selection);
 
 }  // anonymous namespace
 }  // namespace graphics
