@@ -87,11 +87,19 @@ class BoardViewTestBase : public InGameTestBase {
  protected:
   BoardViewTestBase() {}
 
-  virtual void InitializeBoardView() = 0;
+  virtual void InitializeGameModel() = 0;
   virtual void DelayedTestMethod() = 0;
 
+  // TODO(board_view_test): Make these private and add accessors?
   std::auto_ptr<game::Game> game_;
   base::ptr::scoped_ptr<BoardView> view_;
+
+ private:
+  void InitializeBoardView() {
+    InitializeGameModel();
+    Reset(view_, new BoardView(*game_));
+    view_->Initialize();
+  }
 };
 
 class BoardViewSelectionTest : public BoardViewTestBase,
@@ -101,11 +109,9 @@ class BoardViewSelectionTest : public BoardViewTestBase,
       : event_was_fired_(false), expected_location_(-1, -1) {}
 
  private:
-  virtual void InitializeBoardView() {
+  virtual void InitializeGameModel() {
     // TODO(game): Add default argument for game::Game constructor.
     game_ = game::LoadSavedGameForTests("remove_from_mill_6");
-    Reset(view_, new BoardView(*game_));
-    view_->Initialize();
   }
 
   virtual void DelayedTestMethod() {
@@ -166,13 +172,10 @@ IN_GAME_TEST(BoardViewSelectionTest, Selection);
 
 class BoardViewPlacePieceTest : public BoardViewTestBase {
  private:
-  virtual void InitializeBoardView() {
+  virtual void InitializeGameModel() {
     game::GameOptions options;
     game_.reset(new game::Game(options));
     game_->Initialize();
-    // TODO(board_view_test): Separate this init method in game/view init.
-    Reset(view_, new BoardView(*game_));
-    view_->Initialize();
   }
 
   virtual void DelayedTestMethod() {
@@ -210,11 +213,8 @@ IN_GAME_TEST(BoardViewPlacePieceTest, Place);
 
 class BoardViewMovePieceTest : public BoardViewTestBase {
  private:
-  virtual void InitializeBoardView() {
+  virtual void InitializeGameModel() {
     game_ = game::LoadSavedGameForTests("place_phase_3");
-    // TODO(board_view_test): Separate this init method in game/view init.
-    Reset(view_, new BoardView(*game_));
-    view_->Initialize();
   }
 
   virtual void DelayedTestMethod() {
@@ -247,11 +247,8 @@ IN_GAME_TEST(BoardViewMovePieceTest, Move);
 
 class BoardViewRemovePieceTest : public BoardViewTestBase {
  private:
-  virtual void InitializeBoardView() {
+  virtual void InitializeGameModel() {
     game_ = game::LoadSavedGameForTests("remove_from_mill_6");
-    // TODO(board_view_test): Separate this init method in game/view init.
-    Reset(view_, new BoardView(*game_));
-    view_->Initialize();
   }
 
   virtual void DelayedTestMethod() {
