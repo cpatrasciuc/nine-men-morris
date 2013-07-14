@@ -5,11 +5,14 @@
 #ifndef GRAPHICS_BOARD_VIEW_TEST_UTILS_H_
 #define GRAPHICS_BOARD_VIEW_TEST_UTILS_H_
 
+#include "game/piece_color.h"
+
 namespace game {
 class BoardLocation;
 }
 
 namespace Ogre {
+class SceneNode;
 class Vector3;
 }
 
@@ -30,6 +33,14 @@ void ClickOnLocation(BoardView* view, const game::BoardLocation& location);
 // a user click at screen coordinates (x, y). |x| and |y| must be between 0.0
 // and 1.0.
 void ClickAtScreenCoords(BoardView* view, double screen_x, double screen_y);
+
+// Searches for the SceneNode corresponding to the piece belonging to the player
+// specified by |color| and being close to the given |position|. The 3D position
+// for a given location can be obtained using Get3DPosition(). See above.
+// |color| must not be equal to game::NO_COLOR. If a suitable SceneNode cannot
+// be found, the method will return NULL.
+Ogre::SceneNode* GetPieceByColorAndPosition(game::PieceColor color,
+                                            const Ogre::Vector3& position);
 
 }  // namespace graphics
 

@@ -67,28 +67,6 @@ Ogre::SceneNode* GetPieceByColorAndIndex(game::PieceColor color, int index) {
   return NULL;
 }
 
-Ogre::SceneNode* GetPieceByColorAndPosition(game::PieceColor color,
-                                            const Ogre::Vector3& position) {
-  DCHECK(color != game::NO_COLOR);
-  Ogre::SceneManager* const scene_mgr = OgreApp::Instance().scene_manager();
-  const std::string prefix =
-      color == game::WHITE_COLOR ? "WhitePiece" : "BlackPiece";
-  int index = 0;
-  while (true) {
-    const std::string name = prefix + base::ToString(index);
-    if (!scene_mgr->hasEntity(name)) {
-      break;
-    }
-    Ogre::Entity* const entity = scene_mgr->getEntity(name);
-    Ogre::SceneNode* const node = entity->getParentSceneNode();
-    if (node->getPosition().positionEquals(position, 0.001)) {
-      return node;
-    }
-    ++index;
-  }
-  return NULL;
-}
-
 class BoardViewTestBase : public InGameTestBase {
  public:
   virtual ~BoardViewTestBase() {}
