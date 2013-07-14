@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <memory>
 #include <vector>
 
 #include "base/bind.h"
@@ -11,7 +12,8 @@
 #include "game/board.h"
 #include "game/board_location.h"
 #include "game/game.h"
-#include "game/game_options.h"
+#include "game/game_test_helper.h"
+#include "game/piece_color.h"
 #include "graphics/board_view.h"
 #include "graphics/board_view_test_utils.h"
 #include "graphics/in_game_test.h"
@@ -21,6 +23,27 @@
 
 namespace graphics {
 namespace {
+
+typedef bool (*LocationPred)(const game::Board&, const game::BoardLocation&);
+bool IsWhite(const game::Board& board, const game::BoardLocation& loc) {
+  return board.GetPieceAt(loc) == game::WHITE_COLOR;
+}
+bool IsBlack(const game::Board& board, const game::BoardLocation& loc) {
+  return board.GetPieceAt(loc) == game::BLACK_COLOR;
+}
+bool IsEmpty(const game::Board& board, const game::BoardLocation& loc) {
+  return board.GetPieceAt(loc) == game::NO_COLOR;
+}
+bool IsNonEmpty(const game::Board& board, const game::BoardLocation& loc) {
+  return !IsEmpty(board, loc);
+}
+bool IsWhiteAndRemovable(const game::Board& board,
+                         const game::BoardLocation& loc) {
+  return IsWhite(board, loc) && !board.IsPartOfMill(loc);
+}
+bool CustomPredicate(const game::Board& board, const game::BoardLocation& loc) {
+  return loc.line() == 0 && loc.column() == 0;
+}
 
 class BoardViewTest : public InGameTestBase, public SelectionListener {
  public:
@@ -57,9 +80,8 @@ class BoardViewTest : public InGameTestBase, public SelectionListener {
  private:
   void InitializeBoardView() {
     // TODO(game): Add default argument for game::Game constructor.
-    const game::GameOptions options;
-    const game::Game* const game_model = new game::Game(options);
-    Reset(view_, new BoardView(*game_model));
+    game_ = game::LoadSavedGameForTests("remove_from_mill_6");
+    Reset(view_, new BoardView(*game_));
     view_->Initialize();
   }
 
@@ -67,25 +89,26 @@ class BoardViewTest : public InGameTestBase, public SelectionListener {
     view_->AddListener(this);
 
     view_->SetSelectionType(BoardView::EMPTY_LOCATION);
-    const std::vector<game::BoardLocation>& locations
-        = view_->game_model().board().locations();
-    for (size_t i = 0; i < locations.size(); ++i) {
-      event_was_fired_ = false;
-      expected_location_ = locations[i];
-      ClickOnLocation(Get(view_), expected_location_);
-      EXPECT_TRUE(event_was_fired_);
-    }
+    AssertSelectableLocations(&IsEmpty);
+
+    view_->SetSelectionType(BoardView::ANY_WHITE_PIECE);
+    AssertSelectableLocations(&IsWhite);
+
+    view_->SetSelectionType(
+        BoardView::ANY_WHITE_PIECE | BoardView::ANY_BLACK_PIECE);
+    AssertSelectableLocations(&IsNonEmpty);
+
+    view_->SetSelectionType(BoardView::ANY_BLACK_PIECE);
+    AssertSelectableLocations(&IsBlack);
+
+    view_->SetSelectionType(BoardView::REMOVABLE_WHITE_PIECE);
+    AssertSelectableLocations(&IsWhiteAndRemovable);
 
     std::vector<game::BoardLocation> selectable;
     selectable.push_back(game::BoardLocation(0, 0));
     view_->SetCustomSelectableLocations(selectable);
     view_->SetSelectionType(BoardView::CUSTOM);
-    for (size_t i = 0; i < locations.size(); ++i) {
-      event_was_fired_ = false;
-      expected_location_ = locations[i];
-      ClickOnLocation(Get(view_), expected_location_);
-      EXPECT_EQ(expected_location_ == selectable[0], event_was_fired_);
-    }
+    AssertSelectableLocations(&CustomPredicate);
 
     // Click on an empty place. It shouldn't trigger any selection event.
     event_was_fired_ = false;
@@ -96,11 +119,23 @@ class BoardViewTest : public InGameTestBase, public SelectionListener {
     view_->RemoveListener(this);
   }
 
+  void AssertSelectableLocations(LocationPred predicate) {
+    const game::Board& board = view_->game_model().board();
+    const std::vector<game::BoardLocation>& locations = board.locations();
+    for (size_t i = 0; i < locations.size(); ++i) {
+      event_was_fired_ = false;
+      expected_location_ = locations[i];
+      ClickOnLocation(Get(view_), expected_location_);
+      EXPECT_EQ((*predicate)(board, locations[i]), event_was_fired_);
+    }
+  }
+
   virtual void OnLocationSelected(const game::BoardLocation& location) {
     event_was_fired_ = true;
     EXPECT_EQ(expected_location_, location);
   }
 
+  std::auto_ptr<game::Game> game_;
   base::ptr::scoped_ptr<BoardView> view_;
   bool event_was_fired_;
   game::BoardLocation expected_location_;
