@@ -45,10 +45,9 @@ bool CustomPredicate(const game::Board& board, const game::BoardLocation& loc) {
   return loc.line() == 0 && loc.column() == 0;
 }
 
-class BoardViewSelectionTest : public InGameTestBase, public SelectionListener {
+class BoardViewTestBase : public InGameTestBase {
  public:
-  BoardViewSelectionTest()
-      : event_was_fired_(false), expected_location_(-1, -1) {}
+  virtual ~BoardViewTestBase() {}
 
   virtual void TestMethod() {
     // Add a few frames delay to allow the BoardView to fully initialize.
@@ -62,9 +61,9 @@ class BoardViewSelectionTest : public InGameTestBase, public SelectionListener {
       ++frame_counter;
       // Repost TestMethod() on the game loop so it will be called during the
       // next frame.
-      typedef void(BoardViewSelectionTest::*TestMethodSig)(void);
+      typedef void(BoardViewTestBase::*TestMethodSig)(void);
       OgreApp::Instance().PostTaskOnGameLoop(FROM_HERE, base::Bind(
-          new base::Method<TestMethodSig>(&BoardViewSelectionTest::TestMethod),
+          new base::Method<TestMethodSig>(&BoardViewTestBase::TestMethod),
           this));
     } else {
       DelayedTestMethod();
@@ -72,20 +71,33 @@ class BoardViewSelectionTest : public InGameTestBase, public SelectionListener {
     }
   }
 
+ protected:
+  BoardViewTestBase() {}
+
+  virtual void InitializeBoardView() = 0;
+  virtual void DelayedTestMethod() = 0;
+};
+
+class BoardViewSelectionTest : public BoardViewTestBase,
+                               public SelectionListener {
+ public:
+  BoardViewSelectionTest()
+      : event_was_fired_(false), expected_location_(-1, -1) {}
+
   virtual void Done() {
     Reset(view_);
-    InGameTestBase::Done();
+    BoardViewTestBase::Done();
   }
 
  private:
-  void InitializeBoardView() {
+  virtual void InitializeBoardView() {
     // TODO(game): Add default argument for game::Game constructor.
     game_ = game::LoadSavedGameForTests("remove_from_mill_6");
     Reset(view_, new BoardView(*game_));
     view_->Initialize();
   }
 
-  void DelayedTestMethod() {
+  virtual void DelayedTestMethod() {
     view_->AddListener(this);
 
     view_->SetSelectionType(BoardView::EMPTY_LOCATION);
