@@ -27,8 +27,13 @@ Ogre::Vector2 ConvertWorldToScreen(const Ogre::Vector3& world_pos) {
 
 }  // anonymous namespace
 
+const Ogre::Vector3& Get3DPosition(const BoardView& view,
+                                   const game::BoardLocation& location) {
+  return view.Get3DPosition(location);
+}
+
 void ClickOnLocation(BoardView* view, const game::BoardLocation& location) {
-  const Ogre::Vector3 world_pos = view->Get3DPosition(location);
+  const Ogre::Vector3 world_pos = Get3DPosition(*view, location);
   const Ogre::Vector2 screen_pos = ConvertWorldToScreen(world_pos);
   ClickAtScreenCoords(view, screen_pos.x, screen_pos.y);
 }

@@ -9,9 +9,18 @@ namespace game {
 class BoardLocation;
 }
 
+namespace Ogre {
+class Vector3;
+}
+
 namespace graphics {
 
 class BoardView;
+
+// Gets the 3D coordinates corresponding to a BoardLcoation in the 3D space of
+// the given BoardView.
+const Ogre::Vector3& Get3DPosition(const BoardView& view,
+                                   const game::BoardLocation& location);
 
 // Sends a series of mouse events to the |view| instance, in order to simulate
 // a user click on the center of the board |location| given as argument.

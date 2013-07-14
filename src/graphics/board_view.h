@@ -120,7 +120,9 @@ class GRAPHICS_EXPORT BoardView
   Ogre::MovableObject* selected_location_;
   unsigned int selection_type_;
 
-  friend void ClickOnLocation(BoardView*, const game::BoardLocation&);
+  // Friend definition useful for tests.
+  friend const Ogre::Vector3& Get3DPosition(const BoardView&,
+                                            const game::BoardLocation&);
   DISALLOW_COPY_AND_ASSIGN(BoardView);
 };
 
