@@ -179,7 +179,6 @@ class BoardViewPlacePieceTest : public BoardViewTestBase {
   }
 
   virtual void DelayedTestMethod() {
-    // TODO(board_view): Add itself as listener during BoardView::Initialize()
     game_->AddListener(Get(view_));
     const game::BoardLocation location(0, 0);
     const Ogre::Vector3 position = Get3DPosition(*view_, location);
@@ -218,7 +217,6 @@ class BoardViewMovePieceTest : public BoardViewTestBase {
   }
 
   virtual void DelayedTestMethod() {
-    // TODO(board_view): Add itself as listener during BoardView::Initialize()
     game_->AddListener(Get(view_));
     const game::BoardLocation source(0, 0);
     const game::BoardLocation destination(1, 0);
