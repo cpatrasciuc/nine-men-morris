@@ -11,7 +11,6 @@
 #include "base/log.h"
 #include "base/method.h"
 #include "base/ptr/scoped_ptr.h"
-#include "base/string_util.h"
 #include "game/board.h"
 #include "game/board_location.h"
 #include "game/game.h"
@@ -25,7 +24,6 @@
 #include "graphics/selection_listener.h"
 #include "gtest/gtest.h"
 
-#include "OGRE/OgreEntity.h"
 #include "OGRE/OgreMovableObject.h"
 #include "OGRE/OgreSceneManager.h"
 #include "OGRE/OgreSceneNode.h"
@@ -53,18 +51,6 @@ bool IsWhiteAndRemovable(const game::Board& board,
 }
 bool CustomPredicate(const game::Board& board, const game::BoardLocation& loc) {
   return loc.line() == 0 && loc.column() == 0;
-}
-
-Ogre::SceneNode* GetPieceByColorAndIndex(game::PieceColor color, int index) {
-  DCHECK(color != game::NO_COLOR);
-  Ogre::SceneManager* const scene_mgr = OgreApp::Instance().scene_manager();
-  const std::string node_name =
-      color == game::WHITE_COLOR ? "AllWhitePieces" : "AllBlackPieces";
-  Ogre::SceneNode* const all_pieces_node = scene_mgr->getSceneNode(node_name);
-  if (all_pieces_node->numChildren() > 0) {
-    return static_cast<Ogre::SceneNode*>(all_pieces_node->getChild(0));
-  }
-  return NULL;
 }
 
 class BoardViewTestBase : public InGameTestBase {
@@ -205,6 +191,18 @@ class BoardViewPlacePieceTest : public BoardViewTestBase {
     EXPECT_TRUE(piece_entity->isVisible());
     EXPECT_TRUE(position.positionEquals(piece_node->getPosition(), 0.001));
     game_->RemoveListener(Get(view_));
+  }
+
+  Ogre::SceneNode* GetPieceByColorAndIndex(game::PieceColor color, int index) {
+    DCHECK(color != game::NO_COLOR);
+    Ogre::SceneManager* const scene_mgr = OgreApp::Instance().scene_manager();
+    const std::string node_name =
+        color == game::WHITE_COLOR ? "AllWhitePieces" : "AllBlackPieces";
+    Ogre::SceneNode* const all_pieces_node = scene_mgr->getSceneNode(node_name);
+    if (all_pieces_node->numChildren() > 0) {
+      return static_cast<Ogre::SceneNode*>(all_pieces_node->getChild(0));
+    }
+    return NULL;
   }
 };
 
