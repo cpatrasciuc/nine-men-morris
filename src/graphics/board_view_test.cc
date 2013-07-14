@@ -22,10 +22,9 @@
 namespace graphics {
 namespace {
 
-class BoardViewTestUtilsTest : public InGameTestBase,
-                               public SelectionListener {
+class BoardViewTest : public InGameTestBase, public SelectionListener {
  public:
-  BoardViewTestUtilsTest()
+  BoardViewTest()
       : event_was_fired_(false), expected_location_(-1, -1) {}
 
   virtual void TestMethod() {
@@ -40,9 +39,9 @@ class BoardViewTestUtilsTest : public InGameTestBase,
       ++frame_counter;
       // Repost TestMethod() on the game loop so it will be called during the
       // next frame.
-      typedef void(BoardViewTestUtilsTest::*TestMethodSig)(void);
+      typedef void(BoardViewTest::*TestMethodSig)(void);
       OgreApp::Instance().PostTaskOnGameLoop(FROM_HERE, base::Bind(
-          new base::Method<TestMethodSig>(&BoardViewTestUtilsTest::TestMethod),
+          new base::Method<TestMethodSig>(&BoardViewTest::TestMethod),
           this));
     } else {
       DelayedTestMethod();
@@ -107,7 +106,7 @@ class BoardViewTestUtilsTest : public InGameTestBase,
   game::BoardLocation expected_location_;
 };
 
-IN_GAME_TEST(BoardViewTestUtilsTest, ClickOnLocation);
+IN_GAME_TEST(BoardViewTest, ClickOnLocation);
 
 }  // anonymous namespace
 }  // namespace graphics
