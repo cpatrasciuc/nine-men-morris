@@ -40,6 +40,7 @@ set(IN_GAME_TESTS_SOURCE_FILES
   board_view_test_utils.cc
   board_view_test_utils.h
   camera_controller_test.cc
+  game_state_test.cc
   in_game_test.cc
   in_game_test.h
   out_of_process_test.cc
