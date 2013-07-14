@@ -110,7 +110,6 @@ class BoardViewSelectionTest : public BoardViewTestBase,
 
  private:
   virtual void InitializeGameModel() {
-    // TODO(game): Add default argument for game::Game constructor.
     game_ = game::LoadSavedGameForTests("remove_from_mill_6");
   }
 
@@ -173,8 +172,7 @@ IN_GAME_TEST(BoardViewSelectionTest, Selection);
 class BoardViewPlacePieceTest : public BoardViewTestBase {
  private:
   virtual void InitializeGameModel() {
-    game::GameOptions options;
-    game_.reset(new game::Game(options));
+    game_.reset(new game::Game());
     game_->Initialize();
   }
 

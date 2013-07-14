@@ -24,7 +24,7 @@ class GameListener;
 
 class GAME_EXPORT Game : public base::SupportsListener<GameListener> {
  public:
-  explicit Game(const GameOptions& game_options);
+  explicit Game(const GameOptions& game_options = game::GameOptions());
 
   const GameOptions& options() const { return game_options_; }
 
