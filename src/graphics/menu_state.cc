@@ -41,8 +41,7 @@ MenuState::Delegate::~Delegate() {}
 
 MenuState::MenuState(const std::string& menu_name,
                      std::auto_ptr<Delegate> delegate)
-    : GameState(&OgreApp::Instance()),
-      menu_name_(menu_name),
+    : menu_name_(menu_name),
       delegate_(delegate),
       menu_overlay_(NULL),
       reload_captions_(false) {}
