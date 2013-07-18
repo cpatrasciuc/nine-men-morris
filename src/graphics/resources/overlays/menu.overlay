@@ -22,42 +22,10 @@ template element TextArea(MenuButtonTextTemplate)
   height 0.1
 }
 
-TestMenu
+template element TextArea(MenuTitleTextTemplate) : MenuButtonTextTemplate
 {
-  zorder 490
-  container Panel(BackPanel)
-  {
-    left 0
-    top 0.25
-    width 1
-    height 0.52
-    material MenuBackground
-
-    container Panel(MenuButton1) : MenuButtonTemplate
-    {
-      top 0.15
-      element TextArea(Text1) : MenuButtonTextTemplate
-      {
-        caption OPTION1
-      }
-    }
-
-    container Panel(MenuButton2) : MenuButtonTemplate
-    {
-      top 0.27
-      element TextArea(Text2) : MenuButtonTextTemplate
-      {
-        caption OPTION2
-      }
-    }
-
-    container Panel(MenuButton3) : MenuButtonTemplate
-    {
-      top 0.39
-      element TextArea(Text3) : MenuButtonTextTemplate
-      {
-        caption OPTION3
-      }
-    }
-  }
+  top 0.05
+  left 0.5
+  alignment center
+  colour 0 0 0
 }
