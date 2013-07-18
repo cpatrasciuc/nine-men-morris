@@ -76,8 +76,8 @@ Ogre::Vector3 BoardLocationTo3DCoord(const game::BoardLocation& location,
 
 }  // anonymous namespace
 
-BoardView::BoardView(OgreApp* app, const game::Game& game_model)
-    : app_(app),
+BoardView::BoardView(const game::Game& game_model)
+    : app_(&OgreApp::Instance()),
       game_(game_model),
       white_place_index_(0),
       black_place_index_(0),

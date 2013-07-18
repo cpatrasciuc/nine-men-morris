@@ -35,11 +35,14 @@ set(GRAPHICS_SOURCE_FILES
 )
 
 set(IN_GAME_TESTS_SOURCE_FILES
+  ../game/game_test_helper.cc
+  ../game/game_test_helper.h
   ai_player_in_game_test.cc
+  board_view_test.cc
   board_view_test_utils.cc
   board_view_test_utils.h
-  board_view_test_utils_test.cc
   camera_controller_test.cc
+  game_state_test.cc
   in_game_test.cc
   in_game_test.h
   out_of_process_test.cc

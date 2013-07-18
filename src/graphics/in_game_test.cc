@@ -23,7 +23,7 @@ namespace {
 class RunTestMethodGameState : public GameState {
  public:
   explicit RunTestMethodGameState(InGameTestBase* in_game_test)
-      : GameState(in_game_test->app()), in_game_test_(in_game_test) {}
+      : in_game_test_(in_game_test) {}
 
   virtual bool frameRenderingQueued(const Ogre::FrameEvent& event) {
     static bool first_call = true;
@@ -42,21 +42,15 @@ class RunTestMethodGameState : public GameState {
 
 }  // anonymous namespace
 
-// TODO(in_game_tests): Remvome this once OgreApp is a singleton.
-OgreApp* g_ogre_app = NULL;
-
 InGameTestBase::InGameTestBase() : first_state_(NULL) {}
 
 InGameTestBase::~InGameTestBase() {}
 
-OgreApp* InGameTestBase::app() { return g_ogre_app; }
+OgreApp* InGameTestBase::app() { return &OgreApp::Instance(); }
 
 void InGameTestBase::SetUp() {
   // TODO(game_test): Provide an ogre config file for test.
-  if (!g_ogre_app) {
-    g_ogre_app = &OgreApp::Instance();
-    ASSERT_TRUE(g_ogre_app->Init());
-  }
+  ASSERT_TRUE(OgreApp::Instance().Init());
   Reset(first_state_, new RunTestMethodGameState(this));
   app()->PushState(Get(first_state_));
   testing::UnitTest::GetInstance()->listeners().Append(this);

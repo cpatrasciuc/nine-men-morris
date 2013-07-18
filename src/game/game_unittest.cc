@@ -141,8 +141,7 @@ TEST(GameTest, CanJump) {
 
 TEST(GameDeathTest, DEBUG_ONLY_TEST(DoubleInitialization)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
-  const GameOptions options;
-  Game game(options);
+  Game game;
   game.Initialize();
   ASSERT_DEATH(game.Initialize(), "");
 }

@@ -20,13 +20,11 @@
 
 namespace graphics {
 
-PlayingState::PlayingState(OgreApp* app,
-                           std::auto_ptr<game::Game> game_model,
+PlayingState::PlayingState(std::auto_ptr<game::Game> game_model,
                            std::auto_ptr<PlayerDelegate> white_player,
                            std::auto_ptr<PlayerDelegate> black_player)
-    : GameState(app),
-      game_(game_model.release()),
-      board_view_(new BoardView(app, *game_)),
+    : game_(game_model.release()),
+      board_view_(new BoardView(*game_)),
       camera_controller_(),
       white_player_(white_player.release()),
       black_player_(black_player.release()),

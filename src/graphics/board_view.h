@@ -51,7 +51,7 @@ class GRAPHICS_EXPORT BoardView
     CUSTOM = (1 << 5)
   };
 
-  BoardView(OgreApp* app, const game::Game& game_model);
+  explicit BoardView(const game::Game& game_model);
   ~BoardView();
 
   const game::Game& game_model() const { return game_; }
@@ -100,7 +100,7 @@ class GRAPHICS_EXPORT BoardView
 
   void UpdateSelection(const OIS::MouseState& state);
 
-  OgreApp* app_;
+  OgreApp* const app_;
   const game::Game& game_;
 
   std::map<Ogre::MovableObject*, game::BoardLocation> locations_;
@@ -120,7 +120,9 @@ class GRAPHICS_EXPORT BoardView
   Ogre::MovableObject* selected_location_;
   unsigned int selection_type_;
 
-  friend void ClickOnLocation(BoardView*, const game::BoardLocation&);
+  // Friend definition useful for tests.
+  friend const Ogre::Vector3& Get3DPosition(const BoardView&,
+                                            const game::BoardLocation&);
   DISALLOW_COPY_AND_ASSIGN(BoardView);
 };
 

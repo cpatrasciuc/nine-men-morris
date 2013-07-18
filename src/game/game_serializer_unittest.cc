@@ -159,8 +159,7 @@ TEST_F(GameSerializerTest, TextDeserialization) {
 }
 
 TEST_F(GameSerializerTest, EmptyGame) {
-  GameOptions game_options;
-  Game game(game_options);
+  const Game game;
 
   std::ostringstream text_stream;
   GameSerializer::SerializeTo(game, &text_stream, false);
