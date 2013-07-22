@@ -12,7 +12,7 @@ GameState::GameState() {}
 
 GameState::~GameState() {}
 
-OgreApp* GameState::app() const { return &OgreApp::Instance(); }
+OgreApp* GameState::app() { return &OgreApp::Instance(); }
 
 bool GameState::Initialize() { return true; }
 

@@ -30,7 +30,7 @@ class GRAPHICS_EXPORT GameState
   GameState();
   virtual ~GameState();
 
-  OgreApp* app() const;
+  OgreApp* app();
 
   virtual bool Initialize();
   virtual void Exit();

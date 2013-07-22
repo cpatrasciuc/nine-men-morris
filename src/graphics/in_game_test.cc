@@ -9,7 +9,6 @@
 #include "base/callable.h"
 #include "base/location.h"
 #include "base/method.h"
-#include "base/ptr/scoped_ptr.h"
 #include "graphics/ogre_app.h"
 #include "graphics/game_state.h"
 #include "gtest/gtest.h"
@@ -18,41 +17,15 @@
 #include "OGRE/OgreRoot.h"
 
 namespace graphics {
-namespace {
 
-class RunTestMethodGameState : public GameState {
- public:
-  explicit RunTestMethodGameState(InGameTestBase* in_game_test)
-      : in_game_test_(in_game_test) {}
-
-  virtual bool frameRenderingQueued(const Ogre::FrameEvent& event) {
-    static bool first_call = true;
-    if (first_call) {
-      in_game_test_->TestMethod();
-      first_call = false;
-    }
-    return !in_game_test_->HasFatalFailure();
-  }
-
- private:
-  InGameTestBase* const in_game_test_;
-
-  DISALLOW_COPY_AND_ASSIGN(RunTestMethodGameState);
-};
-
-}  // anonymous namespace
-
-InGameTestBase::InGameTestBase() : first_state_(NULL) {}
+InGameTestBase::InGameTestBase() {}
 
 InGameTestBase::~InGameTestBase() {}
-
-OgreApp* InGameTestBase::app() { return &OgreApp::Instance(); }
 
 void InGameTestBase::SetUp() {
   // TODO(game_test): Provide an ogre config file for test.
   ASSERT_TRUE(OgreApp::Instance().Init());
-  Reset(first_state_, new RunTestMethodGameState(this));
-  app()->PushState(Get(first_state_));
+  app()->PushState(this);
   testing::UnitTest::GetInstance()->listeners().Append(this);
 }
 
@@ -74,9 +47,16 @@ void InGameTestBase::PostDoneTaskOnGameLoop() {
 }
 
 void InGameTestBase::Done() {
-  ASSERT_TRUE(Get(first_state_));
-  ASSERT_EQ(Get(first_state_), app()->PopState());
-  Reset(first_state_);
+  ASSERT_EQ(this, app()->PopState());
+}
+
+bool InGameTestBase::frameRenderingQueued(const Ogre::FrameEvent& event) {
+  static bool first_call = true;
+  if (first_call) {
+    TestMethod();
+    first_call = false;
+  }
+  return !HasFatalFailure();
 }
 
 void InGameTestBase::OnTestPartResult(const testing::TestPartResult& result) {
