@@ -42,8 +42,10 @@ class InGameTestBase
   virtual void Done();
 
  private:
-  // GameState overrides.
-  virtual bool frameRenderingQueued(const Ogre::FrameEvent& event);
+  // Called during SetUp() to post a call to TestMethod() on the game loop. This
+  // ensures that TestMethod() will be called even if during SetUp() a new game
+  // state is pushed on the stack on top of |this|.
+  void PostTestTaskOnGameLoop();
 
   // testing::EmptyTestEventListener overrides
   // Listener for partial results. If a fatal failure or SUCCEED() occurred, it

@@ -27,6 +27,7 @@ void InGameTestBase::SetUp() {
   ASSERT_TRUE(OgreApp::Instance().Init());
   app()->PushState(this);
   testing::UnitTest::GetInstance()->listeners().Append(this);
+  PostTestTaskOnGameLoop();
 }
 
 void InGameTestBase::TearDown() {
@@ -50,13 +51,11 @@ void InGameTestBase::Done() {
   ASSERT_EQ(this, app()->PopState());
 }
 
-bool InGameTestBase::frameRenderingQueued(const Ogre::FrameEvent& event) {
-  static bool first_call = true;
-  if (first_call) {
-    TestMethod();
-    first_call = false;
-  }
-  return !HasFatalFailure();
+void InGameTestBase::PostTestTaskOnGameLoop() {
+  typedef void(InGameTestBase::*TestMethodSig)(void);
+  base::Closure* test_task = base::Bind(
+      new base::Method<TestMethodSig>(&InGameTestBase::TestMethod), this);
+  app()->PostTaskOnGameLoop(FROM_HERE, test_task);
 }
 
 void InGameTestBase::OnTestPartResult(const testing::TestPartResult& result) {
