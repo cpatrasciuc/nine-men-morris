@@ -45,6 +45,7 @@ void ClickOnLocation(BoardView* view, const game::BoardLocation& location) {
   ClickAtScreenCoords(view, screen_pos.x, screen_pos.y);
 }
 
+// TODO(in_game_tests): This method is found in two other places. Refactor.
 void ClickAtScreenCoords(BoardView* view, double screen_x, double screen_y) {
   DCHECK(0.0 <= screen_x && screen_x <= 1.0);
   DCHECK(0.0 <= screen_y && screen_y <= 1.0);
