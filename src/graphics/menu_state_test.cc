@@ -50,16 +50,7 @@ class MenuStateTest : public InGameTestBase {
 
   virtual void TestMethod() {
     EXPECT_EQ(arraysize(kMenuButtons), arraysize(kMenuOptions));
-    for (size_t i = 0; i < arraysize(kMenuButtons); ++i) {
-      delegate_->clear_selection();
-      SimulateClickOnOverlayElement(kMenuButtons[i]);
-      EXPECT_EQ(kMenuOptions[i], delegate_->selected_option()) << i;
-    }
-
-    delegate_->clear_selection();
-    SimulateClick(menu_, 0, 0);
-    EXPECT_EQ("", delegate_->selected_option());
-
+    TestMouseEventsHandling();
     // TODO(menu_state_test): Add test for keyboard events.
     SUCCEED();
   }
@@ -70,6 +61,17 @@ class MenuStateTest : public InGameTestBase {
   }
 
  private:
+  void TestMouseEventsHandling() {
+    for (size_t i = 0; i < arraysize(kMenuButtons); ++i) {
+      delegate_->clear_selection();
+      SimulateClickOnOverlayElement(kMenuButtons[i]);
+      EXPECT_EQ(kMenuOptions[i], delegate_->selected_option()) << i;
+    }
+    delegate_->clear_selection();
+    SimulateClick(menu_, 0, 0);
+    EXPECT_EQ("", delegate_->selected_option());
+  }
+
   void SimulateClickOnOverlayElement(const std::string& element_name) {
     Ogre::Overlay* const menu_overlay =
         Ogre::OverlayManager::getSingleton().getByName(kTestMenuOverlayName);
