@@ -12,6 +12,7 @@
 #include "game/piece_color.h"
 #include "graphics/board_view.h"
 #include "graphics/ogre_app.h"
+#include "graphics/ois_test_utils.h"
 
 #include "OGRE/OgreCamera.h"
 #include "OGRE/OgreEntity.h"
@@ -42,7 +43,7 @@ const Ogre::Vector3& Get3DPosition(const BoardView& view,
 void ClickOnLocation(BoardView* view, const game::BoardLocation& location) {
   const Ogre::Vector3 world_pos = Get3DPosition(*view, location);
   const Ogre::Vector2 screen_pos = ConvertWorldToScreen(world_pos);
-  ClickAtScreenCoords(view, screen_pos.x, screen_pos.y);
+  SimulateClick(view, screen_pos.x, screen_pos.y);
 }
 
 // TODO(in_game_tests): This method is found in two other places. Refactor.

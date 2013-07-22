@@ -29,11 +29,6 @@ const Ogre::Vector3& Get3DPosition(const BoardView& view,
 // a user click on the center of the board |location| given as argument.
 void ClickOnLocation(BoardView* view, const game::BoardLocation& location);
 
-// Sends a series of mouse events to the |view| instance, in order to simulate
-// a user click at screen coordinates (x, y). |x| and |y| must be between 0.0
-// and 1.0.
-void ClickAtScreenCoords(BoardView* view, double screen_x, double screen_y);
-
 // Searches for the SceneNode corresponding to the piece belonging to the player
 // specified by |color| and being close to the given |position|. The 3D position
 // for a given location can be obtained using Get3DPosition(). See above.

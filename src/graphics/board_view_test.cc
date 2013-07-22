@@ -18,6 +18,7 @@
 #include "graphics/board_view_test_utils.h"
 #include "graphics/in_game_test.h"
 #include "graphics/ogre_app.h"
+#include "graphics/ois_test_utils.h"
 #include "graphics/selection_listener.h"
 #include "gtest/gtest.h"
 
@@ -117,7 +118,7 @@ class BoardViewSelectionTest : public BoardViewTestBase,
     // Click on an empty place. It shouldn't trigger any selection event.
     event_was_fired_ = false;
     expected_location_ = game::BoardLocation(-1, -1);
-    ClickAtScreenCoords(Get(view_), 0.001, 0.001);
+    SimulateClick(Get(view_), 0.001, 0.001);
     EXPECT_FALSE(event_was_fired_);
 
     view_->RemoveListener(this);
