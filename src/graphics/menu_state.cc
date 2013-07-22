@@ -78,6 +78,9 @@ bool MenuState::keyReleased(const OIS::KeyEvent& event) {
 
 bool MenuState::mouseReleased(const OIS::MouseEvent& event,
                               OIS::MouseButtonID id) {
+  if (id != OIS::MB_Left) {
+    return true;
+  }
   const OIS::MouseState& state = event.state;
   const double screen_x = state.X.abs / static_cast<double>(state.width);
   const double screen_y = state.Y.abs / static_cast<double>(state.height);
