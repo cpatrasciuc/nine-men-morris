@@ -45,6 +45,7 @@ set(IN_GAME_TESTS_SOURCE_FILES
   game_state_test.cc
   in_game_test.cc
   in_game_test.h
+  menu_state_test.cc
   out_of_process_test.cc
   out_of_process_test.h
 )
