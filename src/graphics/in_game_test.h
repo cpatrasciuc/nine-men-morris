@@ -36,7 +36,7 @@ class InGameTestBase
   // |PostTaskOnGameLoop| and passed a call to |Done()| as the task.
   void PostDoneTaskOnGameLoop();
 
-  // It checks that |first_state_| is the only game state left on the stack and
+  // It checks that |this| is the only game state left on the stack and
   // pops it. If it is overridden in subclasses, the overridden method must call
   // InGameTestBase::Done() at the end.
   virtual void Done();
