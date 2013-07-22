@@ -8,6 +8,7 @@
 #include "base/log.h"
 #include "graphics/in_game_test.h"
 #include "graphics/menu_state.h"
+#include "graphics/ois_test_utils.h"
 #include "gtest/gtest.h"
 
 #include "OGRE/OgreOverlay.h"
@@ -59,7 +60,7 @@ class MenuStateTest : public InGameTestBase {
     }
 
     delegate_->clear_selection();
-    SimulateClickAtScreenCoords(0, 0);
+    SimulateClick(menu_, 0, 0);
     EXPECT_EQ("", delegate_->selected_option());
 
     // TODO(menu_state_test): Add test for keyboard events.
@@ -85,21 +86,7 @@ class MenuStateTest : public InGameTestBase {
     EXPECT_TRUE(button->contains(x, y))
         << button->getName() << ": " << x << " " << y;
     EXPECT_TRUE(menu_overlay->findElementAt(x, y));
-    SimulateClickAtScreenCoords(x, y);
-  }
-
-  void SimulateClickAtScreenCoords(double screen_x, double screen_y) {
-    const OIS::MouseState& real_mouse = app()->mouse().getMouseState();
-    OIS::MouseState state(real_mouse);
-    state.X.abs = screen_x * state.width;
-    state.Y.abs = screen_y * state.height;
-    const OIS::MouseEvent move_event(NULL, state);
-    OIS::MouseListener* listener = static_cast<OIS::MouseListener*>(menu_);
-    listener->mouseMoved(move_event);
-    const OIS::MouseEvent press_event(NULL, state);
-    listener->mousePressed(press_event, OIS::MB_Left);
-    const OIS::MouseEvent release_event(NULL, state);
-    listener->mouseReleased(release_event, OIS::MB_Left);
+    SimulateClick(menu_, x, y);
   }
 
   // TODO(menu_state_test): Make this a scoped_ptr.
