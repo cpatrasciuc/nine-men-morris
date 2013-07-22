@@ -20,6 +20,9 @@ namespace graphics {
 namespace {
 
 const char kTestMenuOverlayName[] = "TestMenu";
+const char* const kMenuButtons[] = {
+    "MenuButton1", "MenuButton2", "MenuButton3" };
+const char* const kMenuOptions[] = { "Option1", "Option2", "Option3" };
 
 class MenuStateTest : public InGameTestBase {
  public:
@@ -46,15 +49,11 @@ class MenuStateTest : public InGameTestBase {
   }
 
   virtual void TestMethod() {
-    const char* const menu_buttons[] = {
-        "MenuButton1", "MenuButton2", "MenuButton3" };
-    const char* const menu_options[] = { "Option1", "Option2", "Option3" };
-
-    EXPECT_EQ(arraysize(menu_buttons), arraysize(menu_options));
-    for (size_t i = 0; i < arraysize(menu_buttons); ++i) {
+    EXPECT_EQ(arraysize(kMenuButtons), arraysize(kMenuOptions));
+    for (size_t i = 0; i < arraysize(kMenuButtons); ++i) {
       delegate_->clear_selection();
-      SimulateClickOnOverlayElement(menu_buttons[i]);
-      EXPECT_EQ(menu_options[i], delegate_->selected_option()) << i;
+      SimulateClickOnOverlayElement(kMenuButtons[i]);
+      EXPECT_EQ(kMenuOptions[i], delegate_->selected_option()) << i;
     }
 
     delegate_->clear_selection();
