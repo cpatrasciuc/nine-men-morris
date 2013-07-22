@@ -16,8 +16,6 @@
 #include "OGRE/OgreOverlayElement.h"
 #include "OGRE/OgreOverlayManager.h"
 
-#include "OIS/OISMouse.h"
-
 namespace graphics {
 namespace {
 
