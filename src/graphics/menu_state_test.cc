@@ -6,6 +6,7 @@
 #include <string>
 
 #include "base/log.h"
+#include "base/ptr/scoped_ptr.h"
 #include "graphics/in_game_test.h"
 #include "graphics/menu_state.h"
 #include "graphics/ois_test_utils.h"
@@ -42,9 +43,9 @@ class MenuStateTest : public InGameTestBase {
 
   virtual bool Initialize() {
     delegate_ = new TestMenuDelegate;
-    menu_ = new MenuState(kTestMenuOverlayName,
-                          std::auto_ptr<MenuState::Delegate>(delegate_));
-    app()->PushState(menu_);
+    Reset(menu_, new MenuState(kTestMenuOverlayName,
+                               std::auto_ptr<MenuState::Delegate>(delegate_)));
+    app()->PushState(Get(menu_));
     return true;
   }
 
@@ -56,7 +57,8 @@ class MenuStateTest : public InGameTestBase {
   }
 
   virtual void Done() {
-    EXPECT_EQ(menu_, app()->PopState());
+    EXPECT_EQ(Get(menu_), app()->PopState());
+    Reset(menu_);
     InGameTestBase::Done();
   }
 
@@ -68,7 +70,7 @@ class MenuStateTest : public InGameTestBase {
       EXPECT_EQ(kMenuOptions[i], delegate_->selected_option()) << i;
     }
     delegate_->clear_selection();
-    SimulateClick(menu_, 0, 0);
+    SimulateClick(Get(menu_), 0, 0);
     EXPECT_TRUE(delegate_->selected_option().empty());
   }
 
@@ -77,9 +79,9 @@ class MenuStateTest : public InGameTestBase {
     for (size_t i = 0; i < arraysize(expected_options); ++i) {
       delegate_->clear_selection();
       menu_->set_escape_option(expected_options[i]);
-      SimulateKeyPress(menu_, OIS::KC_RETURN);
+      SimulateKeyPress(Get(menu_), OIS::KC_RETURN);
       EXPECT_TRUE(delegate_->selected_option().empty());
-      SimulateKeyPress(menu_, OIS::KC_ESCAPE);
+      SimulateKeyPress(Get(menu_), OIS::KC_ESCAPE);
       EXPECT_EQ(expected_options[i], delegate_->selected_option());
     }
   }
@@ -97,11 +99,10 @@ class MenuStateTest : public InGameTestBase {
     EXPECT_TRUE(button->contains(x, y))
         << button->getName() << ": " << x << " " << y;
     EXPECT_TRUE(menu_overlay->findElementAt(x, y));
-    SimulateClick(menu_, x, y);
+    SimulateClick(Get(menu_), x, y);
   }
 
-  // TODO(menu_state_test): Make this a scoped_ptr.
-  MenuState* menu_;
+  base::ptr::scoped_ptr<MenuState> menu_;
   TestMenuDelegate* delegate_;
 };
 
