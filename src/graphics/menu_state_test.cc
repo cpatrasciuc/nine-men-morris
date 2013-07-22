@@ -51,7 +51,7 @@ class MenuStateTest : public InGameTestBase {
   virtual void TestMethod() {
     EXPECT_EQ(arraysize(kMenuButtons), arraysize(kMenuOptions));
     TestMouseEventsHandling();
-    // TODO(menu_state_test): Add test for keyboard events.
+    TestKeyboardEventsHandling();
     SUCCEED();
   }
 
@@ -69,7 +69,19 @@ class MenuStateTest : public InGameTestBase {
     }
     delegate_->clear_selection();
     SimulateClick(menu_, 0, 0);
-    EXPECT_EQ("", delegate_->selected_option());
+    EXPECT_TRUE(delegate_->selected_option().empty());
+  }
+
+  void TestKeyboardEventsHandling() {
+    const char* const expected_options[] = { "", kMenuOptions[0], "" };
+    for (size_t i = 0; i < arraysize(expected_options); ++i) {
+      delegate_->clear_selection();
+      menu_->set_escape_option(expected_options[i]);
+      SimulateKeyPress(menu_, OIS::KC_RETURN);
+      EXPECT_TRUE(delegate_->selected_option().empty());
+      SimulateKeyPress(menu_, OIS::KC_ESCAPE);
+      EXPECT_EQ(expected_options[i], delegate_->selected_option());
+    }
   }
 
   void SimulateClickOnOverlayElement(const std::string& element_name) {
