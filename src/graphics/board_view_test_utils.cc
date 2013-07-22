@@ -46,23 +46,6 @@ void ClickOnLocation(BoardView* view, const game::BoardLocation& location) {
   SimulateClick(view, screen_pos.x, screen_pos.y);
 }
 
-// TODO(in_game_tests): This method is found in two other places. Refactor.
-void ClickAtScreenCoords(BoardView* view, double screen_x, double screen_y) {
-  DCHECK(0.0 <= screen_x && screen_x <= 1.0);
-  DCHECK(0.0 <= screen_y && screen_y <= 1.0);
-  const OIS::MouseState& real_mouse =
-      OgreApp::Instance().mouse().getMouseState();
-  OIS::MouseState state(real_mouse);
-  state.X.abs = screen_x * state.width;
-  state.Y.abs = screen_y * state.height;
-  const OIS::MouseEvent move_event(NULL, state);
-  view->mouseMoved(move_event);
-  const OIS::MouseEvent press_event(NULL, state);
-  view->mousePressed(press_event, OIS::MB_Left);
-  const OIS::MouseEvent release_event(NULL, state);
-  view->mouseReleased(release_event, OIS::MB_Left);
-}
-
 Ogre::SceneNode* GetPieceByColorAndPosition(game::PieceColor color,
                                             const Ogre::Vector3& position) {
   DCHECK(color != game::NO_COLOR);
