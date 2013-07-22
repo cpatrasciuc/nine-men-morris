@@ -6,10 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "base/bind.h"
-#include "base/location.h"
 #include "base/log.h"
-#include "base/method.h"
 #include "base/ptr/scoped_ptr.h"
 #include "game/board.h"
 #include "game/board_location.h"
@@ -57,26 +54,11 @@ class BoardViewTestBase : public InGameTestBase {
  public:
   virtual ~BoardViewTestBase() {}
 
-  virtual void TestMethod() {
-    // Add a few frames delay to allow the BoardView to fully initialize.
-    // TODO(in_game_tests): Add a generic mechanism to add delay frames.
-    static int frame_counter = 0;
-    const int delay_count = 10;
-    if (frame_counter == 0) {
-      InitializeBoardView();
-    }
-    if (frame_counter < delay_count) {
-      ++frame_counter;
-      // Repost TestMethod() on the game loop so it will be called during the
-      // next frame.
-      typedef void(BoardViewTestBase::*TestMethodSig)(void);
-      OgreApp::Instance().PostTaskOnGameLoop(FROM_HERE, base::Bind(
-          new base::Method<TestMethodSig>(&BoardViewTestBase::TestMethod),
-          this));
-    } else {
-      DelayedTestMethod();
-      SUCCEED();
-    }
+  virtual bool Initialize() {
+    InitializeGameModel();
+    Reset(view_, new BoardView(*game_));
+    view_->Initialize();
+    return true;
   }
 
   virtual void Done() {
@@ -88,18 +70,12 @@ class BoardViewTestBase : public InGameTestBase {
   BoardViewTestBase() {}
 
   virtual void InitializeGameModel() = 0;
-  virtual void DelayedTestMethod() = 0;
 
   // TODO(board_view_test): Make these private and add accessors?
   std::auto_ptr<game::Game> game_;
   base::ptr::scoped_ptr<BoardView> view_;
 
  private:
-  void InitializeBoardView() {
-    InitializeGameModel();
-    Reset(view_, new BoardView(*game_));
-    view_->Initialize();
-  }
 };
 
 class BoardViewSelectionTest : public BoardViewTestBase,
@@ -113,7 +89,7 @@ class BoardViewSelectionTest : public BoardViewTestBase,
     game_ = game::LoadSavedGameForTests("remove_from_mill_6");
   }
 
-  virtual void DelayedTestMethod() {
+  virtual void TestMethod() {
     view_->AddListener(this);
 
     view_->SetSelectionType(BoardView::EMPTY_LOCATION);
@@ -145,6 +121,7 @@ class BoardViewSelectionTest : public BoardViewTestBase,
     EXPECT_FALSE(event_was_fired_);
 
     view_->RemoveListener(this);
+    SUCCEED();
   }
 
   void AssertSelectableLocations(LocationPred predicate) {
@@ -176,7 +153,7 @@ class BoardViewPlacePieceTest : public BoardViewTestBase {
     game_->Initialize();
   }
 
-  virtual void DelayedTestMethod() {
+  virtual void TestMethod() {
     game_->AddListener(Get(view_));
     const game::BoardLocation location(0, 0);
     const Ogre::Vector3 position = Get3DPosition(*view_, location);
@@ -191,6 +168,7 @@ class BoardViewPlacePieceTest : public BoardViewTestBase {
     EXPECT_TRUE(piece_entity->isVisible());
     EXPECT_TRUE(position.positionEquals(piece_node->getPosition(), 0.001));
     game_->RemoveListener(Get(view_));
+    SUCCEED();
   }
 
   Ogre::SceneNode* GetPieceByColorAndIndex(game::PieceColor color, int index) {
@@ -214,7 +192,7 @@ class BoardViewMovePieceTest : public BoardViewTestBase {
     game_ = game::LoadSavedGameForTests("place_phase_3");
   }
 
-  virtual void DelayedTestMethod() {
+  virtual void TestMethod() {
     game_->AddListener(Get(view_));
     const game::BoardLocation source(0, 0);
     const game::BoardLocation destination(1, 0);
@@ -236,6 +214,7 @@ class BoardViewMovePieceTest : public BoardViewTestBase {
     EXPECT_TRUE(dest_pos.positionEquals(piece_node->getPosition(), 0.001));
     EXPECT_FALSE(GetPieceByColorAndPosition(color, source_pos));
     game_->RemoveListener(Get(view_));
+    SUCCEED();
   }
 };
 
@@ -247,7 +226,7 @@ class BoardViewRemovePieceTest : public BoardViewTestBase {
     game_ = game::LoadSavedGameForTests("remove_from_mill_6");
   }
 
-  virtual void DelayedTestMethod() {
+  virtual void TestMethod() {
     game_->AddListener(Get(view_));
     const game::BoardLocation source(0, 0);
     const Ogre::Vector3 source_pos = Get3DPosition(*view_, source);
@@ -263,6 +242,7 @@ class BoardViewRemovePieceTest : public BoardViewTestBase {
     game_->ExecutePlayerAction(action);
     EXPECT_FALSE(piece_entity->isVisible());
     game_->RemoveListener(Get(view_));
+    SUCCEED();
   }
 };
 
