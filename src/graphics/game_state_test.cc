@@ -101,7 +101,7 @@ class GameStateTest : public InGameTestBase {
         EXPECT_EQ(0, pause_);
         EXPECT_EQ(0, resume_);
         EXPECT_EQ(1, frame_started_);
-        EXPECT_EQ(1, frame_ended_);
+        EXPECT_EQ(0, frame_ended_);
         ExpectEventCount(0);
         SimulateIOEvents();
         ExpectEventCount(1);
@@ -112,7 +112,7 @@ class GameStateTest : public InGameTestBase {
         EXPECT_EQ(1, pause_);
         EXPECT_EQ(1, resume_);
         EXPECT_EQ(2, frame_started_);
-        EXPECT_EQ(2, frame_ended_);
+        EXPECT_EQ(1, frame_ended_);
         ExpectEventCount(1);
         SUCCEED();
       } else {
