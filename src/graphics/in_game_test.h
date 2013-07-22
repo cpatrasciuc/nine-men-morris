@@ -22,8 +22,6 @@ class InGameTestBase
   // the game loop after the first frame is queued for rendering.
   virtual void TestMethod() = 0;
 
-  OgreApp* app();
-
  protected:
   InGameTestBase();
   virtual ~InGameTestBase();

@@ -22,8 +22,6 @@ InGameTestBase::InGameTestBase() {}
 
 InGameTestBase::~InGameTestBase() {}
 
-OgreApp* InGameTestBase::app() { return &OgreApp::Instance(); }
-
 void InGameTestBase::SetUp() {
   // TODO(game_test): Provide an ogre config file for test.
   ASSERT_TRUE(OgreApp::Instance().Init());
