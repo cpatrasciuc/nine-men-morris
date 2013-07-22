@@ -5,6 +5,7 @@
 #ifndef GRAPHICS_OIS_TEST_UTILS_H_
 #define GRAPHICS_OIS_TEST_UTILS_H_
 
+#include "OIS/OISKeyboard.h"
 #include "OIS/OISMouse.h"
 
 namespace graphics {
@@ -16,6 +17,10 @@ void SimulateClick(OIS::MouseListener* listener,
                    double screen_x,
                    double screen_y,
                    OIS::MouseButtonID button_id = OIS::MB_Left);
+
+// Create a series of I/O events and pass them to the |listener| in order to
+// simulate pressing the given |key|.
+void SimulateKeyPress(OIS::KeyListener* listener, OIS::KeyCode key);
 
 }  // namespace graphics
 

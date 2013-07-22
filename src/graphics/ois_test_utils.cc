@@ -30,4 +30,10 @@ void SimulateClick(OIS::MouseListener* listener,
   listener->mouseReleased(release_event, button_id);
 }
 
+void SimulateKeyPress(OIS::KeyListener* listener, OIS::KeyCode key) {
+  const OIS::KeyEvent key_event(NULL, key, 0);
+  listener->keyPressed(key_event);
+  listener->keyReleased(key_event);
+}
+
 }  // namespace graphics

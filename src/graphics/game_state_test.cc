@@ -19,11 +19,7 @@ namespace {
 void SimulateIOEvents() {
   OgreApp& app = OgreApp::Instance();
   SimulateClick(&app, 0, 0);
-
-  const OIS::KeyEvent key_event(NULL, OIS::KC_0, 0);
-  OIS::KeyListener* const key_list = static_cast<OIS::KeyListener*>(&app);
-  key_list->keyPressed(key_event);
-  key_list->keyReleased(key_event);
+  SimulateKeyPress(&app, OIS::KC_0);
 }
 
 class GameStateTest : public InGameTestBase {
