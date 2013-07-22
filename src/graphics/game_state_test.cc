@@ -5,8 +5,9 @@
 #include "base/log.h"
 #include "base/ptr/scoped_ptr.h"
 #include "graphics/game_state.h"
-#include "graphics/ogre_app.h"
 #include "graphics/in_game_test.h"
+#include "graphics/ogre_app.h"
+#include "graphics/ois_test_utils.h"
 #include "gtest/gtest.h"
 
 #include "OIS/OISKeyboard.h"
@@ -17,13 +18,7 @@ namespace {
 
 void SimulateIOEvents() {
   OgreApp& app = OgreApp::Instance();
-
-  const OIS::MouseState& mouse_state = app.mouse().getMouseState();
-  const OIS::MouseEvent mouse_event(NULL, mouse_state);
-  OIS::MouseListener* const mouse_list = static_cast<OIS::MouseListener*>(&app);
-  mouse_list->mouseMoved(mouse_event);
-  mouse_list->mousePressed(mouse_event, OIS::MB_Left);
-  mouse_list->mouseReleased(mouse_event, OIS::MB_Left);
+  SimulateClick(&app, 0, 0);
 
   const OIS::KeyEvent key_event(NULL, OIS::KC_0, 0);
   OIS::KeyListener* const key_list = static_cast<OIS::KeyListener*>(&app);
