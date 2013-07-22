@@ -37,7 +37,7 @@ class MenuDelegate : public graphics::MenuState::Delegate {
  public:
   virtual void OnMenuOptionSelected(const std::string& option) {
     LOG(INFO) << option;
-    if (option == "OPTION3") {
+    if (option == "Option3") {
       graphics::OgreApp::Instance().PopState();
     }
   }
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));*/
   graphics::MenuState menu("TestMenu",
       std::auto_ptr<graphics::MenuState::Delegate>(new MenuDelegate));
-  menu.set_escape_option("OPTION3");
+  menu.set_escape_option("Option3");
   app.PushState(&menu);
   app.RunMainLoop();
   app.ShutDown();
