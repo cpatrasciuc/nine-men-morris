@@ -150,6 +150,7 @@ void OgreApp::PostTaskOnGameLoop(const base::Location& from,
 }
 
 void OgreApp::InitializeResourcePaths() {
+  // TODO(ogre_app): Ensure resources are loaded in the proper order.
   const base::FilePath resource_dir =
       base::FilePath::CurrentDir().Append(FILE_PATH_LITERAL("resources"));
   const base::FilePath::CharType* const sub_dirs[] = {
