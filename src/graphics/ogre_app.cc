@@ -150,14 +150,14 @@ void OgreApp::PostTaskOnGameLoop(const base::Location& from,
 }
 
 void OgreApp::InitializeResourcePaths() {
-  // TODO(ogre_app): Ensure resources are loaded in the proper order.
   const base::FilePath resource_dir =
       base::FilePath::CurrentDir().Append(FILE_PATH_LITERAL("resources"));
   const base::FilePath::CharType* const sub_dirs[] = {
-      FILE_PATH_LITERAL("meshes"),
-      FILE_PATH_LITERAL("overlays"),
-      FILE_PATH_LITERAL("materials"),
       FILE_PATH_LITERAL("fonts"),
+      FILE_PATH_LITERAL("materials"),
+      FILE_PATH_LITERAL("meshes"),
+      FILE_PATH_LITERAL("overlay_templates"),
+      FILE_PATH_LITERAL("overlays")
   };
 
   for (size_t i = 0; i < arraysize(sub_dirs); ++i) {
