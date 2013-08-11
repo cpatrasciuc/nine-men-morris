@@ -56,7 +56,7 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
   CameraController camera_controller_;
   base::ptr::scoped_ptr<PlayerDelegate> white_player_;
   base::ptr::scoped_ptr<PlayerDelegate> black_player_;
-  bool paused_;
+  bool stopped_;
   base::ptr::scoped_ptr<ConfirmationMenuState> pause_menu_;
 };
 

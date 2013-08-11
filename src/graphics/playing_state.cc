@@ -29,7 +29,7 @@ PlayingState::PlayingState(std::auto_ptr<game::Game> game_model,
       camera_controller_(),
       white_player_(white_player.release()),
       black_player_(black_player.release()),
-      paused_(false) {}
+      stopped_(false) {}
 
 bool PlayingState::Initialize() {
   board_view_->Initialize();
@@ -45,7 +45,7 @@ bool PlayingState::Initialize() {
 }
 
 void PlayingState::Exit() {
-  paused_ = true;
+  stopped_ = true;
   Reset(white_player_);
   Reset(black_player_);
   Reset(board_view_);
@@ -106,7 +106,7 @@ void PlayingState::RequestPlayerAction() {
 
 void PlayingState::ExecuteAction(const game::PlayerAction& action) {
   game_->ExecutePlayerAction(action);
-  if (!game_->is_game_over() && !paused_) {
+  if (!game_->is_game_over() && !stopped_) {
     RequestPlayerAction();
   }
 }
