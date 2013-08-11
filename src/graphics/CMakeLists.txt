@@ -19,6 +19,8 @@ set(GRAPHICS_SOURCE_FILES
   camera_controller.h
   confirmation_menu_state.cc
   confirmation_menu_state.h
+  game_over_state.cc
+  game_over_state.h
   game_state.cc
   game_state.h
   graphics_export.h
