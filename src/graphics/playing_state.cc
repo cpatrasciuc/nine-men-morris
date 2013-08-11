@@ -14,6 +14,7 @@
 #include "game/player_action.h"
 #include "graphics/ai_player.h"
 #include "graphics/board_view.h"
+#include "graphics/confirmation_menu_state.h"
 #include "graphics/human_player.h"
 #include "graphics/ogre_app.h"
 #include "graphics/player_delegate.h"
@@ -51,9 +52,18 @@ void PlayingState::Exit() {
   camera_controller_.set_camera(NULL);
 }
 
-bool PlayingState::keyPressed(const OIS::KeyEvent& event) {
-  if (event.key == OIS::KC_ESCAPE) {
+void PlayingState::Resume() {
+  const bool quit = Get(pause_menu_) && pause_menu_->is_confirmed();
+  Reset(pause_menu_);
+  if (quit) {
     app()->PopState();
+  }
+}
+
+bool PlayingState::keyReleased(const OIS::KeyEvent& event) {
+  if (event.key == OIS::KC_ESCAPE) {
+    Reset(pause_menu_, new ConfirmationMenuState("Do you want to quit?"));
+    app()->PushState(Get(pause_menu_));
   }
   return true;
 }

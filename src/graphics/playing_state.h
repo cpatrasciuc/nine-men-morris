@@ -12,6 +12,7 @@
 #include "game/game_options.h"
 #include "graphics/board_view.h"
 #include "graphics/camera_controller.h"
+#include "graphics/confirmation_menu_state.h"
 #include "graphics/game_state.h"
 #include "graphics/graphics_export.h"
 #include "graphics/player_delegate.h"
@@ -32,10 +33,11 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
 
   virtual bool Initialize();
   virtual void Exit();
+  virtual void Resume();
 
  private:
   // KeyListener overrides
-  virtual bool keyPressed(const OIS::KeyEvent& event);
+  virtual bool keyReleased(const OIS::KeyEvent& event);
 
   // MouseListener overrides
   virtual bool mouseMoved(const OIS::MouseEvent& event);
@@ -55,6 +57,7 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
   base::ptr::scoped_ptr<PlayerDelegate> white_player_;
   base::ptr::scoped_ptr<PlayerDelegate> black_player_;
   bool paused_;
+  base::ptr::scoped_ptr<ConfirmationMenuState> pause_menu_;
 };
 
 }  // namespace graphics
