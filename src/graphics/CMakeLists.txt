@@ -17,6 +17,8 @@ set(GRAPHICS_SOURCE_FILES
   board_view.h
   camera_controller.cc
   camera_controller.h
+  confirmation_menu_state.cc
+  confirmation_menu_state.h
   game_state.cc
   game_state.h
   graphics_export.h
@@ -42,6 +44,7 @@ set(IN_GAME_TESTS_SOURCE_FILES
   board_view_test_utils.cc
   board_view_test_utils.h
   camera_controller_test.cc
+  confirmation_menu_state_test.cc
   game_state_test.cc
   in_game_test.cc
   in_game_test.h
