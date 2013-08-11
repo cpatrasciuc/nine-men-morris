@@ -4,7 +4,6 @@
 
 #include "graphics/menu_state.h"
 
-#include <memory>
 #include <string>
 
 #include "base/log.h"
@@ -35,14 +34,8 @@ void FixOgreBugWithOverlays(Ogre::Overlay* overlay) {
 
 }  // anonymous namespace
 
-MenuState::Delegate::Delegate() {}
-
-MenuState::Delegate::~Delegate() {}
-
-MenuState::MenuState(const std::string& menu_name,
-                     std::auto_ptr<Delegate> delegate)
+MenuState::MenuState(const std::string& menu_name)
     : menu_name_(menu_name),
-      delegate_(delegate),
       menu_overlay_(NULL),
       reload_captions_(false) {}
 
@@ -71,7 +64,7 @@ void MenuState::Resume() {
 
 bool MenuState::keyReleased(const OIS::KeyEvent& event) {
   if (event.key == OIS::KC_ESCAPE && !escape_option_.empty()) {
-    delegate_->OnMenuOptionSelected(escape_option_);
+    OnMenuOptionSelected(escape_option_);
   }
   return true;
 }
@@ -87,7 +80,7 @@ bool MenuState::mouseReleased(const OIS::MouseEvent& event,
   const Ogre::OverlayElement* const element =
       menu_overlay_->findElementAt(screen_x, screen_y);
   if (element && !element->getCaption().empty()) {
-    delegate_->OnMenuOptionSelected(element->getCaption());
+    OnMenuOptionSelected(element->getCaption());
   }
   return true;
 }

@@ -33,8 +33,10 @@ class EmptyGameState : public graphics::GameState {
   }
 };
 
-class MenuDelegate : public graphics::MenuState::Delegate {
+class SampleMenu : public graphics::MenuState {
  public:
+  SampleMenu() : MenuState("TestMenu") {}
+
   virtual void OnMenuOptionSelected(const std::string& option) {
     LOG(INFO) << option;
     if (option == "Option3") {
@@ -59,8 +61,7 @@ int main(int argc, char** argv) {
       game_model,
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::HumanPlayer()),
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));*/
-  graphics::MenuState menu("TestMenu",
-      std::auto_ptr<graphics::MenuState::Delegate>(new MenuDelegate));
+  SampleMenu menu;
   menu.set_escape_option("Option3");
   app.PushState(&menu);
   app.RunMainLoop();

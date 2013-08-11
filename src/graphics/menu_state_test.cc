@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <memory>
 #include <string>
 
 #include "base/log.h"
@@ -27,8 +26,10 @@ const char* const kMenuOptions[] = { "Option1", "Option2", "Option3" };
 
 class MenuStateTest : public InGameTestBase {
  public:
-  class TestMenuDelegate : public MenuState::Delegate {
+  class TestMenu : public MenuState {
    public:
+    TestMenu() : MenuState(kTestMenuOverlayName) {}
+
     virtual void OnMenuOptionSelected(const std::string& option) {
       LOG(INFO) << option;
       option_ = option;
@@ -42,9 +43,7 @@ class MenuStateTest : public InGameTestBase {
   };
 
   virtual bool Initialize() {
-    delegate_ = new TestMenuDelegate;
-    Reset(menu_, new MenuState(kTestMenuOverlayName,
-                               std::auto_ptr<MenuState::Delegate>(delegate_)));
+    Reset(menu_, new TestMenu);
     app()->PushState(Get(menu_));
     return true;
   }
@@ -65,24 +64,24 @@ class MenuStateTest : public InGameTestBase {
  private:
   void TestMouseEventsHandling() {
     for (size_t i = 0; i < arraysize(kMenuButtons); ++i) {
-      delegate_->clear_selection();
+      menu_->clear_selection();
       SimulateClickOnOverlayElement(kMenuButtons[i]);
-      EXPECT_EQ(kMenuOptions[i], delegate_->selected_option()) << i;
+      EXPECT_EQ(kMenuOptions[i], menu_->selected_option()) << i;
     }
-    delegate_->clear_selection();
+    menu_->clear_selection();
     SimulateClick(Get(menu_), 0, 0);
-    EXPECT_TRUE(delegate_->selected_option().empty());
+    EXPECT_TRUE(menu_->selected_option().empty());
   }
 
   void TestKeyboardEventsHandling() {
     const char* const expected_options[] = { "", kMenuOptions[0], "" };
     for (size_t i = 0; i < arraysize(expected_options); ++i) {
-      delegate_->clear_selection();
+      menu_->clear_selection();
       menu_->set_escape_option(expected_options[i]);
       SimulateKeyPress(Get(menu_), OIS::KC_RETURN);
-      EXPECT_TRUE(delegate_->selected_option().empty());
+      EXPECT_TRUE(menu_->selected_option().empty());
       SimulateKeyPress(Get(menu_), OIS::KC_ESCAPE);
-      EXPECT_EQ(expected_options[i], delegate_->selected_option());
+      EXPECT_EQ(expected_options[i], menu_->selected_option());
     }
   }
 
@@ -102,8 +101,7 @@ class MenuStateTest : public InGameTestBase {
     SimulateClick(Get(menu_), x, y);
   }
 
-  base::ptr::scoped_ptr<MenuState> menu_;
-  TestMenuDelegate* delegate_;
+  base::ptr::scoped_ptr<TestMenu> menu_;
 };
 
 IN_GAME_TEST(MenuStateTest, MenuStateTest);
