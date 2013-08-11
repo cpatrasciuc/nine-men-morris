@@ -86,10 +86,12 @@ bool MenuState::mouseReleased(const OIS::MouseEvent& event,
 }
 
 bool MenuState::frameRenderingQueued(const Ogre::FrameEvent& event) {
-  if (reload_captions_) {
+  static bool was_called = false;
+  if (was_called && reload_captions_) {
     FixOgreBugWithOverlays(menu_overlay_);
     reload_captions_ = false;
   }
+  was_called = true;
   return true;
 }
 
