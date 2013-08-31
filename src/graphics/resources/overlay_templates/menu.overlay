@@ -13,7 +13,7 @@ template container Panel(MenuButtonTemplate)
 
 template element TextArea(MenuButtonTextTemplate)
 {
-  font_name Diogenes
+  font_name Monofur
   char_height 0.08
   colour 1 1 0
   left 0.01
