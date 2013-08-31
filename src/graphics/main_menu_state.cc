@@ -40,8 +40,8 @@ void MainMenuState::OnMenuOptionSelected(const std::string& option) {
     std::auto_ptr<game::Game> game_model(new game::Game(options));
     game_model->Initialize();
     PlayingState* const state = new PlayingState(game_model,
-      std::auto_ptr<graphics::PlayerDelegate>(new graphics::HumanPlayer()),
-      std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));
+        std::auto_ptr<graphics::PlayerDelegate>(new graphics::HumanPlayer()),
+        std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));
     Reset(playing_state_, state);
     app()->PushState(state);
   }
