@@ -94,8 +94,7 @@ BoardView::~BoardView() {
   Ogre::MaterialManager::getSingleton().remove(kBlackPieceMaterialName);
   Ogre::MeshManager::getSingleton().remove(kBoardPlaneName);
   Ogre::TextureManager::getSingleton().remove(kBoardTextureName);
-  app_->scene_manager()->getRootSceneNode()
-      ->removeAndDestroyChild(kBoardViewRootNodeName);
+  app_->scene_manager()->clearScene();
 }
 
 void BoardView::Initialize() {
