@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #ifndef GRAPHICS_MAIN_MENU_STATE_H_
-#define	GRAPHICS_MAIN_MENU_STATE_H_
+#define GRAPHICS_MAIN_MENU_STATE_H_
 
 #include <string>
 
