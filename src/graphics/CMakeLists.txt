@@ -26,6 +26,8 @@ set(GRAPHICS_SOURCE_FILES
   graphics_export.h
   human_player.cc
   human_player.h
+  main_menu_state.cc
+  main_menu_state.h
   menu_state.cc
   menu_state.h
   ogre_app.cc

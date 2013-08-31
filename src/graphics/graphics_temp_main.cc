@@ -11,12 +11,16 @@
 #include "game/game.h"
 #include "game/game_options.h"
 #include "game/game_type.h"
+#include "game/piece_color.h"
 
 #include "graphics/ai_player.h"
-#include "graphics/ogre_app.h"
+#include "graphics/confirmation_menu_state.h"
+#include "graphics/game_over_state.h"
 #include "graphics/game_state.h"
 #include "graphics/human_player.h"
+#include "graphics/main_menu_state.h"
 #include "graphics/menu_state.h"
+#include "graphics/ogre_app.h"
 #include "graphics/playing_state.h"
 
 #include "OIS/OISKeyboard.h"
@@ -51,19 +55,18 @@ int main(int argc, char** argv) {
   base::debug::EnableStackTraceDumpOnCrash();
   graphics::OgreApp& app = graphics::OgreApp::Instance();
   app.Init();
-  /*game::GameOptions options;
+  game::GameOptions options;
   options.set_jumps_allowed(false);
   options.set_game_type(game::THREE_MEN_MORRIS);
   std::auto_ptr<game::Game> game_model(new game::Game(options));
   game_model->Initialize();
   // EmptyGameState game_state(&app);
-  graphics::PlayingState game_state(
+  /*graphics::PlayingState game_state(
       game_model,
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::HumanPlayer()),
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));*/
-  SampleMenu menu;
-  menu.set_escape_option("Option3");
-  app.PushState(&menu);
+  graphics::MainMenuState game_state;
+  app.PushState(&game_state);
   app.RunMainLoop();
   app.ShutDown();
   return 0;
