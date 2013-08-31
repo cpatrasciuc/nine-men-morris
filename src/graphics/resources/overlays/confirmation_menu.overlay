@@ -20,7 +20,7 @@ ConfirmationMenu
 
     container Panel(YesButton) : MenuButtonTemplate
     {
-      top 0.15
+      top 0.27
       element TextArea(YesText) : MenuButtonTextTemplate
       {
         caption Yes
@@ -29,7 +29,7 @@ ConfirmationMenu
 
     container Panel(NoButton) : MenuButtonTemplate
     {
-      top 0.27
+      top 0.39
       element TextArea(NoText) : MenuButtonTextTemplate
       {
         caption No
