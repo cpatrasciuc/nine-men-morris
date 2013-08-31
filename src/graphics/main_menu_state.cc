@@ -11,6 +11,7 @@
 #include "game/game_options.h"
 #include "game/game_type.h"
 #include "graphics/ai_player.h"
+#include "graphics/confirmation_menu_state.h"
 #include "graphics/human_player.h"
 #include "graphics/menu_state.h"
 #include "graphics/ogre_app.h"
@@ -27,8 +28,9 @@ MainMenuState::MainMenuState() : MenuState("MainMenu") {
 
 void MainMenuState::OnMenuOptionSelected(const std::string& option) {
   if (option == kQuitOption) {
-    // TODO(main_menu): Add user confirmation.
-    app()->PopState();
+    Reset(quit_confirmation_state_,
+          new ConfirmationMenuState("Are you sure you want to quit?"));
+    app()->PushState(Get(quit_confirmation_state_));
     return;
   }
   if (option == kNewGameOption) {
@@ -42,6 +44,17 @@ void MainMenuState::OnMenuOptionSelected(const std::string& option) {
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));
     Reset(playing_state_, state);
     app()->PushState(state);
+  }
+}
+
+void MainMenuState::Resume() {
+  MenuState::Resume();
+  if (quit_confirmation_state_) {
+    const bool quit_was_confirmed = quit_confirmation_state_->is_confirmed();
+    Reset(quit_confirmation_state_);
+    if (quit_was_confirmed) {
+      app()->PopState();
+    }
   }
 }
 

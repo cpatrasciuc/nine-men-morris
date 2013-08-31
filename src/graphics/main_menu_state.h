@@ -8,6 +8,7 @@
 #include <string>
 
 #include "base/ptr/scoped_ptr.h"
+#include "graphics/confirmation_menu_state.h"
 #include "graphics/graphics_export.h"
 #include "graphics/menu_state.h"
 #include "graphics/playing_state.h"
@@ -20,9 +21,11 @@ class GRAPHICS_EXPORT MainMenuState : public MenuState {
 
   // MenuState overrides
   virtual void OnMenuOptionSelected(const std::string& option);
+  virtual void Resume();
 
  private:
   base::ptr::scoped_ptr<PlayingState> playing_state_;
+  base::ptr::scoped_ptr<ConfirmationMenuState> quit_confirmation_state_;
 };
 
 }  // namespace graphics
