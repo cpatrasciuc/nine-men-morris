@@ -7,11 +7,14 @@
 #include <memory>
 #include <string>
 
+#include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
 #include "game/game_options.h"
 #include "game/game_type.h"
+#include "game/piece_color.h"
 #include "graphics/ai_player.h"
 #include "graphics/confirmation_menu_state.h"
+#include "graphics/game_over_state.h"
 #include "graphics/human_player.h"
 #include "graphics/menu_state.h"
 #include "graphics/ogre_app.h"
@@ -55,6 +58,18 @@ void MainMenuState::Resume() {
     if (quit_was_confirmed) {
       app()->PopState();
     }
+  } else if (playing_state_) {
+    const bool is_game_over = playing_state_->game_model().is_game_over();
+    if (is_game_over) {
+      const game::PieceColor winner = playing_state_->game_model().winner();
+      Reset(game_over_state_, new GameOverState(winner));
+    }
+    Reset(playing_state_);
+    if (is_game_over) {
+      app()->PushState(Get(game_over_state_));
+    }
+  } else if (game_over_state_) {
+    Reset(game_over_state_);
   }
 }
 

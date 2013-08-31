@@ -31,6 +31,8 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
 
   BoardView* board_view() { return Get(board_view_); }
 
+  const game::Game& game_model() const { return *game_; }
+
   virtual bool Initialize();
   virtual void Exit();
   virtual void Resume();
