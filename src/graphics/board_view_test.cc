@@ -249,5 +249,26 @@ class BoardViewRemovePieceTest : public BoardViewTestBase {
 
 IN_GAME_TEST(BoardViewRemovePieceTest, Remove);
 
+// This test validates that upon deletion the BoardView class completely removes
+// all OGRE entities, lights, etc. so that a new view can be instantiated later
+// on without having name conflicts inside the OGRE scene.
+class BoardViewMultipleInstances : public InGameTestBase {
+ private:
+  virtual void TestMethod() {
+    game::Game game_model;
+    {
+      base::ptr::scoped_ptr<BoardView> first_view_(new BoardView(game_model));
+      first_view_->Initialize();
+    }
+    {
+      base::ptr::scoped_ptr<BoardView> second_view_(new BoardView(game_model));
+      second_view_->Initialize();
+    }
+    SUCCEED();
+  }
+};
+
+IN_GAME_TEST(BoardViewMultipleInstances, BoardViewMultipleInstances);
+
 }  // anonymous namespace
 }  // namespace graphics
