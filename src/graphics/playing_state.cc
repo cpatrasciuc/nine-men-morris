@@ -5,6 +5,7 @@
 #include "graphics/playing_state.h"
 
 #include <memory>
+#include <string>
 
 #include "base/bind.h"
 #include "base/log.h"
@@ -66,7 +67,8 @@ void PlayingState::Resume() {
 
 bool PlayingState::keyReleased(const OIS::KeyEvent& event) {
   if (event.key == OIS::KC_ESCAPE) {
-    Reset(pause_menu_, new ConfirmationMenuState("Do you want to quit?"));
+    const std::string msg = "Quit to main menu?\nAll progress will be lost.";
+    Reset(pause_menu_, new ConfirmationMenuState(msg));
     app()->PushState(Get(pause_menu_));
   }
   return true;
