@@ -20,6 +20,7 @@
 #include "graphics/human_player.h"
 #include "graphics/main_menu_state.h"
 #include "graphics/menu_state.h"
+#include "graphics/new_game_menu_state.h"
 #include "graphics/ogre_app.h"
 #include "graphics/playing_state.h"
 
@@ -65,7 +66,7 @@ int main(int argc, char** argv) {
       game_model,
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::HumanPlayer()),
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));*/
-  graphics::MainMenuState game_state;
+  graphics::NewGameMenuState game_state;
   app.PushState(&game_state);
   app.RunMainLoop();
   app.ShutDown();

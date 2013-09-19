@@ -1,0 +1,57 @@
+// Copyright (c) 2013 Cristian Patrasciuc. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+NewGameMenu
+{
+  zorder 490
+  container Panel(NewGameMenuBackground)
+  {
+    left 0
+    top 0.25
+    width 1
+    height 0.65
+    material MenuBackground
+
+    element TextArea(NewGameMenuTitleText) : MenuTitleTextTemplate
+    {
+      caption New Game
+    }
+
+    container Panel(NewGameMenuButton1) : MenuButtonTemplate
+    {
+      top 0.15
+      element TextArea(GameTypeMenuText) : MenuButtonTextTemplate
+      {
+        caption Three
+      }
+    }
+
+    container Panel(NewGameMenuButton2) : MenuButtonTemplate
+    {
+      top 0.27
+      element TextArea(PlayerConfigMenuText) : MenuButtonTextTemplate
+      {
+        caption Human vs. AI
+      }
+    }
+
+    container Panel(NewGameMenuButton3) : MenuButtonTemplate
+    {
+      top 0.39
+      element TextArea(JumpsMenuText) : MenuButtonTextTemplate
+      {
+        caption Jumps allowed
+      }
+    }
+
+    container Panel(NewGameMenuButton4) : MenuButtonTemplate
+    {
+      top 0.50
+      element TextArea(StartGameMenuText) : MenuButtonTextTemplate
+      {
+        caption Start Game!
+      }
+    }
+  }
+}

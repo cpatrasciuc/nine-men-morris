@@ -30,8 +30,11 @@ set(GRAPHICS_SOURCE_FILES
   main_menu_state.h
   menu_state.cc
   menu_state.h
+  new_game_menu_state.cc
+  new_game_menu_state.h
   ogre_app.cc
   ogre_app.h
+  player_configuration.h
   playing_state.cc
   playing_state.h
   player_delegate.cc
