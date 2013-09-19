@@ -17,7 +17,9 @@
 #include "graphics/game_over_state.h"
 #include "graphics/human_player.h"
 #include "graphics/menu_state.h"
+#include "graphics/new_game_menu_state.h"
 #include "graphics/ogre_app.h"
+#include "graphics/player_configuration.h"
 #include "graphics/player_delegate.h"
 
 namespace graphics {
@@ -37,16 +39,8 @@ void MainMenuState::OnMenuOptionSelected(const std::string& option) {
     return;
   }
   if (option == kNewGameOption) {
-    game::GameOptions options;
-    options.set_jumps_allowed(false);
-    options.set_game_type(game::THREE_MEN_MORRIS);
-    std::auto_ptr<game::Game> game_model(new game::Game(options));
-    game_model->Initialize();
-    PlayingState* const state = new PlayingState(game_model,
-        std::auto_ptr<graphics::PlayerDelegate>(new graphics::HumanPlayer()),
-        std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));
-    Reset(playing_state_, state);
-    app()->PushState(state);
+    Reset(new_game_state_, new NewGameMenuState());
+    app()->PushState(Get(new_game_state_));
   }
 }
 
@@ -70,6 +64,32 @@ void MainMenuState::Resume() {
     }
   } else if (game_over_state_) {
     Reset(game_over_state_);
+  } else if (new_game_state_) {
+    game::GameOptions options;
+    options.set_jumps_allowed(new_game_state_->jumps_allowed());
+    options.set_game_type(new_game_state_->game_type());
+    std::auto_ptr<game::Game> game_model(new game::Game(options));
+    game_model->Initialize();
+    std::auto_ptr<graphics::PlayerDelegate> white_player;
+    std::auto_ptr<graphics::PlayerDelegate> black_player;
+    switch (new_game_state_->player_configuration()) {
+      case HUMAN_VS_AI:
+        white_player.reset(new graphics::HumanPlayer());
+        black_player.reset(new graphics::AIPlayer());
+        break;
+      case AI_VS_HUMAN:
+        white_player.reset(new graphics::AIPlayer());
+        black_player.reset(new graphics::HumanPlayer());
+        break;
+      case HUMAN_VS_HUMAN:
+        white_player.reset(new graphics::HumanPlayer());
+        black_player.reset(new graphics::HumanPlayer());
+        break;
+    }
+    Reset(new_game_state_);
+    Reset(playing_state_,
+          new PlayingState(game_model, white_player, black_player));
+    app()->PushState(Get(playing_state_));
   }
 }
 

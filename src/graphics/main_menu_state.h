@@ -12,6 +12,7 @@
 #include "graphics/game_over_state.h"
 #include "graphics/graphics_export.h"
 #include "graphics/menu_state.h"
+#include "graphics/new_game_menu_state.h"
 #include "graphics/playing_state.h"
 
 namespace graphics {
@@ -28,6 +29,7 @@ class GRAPHICS_EXPORT MainMenuState : public MenuState {
   base::ptr::scoped_ptr<PlayingState> playing_state_;
   base::ptr::scoped_ptr<ConfirmationMenuState> quit_confirmation_state_;
   base::ptr::scoped_ptr<GameOverState> game_over_state_;
+  base::ptr::scoped_ptr<NewGameMenuState> new_game_state_;
 };
 
 }  // namespace graphics

@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
       game_model,
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::HumanPlayer()),
       std::auto_ptr<graphics::PlayerDelegate>(new graphics::AIPlayer()));*/
-  graphics::NewGameMenuState game_state;
+  graphics::MainMenuState game_state;
   app.PushState(&game_state);
   app.RunMainLoop();
   app.ShutDown();
