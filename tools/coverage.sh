@@ -31,7 +31,12 @@ rm -rf ${COVERAGE_DIR}
 (cd ${SRC_DIR} && make)
 
 # Run all tests
-find ${SRC_DIR} -name "*tests" -type f -perm -o+x -exec '{}' \;
+${SRC_DIR}/base/base_unittests
+${SRC_DIR}/game/game_unittests
+${SRC_DIR}/ai/ai_unittests
+${SRC_DIR}/console_game/console_game_unittests
+${SRC_DIR}/console_game/functional_tests
+(cd ${SRC_DIR}/graphics && ./in_game_tests)
 
 # Generate coverage reports
 mkdir ${COVERAGE_DIR}
@@ -39,7 +44,7 @@ find ${SRC_DIR} -name "*gcda" -exec mv '{}' ${COVERAGE_DIR} \;
 find ${SRC_DIR} -name "*gcno" -exec mv '{}' ${COVERAGE_DIR} \;
 lcov -t "Code coverage report" -o ${LCOV_INFO_FILE} -c -d ${COVERAGE_DIR}
 lcov -e ${LCOV_INFO_FILE} -o ${LCOV_INFO_FILE} "*src/base/*" "*src/game/*" \
-    "*src/console_game/*" "*src/ai/*" 
+    "*src/console_game/*" "*src/ai/*" "*src/graphics/*" 
 lcov -r ${LCOV_INFO_FILE} -o ${LCOV_INFO_FILE} "*test.cc"
 
 HTML_REPORT_DIR=${COVERAGE_DIR}/html_report
