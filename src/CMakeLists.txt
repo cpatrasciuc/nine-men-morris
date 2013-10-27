@@ -23,6 +23,10 @@ else()
   set(ldflags "-pthread -Wl,-z,noexecstack -fPIC")
 endif()
 
+if(${CMAKE_C_COMPILER} MATCHES ".*gcc")
+  set(cflags "${cflags} -Wno-deprecated -Wno-pragmas")
+endif()
+
 if(BUILD_SHARED_LIBS)
   add_definitions("-DGTEST_LINKED_AS_SHARED_LIBRARY=1")
   set(ldflags "-rdynamic ${ldflags}")
