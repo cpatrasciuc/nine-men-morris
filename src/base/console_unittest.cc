@@ -43,7 +43,9 @@ TEST(ConsoleDeathTest, IsColoredOutputSupported) {
   for (std::map<std::string, bool>::const_iterator it = files.begin();
       it != files.end(); ++it) {
     ASSERT_DEATH({
-        freopen(it->first.c_str(), "w", stdout);
+        if (!freopen(it->first.c_str(), "w", stdout)) {
+          _exit(1);
+        }
         if (Console::IsColoredOutputSupported() == it->second) {
           std::cerr << passed_message << std::endl;
           _exit(1);
