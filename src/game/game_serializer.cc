@@ -230,7 +230,7 @@ bool DeserializeActionsFromTextStream(std::istream* in,
     LOG(ERROR) << "Could not read the number of actions";
     return false;
   }
-  int64_t actions_count;
+  int64_t actions_count = 0;
   if (!GetIntegerFromTextStream(in, &actions_count)) {
     LOG(ERROR) << "Could not deserialize the action number";
     return false;
