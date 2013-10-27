@@ -6,8 +6,7 @@ language: cpp
 
 compiler:
   - clang
-  # TODO(ci): Enable gcc build on Travis
-  # - gcc
+  - gcc
 
 before_script:
   - svn checkout http://googletest.googlecode.com/svn/trunk/ src/gtest
