@@ -91,12 +91,14 @@ TEST_F(LogUnittest, LogMessageFormatTest) {
 }
 
 TEST_F(LogUnittest, DEBUG_ONLY_TEST(SystemErrorLogIfTest)) {
-  ELOG_IF(ERROR, std::pow(10.0f, 2.0f) == HUGE_VAL) << "Should not be logged";
+  float result = std::pow(10.0f, 2.0f);
+  ELOG_IF(ERROR, result == HUGE_VAL) << "Should not be logged";
   EXPECT_EQ(std::string(), test_stream().str());
 
   std::string message("Should be logged");
   float max_float = std::numeric_limits<float>::max();
-  ELOG_IF(ERROR, std::pow(max_float, max_float) == HUGE_VAL) << message;
+  result = std::pow(max_float, max_float);
+  ELOG_IF(ERROR, result == HUGE_VAL) << message;
   std::string output = test_stream().str();
   size_t pos = output.find(message);
   EXPECT_NE(std::string::npos, pos);
