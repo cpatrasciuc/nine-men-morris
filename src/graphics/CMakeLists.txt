@@ -1,6 +1,6 @@
 project(3d_game)
 
-set(CMAKE_MODULE_PATH "/usr/lib64/OGRE/cmake/;/usr/share/OGRE/cmake/modules/;${CMAKE_MODULE_PATH}")
+set(CMAKE_MODULE_PATH "/usr/lib64/OGRE/cmake/;${CMAKE_MODULE_PATH}")
 
 find_package(OGRE REQUIRED)
 
