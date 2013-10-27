@@ -118,7 +118,7 @@ class BASE_EXPORT AssertionFailedLogMessage : public LogMessage {
   DISALLOW_COPY_AND_ASSIGN(AssertionFailedLogMessage);
 };
 
-#define EAT_LOG_STATEMENT if (false) std::cerr
+#define EAT_LOG_STATEMENT(condition) if (false && (condition)) std::cerr
 
 #ifdef ENABLE_LOGGING
 #define LOG_TEMPLATE(level, condition) \
@@ -130,15 +130,15 @@ class BASE_EXPORT AssertionFailedLogMessage : public LogMessage {
 #define ELOG_IF(level, condition) LOG_TEMPLATE(level, condition) \
   base::SystemErrorLogMessage(level, FROM_HERE).stream()
 #else
-#define LOG_IF(level, condition) EAT_LOG_STATEMENT
-#define ELOG_IF(level, condition) EAT_LOG_STATEMENT
+#define LOG_IF(level, condition) EAT_LOG_STATEMENT(condition)
+#define ELOG_IF(level, condition) EAT_LOG_STATEMENT(condition)
 #endif
 
 #ifdef ENABLE_DCHECK
 #define DCHECK(condition) LOG_TEMPLATE(ERROR, !(condition)) \
   base::AssertionFailedLogMessage(ERROR, FROM_HERE).stream()
 #else
-#define DCHECK(condition) EAT_LOG_STATEMENT << ""
+#define DCHECK(condition) EAT_LOG_STATEMENT(condition) << ""
 #endif
 
 #define LOG(level) LOG_IF(level, true)
