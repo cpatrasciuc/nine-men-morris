@@ -129,16 +129,6 @@ TEST(ConditionVariableDeathTest, DEBUG_ONLY_TEST(NoLockedAcquired)) {
   ASSERT_DEATH(cv.Broadcast(), "");
 }
 
-TEST(ConditionVariableDeathTest, DEBUG_ONLY_TEST(NoMutexLock)) {
-  ::testing::FLAGS_gtest_death_test_style = "threadsafe";
-  Lock lock(new SpinLockImpl);
-  ConditionVariable cv(&lock);
-  {
-    ScopedGuard _(&lock);
-    ASSERT_DEATH(cv.Wait(), "Invalid lock provided");
-  }
-}
-
 }  // anonymous namespace
 }  // namespace threading
 }  // namespace base
