@@ -5,10 +5,12 @@
 #ifndef GAME_GAME_H_
 #define GAME_GAME_H_
 
+#include <deque>
 #include <map>
 #include <vector>
 
 #include "base/basic_macros.h"
+#include "base/supports_listener.h"
 #include "game/board.h"
 #include "game/game_export.h"
 #include "game/game_options.h"
@@ -18,9 +20,11 @@
 
 namespace game {
 
-class GAME_EXPORT Game {
+class GameListener;
+
+class GAME_EXPORT Game : public base::SupportsListener<GameListener> {
  public:
-  explicit Game(const GameOptions& game_options);
+  explicit Game(const GameOptions& game_options = game::GameOptions());
 
   const GameOptions& options() const { return game_options_; }
 
@@ -81,6 +85,12 @@ class GAME_EXPORT Game {
 
   // Checks if the game reached its end. It is called after each action.
   bool CheckIfGameIsOver() const;
+
+  // Convenience methods used to notify game listeners.
+  void FireOnGameInitialized();
+  void FireOnPlayerAction(const PlayerAction& action);
+  void FireOnUndoAction(const PlayerAction& action);
+  void FireOnGameOver(PieceColor winner);
 
   // The options for this game instance.
   GameOptions game_options_;

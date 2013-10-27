@@ -37,8 +37,10 @@ set(BASE_SOURCE_FILES
   ptr/weak_ptr.h
   random.cc
   random.h
+  singleton.h
   string_util.cc
   string_util.h
+  supports_listener.h
   threading/atomic.h
   threading/condition_variable.cc
   threading/condition_variable.h
@@ -71,7 +73,9 @@ set(BASE_UNITTESTS_SOURCE_FILES
   ptr/smart_ptr_unittest.cc
   ptr/weak_ptr_unittest.cc
   random_unittest.cc
+  singleton_unittest.cc
   string_util_unittest.cc
+  supports_listener_unittest.cc
   threading/atomic_unittest.cc
   threading/condition_variable_unittest.cc
   threading/task_unittest.cc
@@ -95,6 +99,7 @@ add_definitions("-DBASE_IMPLEMENTATION")
 # The main target of this directory
 add_library(base ${BASE_SOURCE_FILES})
 
+# TODO(base_unittests): Consider merging the helper shared libraries.
 # This is always a shared library because it's used by the stacktrace test
 # and we want to have all the symbols available.
 add_library(stacktrace_test_helper SHARED
@@ -103,6 +108,13 @@ add_library(stacktrace_test_helper SHARED
 )
 target_link_libraries(stacktrace_test_helper base)
 
+add_library(singleton_unittest_helper SHARED
+  singleton_unittest_helper.cc
+  singleton_unittest_helper.h
+)
+target_link_libraries(singleton_unittest_helper base)
+
 # The unittests for this directory
 add_executable(base_unittests ${BASE_UNITTESTS_SOURCE_FILES} test_runner.cc)
-target_link_libraries(base_unittests gtest base stacktrace_test_helper)
+target_link_libraries(base_unittests gtest base stacktrace_test_helper
+                      singleton_unittest_helper)

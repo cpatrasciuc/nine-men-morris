@@ -1,0 +1,29 @@
+// Copyright (c) 2013 Cristian Patrasciuc. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+GameOver
+{
+  zorder 490
+  container Panel(GameOverBackground)
+  {
+    left 0
+    top 0.25
+    width 1
+    height 0.52
+    material MenuBackground
+
+    element TextArea(GameOverText) : MenuTitleTextTemplate
+    {
+      caption __GAME_OVER_MESSAGE_PLACEHOLDER__
+    }
+
+    container Panel(GameOverOKButton) : MenuButtonTemplate
+    {
+      top 0.27
+      element TextArea(GameOverOKText) : MenuButtonTextTemplate
+      {
+        caption OK
+      }
+    }
+}

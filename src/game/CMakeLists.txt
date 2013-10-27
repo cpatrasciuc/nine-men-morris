@@ -6,6 +6,8 @@ set(GAME_SOURCE_FILES
   game.cc
   game.h
   game_export.h
+  game_listener.cc
+  game_listener.h
   game_options.cc
   game_options.h
   game_serializer.cc
@@ -19,6 +21,7 @@ set(GAME_SOURCE_FILES
 set(GAME_UNITTESTS_SOURCE_FILES
   board_unittest.cc
   board_location_unittest.cc
+  game_listener_unittest.cc
   game_options_unittest.cc
   game_unittest.cc
   game_serializer_unittest.cc

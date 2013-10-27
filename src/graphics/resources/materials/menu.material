@@ -1,0 +1,33 @@
+// Copyright (c) 2013 Cristian Patrasciuc. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// http://www.ogre3d.org/tikiwiki/Materials#Solid_colour
+
+material MenuBackground
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        colour_op_ex source1 src_manual src_current 0.75 0.75 0.75
+      }
+    }
+  }
+}
+
+material MenuButton
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        colour_op_ex source1 src_manual src_current 0.3 0.3 0.3
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+// Copyright (c) 2013 Cristian Patrasciuc. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+MainMenu
+{
+  zorder 490
+  container Panel(MainMenuBackground)
+  {
+    left 0
+    top 0.25
+    width 1
+    height 0.52
+    material MenuBackground
+
+    element TextArea(MainMenuTitleText) : MenuTitleTextTemplate
+    {
+      caption Nine Men's Morris
+    }
+
+    container Panel(MainMenuButton1) : MenuButtonTemplate
+    {
+      top 0.27
+      element TextArea(MainMenuText1) : MenuButtonTextTemplate
+      {
+        caption New Game
+      }
+    }
+
+    container Panel(MainMenuButton2) : MenuButtonTemplate
+    {
+      top 0.39
+      element TextArea(MainMenuText2) : MenuButtonTextTemplate
+      {
+        caption Quit
+      }
+    }
+  }
+}

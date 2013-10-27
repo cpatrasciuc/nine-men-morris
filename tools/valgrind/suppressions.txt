@@ -62,6 +62,103 @@
    fun:_ZN7testing8internal38HandleSehExceptionsInMethodIfSupportedINS0_12UnitTestImplEbEET0_PT_MS4_FS3_vEPKc
    fun:_ZN7testing8internal35HandleExceptionsInMethodIfSupportedINS0_12UnitTestImplEbEET0_PT_MS4_FS3_vEPKc
 }
+
+# Memory leaks from libX11.
+{
+   XrmGetStringDatabase intentionally leaks (see 'man XrmGetStringDatabase')
+   Memcheck:Leak
+   ...   
+   fun:XrmGetStringDatabase
+   ...
+}
+{
+   XGetDefault leak
+   Memcheck:Leak
+   ...
+   fun:XGetDefault
+}
+{
+   _XlcCreateLocaleDataBase leak
+   Memcheck:Leak
+   ...
+   fun:_XlcCreateLocaleDataBase
+}
+{
+   XAllocNamedColor leak
+   Memcheck:Leak
+   ...
+   fun:XAllocNamedColor
+}
+{
+   XextCreateExtension leak (also found in Chromium's suppression list)
+   Memcheck:Leak
+   fun:malloc
+   fun:XextCreateExtension
+}
+
+# Boost false memory leaks
+{
+   Boost thread local variables are freed after valgrind memory checks, so they appear as leaks 
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN5boost6detail25get_once_per_thread_epochEv
+   fun:_ZN5boost9call_onceIPFvvEEEvRNS_9once_flagET_
+   fun:_ZN5boost6detail23get_current_thread_dataEv
+   fun:_ZN5boost6detail13find_tss_dataEPKv
+   fun:_ZN5boost6detail12get_tss_dataEPKv
+   obj:/usr/lib64/libOgreMain.so.1.8.1
+   fun:_ZN4Ogre15MaterialManagerC1Ev
+   fun:_ZN4Ogre4RootC1ERKSsS2_S2_
+   fun:_ZN8graphics7OgreApp4InitEv
+   fun:main
+}
+{
+   Boost thread local variables are freed after valgrind memory checks, so they appear as leaks
+   Memcheck:Leak
+   fun:_Znwm
+   obj:/usr/lib64/libboost_thread.so.1.49.0
+   fun:_ZN5boost6detail16add_new_tss_nodeEPKvNS_10shared_ptrINS0_20tss_cleanup_functionEEEPv
+   fun:_ZN5boost6detail12set_tss_dataEPKvNS_10shared_ptrINS0_20tss_cleanup_functionEEEPvb
+   obj:/usr/lib64/libOgreMain.so.1.8.1
+   fun:_ZN4Ogre15MaterialManagerC1Ev
+   fun:_ZN4Ogre4RootC1ERKSsS2_S2_
+   fun:_ZN8graphics7OgreApp4InitEv
+   fun:main
+}
+
+# Memory leaks in libc.
+{
+   dlopen leak on error. See http://sourceware.org/bugzilla/show_bug.cgi?id=12878.
+   Memcheck:Leak
+   ...
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+}
+{
+   dlopen leak on error
+   Memcheck:Leak
+   ...
+   fun:_dl_catch_error
+}
+{
+   Leak in getdelim()
+   Memcheck:Leak
+   fun:malloc
+   fun:getdelim
+   ...
+   fun:call_init
+   fun:_dl_init
+}
+
+# Memory leaks in libXau.
+{
+   XauFileName leak
+   Memcheck:Leak
+   fun:malloc
+   fun:XauFileName
+}
+
+# Libc issues
 {
    Uninitialized variable in libc.
    Memcheck:Value8

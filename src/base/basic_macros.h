@@ -13,6 +13,9 @@
 //   }
 #define arraysize(a) (sizeof(a)/sizeof((a)[0]))
 
+// Force the visibility of a symbol to be public.
+#define ALWAYS_EXPORT __attribute__((visibility("default")))
+
 // TODO(macros): Add a macro from __attribute__(override)
 
 // This macro should be used in tests for specifying that specific statements

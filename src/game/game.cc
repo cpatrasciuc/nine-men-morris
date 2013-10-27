@@ -4,14 +4,19 @@
 
 #include "game/game.h"
 
+#include <deque>
 #include <map>
 #include <vector>
 
 #include "base/log.h"
+#include "game/game_listener.h"
 #include "game/game_options.h"
 #include "game/game_type.h"
 
 namespace game {
+
+typedef base::SupportsListener<GameListener>::ListenerList ListenerList;
+typedef base::SupportsListener<GameListener>::ListenerIter ListenerIter;
 
 Game::Game(const GameOptions& game_options)
     : game_options_(game_options),
@@ -35,6 +40,7 @@ void Game::Initialize() {
   pieces_in_hand_.insert(std::make_pair(WHITE_COLOR, piece_count));
   pieces_in_hand_.insert(std::make_pair(BLACK_COLOR, piece_count));
   UpdateGameState();
+  FireOnGameInitialized();
 }
 
 bool Game::CheckIfGameIsOver() const {
@@ -112,6 +118,7 @@ void Game::ExecutePlayerAction(const PlayerAction& action) {
     --pieces_in_hand_[current_player_];
   }
   UpdateGameState();
+  FireOnPlayerAction(action);
 }
 
 bool Game::CanJump() const {
@@ -139,6 +146,7 @@ void Game::UndoLastAction() {
     ++pieces_in_hand_[last_action.player_color()];
   }
   UpdateGameState();
+  FireOnUndoAction(last_action);
 }
 
 void Game::UpdateGameState() {
@@ -159,6 +167,7 @@ void Game::UpdateGameState() {
     } else if (CheckIfGameIsOver()) {
         is_game_over_ = true;
         winner_ = current_player_;
+        FireOnGameOver(winner_);
     } else {
       current_player_ = GetOpponent(action.player_color());
       next_action_type_ = pieces_in_hand_[current_player_] > 0 ?
@@ -175,6 +184,34 @@ void Game::DumpActionList(std::vector<PlayerAction>* actions) const {
 int Game::GetPiecesInHand(const PieceColor player_color) const {
   DCHECK(player_color != NO_COLOR);
   return (*pieces_in_hand_.find(player_color)).second;
+}
+
+void Game::FireOnGameInitialized() {
+  const ListenerList list(listeners());
+  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
+    (*it)->OnGameInitialized();
+  }
+}
+
+void Game::FireOnPlayerAction(const PlayerAction& action) {
+  const ListenerList list(listeners());
+  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
+    (*it)->OnPlayerAction(action);
+  }
+}
+
+void Game::FireOnUndoAction(const PlayerAction& action) {
+  const ListenerList list(listeners());
+  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
+    (*it)->OnUndoPlayerAction(action);
+  }
+}
+
+void Game::FireOnGameOver(PieceColor winner) {
+  const ListenerList list(listeners());
+  for (ListenerIter it = list.begin(); it != list.end(); ++it) {
+    (*it)->OnGameOver(winner);
+  }
 }
 
 // static

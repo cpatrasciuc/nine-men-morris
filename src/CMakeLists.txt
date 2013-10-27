@@ -6,23 +6,39 @@ project(nine-men-morris)
 cmake_policy(SET CMP0015 NEW)
 
 if(RELEASE)
-  set(cflags "-Werror -pthread -fno-exceptions -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O2 -fdata-sections -ffunction-sections")
-  set(only_cxx_flags "-fno-rtti -fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
-  set(only_c_flags "")
-  set(ldflags "-pthread -Wl,-z,noexecstack -fPIC -Wl,--threads -Wl,--thread-count=4 -Wl,--icf=none -Wl,-O1 -Wl,--as-needed -Wl,--gc-sections")
+  set(CMAKE_BUILD_TYPE "Release")
 else()
-  set(cflags "-Werror -pthread -fno-exceptions -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O0 -g --coverage")
-  set(only_cxx_flags "-fno-rtti -fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
-  set(only_c_flags "")
-  set(ldflags "-pthread -Wl,-z,noexecstack -fPIC -Wl,--threads -Wl,--thread-count=4 -Wl,--icf=none")
+  set(CMAKE_BUILD_TYPE "Debug")
 endif()
 
-set(CMAKE_C_FLAGS "${cflags} ${only_c_flags}")
-set(CMAKE_CXX_FLAGS "${cflags} ${only_cxx_flags}")
+if(RELEASE)
+  set(cflags "-Werror -pthread -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O2 -fdata-sections -ffunction-sections")
+  set(only_cxx_flags "-fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
+  set(only_c_flags "")
+  set(ldflags "-pthread -Wl,-z,noexecstack -fPIC -Wl,-O1 -Wl,--as-needed -Wl,--gc-sections")
+else()
+  set(cflags "-Werror -pthread -fno-strict-aliasing -Wall -Wno-unused-parameter -Wno-missing-field-initializers -fvisibility=hidden -pipe -fPIC -O0 -g --coverage")
+  set(only_cxx_flags " -fno-threadsafe-statics -fvisibility-inlines-hidden -Wsign-compare")
+  set(only_c_flags "")
+  set(ldflags "-pthread -Wl,-z,noexecstack -fPIC")
+endif()
+
+if(${CMAKE_C_COMPILER} MATCHES ".*gcc")
+  set(cflags "${cflags} -Wno-deprecated -Wno-pragmas")
+endif()
 
 if(BUILD_SHARED_LIBS)
   add_definitions("-DGTEST_LINKED_AS_SHARED_LIBRARY=1")
+  set(ldflags "-rdynamic ${ldflags}")
 endif()
+
+# TODO(compile flags): Add -fno-rtti and -fno-exceptions
+set(CMAKE_C_FLAGS "${cflags} ${only_c_flags}")
+set(CMAKE_CXX_FLAGS "${cflags} ${only_cxx_flags}")
+
+set(CMAKE_EXE_LINKER_FLAGS ${ldflags})
+set(CMAKE_MODULE_LINKER_FLAGS ${ldflags})
+set(CMAKE_SHARED_LINKER_FLAGS ${ldflags})
 
 if(RELEASE)
   add_definitions("-DNDEBUG")
@@ -40,6 +56,8 @@ add_subdirectory(game)
 add_subdirectory(ai)
 
 add_subdirectory(console_game)
+
+add_subdirectory(graphics)
 
 # Hack to make all gtest symbols visible; by default we compile with -fvisibility=hidden
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=default")

@@ -1,0 +1,38 @@
+// Copyright (c) 2013 Cristian Patrasciuc. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+ConfirmationMenu
+{
+  zorder 490
+  container Panel(ConfirmationMenuBackground)
+  {
+    left 0
+    top 0.25
+    width 1
+    height 0.52
+    material MenuBackground
+
+    element TextArea(QuestionText) : MenuTitleTextTemplate
+    {
+      caption __QUESTION_PLACEHOLDER__
+    }
+
+    container Panel(YesButton) : MenuButtonTemplate
+    {
+      top 0.27
+      element TextArea(YesText) : MenuButtonTextTemplate
+      {
+        caption Yes
+      }
+    }
+
+    container Panel(NoButton) : MenuButtonTemplate
+    {
+      top 0.39
+      element TextArea(NoText) : MenuButtonTextTemplate
+      {
+        caption No
+      }
+    }
+}
