@@ -13,7 +13,7 @@ before_script:
   - svn checkout http://googletest.googlecode.com/svn/trunk/ src/gtest
 
 before_install:
-  - sudo add-apt-repository ppa:ogre-team/ogre
+  - sudo add-apt-repository -qq ppa:ogre-team/ogre
   - sudo apt-get update -qq
   - sudo apt-get install -qq libogre-dev
 
