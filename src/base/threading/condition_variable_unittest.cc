@@ -116,7 +116,7 @@ TEST_F(ConditionVariableTest, TimedWait) {
   lock.Release();
 }
 
-TEST(ConditionVariableDeathTest, DEBUG_ONLY_TEST(NoLockedAcquired)) {
+TEST(ConditionVariableDeathTest, DEBUG_ONLY_TEST(NoLockAcquired)) {
   ::testing::FLAGS_gtest_death_test_style = "threadsafe";
   Lock lock;
   ConditionVariable cv(&lock);
