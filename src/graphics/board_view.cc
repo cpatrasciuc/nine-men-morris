@@ -352,7 +352,6 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
     Ogre::Entity* entity = scene_mgr->createEntity(
         "WhitePiece" + index_str, mesh_name);
     entity->setMaterial(white_material);
-    entity->setVisible(false);
     Ogre::SceneNode* piece_node = white_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
     if (i == 0) {
@@ -360,12 +359,17 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
     }
     piece_node->scale(scale, scale, scale);
 
+    const double piece_diameter = entity->getBoundingRadius() * scale;
+    const double x = kBoardSize / 2.0 + 1.5 * piece_diameter;
+    const double z = kBoardSize / 2.0 - (2.1 * i + 1) * piece_diameter;
+    piece_node->setPosition(x, 0, z);
+
     entity = scene_mgr->createEntity("BlackPiece" + index_str, mesh_name);
     entity->setMaterial(black_material);
-    entity->setVisible(false);
     piece_node = black_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
     piece_node->scale(scale, scale, scale);
+    piece_node->setPosition(-x, 0, -z);
   }
 }
 
@@ -510,7 +514,6 @@ void BoardView::AddPiece(const game::BoardLocation& to,
       &white_place_index_ : &black_place_index_;
   Ogre::SceneNode* const piece_node = GetPieceByColorAndIndex(color, *index);
   piece_node->setPosition(Get3DPosition(to));
-  piece_node->setVisible(true, true);
   IndexMap& index_map = *GetIndexMapByColor(color);
   index_map[to] = *index;
   ++(*index);
