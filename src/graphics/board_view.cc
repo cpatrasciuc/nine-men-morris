@@ -64,6 +64,7 @@ const char kBlackPieceMaterialName[] = "BlackPieceMaterial";
 const char kSelectedBlackPieceMaterialName[] = "SelectedBlackPieceMaterial";
 
 const int kBoardTextureSize = 3;
+const int kBoardSize = kBoardTextureSize * 10;
 
 Ogre::Vector3 BoardLocationTo3DCoord(const game::BoardLocation& location,
                                      const game::Board& board) {
@@ -104,10 +105,9 @@ void BoardView::Initialize() {
   scene_manager->setAmbientLight(Ogre::ColourValue::Black);
   scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
-  const int multiplier = 10;
-  const int board_size = kBoardTextureSize * multiplier;
+  const int multiplier = kBoardSize / kBoardTextureSize;
   Ogre::Camera* const camera = app_->camera();
-  camera->setPosition(board_size, board_size, board_size);
+  camera->setPosition(kBoardSize, kBoardSize, kBoardSize);
   camera->lookAt(Ogre::Vector3::ZERO);
 
   Ogre::MovableObject::setDefaultQueryFlags(0);
@@ -117,12 +117,12 @@ void BoardView::Initialize() {
   main_light->setDiffuseColour(Ogre::ColourValue::White);
   main_light->setSpecularColour(Ogre::ColourValue::White);
   main_light->setCastShadows(true);
-  main_light->setDirection(board_size, -board_size, -board_size);
+  main_light->setDirection(kBoardSize, -kBoardSize, -kBoardSize);
 
   const Ogre::Plane board_plane(Ogre::Vector3::UNIT_Y, 0);
   Ogre::MeshManager::getSingleton().createPlane(kBoardPlaneName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-      board_plane, board_size, board_size, multiplier, multiplier,
+      board_plane, kBoardSize, kBoardSize, multiplier, multiplier,
       true, 1, 1, 1, Ogre::Vector3::UNIT_Z);
   Ogre::Entity* const board_entity =
       scene_manager->createEntity(kBoardEntityName, kBoardPlaneName);
@@ -344,6 +344,9 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
   const int piece_count =
       game_.GetInitialPieceCountByGameType(game_.options().game_type());
 
+  const int pieces_in_a_row = game_.board().size() * 2 - 1;
+  double scale = (kBoardSize / pieces_in_a_row) / 2.3;
+
   for (int i = 0; i < piece_count; ++i) {
     const std::string index_str(base::ToString(i));
     Ogre::Entity* entity = scene_mgr->createEntity(
@@ -352,12 +355,17 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
     entity->setVisible(false);
     Ogre::SceneNode* piece_node = white_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
+    if (i == 0) {
+      scale /= entity->getBoundingRadius();
+    }
+    piece_node->scale(scale, scale, scale);
 
     entity = scene_mgr->createEntity("BlackPiece" + index_str, mesh_name);
     entity->setMaterial(black_material);
     entity->setVisible(false);
     piece_node = black_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
+    piece_node->scale(scale, scale, scale);
   }
 }
 
