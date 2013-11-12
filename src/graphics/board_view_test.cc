@@ -162,7 +162,7 @@ class BoardViewPlacePieceTest : public BoardViewTestBase {
     Ogre::SceneNode* const piece_node = GetPieceByColorAndIndex(color, 0);
     const Ogre::MovableObject* const piece_entity =
         piece_node->getAttachedObject(0);
-    EXPECT_FALSE(piece_entity->isVisible());
+    EXPECT_TRUE(piece_entity->isVisible());
     game::PlayerAction action(color, game::PlayerAction::PLACE_PIECE);
     action.set_destination(location);
     game_->ExecutePlayerAction(action);
