@@ -1,0 +1,46 @@
+// Copyright (c) 2013 Cristian Patrasciuc. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// http://www.ogre3d.org/tikiwiki/Materials#Simple_texture_transition
+
+material BoardMaterial
+{
+  technique
+  {
+    pass
+    {
+      scene_blend alpha_blend
+      depth_write off
+
+      texture_unit
+      {
+        texture parchment.png
+        colour_op modulate
+      }
+    }
+
+    pass
+    {
+      scene_blend alpha_blend
+      depth_write off
+
+      texture_unit
+      {
+        texture BoardTexture
+        colour_op alpha_blend
+      }
+      texture_unit
+      {
+        texture parchment.png
+        colour_op_ex blend_current_alpha src_texture src_current
+      }
+      texture_unit
+      {
+        texture scratches.png
+        scale 0.1 0.1
+        colour_op_ex modulate src_current src_texture
+      }
+    }
+  }
+}

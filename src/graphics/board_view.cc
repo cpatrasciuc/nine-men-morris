@@ -130,12 +130,7 @@ void BoardView::Initialize() {
   root = root->createChildSceneNode(kBoardViewRootNodeName);
   root->createChildSceneNode()->attachObject(board_entity);
 
-  Ogre::MaterialPtr board_material =
-      Ogre::MaterialManager::getSingleton().create(kBoardMaterialName,
-      Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-  board_material->getTechnique(0)->getPass(0)
-      ->createTextureUnitState(kBoardTextureName);
-  board_entity->setMaterial(board_material);
+  board_entity->setMaterialName(kBoardMaterialName);
   board_entity->setCastShadows(false);
 
   const std::vector<game::BoardLocation>& locations = game_.board().locations();
@@ -238,12 +233,13 @@ bool BoardView::mouseReleased(const OIS::MouseEvent& event,
 }
 
 void BoardView::GenerateBoardTexture() {
+  // TODO(board): Blur a bit the blending texture.
   Ogre::TexturePtr rtt_tex = Ogre::TextureManager::getSingleton().createManual(
       kBoardTextureName,
       Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
       Ogre::TEX_TYPE_2D,
       1024, 1024, 0,
-      Ogre::PF_R8G8B8,
+      Ogre::PF_R8G8B8A8,
       Ogre::TU_RENDERTARGET);
 
   Ogre::SceneManager* const scene_manager =
@@ -258,7 +254,7 @@ void BoardView::GenerateBoardTexture() {
   Ogre::RenderTexture* render_texture = rtt_tex->getBuffer()->getRenderTarget();
   render_texture->addViewport(camera);
   render_texture->getViewport(0)->setClearEveryFrame(true);
-  render_texture->getViewport(0)->setBackgroundColour(Ogre::ColourValue::Black);
+  render_texture->getViewport(0)->setBackgroundColour(Ogre::ColourValue::ZERO);
   render_texture->getViewport(0)->setOverlaysEnabled(false);
 
   const game::Board& board = game_.board();
