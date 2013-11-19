@@ -157,7 +157,8 @@ void OgreApp::InitializeResourcePaths() {
       FILE_PATH_LITERAL("materials"),
       FILE_PATH_LITERAL("meshes"),
       FILE_PATH_LITERAL("overlay_templates"),
-      FILE_PATH_LITERAL("overlays")
+      FILE_PATH_LITERAL("overlays"),
+      FILE_PATH_LITERAL("textures")
   };
 
   for (size_t i = 0; i < arraysize(sub_dirs); ++i) {
