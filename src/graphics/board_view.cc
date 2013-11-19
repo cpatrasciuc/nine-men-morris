@@ -34,6 +34,7 @@
 #include "OGRE/OgreMovableObject.h"
 #include "OGRE/OgrePlane.h"
 #include "OGRE/OgreRay.h"
+#include "OGRE/OgreRenderQueue.h"
 #include "OGRE/OgreRenderTexture.h"
 #include "OGRE/OgreResourceGroupManager.h"
 #include "OGRE/OgreRoot.h"
@@ -155,6 +156,7 @@ void BoardView::Initialize() {
     sphere_entity->setMaterial(sphere_material);
     sphere_entity->setCastShadows(false);
     sphere_entity->setQueryFlags(EMPTY_LOCATION);
+    sphere_entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_9);
     const double scale = 0.005f / game_.board().size() * multiplier * 5;
     sphere_node->setScale(scale, 0.001, scale);
     sphere_entity->setVisible(false);
@@ -348,6 +350,7 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
     Ogre::Entity* entity = scene_mgr->createEntity(
         "WhitePiece" + index_str, mesh_name);
     entity->setMaterial(white_material);
+    entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
     Ogre::SceneNode* piece_node = white_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
     if (i == 0) {
@@ -362,6 +365,7 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
 
     entity = scene_mgr->createEntity("BlackPiece" + index_str, mesh_name);
     entity->setMaterial(black_material);
+    entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
     piece_node = black_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
     piece_node->scale(scale, scale, scale);
