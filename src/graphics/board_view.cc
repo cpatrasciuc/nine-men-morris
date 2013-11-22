@@ -344,6 +344,8 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
 
   const int pieces_in_a_row = game_.board().size() * 2 - 1;
   double scale = (kBoardSize / pieces_in_a_row) / 2.3;
+  double white_diameter = 0.0;
+  double black_diameter = 0.0;
 
   for (int i = 0; i < piece_count; ++i) {
     const std::string index_str(base::ToString(i));
@@ -357,11 +359,7 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
       scale /= entity->getBoundingRadius();
     }
     piece_node->scale(scale, scale, scale);
-
-    const double piece_diameter = entity->getBoundingRadius() * scale;
-    const double x = kBoardSize / 2.0 + 1.5 * piece_diameter;
-    const double z = kBoardSize / 2.0 - (2.1 * i + 1) * piece_diameter;
-    piece_node->setPosition(x, 0, z);
+    white_diameter = entity->getBoundingRadius() * scale;
 
     entity = scene_mgr->createEntity("BlackPiece" + index_str, mesh_name);
     entity->setMaterial(black_material);
@@ -369,7 +367,24 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
     piece_node = black_pieces_->createChildSceneNode();
     piece_node->attachObject(entity);
     piece_node->scale(scale, scale, scale);
-    piece_node->setPosition(-x, 0, -z);
+    black_diameter = entity->getBoundingRadius() * scale;
+  }
+
+  DCHECK_GT(white_diameter, 0.0);
+  DCHECK_GT(black_diameter, 0.0);
+
+  for (int i = 0; i < piece_count; ++i) {
+    // Compute the position index this way, instead of using |i| directly,
+    // because we want the last played piece to be the one closest to the
+    // corner of the board.
+    const int position_index = piece_count - i - 1;
+    double x = kBoardSize / 2.0 + 1.5 * white_diameter;
+    double z = kBoardSize / 2.0 - (2.1 * position_index + 1) * white_diameter;
+    GetPieceByColorAndIndex(game::WHITE_COLOR, i)->setPosition(x, 0, z);
+
+    x *= black_diameter / white_diameter;
+    z *= black_diameter / white_diameter;
+    GetPieceByColorAndIndex(game::BLACK_COLOR, i)->setPosition(-x, 0, -z);
   }
 }
 
