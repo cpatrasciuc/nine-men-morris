@@ -97,6 +97,7 @@ bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
 }
 
 bool PlayingState::frameRenderingQueued(const Ogre::FrameEvent& event) {
+  // TODO(board_view): Wait for animations to finish before quitting.
   board_view_->UpdateAnimations(event.timeSinceLastEvent);
   return true;
 }
