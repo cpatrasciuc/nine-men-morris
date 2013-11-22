@@ -21,6 +21,10 @@ namespace game {
 class PlayerAction;
 }
 
+namespace Ogre {
+struct FrameEvent;
+}
+
 namespace graphics {
 
 class GRAPHICS_EXPORT PlayingState : public GameState {
@@ -47,6 +51,9 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
                             OIS::MouseButtonID id);
   virtual bool mouseReleased(const OIS::MouseEvent& event,
                              OIS::MouseButtonID id);
+
+  // FrameListener overrides
+  virtual bool frameRenderingQueued(const Ogre::FrameEvent& event);
 
   void InitializePlayers();
   void RequestPlayerAction();

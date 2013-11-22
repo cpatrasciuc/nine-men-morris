@@ -5,8 +5,9 @@
 #ifndef GRAPHICS_BOARD_VIEW_H_
 #define GRAPHICS_BOARD_VIEW_H_
 
-#include <deque>
 #include <map>
+#include <queue>
+#include <utility>
 #include <vector>
 
 #include "base/basic_macros.h"
@@ -69,6 +70,8 @@ class GRAPHICS_EXPORT BoardView
   virtual bool mouseReleased(const OIS::MouseEvent& event,
                              OIS::MouseButtonID id);
 
+  void UpdateAnimations(double time_delta);
+
  private:
   typedef std::map<game::BoardLocation, int> IndexMap;
 
@@ -119,6 +122,10 @@ class GRAPHICS_EXPORT BoardView
   Ogre::MovableObject* temp_selected_location_;
   Ogre::MovableObject* selected_location_;
   unsigned int selection_type_;
+
+  // Queue that holds the pieces that are currently animated and their
+  // location which they are moving towards.
+  std::queue<std::pair<Ogre::SceneNode*, Ogre::Vector3> > animated_pieces_;
 
   // Friend definition useful for tests.
   friend const Ogre::Vector3& Get3DPosition(const BoardView&,

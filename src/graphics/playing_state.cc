@@ -20,6 +20,8 @@
 #include "graphics/ogre_app.h"
 #include "graphics/player_delegate.h"
 
+#include "OGRE/OgreFrameListener.h"
+
 namespace graphics {
 
 PlayingState::PlayingState(std::auto_ptr<game::Game> game_model,
@@ -91,6 +93,11 @@ bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
                                  OIS::MouseButtonID id) {
   camera_controller_.mouseReleased(event, id);
   board_view_->mouseReleased(event, id);
+  return true;
+}
+
+bool PlayingState::frameRenderingQueued(const Ogre::FrameEvent& event) {
+  board_view_->UpdateAnimations(event.timeSinceLastEvent);
   return true;
 }
 
