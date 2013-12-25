@@ -70,6 +70,8 @@ const int kBoardSize = kBoardTextureSize * 10;
 
 const double kPieceAnimationSpeed = 25.0;
 
+const Ogre::Vector3 kRemovePieceLocation(Ogre::Vector3::NEGATIVE_UNIT_Y);
+
 Ogre::Vector3 BoardLocationTo3DCoord(const game::BoardLocation& location,
                                      const game::Board& board) {
   const int delta = board.size() / 2;
@@ -540,7 +542,7 @@ void BoardView::AddPiece(const game::BoardLocation& to,
 void BoardView::RemovePiece(const game::BoardLocation& from,
                             game::PieceColor color) {
   Ogre::SceneNode* const piece_node = GetPieceByLocation(from);
-  piece_node->setVisible(false, true);
+  animated_pieces_.push(std::make_pair(piece_node, kRemovePieceLocation));
   IndexMap* index_map = GetIndexMapByColor(game::GetOpponent(color));
   index_map->erase(from);
 }
@@ -580,20 +582,25 @@ void BoardView::UpdateAnimations(double time_delta) {
   bool is_animation_over = false;
   Ogre::SceneNode* piece_node = animated_pieces_.front().first;
   Ogre::Vector3 destination = animated_pieces_.front().second;
-  Ogre::Vector3 old_position = piece_node->getPosition();
-  Ogre::Vector3 distance = destination - old_position;
-  Ogre::Vector3 direction = distance.normalisedCopy();
-  double distance_to_move = kPieceAnimationSpeed * time_delta;
-  Ogre::Vector3 new_position = old_position + (distance_to_move * direction);
-  Ogre::Vector3 new_distance = new_position - old_position;
-  if (new_distance.squaredLength() > distance.squaredLength()) {
-    new_position = destination;
-  }
-  if (new_position.squaredDistance(destination) < 0.001) {
-    new_position = destination;
+  if (destination == kRemovePieceLocation) {
+    piece_node->setVisible(false, true);
     is_animation_over = true;
+  } else {
+    Ogre::Vector3 old_position = piece_node->getPosition();
+    Ogre::Vector3 distance = destination - old_position;
+    Ogre::Vector3 direction = distance.normalisedCopy();
+    double distance_to_move = kPieceAnimationSpeed * time_delta;
+    Ogre::Vector3 new_position = old_position + (distance_to_move * direction);
+    Ogre::Vector3 new_distance = new_position - old_position;
+    if (new_distance.squaredLength() > distance.squaredLength()) {
+      new_position = destination;
+    }
+    if (new_position.squaredDistance(destination) < 0.001) {
+      new_position = destination;
+      is_animation_over = true;
+    }
+    piece_node->setPosition(new_position);
   }
-  piece_node->setPosition(new_position);
   if (is_animation_over) {
     animated_pieces_.pop();
   }
