@@ -79,6 +79,8 @@ class BoardViewTestBase : public InGameTestBase {
  private:
 };
 
+// TODO(board_view_test): Add a test with animations enabled?
+
 class BoardViewSelectionTest : public BoardViewTestBase,
                                public SelectionListener {
  public:
