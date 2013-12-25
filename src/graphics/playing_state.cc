@@ -39,6 +39,7 @@ PlayingState::PlayingState(std::auto_ptr<game::Game> game_model,
 }
 
 bool PlayingState::Initialize() {
+  board_view_->set_animations_enabled(true);
   board_view_->Initialize();
   camera_controller_.set_min_distance(50);
   camera_controller_.set_max_distance(200);
