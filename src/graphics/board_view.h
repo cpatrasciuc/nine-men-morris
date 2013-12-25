@@ -57,6 +57,11 @@ class GRAPHICS_EXPORT BoardView
 
   const game::Game& game_model() const { return game_; }
 
+  // If this is |false|, pieces are moved directly on the board instead of
+  // using a transition animation towards their destination.
+  bool animations_enabled() const { return animations_enabled_; }
+  void set_animations_enabled(bool enabled) { animations_enabled_ = enabled; }
+
   void Initialize();
 
   void SetSelectionType(unsigned int selection_type);
@@ -126,6 +131,7 @@ class GRAPHICS_EXPORT BoardView
   // Queue that holds the pieces that are currently animated and their
   // location which they are moving towards.
   std::queue<std::pair<Ogre::SceneNode*, Ogre::Vector3> > animated_pieces_;
+  bool animations_enabled_;
 
   // Friend definition useful for tests.
   friend const Ogre::Vector3& Get3DPosition(const BoardView&,
