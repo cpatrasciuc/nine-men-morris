@@ -6,14 +6,13 @@
 #define GRAPHICS_BOARD_VIEW_H_
 
 #include <map>
-#include <queue>
-#include <utility>
 #include <vector>
 
 #include "base/basic_macros.h"
 #include "base/supports_listener.h"
 #include "game/game_listener.h"
 #include "game/piece_color.h"
+#include "graphics/animation_controller.h"
 #include "graphics/graphics_export.h"
 
 #include "OGRE/OgreTexture.h"
@@ -57,10 +56,9 @@ class GRAPHICS_EXPORT BoardView
 
   const game::Game& game_model() const { return game_; }
 
-  // If this is |false|, pieces are moved directly on the board instead of
-  // using a transition animation towards their destination.
-  bool animations_enabled() const { return animations_enabled_; }
-  void set_animations_enabled(bool enabled) { animations_enabled_ = enabled; }
+  AnimationController* animation_controller() {
+    return &animation_controller_;
+  }
 
   void Initialize();
 
@@ -74,8 +72,6 @@ class GRAPHICS_EXPORT BoardView
                             OIS::MouseButtonID id);
   virtual bool mouseReleased(const OIS::MouseEvent& event,
                              OIS::MouseButtonID id);
-
-  void UpdateAnimations(double time_delta);
 
  private:
   typedef std::map<game::BoardLocation, int> IndexMap;
@@ -128,10 +124,7 @@ class GRAPHICS_EXPORT BoardView
   Ogre::MovableObject* selected_location_;
   unsigned int selection_type_;
 
-  // Queue that holds the pieces that are currently animated and their
-  // location which they are moving towards.
-  std::queue<std::pair<Ogre::SceneNode*, Ogre::Vector3> > animated_pieces_;
-  bool animations_enabled_;
+  AnimationController animation_controller_;
 
   // Friend definition useful for tests.
   friend const Ogre::Vector3& Get3DPosition(const BoardView&,

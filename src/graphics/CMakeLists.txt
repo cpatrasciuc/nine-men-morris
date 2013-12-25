@@ -13,6 +13,8 @@ endif()
 set(GRAPHICS_SOURCE_FILES
   ai_player.cc
   ai_player.h
+  animation_controller.cc
+  animation_controller.h
   board_view.cc
   board_view.h
   camera_controller.cc

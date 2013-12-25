@@ -39,7 +39,7 @@ PlayingState::PlayingState(std::auto_ptr<game::Game> game_model,
 }
 
 bool PlayingState::Initialize() {
-  board_view_->set_animations_enabled(true);
+  board_view_->animation_controller()->set_animations_enabled(true);
   board_view_->Initialize();
   camera_controller_.set_min_distance(50);
   camera_controller_.set_max_distance(200);
@@ -99,7 +99,7 @@ bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
 
 bool PlayingState::frameRenderingQueued(const Ogre::FrameEvent& event) {
   // TODO(board_view): Wait for animations to finish before quitting.
-  board_view_->UpdateAnimations(event.timeSinceLastEvent);
+  board_view_->animation_controller()->Update(event.timeSinceLastEvent);
   return true;
 }
 

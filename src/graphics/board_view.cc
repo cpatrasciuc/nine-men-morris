@@ -5,9 +5,7 @@
 #include "graphics/board_view.h"
 
 #include <algorithm>
-#include <queue>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include "base/log.h"
@@ -68,10 +66,6 @@ const char kSelectedBlackPieceMaterialName[] = "SelectedBlackPieceMaterial";
 const int kBoardTextureSize = 3;
 const int kBoardSize = kBoardTextureSize * 10;
 
-const double kPieceAnimationSpeed = 25.0;
-
-const Ogre::Vector3 kRemovePieceLocation(Ogre::Vector3::NEGATIVE_UNIT_Y);
-
 Ogre::Vector3 BoardLocationTo3DCoord(const game::BoardLocation& location,
                                      const game::Board& board) {
   const int delta = board.size() / 2;
@@ -92,8 +86,7 @@ BoardView::BoardView(const game::Game& game_model)
       black_pieces_(NULL),
       temp_selected_location_(NULL),
       selected_location_(NULL),
-      selection_type_(NONE),
-      animations_enabled_(false) {}
+      selection_type_(NONE) {}
 
 BoardView::~BoardView() {
   Ogre::MaterialManager::getSingleton().remove(kBoardMaterialName);
@@ -175,14 +168,14 @@ void BoardView::Initialize() {
   InitializePieces(root);
 
   // TODO(board_view): Add a test for BoardView on a loaded game
-  bool old_animations_enabled = animations_enabled_;
-  animations_enabled_ = false;
+  bool old_animations_enabled = animation_controller_.animations_enabled();
+  animation_controller_.set_animations_enabled(false);
   std::vector<game::PlayerAction> actions;
   game_.DumpActionList(&actions);
   for (size_t i = 0; i < actions.size(); ++i) {
     OnPlayerAction(actions[i]);
   }
-  animations_enabled_ = old_animations_enabled;
+  animation_controller_.set_animations_enabled(old_animations_enabled);
 }
 
 void BoardView::SetSelectionType(unsigned int selection_type) {
@@ -527,14 +520,7 @@ void BoardView::MovePiece(const game::BoardLocation& from,
                           const game::BoardLocation& to,
                           game::PieceColor color) {
   Ogre::SceneNode* const piece_node = GetPieceByLocation(from);
-  const Ogre::Vector3& destination = Get3DPosition(to);
-  // TODO(board_view): Extarct a separate class, AniamtionController
-  // TODO(board_view): This IF should be part of the AnimationController
-  if (animations_enabled_) {
-    animated_pieces_.push(std::make_pair(piece_node, destination));
-  } else {
-    piece_node->setPosition(destination);
-  }
+  animation_controller_.AddMoveAnimation(piece_node, Get3DPosition(to));
   IndexMap& index_map = *GetIndexMapByColor(color);
   index_map[to] = index_map[from];
   index_map.erase(from);
@@ -545,12 +531,7 @@ void BoardView::AddPiece(const game::BoardLocation& to,
   int* const index = color == game::WHITE_COLOR ?
       &white_place_index_ : &black_place_index_;
   Ogre::SceneNode* const piece_node = GetPieceByColorAndIndex(color, *index);
-  const Ogre::Vector3& destination = Get3DPosition(to);
-  if (animations_enabled_) {
-    animated_pieces_.push(std::make_pair(piece_node, destination));
-  } else {
-    piece_node->setPosition(destination);
-  }
+  animation_controller_.AddMoveAnimation(piece_node, Get3DPosition(to));
   IndexMap& index_map = *GetIndexMapByColor(color);
   index_map[to] = *index;
   ++(*index);
@@ -559,11 +540,7 @@ void BoardView::AddPiece(const game::BoardLocation& to,
 void BoardView::RemovePiece(const game::BoardLocation& from,
                             game::PieceColor color) {
   Ogre::SceneNode* const piece_node = GetPieceByLocation(from);
-  if (animations_enabled_) {
-    animated_pieces_.push(std::make_pair(piece_node, kRemovePieceLocation));
-  } else {
-    piece_node->setVisible(false, true);
-  }
+  animation_controller_.AddRemoveAnimation(piece_node);
   IndexMap* index_map = GetIndexMapByColor(game::GetOpponent(color));
   index_map->erase(from);
 }
@@ -594,37 +571,6 @@ void BoardView::UpdateSelection(const OIS::MouseState& mouse_state) {
     break;
   }
   scene_manager->destroyQuery(ray_scene_query);
-}
-
-void BoardView::UpdateAnimations(double time_delta) {
-  if (animated_pieces_.empty()) {
-    return;
-  }
-  bool is_animation_over = false;
-  Ogre::SceneNode* piece_node = animated_pieces_.front().first;
-  Ogre::Vector3 destination = animated_pieces_.front().second;
-  if (destination == kRemovePieceLocation) {
-    piece_node->setVisible(false, true);
-    is_animation_over = true;
-  } else {
-    Ogre::Vector3 old_position = piece_node->getPosition();
-    Ogre::Vector3 distance = destination - old_position;
-    Ogre::Vector3 direction = distance.normalisedCopy();
-    double distance_to_move = kPieceAnimationSpeed * time_delta;
-    Ogre::Vector3 new_position = old_position + (distance_to_move * direction);
-    Ogre::Vector3 new_distance = new_position - old_position;
-    if (new_distance.squaredLength() > distance.squaredLength()) {
-      new_position = destination;
-    }
-    if (new_position.squaredDistance(destination) < 0.001) {
-      new_position = destination;
-      is_animation_over = true;
-    }
-    piece_node->setPosition(new_position);
-  }
-  if (is_animation_over) {
-    animated_pieces_.pop();
-  }
 }
 
 }  // namespace graphics
