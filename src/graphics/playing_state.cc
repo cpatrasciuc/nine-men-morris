@@ -14,6 +14,7 @@
 #include "game/game.h"
 #include "game/player_action.h"
 #include "graphics/ai_player.h"
+#include "graphics/animation_controller.h"
 #include "graphics/board_view.h"
 #include "graphics/confirmation_menu_state.h"
 #include "graphics/human_player.h"
@@ -98,8 +99,11 @@ bool PlayingState::mouseReleased(const OIS::MouseEvent& event,
 }
 
 bool PlayingState::frameRenderingQueued(const Ogre::FrameEvent& event) {
-  // TODO(board_view): Wait for animations to finish before quitting.
-  board_view_->animation_controller()->Update(event.timeSinceLastEvent);
+  AnimationController* controller = board_view_->animation_controller();
+  controller->Update(event.timeSinceLastEvent);
+  if (game_->is_game_over() && !controller->HasPendingAnimations()) {
+    app()->PopState();
+  }
   return true;
 }
 
@@ -123,8 +127,6 @@ void PlayingState::ExecuteAction(const game::PlayerAction& action) {
   game_->ExecutePlayerAction(action);
   if (!game_->is_game_over() && !stopped_) {
     RequestPlayerAction();
-  } else if (game_->is_game_over()) {
-    app()->PopState();
   }
 }
 
