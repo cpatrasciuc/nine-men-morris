@@ -586,7 +586,7 @@ void BoardView::UpdateAnimations(double time_delta) {
   double distance_to_move = kPieceAnimationSpeed * time_delta;
   Ogre::Vector3 new_position = old_position + (distance_to_move * direction);
   Ogre::Vector3 new_distance = new_position - old_position;
-  if (new_distance.squaredLength() > old_position.squaredLength()) {
+  if (new_distance.squaredLength() > distance.squaredLength()) {
     new_position = destination;
   }
   if (new_position.squaredDistance(destination) < 0.001) {
