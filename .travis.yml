@@ -5,7 +5,8 @@
 language: cpp
 
 compiler:
-  - clang
+  # TODO(travis_ci): Fix issues with clang3.3 used by Travis CI.
+  # - clang
   - gcc
 
 before_script:
