@@ -80,8 +80,7 @@ TEST(Singleton, MultiThreaded) {
   BasicTest<MultiThreadedSingleton>();
 }
 
-// TODO(singleton): Fix this failure on clang++ 3.3
-TEST(Singleton, DISABLED_DifferentDynamicSharedObjects) {
+TEST(Singleton, DifferentDynamicSharedObjects) {
   const int* const other_dso_instance = GetSingletonFromOtherDSO();
   const int* const this_dso_instance = &Singleton<int>::Instance();
   EXPECT_EQ(this_dso_instance, other_dso_instance);
