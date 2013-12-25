@@ -178,6 +178,8 @@ void OgreApp::windowResized(Ogre::RenderWindow* render_window) {
   mouse_state.width = width;
   mouse_state.height = height;
 
+  camera_->setAspectRatio(static_cast<double>(width) / height);
+
   if (!states_.empty()) {
     states_.top()->windowResized(render_window);
   }
