@@ -12,6 +12,8 @@ set(GAME_SOURCE_FILES
   game_options.h
   game_serializer.cc
   game_serializer.h
+  mill_event_listener.cc
+  mill_event_listener.h
   piece_color.cc
   piece_color.h
   player_action.cc
