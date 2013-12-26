@@ -14,6 +14,8 @@ set(GAME_SOURCE_FILES
   game_serializer.h
   mill_event_listener.cc
   mill_event_listener.h
+  mill_events_generator.cc
+  mill_events_generator.h
   piece_color.cc
   piece_color.h
   player_action.cc
@@ -30,6 +32,7 @@ set(GAME_UNITTESTS_SOURCE_FILES
   game_test_helper.cc
   game_test_helper.h
   game_test_helper_unittest.cc
+  mill_events_generator_unittest.cc
   piece_color_unittest.cc
   player_action_unittest.cc
 )
