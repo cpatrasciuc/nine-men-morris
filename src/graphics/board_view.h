@@ -11,6 +11,7 @@
 #include "base/basic_macros.h"
 #include "base/supports_listener.h"
 #include "game/game_listener.h"
+#include "game/mill_event_listener.h"
 #include "game/piece_color.h"
 #include "graphics/animation_controller.h"
 #include "graphics/graphics_export.h"
@@ -27,6 +28,7 @@ class PlayerAction;
 
 namespace Ogre {
 class MovableObject;
+class ParticleEmitter;
 class SceneNode;
 class Vector3;
 }
@@ -39,6 +41,7 @@ class SelectionListener;
 class GRAPHICS_EXPORT BoardView
     : public OIS::MouseListener,
       public game::GameListener,
+      public game::MillEventListener,
       public base::SupportsListener<SelectionListener> {
  public:
   enum SelectionType {
@@ -78,6 +81,7 @@ class GRAPHICS_EXPORT BoardView
 
   void GenerateBoardTexture();
   void InitializePieces(Ogre::SceneNode* board_view_root);
+  void InitializeMillEffect(Ogre::SceneNode* board_view_root);
 
   void FireOnLocationSelected(const game::BoardLocation& location);
 
@@ -86,6 +90,9 @@ class GRAPHICS_EXPORT BoardView
 
   // game::GameListener overrides
   virtual void OnPlayerAction(const game::PlayerAction& action);
+
+  // game::MillEventListener overrides
+  virtual void OnMillEvent(const game::BoardLocation& location, bool mill);
 
   Ogre::SceneNode* GetPieceByColorAndIndex(game::PieceColor color,
                                                int index);
@@ -110,6 +117,7 @@ class GRAPHICS_EXPORT BoardView
   std::map<Ogre::MovableObject*, game::BoardLocation> locations_;
   std::map<game::BoardLocation, Ogre::MovableObject*> reverse_loc_map_;
   std::map<game::BoardLocation, const Ogre::Vector3*> positions_;
+  std::map<game::BoardLocation, Ogre::ParticleEmitter*> emitters_;
 
   IndexMap white_index_map_;
   IndexMap black_index_map_;

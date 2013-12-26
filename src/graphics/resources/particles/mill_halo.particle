@@ -1,0 +1,29 @@
+// Copyright (c) 2013 Cristian Patrasciuc. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Uses the Examples/Aureola particles system from Ogre Samples as guideline.
+
+particle_system MillHalo
+{
+  material MillHalo
+  cull_each false
+  quota 500
+  billboard_type perpendicular_common
+  common_up_vector 0 0 1
+  common_direction 0 1 0
+
+  affector LinearForce
+  {
+    force_vector 0 1 0
+    force_application add
+  }
+
+  affector ColourFader
+  {
+    red 0
+    green -0.5
+    blue 0
+    alpha -0.5
+  }
+}

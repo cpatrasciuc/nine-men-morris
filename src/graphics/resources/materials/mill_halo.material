@@ -1,0 +1,26 @@
+// Copyright (c) 2013 Cristian Patrasciuc. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Uses the Examples/Aureola material from Ogre Samples as starting point.
+
+material MillHalo
+{
+  technique
+  {
+    pass
+    {
+      lighting off
+      scene_blend alpha_blend
+      depth_write off
+      diffuse vertexcolour
+      cull_hardware none
+
+      texture_unit
+      {
+        texture mill_halo.png
+        tex_address_mode clamp
+      }
+    }
+  }
+}

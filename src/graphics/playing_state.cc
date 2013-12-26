@@ -12,6 +12,7 @@
 #include "base/method.h"
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
+#include "game/mill_events_generator.h"
 #include "game/player_action.h"
 #include "graphics/ai_player.h"
 #include "graphics/animation_controller.h"
@@ -30,6 +31,7 @@ PlayingState::PlayingState(std::auto_ptr<game::Game> game_model,
                            std::auto_ptr<PlayerDelegate> black_player)
     : game_(game_model.release()),
       board_view_(new BoardView(*game_)),
+      mill_events_generator_(new game::MillEventsGenerator(Get(game_))),
       camera_controller_(),
       white_player_(white_player.release()),
       black_player_(black_player.release()),
@@ -42,6 +44,7 @@ PlayingState::PlayingState(std::auto_ptr<game::Game> game_model,
 bool PlayingState::Initialize() {
   board_view_->animation_controller()->set_animations_enabled(true);
   board_view_->Initialize();
+  mill_events_generator_->AddListener(Get(board_view_));
   camera_controller_.set_min_distance(50);
   camera_controller_.set_max_distance(200);
   camera_controller_.set_zoom_speed(0.05);
@@ -55,6 +58,8 @@ bool PlayingState::Initialize() {
 
 void PlayingState::Exit() {
   stopped_ = true;
+  mill_events_generator_->RemoveListener(Get(board_view_));
+  Reset(mill_events_generator_);
   Reset(white_player_);
   Reset(black_player_);
   Reset(board_view_);

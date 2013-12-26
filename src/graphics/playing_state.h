@@ -10,6 +10,7 @@
 #include "base/ptr/scoped_ptr.h"
 #include "game/game.h"
 #include "game/game_options.h"
+#include "game/mill_events_generator.h"
 #include "graphics/board_view.h"
 #include "graphics/camera_controller.h"
 #include "graphics/confirmation_menu_state.h"
@@ -62,6 +63,7 @@ class GRAPHICS_EXPORT PlayingState : public GameState {
 
   base::ptr::scoped_ptr<game::Game> game_;
   base::ptr::scoped_ptr<BoardView> board_view_;
+  base::ptr::scoped_ptr<game::MillEventsGenerator> mill_events_generator_;
   CameraController camera_controller_;
   base::ptr::scoped_ptr<PlayerDelegate> white_player_;
   base::ptr::scoped_ptr<PlayerDelegate> black_player_;

@@ -31,6 +31,8 @@
 #include "OGRE/OgreMaterialManager.h"
 #include "OGRE/OgreMeshManager.h"
 #include "OGRE/OgreMovableObject.h"
+#include "OGRE/OgreParticleEmitter.h"
+#include "OGRE/OgreParticleSystem.h"
 #include "OGRE/OgrePlane.h"
 #include "OGRE/OgreRay.h"
 #include "OGRE/OgreRenderQueue.h"
@@ -176,6 +178,8 @@ void BoardView::Initialize() {
     OnPlayerAction(actions[i]);
   }
   animation_controller_.set_animations_enabled(old_animations_enabled);
+
+  InitializeMillEffect(root);
 }
 
 void BoardView::SetSelectionType(unsigned int selection_type) {
@@ -391,6 +395,37 @@ void BoardView::InitializePieces(Ogre::SceneNode* board_view_root) {
   }
 }
 
+void BoardView::InitializeMillEffect(Ogre::SceneNode* board_view_root) {
+  Ogre::SceneManager* const scene_manager = app_->scene_manager();
+  Ogre::ParticleSystem* const particle_system =
+      scene_manager->createParticleSystem("MillHalo", "MillHalo");
+  board_view_root->attachObject(particle_system);
+
+  const std::vector<game::BoardLocation>& locations = game_.board().locations();
+
+  Ogre::MovableObject* selector = GetLocationSelector(locations[0]);
+  Ogre::SceneNode* node = selector->getParentSceneNode();
+  const double radius = selector->getBoundingRadius() * node->getScale().x;
+
+  particle_system->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
+  particle_system->setDefaultHeight(1.5 * radius);
+  particle_system->setDefaultWidth(1.5 * radius);
+
+  for (size_t i = 0; i < locations.size(); ++i) {
+    Ogre::ParticleEmitter* emitter = particle_system->addEmitter("Point");
+    emitter->setPosition(Get3DPosition(locations[i]));
+    emitter->setColour(Ogre::ColourValue(1, 1, 0));
+    emitter->setDirection(Ogre::Vector3::UNIT_Y);
+    emitter->setEmissionRate(15);
+    emitter->setParticleVelocity(0.25);
+    emitter->setTimeToLive(1);
+    emitter->setEnabled(game_.board().IsPartOfMill(locations[i]));
+    emitters_.insert(std::make_pair(locations[i], emitter));
+  }
+
+  particle_system->fastForward(15);
+}
+
 void BoardView::FireOnLocationSelected(const game::BoardLocation& loc) {
   typedef base::SupportsListener<SelectionListener>::ListenerList ListenerList;
   typedef base::SupportsListener<SelectionListener>::ListenerIter ListenerIter;
@@ -477,6 +512,11 @@ void BoardView::OnPlayerAction(const game::PlayerAction& action) {
           player == game::WHITE_COLOR ? ANY_WHITE_PIECE : ANY_BLACK_PIECE);
       break;
   }
+}
+
+void BoardView::OnMillEvent(const game::BoardLocation& location, bool mill) {
+  DCHECK(emitters_.count(location));
+  emitters_[location]->setEnabled(mill);
 }
 
 Ogre::SceneNode* BoardView::GetPieceByColorAndIndex(game::PieceColor color,
