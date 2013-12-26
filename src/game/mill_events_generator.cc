@@ -4,8 +4,6 @@
 
 #include "game/mill_events_generator.h"
 
-#include <algorithm>
-#include <queue>
 #include <vector>
 
 #include "game/board_location.h"
@@ -25,40 +23,21 @@ MillEventsGenerator::~MillEventsGenerator() {
 }
 
 void MillEventsGenerator::OnPlayerAction(const PlayerAction& action) {
-  std::queue<BoardLocation> q;
-  switch (action.type()) {
-    case PlayerAction::MOVE_PIECE:
-      q.push(action.source());
-      q.push(action.destination());
-      break;
-    case PlayerAction::PLACE_PIECE:
-      q.push(action.destination());
-      break;
-    case PlayerAction::REMOVE_PIECE:
-      q.push(action.source());
-      break;
-  }
-
-  while (!q.empty()) {
-    const BoardLocation loc = q.front();
-    q.pop();
-
-    std::vector<BoardLocation>::iterator it =
-        std::lower_bound(mills_.begin(), mills_.end(), loc);
-    const bool was_part_of_mill = (it != mills_.end() && *it == loc);
-    const bool is_part_of_mill = game_->board().IsPartOfMill(loc);
+  // TODO(mill_effect_generator): Can find a better algorithm instead of
+  // iterating through all board locations?
+  const std::vector<BoardLocation>& locations = game_->board().locations();
+  for (size_t i = 0; i < locations.size(); ++i) {
+    const std::vector<BoardLocation>::iterator it =
+        std::lower_bound(mills_.begin(), mills_.end(), locations[i]);
+    const bool was_part_of_mill = (it != mills_.end() && *it == locations[i]);
+    const bool is_part_of_mill = game_->board().IsPartOfMill(locations[i]);
 
     if (is_part_of_mill != was_part_of_mill) {
-      FireMillEvent(loc, is_part_of_mill);
+      FireMillEvent(locations[i], is_part_of_mill);
       if (is_part_of_mill) {
-        mills_.insert(it, loc);
+        mills_.insert(it, locations[i]);
       } else {
         mills_.erase(it);
-      }
-      std::vector<BoardLocation> adjacent_locations;
-      game_->board().GetAdjacentLocations(loc, &adjacent_locations);
-      for (size_t i = 0; i < adjacent_locations.size(); ++i) {
-        q.push(adjacent_locations[i]);
       }
     }
   }
