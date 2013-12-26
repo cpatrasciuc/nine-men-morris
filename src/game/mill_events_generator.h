@@ -23,7 +23,7 @@ class GAME_EXPORT MillEventsGenerator
       public GameListener {
  public:
   explicit MillEventsGenerator(Game* game_model);
-  ~MillEventsGenerator();
+  virtual ~MillEventsGenerator();
 
  private:
   // GameListener overides
