@@ -15,7 +15,7 @@ material BoardMaterial
 
       texture_unit
       {
-        texture parchment.png
+        texture parchment.png gamma
         colour_op modulate
       }
     }
@@ -32,12 +32,12 @@ material BoardMaterial
       }
       texture_unit
       {
-        texture parchment.png
+        texture parchment.png gamma
         colour_op_ex blend_current_alpha src_texture src_current
       }
       texture_unit
       {
-        texture scratches.png
+        texture scratches.png gamma
         scale 0.1 0.1
         colour_op_ex modulate src_current src_texture
       }

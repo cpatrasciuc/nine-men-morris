@@ -18,7 +18,7 @@ material MillHalo
 
       texture_unit
       {
-        texture mill_halo.png
+        texture mill_halo.png gamma
         tex_address_mode clamp
       }
     }
