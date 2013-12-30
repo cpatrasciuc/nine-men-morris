@@ -41,6 +41,8 @@ set(GRAPHICS_SOURCE_FILES
   playing_state.h
   player_delegate.cc
   player_delegate.h
+  post_effects.cc
+  post_effects.h
   selection_listener.cc
   selection_listener.h
 )
@@ -63,6 +65,7 @@ set(IN_GAME_TESTS_SOURCE_FILES
   ois_test_utils.h
   out_of_process_test.cc
   out_of_process_test.h
+  post_effects_test.cc
 )
 
 include_directories(
