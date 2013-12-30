@@ -60,6 +60,8 @@ class GRAPHICS_EXPORT OgreApp : public base::Singleton<OgreApp, false>,
 
   const OIS::Mouse& mouse() const { return *mouse_; }
 
+  Ogre::RenderWindow* window() { return render_window_; }
+
   bool Init();
   void ShutDown();
 
